@@ -16,9 +16,7 @@ or
 yarn add react-boilerplate-redux-saga-hoc
 ```
 
-> ### **Note:** Before proceeding further. Please read the detail documentation from [here](https://react-boilerplate-redux-saga-hoc.now.sh/)
->
-> ---
+> ### **Note:** Before proceeding further.[Please read the detail documentation from here](https://react-boilerplate-redux-saga-hoc.now.sh/)
 
 ## Why we created this hoc?
 
@@ -189,16 +187,16 @@ This package also supports for both React and React native.So no need to worry a
 ```js
 /** App.js **/
 
-import React, { useEffect, useMemo } from "react";
-import PropTypes from "prop-types";
-import { Provider } from "react-redux";
-import { compose } from "redux";
+import React, { useEffect, useMemo } from 'react';
+import PropTypes from 'prop-types';
+import { Provider } from 'react-redux';
+import { compose } from 'redux';
 
 import {
   HOC as HocConfigure,
   commonConstants,
   store as configureStore,
-} from "react-boilerplate-redux-saga-hoc";
+} from 'react-boilerplate-redux-saga-hoc';
 
 const initialState = {};
 
@@ -217,22 +215,22 @@ const AuthenticationHOC = HOC({
   },
   apiEndPoints: {
     TEST_API: {
-      url: "https://jsonplaceholder.typicode.com/posts/",
-      method: "GET",
+      url: 'https://jsonplaceholder.typicode.com/posts/',
+      method: 'GET',
       responseStatusCode: [900],
-      responseStatusKey: "code",
-      responseDataKey: "data",
-      responseMessageKey: "message",
+      responseStatusKey: 'code',
+      responseDataKey: 'data',
+      responseMessageKey: 'message',
     },
     REGISTER_API: {
       url: `users/user-signup/`,
-      method: "POST",
+      method: 'POST',
     },
   },
-  name: "Auth",
+  name: 'Auth',
 });
 
-const CustomComponent = compose(AuthenticationHOC)((props) => {
+const CustomComponent = compose(AuthenticationHOC)(props => {
   const {
     ON_SUCCESS,
     ON_UNMOUNT,
@@ -287,9 +285,9 @@ export default App;
     - Store can be imported from react-boilerplate-redux-saga-hoc.
 
 ```js
-import React from "react";
-import { Provider } from "react-redux";
-import { store as configureStore } from "react-boilerplate-redux-saga-hoc";
+import React from 'react';
+import { Provider } from 'react-redux';
+import { store as configureStore } from 'react-boilerplate-redux-saga-hoc';
 
 const initialState = {};
 const connected_router_enable = false;
@@ -330,9 +328,9 @@ We already knows [redux](https://redux.js.org/) is a valuable tool for organisin
 
 #### **Yes** ,this package will support for both [react](https://reactjs.org/) and [react-native](https://reactnative.dev/)
 
+###
+
 > ### **Note:** Please read the detail documentation from [here](https://react-boilerplate-redux-saga-hoc.now.sh/)
->
-> ---
 
 ## Contributing
 
