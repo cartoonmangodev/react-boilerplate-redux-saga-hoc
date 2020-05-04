@@ -1,0 +1,32 @@
+export default {
+  storingData: [] || {},
+  storingSubdata: {
+    data: [],
+    limit: [],
+  },
+  updatingData: {},
+};
+
+/**
+ * storing data
+ * can store from api or manual storing [],{}
+ * update an object,update sub key,update group of keys,update muliple data
+ * update list,update group of list
+ * delete data,delete group of data
+ * update callback
+ * successCallback
+ * errorCallback
+ * resetdata
+ * update multiple reducer at single shot
+ * execute multiple tasks
+ * sub key update
+ * filters
+ * storing errore
+ * loaders
+ * lastupdate
+ * infinite
+
+ * Things to be added
+ * reducer
+ * saga
+ */
