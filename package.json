@@ -10,6 +10,10 @@
     "src",
     "es"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cartoonmangodev/react-boilerplate-redux-saga-hoc.git"
+  },
   "scripts": {
     "build:prod": "webpack --mode production",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
