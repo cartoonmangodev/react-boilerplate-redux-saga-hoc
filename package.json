@@ -10,6 +10,21 @@
     "src",
     "es"
   ],
+  "keywords": [
+    "react",
+    "reactjs",
+    "redux",
+    "saga",
+    "redux-saga",
+    "reducer",
+    "constant",
+    "hoc",
+    "react-redux",
+    "actions",
+    "react-boilerplate-redux-saga-hoc"
+  ],
+  "homepage": "https://github.com/cartoonmangodev/react-boilerplate-redux-saga-hoc.git",
+  "bugs": "https://github.com/cartoonmangodev/react-boilerplate-redux-saga-hoc/issues",
   "repository": {
     "type": "git",
     "url": "https://github.com/cartoonmangodev/react-boilerplate-redux-saga-hoc.git"
