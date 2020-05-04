@@ -21,6 +21,7 @@
     "hoc",
     "react-redux",
     "actions",
+    "react-boilerplate",
     "react-boilerplate-redux-saga-hoc"
   ],
   "homepage": "https://github.com/cartoonmangodev/react-boilerplate-redux-saga-hoc.git",
