@@ -1,5 +1,6 @@
 /* eslint-disable */
-import _regeneratorRuntime from './runtime';
+
+import _regeneratorRuntime from '@babel/runtime/regenerator';
 import React, { Component } from 'react';
 import { END } from 'redux-saga';
 
