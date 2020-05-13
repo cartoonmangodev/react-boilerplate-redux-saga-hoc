@@ -4,7 +4,6 @@
  * Dashboard
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
@@ -25,10 +24,13 @@ import Saga from './generator';
 import nullcheck from '../../utils/nullCheck';
 import { getData, mapDispatchToProps } from '../../utils';
 import { commonConstants } from '../..';
-
 const safe = nullcheck;
 
-export default ({ handlers = [], isReactBoilerplate: isWeb = false }) => ({
+export default ({
+  handlers = [],
+  isReactBoilerplate: isWeb = false,
+  nextJS = false,
+}) => ({
   apiEndPoints = {},
   initialState = {},
   dontReset: dontResetOnLogout = {},
@@ -95,7 +97,7 @@ export default ({ handlers = [], isReactBoilerplate: isWeb = false }) => ({
     },
   };
   // eslint-disable-next-line no-unused-vars
-  return function(WrapperComponent, autoLoginCheck = true) {
+  const AuthenticationHoc = (WrapperComponent, autoLoginCheck = true) => {
     function Authentication(props) {
       // const [language, setLanguage] = useState(getLanguage('EN'));
       // useEffect(() => {
@@ -140,11 +142,40 @@ export default ({ handlers = [], isReactBoilerplate: isWeb = false }) => ({
       mapStateToProps,
       mapDispatchToProps(componentActions, componentData, reducerName),
     );
-
+    if (nextJS)
+      Authentication.getInitialProps = async props => {
+        const { res, req, store, ...rest } = props.ctx;
+        let data = {
+          res,
+          req,
+          store,
+          ...rest,
+        };
+        if (WrapperComponent.getInitialProps)
+          data = await WrapperComponent.getInitialProps({
+            ...props,
+            ...mapDispatchToProps(
+              componentActions,
+              componentData,
+              reducerName,
+            )(store.dispatch),
+          });
+        return {
+          ...(data || {}),
+        };
+      };
+    if (nextJS) return withConnect(Authentication);
     return compose(
       withConnect,
       authenticationReducer,
       authenticationSaga,
     )(Authentication);
   };
+  if (nextJS)
+    return {
+      hoc: AuthenticationHoc,
+      saga,
+      reducer: { name: reducerName, reducer },
+    };
+  return AuthenticationHoc;
 };

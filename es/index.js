@@ -89,6 +89,12 @@ Object.defineProperty(exports, "store", {
     return _configureStore.default;
   }
 });
+Object.defineProperty(exports, "nextStore", {
+  enumerable: true,
+  get: function get() {
+    return _configureStore.nextStore;
+  }
+});
 Object.defineProperty(exports, "injectReducer", {
   enumerable: true,
   get: function get() {
@@ -119,6 +125,12 @@ Object.defineProperty(exports, "axios", {
     return _axios.default;
   }
 });
+Object.defineProperty(exports, "withReduxSaga", {
+  enumerable: true,
+  get: function get() {
+    return _withReduxSaga.default;
+  }
+});
 exports.commonConstants = void 0;
 
 var commonConstants = _interopRequireWildcard(require("./utils/commonReduxSagaConverter/commonConstants"));
@@ -137,13 +149,15 @@ var _hooks = require("./hooks");
 
 var _helpers = require("./utils/helpers");
 
-var _configureStore = _interopRequireDefault(require("./utils/configureStore"));
+var _configureStore = _interopRequireWildcard(require("./utils/configureStore"));
 
 var _injectReducer = _interopRequireWildcard(require("./utils/utils/injectReducer"));
 
 var _injectSaga = _interopRequireWildcard(require("./utils/utils/injectSaga"));
 
 var _axios = _interopRequireDefault(require("./config/axios"));
+
+var _withReduxSaga = _interopRequireDefault(require("./utils/utils/next/withReduxSaga"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

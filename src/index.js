@@ -15,7 +15,7 @@ export {
   updateIn,
   generateTimeStamp,
 } from './utils/helpers';
-export { default as store } from './utils/configureStore';
+export { default as store, nextStore } from './utils/configureStore';
 export { commonConstants };
 export {
   default as injectReducer,
@@ -23,3 +23,4 @@ export {
 } from './utils/utils/injectReducer';
 export { default as injectSaga, useInjectSaga } from './utils/utils/injectSaga';
 export { default as axios } from './config/axios';
+export { default as withReduxSaga } from './utils/utils/next/withReduxSaga';

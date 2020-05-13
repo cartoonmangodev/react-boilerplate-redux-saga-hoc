@@ -7,8 +7,6 @@ exports.default = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
-var _propTypes = _interopRequireDefault(require("prop-types"));
-
 var _reactRedux = require("react-redux");
 
 var _reselect = require("reselect");
@@ -41,6 +39,14 @@ var _ = require("../..");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -67,7 +73,9 @@ var _default = function _default(_ref) {
   var _ref$handlers = _ref.handlers,
       handlers = _ref$handlers === void 0 ? [] : _ref$handlers,
       _ref$isReactBoilerpla = _ref.isReactBoilerplate,
-      isWeb = _ref$isReactBoilerpla === void 0 ? false : _ref$isReactBoilerpla;
+      isWeb = _ref$isReactBoilerpla === void 0 ? false : _ref$isReactBoilerpla,
+      _ref$nextJS = _ref.nextJS,
+      nextJS = _ref$nextJS === void 0 ? false : _ref$nextJS;
   return function () {
     var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref2$apiEndPoints = _ref2.apiEndPoints,
@@ -136,7 +144,7 @@ var _default = function _default(_ref) {
     }); // eslint-disable-next-line no-unused-vars
 
 
-    return function (WrapperComponent) {
+    var AuthenticationHoc = function AuthenticationHoc(WrapperComponent) {
       var autoLoginCheck = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
       function Authentication(props) {
@@ -173,8 +181,60 @@ var _default = function _default(_ref) {
         saga: saga
       });
       var withConnect = (0, _reactRedux.connect)(mapStateToProps, (0, _utils.mapDispatchToProps)(componentActions, componentData, reducerName));
+      if (nextJS) Authentication.getInitialProps = /*#__PURE__*/function () {
+        var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(props) {
+          var _props$ctx, res, req, store, rest, data;
+
+          return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  _props$ctx = props.ctx, res = _props$ctx.res, req = _props$ctx.req, store = _props$ctx.store, rest = _objectWithoutProperties(_props$ctx, ["res", "req", "store"]);
+                  data = _objectSpread({
+                    res: res,
+                    req: req,
+                    store: store
+                  }, rest);
+
+                  if (!WrapperComponent.getInitialProps) {
+                    _context.next = 6;
+                    break;
+                  }
+
+                  _context.next = 5;
+                  return WrapperComponent.getInitialProps(_objectSpread({}, props, {}, (0, _utils.mapDispatchToProps)(componentActions, componentData, reducerName)(store.dispatch)));
+
+                case 5:
+                  data = _context.sent;
+
+                case 6:
+                  return _context.abrupt("return", _objectSpread({}, data || {}));
+
+                case 7:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee);
+        }));
+
+        return function (_x) {
+          return _ref5.apply(this, arguments);
+        };
+      }();
+      if (nextJS) return withConnect(Authentication);
       return (0, _redux.compose)(withConnect, authenticationReducer, authenticationSaga)(Authentication);
     };
+
+    if (nextJS) return {
+      hoc: AuthenticationHoc,
+      saga: saga,
+      reducer: {
+        name: reducerName,
+        reducer: reducer
+      }
+    };
+    return AuthenticationHoc;
   };
 };
 
