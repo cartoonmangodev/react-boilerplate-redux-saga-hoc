@@ -7,7 +7,6 @@
   "module": "es/index.js",
   "files": [
     "lib",
-    "src",
     "es"
   ],
   "keywords": [
@@ -53,6 +52,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "@babel/runtime": "^7.4.3",
     "connected-react-router": "^6.8.0",
     "history": "^4.10.1",
     "hoist-non-react-statics": "^3.3.0",
@@ -79,7 +79,6 @@
     "@babel/plugin-transform-react-jsx": "^7.3.0",
     "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
-    "@babel/runtime": "^7.4.3",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.7.1",
