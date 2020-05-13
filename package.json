@@ -1,12 +1,13 @@
 {
   "name": "react-boilerplate-redux-saga-hoc",
-  "version": "1.1.28",
+  "version": "1.1.27",
   "description": "No worry about api calls.No need to create constants,reducer,saga,actions.Easy to make api call.Handles automatically all api request,cancel,errors etc",
-  "main": "dist/react-boilerplate-redux-saga-hoc.min.js",
-  "unpkg": "dist/react-boilerplate-redux-saga-hoc.min.js",
-  "module": "dist/react-boilerplate-redux-saga-hoc.js",
+  "main": "./lib/index.js",
+  "unpkg": "./lib/index.js",
+  "module": "es/index.js",
   "files": [
-    "dist"
+    "lib",
+    "es"
   ],
   "keywords": [
     "react",
@@ -34,7 +35,7 @@
     "build:es": "babel src --out-dir es",
     "build:umd": "cross-env NODE_ENV=development rollup -c -o dist/react-boilerplate-redux-saga-hoc.js",
     "build:umd:min": "cross-env NODE_ENV=production rollup -c -o dist/react-boilerplate-redux-saga-hoc.min.js",
-    "build": "npm run build:commonjs && npm run build:es && npm run build:umd:min && npm run build:umd",
+    "build": "npm run build:commonjs && npm run build:es",
     "clean": "rimraf lib dist es coverage",
     "format": "prettier --write \"{src,test}/**/*.{js,ts}\" index.d.ts \"docs/**/*.md\"",
     "lint": "eslint src test/utils test/components",
