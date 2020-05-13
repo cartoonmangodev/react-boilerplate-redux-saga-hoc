@@ -7,7 +7,8 @@
   "module": "es/index.js",
   "files": [
     "lib",
-    "es"
+    "es",
+    "src"
   ],
   "keywords": [
     "react",

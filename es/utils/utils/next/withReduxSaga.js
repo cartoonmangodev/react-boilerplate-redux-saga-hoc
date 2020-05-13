@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _runtime = _interopRequireDefault(require("./runtime"));
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
 var _react = _interopRequireWildcard(require("react"));
 
@@ -170,10 +170,10 @@ function hoc(config) {
       }], [{
         key: 'getInitialProps',
         value: function () {
-          var _getInitialProps = _asyncToGenerator( /*#__PURE__*/_runtime.default.mark(function _callee(props) {
+          var _getInitialProps = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(props) {
             var _props$ctx, isServer, store, pageProps;
 
-            return _runtime.default.wrap(function _callee$(_context) {
+            return _regenerator.default.wrap(function _callee$(_context) {
               while (1) {
                 switch (_context.prev = _context.next) {
                   case 0:
