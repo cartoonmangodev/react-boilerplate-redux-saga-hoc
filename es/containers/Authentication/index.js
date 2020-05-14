@@ -72,10 +72,10 @@ var safe = _nullCheck.default;
 var _default = function _default(_ref) {
   var _ref$handlers = _ref.handlers,
       handlers = _ref$handlers === void 0 ? [] : _ref$handlers,
-      _ref$isReactBoilerpla = _ref.isReactBoilerplate,
-      isWeb = _ref$isReactBoilerpla === void 0 ? false : _ref$isReactBoilerpla,
       _ref$nextJS = _ref.nextJS,
-      nextJS = _ref$nextJS === void 0 ? false : _ref$nextJS;
+      nextJS = _ref$nextJS === void 0 ? false : _ref$nextJS,
+      _ref$createReducer = _ref.createReducer,
+      createReducer = _ref$createReducer === void 0 ? null : _ref$createReducer;
   return function () {
     var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref2$apiEndPoints = _ref2.apiEndPoints,
@@ -175,7 +175,7 @@ var _default = function _default(_ref) {
       var authenticationReducer = (0, _injectReducer.default)({
         key: reducerName,
         reducer: reducer
-      }, isWeb);
+      }, createReducer);
       var authenticationSaga = (0, _injectSaga.default)({
         key: reducerName,
         saga: saga

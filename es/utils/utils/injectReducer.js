@@ -46,7 +46,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @param {function} reducer A reducer that will be injected
  *
  */
-var _default = function _default(_ref, isWeb) {
+var _default = function _default(_ref, createReducer) {
   var key = _ref.key,
       reducer = _ref.reducer;
   return function (WrappedComponent) {
@@ -61,7 +61,7 @@ var _default = function _default(_ref, isWeb) {
         _classCallCheck(this, ReducerInjector);
 
         _this = _super.call(this, props, context);
-        (0, _reducerInjectors.default)(context.store).injectReducer(key, reducer, isWeb);
+        (0, _reducerInjectors.default)(context.store).injectReducer(key, reducer, createReducer);
         return _this;
       }
 

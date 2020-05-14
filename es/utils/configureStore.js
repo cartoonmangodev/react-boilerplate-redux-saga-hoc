@@ -38,7 +38,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 function configureStore() {
   var initialState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var isWeb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var middleWare = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
   var composeEnhancers = _redux.compose;
   var reduxSagaMonitorOptions = {}; // const routerMiddleware = isWeb
   //   ? require('connected-react-router').routerMiddleware
@@ -64,10 +64,10 @@ function configureStore() {
   // 1. sagaMiddleware: Makes redux-sagas work
   // 2. routerMiddleware: Syncs the location/URL path to the state
 
-  var middlewares = [sagaMiddleware].concat([] // isWeb ? [routerMiddleware(History)] : [],
+  var middlewares = [sagaMiddleware].concat(middleWare // isWeb ? [routerMiddleware(History)] : [],
   );
   var enhancers = [_redux.applyMiddleware.apply(void 0, _toConsumableArray(middlewares))];
-  var store = (0, _redux.createStore)((0, _reducers.default)({}, isWeb), initialState, composeEnhancers.apply(void 0, enhancers)); // Extensions
+  var store = (0, _redux.createStore)((0, _reducers.default)({}), initialState, composeEnhancers.apply(void 0, enhancers)); // Extensions
 
   store.runSaga = sagaMiddleware.run;
   store.injectedReducers = {}; // Reducer registry
@@ -77,7 +77,7 @@ function configureStore() {
 
   /* istanbul ignore next */
 
-  if (module.hot) {
+  if ((typeof module === "undefined" ? "undefined" : _typeof(module)) === 'object' && module.hot) {
     module.hot.accept('./reducers', function () {
       store.replaceReducer((0, _reducers.default)(store.injectedReducers));
     });
