@@ -29,8 +29,7 @@ export default ({ key, saga, mode }) => WrappedComponent => {
     constructor(props, context) {
       super(props, context);
 
-      // eslint-disable-next-line no-underscore-dangle
-      this.injectors = getInjectors(window._redux_store);
+      this.injectors = getInjectors(context.store);
 
       this.injectors.injectSaga(key, { saga, mode }, this.props);
     }
@@ -48,10 +47,9 @@ export default ({ key, saga, mode }) => WrappedComponent => {
 };
 
 const useInjectSaga = ({ key, saga, mode }) => {
-  // const context = React.useContext(ReactReduxContext);
+  const context = React.useContext(ReactReduxContext);
   React.useEffect(() => {
-    // eslint-disable-next-line no-underscore-dangle
-    const injectors = getInjectors(window._redux_store);
+    const injectors = getInjectors(context.store);
     injectors.injectSaga(key, { saga, mode });
 
     return () => {

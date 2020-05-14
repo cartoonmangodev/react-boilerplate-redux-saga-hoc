@@ -66,8 +66,9 @@ var _default = function _default(_ref) {
 
         _classCallCheck(this, InjectSaga);
 
-        _this = _super.call(this, props, context);
-        _this.injectors = (0, _sagaInjectors.default)(context.store);
+        _this = _super.call(this, props, context); // eslint-disable-next-line no-underscore-dangle
+
+        _this.injectors = (0, _sagaInjectors.default)(window._redux_store);
 
         _this.injectors.injectSaga(key, {
           saga: saga,
@@ -109,10 +110,10 @@ var useInjectSaga = function useInjectSaga(_ref2) {
       saga = _ref2.saga,
       mode = _ref2.mode;
 
-  var context = _react.default.useContext(_reactRedux.ReactReduxContext);
-
+  // const context = React.useContext(ReactReduxContext);
   _react.default.useEffect(function () {
-    var injectors = (0, _sagaInjectors.default)(context.store);
+    // eslint-disable-next-line no-underscore-dangle
+    var injectors = (0, _sagaInjectors.default)(window._redux_store);
     injectors.injectSaga(key, {
       saga: saga,
       mode: mode

@@ -144,7 +144,7 @@ export default ({
     );
     if (nextJS)
       Authentication.getInitialProps = async props => {
-        const { res, req, store, ...rest } = props.ctx;
+        const { res, req, store, ...rest } = props.ctx || props;
         let data = {
           res,
           req,
