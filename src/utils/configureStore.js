@@ -12,10 +12,10 @@ import createReducer from './reducers';
 export default function configureStore(initialState = {}, isWeb = false) {
   let composeEnhancers = compose;
   const reduxSagaMonitorOptions = {};
-  const routerMiddleware = isWeb
-    ? require('connected-react-router').routerMiddleware
-    : null;
-  const History = isWeb ? require('./utils/history').default : null;
+  // const routerMiddleware = isWeb
+  //   ? require('connected-react-router').routerMiddleware
+  //   : null;
+  // const History = isWeb ? require('./utils/history').default : null;
   // If Redux Dev Tools and Saga Dev Tools Extensions are installed, enable them
   /* istanbul ignore next */
   if (process.env.NODE_ENV !== 'production' && typeof window === 'object') {
@@ -38,7 +38,8 @@ export default function configureStore(initialState = {}, isWeb = false) {
   // 1. sagaMiddleware: Makes redux-sagas work
   // 2. routerMiddleware: Syncs the location/URL path to the state
   const middlewares = [sagaMiddleware].concat(
-    isWeb ? [routerMiddleware(History)] : [],
+    [],
+    // isWeb ? [routerMiddleware(History)] : [],
   );
 
   const enhancers = [applyMiddleware(...middlewares)];
