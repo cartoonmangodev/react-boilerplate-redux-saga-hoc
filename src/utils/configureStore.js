@@ -61,7 +61,8 @@ export default function configureStore(initialState = {}, isWeb = false) {
       store.replaceReducer(createReducer(store.injectedReducers));
     });
   }
-
+  // eslint-disable-next-line no-underscore-dangle
+  window._redux_store = store;
   return store;
 }
 
@@ -128,7 +129,7 @@ const nextStore = ({ saga, reducer }) => (
   //     store.replaceReducer(createReducer(store.injectedReducers));
   //   });
   // }
-  // global._redux_store = store;
+
   return store;
 };
 

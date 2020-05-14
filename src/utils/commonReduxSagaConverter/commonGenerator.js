@@ -187,7 +187,7 @@ export default function({
             commonData,
           });
         if (typeof successCallback === 'function')
-          successCallback({
+          yield successCallback({
             res: data,
             data: data.data,
             message: successMessage,
@@ -239,7 +239,7 @@ export default function({
         } = {},
       } = error || {};
       if (typeof errorCallback === 'function')
-        errorCallback({
+        yield errorCallback({
           error,
           errorData: responseErrorParser(errorData),
           message: errorMessage,
@@ -277,7 +277,7 @@ export default function({
     } finally {
       const Cancelled = yield cancelled();
       if (typeof finalCallback === 'function')
-        finalCallback({ type, action, payload: commonData, Cancelled });
+        yield finalCallback({ type, action, payload: commonData, Cancelled });
       yield call(requestResponseHandler, {
         type,
         action,

@@ -24,7 +24,8 @@ export default ({ key, reducer }, isWeb) => WrappedComponent => {
     constructor(props, context) {
       super(props, context);
 
-      getInjectors(context.store).injectReducer(key, reducer, isWeb);
+      // eslint-disable-next-line no-underscore-dangle
+      getInjectors(window._redux_store).injectReducer(key, reducer, isWeb);
     }
 
     render() {
@@ -36,9 +37,10 @@ export default ({ key, reducer }, isWeb) => WrappedComponent => {
 };
 
 const useInjectReducer = ({ key, reducer }) => {
-  const context = React.useContext(ReactReduxContext);
+  // const context = React.useContext(ReactReduxContext);
   React.useEffect(() => {
-    getInjectors(context.store).injectReducer(key, reducer);
+    // eslint-disable-next-line no-underscore-dangle
+    getInjectors(window._redux_store).injectReducer(key, reducer);
   }, []);
 };
 
