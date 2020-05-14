@@ -5,7 +5,7 @@ import checkStore from './checkStore';
 import createReducer from '../reducers';
 
 export function injectReducerFactory(store, isValid) {
-  return function injectReducer(key, reducer, isWeb) {
+  return function injectReducer(key, reducer, customCreateReducer) {
     if (!isValid) checkStore(store);
 
     invariant(
@@ -21,7 +21,9 @@ export function injectReducerFactory(store, isValid) {
       return;
 
     store.injectedReducers[key] = reducer; // eslint-disable-line no-param-reassign
-    store.replaceReducer(createReducer(store.injectedReducers, isWeb));
+    store.replaceReducer(
+      (customCreateReducer || createReducer)(store.injectedReducers),
+    );
   };
 }
 

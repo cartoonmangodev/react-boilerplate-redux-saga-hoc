@@ -11,7 +11,7 @@ import getInjectors from './reducerInjectors';
  * @param {function} reducer A reducer that will be injected
  *
  */
-export default ({ key, reducer }, isWeb) => WrappedComponent => {
+export default ({ key, reducer }, createReducer) => WrappedComponent => {
   class ReducerInjector extends React.Component {
     static WrappedComponent = WrappedComponent;
 
@@ -24,7 +24,7 @@ export default ({ key, reducer }, isWeb) => WrappedComponent => {
     constructor(props, context) {
       super(props, context);
 
-      getInjectors(context.store).injectReducer(key, reducer, isWeb);
+      getInjectors(context.store).injectReducer(key, reducer, createReducer);
     }
 
     render() {

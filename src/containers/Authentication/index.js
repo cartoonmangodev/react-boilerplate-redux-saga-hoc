@@ -26,11 +26,7 @@ import { getData, mapDispatchToProps } from '../../utils';
 import { commonConstants } from '../..';
 const safe = nullcheck;
 
-export default ({
-  handlers = [],
-  isReactBoilerplate: isWeb = false,
-  nextJS = false,
-}) => ({
+export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
   apiEndPoints = {},
   initialState = {},
   dontReset: dontResetOnLogout = {},
@@ -134,7 +130,7 @@ export default ({
         key: reducerName,
         reducer,
       },
-      isWeb,
+      createReducer,
     );
     const authenticationSaga = injectSaga({ key: reducerName, saga });
 

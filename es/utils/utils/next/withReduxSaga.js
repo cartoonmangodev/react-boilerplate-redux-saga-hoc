@@ -84,18 +84,32 @@ function withReduxSaga(BaseComponent) {
 
                 case 6:
                   if (!isServer) {
-                    _context.next = 10;
+                    _context.next = 15;
                     break;
                   }
 
                   store.dispatch(_reduxSaga.END);
-                  _context.next = 10;
-                  return store.sagaTask.done;
 
-                case 10:
-                  return _context.abrupt("return", pageProps);
+                  if (!store.sagaTask.toPromise) {
+                    _context.next = 13;
+                    break;
+                  }
+
+                  _context.next = 11;
+                  return store.sagaTask.toPromise();
 
                 case 11:
+                  _context.next = 15;
+                  break;
+
+                case 13:
+                  _context.next = 15;
+                  return store.sagaTask.done;
+
+                case 15:
+                  return _context.abrupt("return", pageProps);
+
+                case 16:
                 case "end":
                   return _context.stop();
               }
