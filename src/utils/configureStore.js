@@ -9,7 +9,7 @@ import createSagaMiddleware from 'redux-saga';
 import { all, fork } from 'redux-saga/effects';
 import createReducer from './reducers';
 
-export default function configureStore(initialState = {}, isWeb = false) {
+export default function configureStore(initialState = {}, middleWare = []) {
   let composeEnhancers = compose;
   const reduxSagaMonitorOptions = {};
   // const routerMiddleware = isWeb
@@ -38,14 +38,14 @@ export default function configureStore(initialState = {}, isWeb = false) {
   // 1. sagaMiddleware: Makes redux-sagas work
   // 2. routerMiddleware: Syncs the location/URL path to the state
   const middlewares = [sagaMiddleware].concat(
-    [],
+    middleWare,
     // isWeb ? [routerMiddleware(History)] : [],
   );
 
   const enhancers = [applyMiddleware(...middlewares)];
 
   const store = createStore(
-    createReducer({}, isWeb),
+    createReducer({}),
     initialState,
     composeEnhancers(...enhancers),
   );
@@ -57,7 +57,7 @@ export default function configureStore(initialState = {}, isWeb = false) {
 
   // Make reducers hot reloadable, see http://mxs.is/googmo
   /* istanbul ignore next */
-  if (module.hot) {
+  if (typeof module === 'object' && module.hot) {
     module.hot.accept('./reducers', () => {
       store.replaceReducer(createReducer(store.injectedReducers));
     });
