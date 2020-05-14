@@ -60,9 +60,8 @@ var _default = function _default(_ref, isWeb) {
 
         _classCallCheck(this, ReducerInjector);
 
-        _this = _super.call(this, props, context); // eslint-disable-next-line no-underscore-dangle
-
-        (0, _reducerInjectors.default)(window._redux_store).injectReducer(key, reducer, isWeb);
+        _this = _super.call(this, props, context);
+        (0, _reducerInjectors.default)(context.store).injectReducer(key, reducer, isWeb);
         return _this;
       }
 
@@ -92,10 +91,10 @@ var useInjectReducer = function useInjectReducer(_ref2) {
   var key = _ref2.key,
       reducer = _ref2.reducer;
 
-  // const context = React.useContext(ReactReduxContext);
+  var context = _react.default.useContext(_reactRedux.ReactReduxContext);
+
   _react.default.useEffect(function () {
-    // eslint-disable-next-line no-underscore-dangle
-    (0, _reducerInjectors.default)(window._redux_store).injectReducer(key, reducer);
+    (0, _reducerInjectors.default)(context.store).injectReducer(key, reducer);
   }, []);
 };
 

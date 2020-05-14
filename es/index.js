@@ -131,6 +131,12 @@ Object.defineProperty(exports, "withReduxSaga", {
     return _withReduxSaga.default;
   }
 });
+Object.defineProperty(exports, "withRedux", {
+  enumerable: true,
+  get: function get() {
+    return _withRedux.default;
+  }
+});
 exports.commonConstants = void 0;
 
 var commonConstants = _interopRequireWildcard(require("./utils/commonReduxSagaConverter/commonConstants"));
@@ -158,6 +164,8 @@ var _injectSaga = _interopRequireWildcard(require("./utils/utils/injectSaga"));
 var _axios = _interopRequireDefault(require("./config/axios"));
 
 var _withReduxSaga = _interopRequireDefault(require("./utils/utils/next/withReduxSaga"));
+
+var _withRedux = _interopRequireDefault(require("./utils/utils/next/withRedux"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
