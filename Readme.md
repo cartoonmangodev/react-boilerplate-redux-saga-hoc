@@ -16,6 +16,22 @@ or
 yarn add react-boilerplate-redux-saga-hoc
 ```
 
+## # Setup
+
+[Installing on create-react-app scafolding](https://react-boilerplate-redux-saga-hoc.now.sh/docs/getting-started/installation-setup#-installing-on-create-react-app-scafolding)
+
+#
+
+[Installing on React-Boilerplate scafolding](https://react-boilerplate-redux-saga-hoc.now.sh/docs/getting-started/installation-setup#-installing-on-react-boilerplate-scafolding)
+
+#
+
+[Installing on React-Native](https://react-boilerplate-redux-saga-hoc.now.sh/docs/getting-started/installation-setup#-installing-on-react-native)
+
+#
+
+[Installing on Next-js](https://react-boilerplate-redux-saga-hoc.now.sh/docs/getting-started/installation-setup#-installing-on-next-js)
+
 > ### **Note:** Before proceeding further.[Please read the detail documentation from here](https://react-boilerplate-redux-saga-hoc.now.sh/)
 
 ## Why we created this hoc?
