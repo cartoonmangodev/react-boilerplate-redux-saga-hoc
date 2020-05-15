@@ -332,6 +332,8 @@ We already knows [redux](https://redux.js.org/) is a valuable tool for organisin
 
 > ### **Note:** Please read the detail documentation from [here](https://react-boilerplate-redux-saga-hoc.now.sh/)
 
+> ### **Important:** This package now also works in nextJS.Document will be updated soon for nextJS
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
