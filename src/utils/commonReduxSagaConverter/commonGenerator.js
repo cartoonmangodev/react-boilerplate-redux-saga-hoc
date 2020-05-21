@@ -300,8 +300,13 @@ export default function({
           loop = false;
         }
       }
-      if (polling) yield call(delay, Delay);
-      else loop = false;
+      if (polling) {
+        const { cancel: CancelPolling } = yield race({
+          posts: call(delay, Delay),
+          cancel: take(action.cancel),
+        });
+        if (CancelPolling) loop = false;
+      } else loop = false;
     } while (loop);
   }
 
