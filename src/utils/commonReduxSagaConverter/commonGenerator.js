@@ -9,7 +9,6 @@ import {
   take,
   takeLatest,
 } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
 import * as constants from './commonConstants';
 import { responseErrorParser } from '../index';
 import Axios from '../../config/axios';
@@ -26,6 +25,8 @@ function* loaderGenerator({ type, commonData }) {
     }),
   );
 }
+
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 export default function({
   actionType = {},
@@ -299,9 +300,8 @@ export default function({
           loop = false;
         }
       }
-      if (polling) {
-        yield call(delay, Delay);
-      } else loop = false;
+      if (polling) yield call(delay, Delay);
+      else loop = false;
     } while (loop);
   }
 

@@ -74,7 +74,7 @@ function _default(_ref2) {
       axiosInterceptors = _ref2.axiosInterceptors;
 
   function commonGenerator(_ref3) {
-    var _ref3$payload, _ref3$payload$request, _ref3$payload$request2, payload, params, query, _ref3$payload$request3, paramsSerializer, _ref3$payload$request4, axiosConfig, _ref3$payload$request5, polling, _ref3$payload$request6, Delay, rest, _ref3$payload$callbac, successCallback, errorCallback, logoutCallback, finalCallback, restCallback, restPayload, type, _loop, _ret;
+    var _ref3$payload, _ref3$payload$request, _ref3$payload$request2, payload, params, query, _ref3$payload$request3, paramsSerializer, _ref3$payload$request4, axiosConfig, _ref3$payload$request5, polling, _ref3$payload$request6, Delay, rest, _ref3$payload$callbac, successCallback, errorCallback, logoutCallback, finalCallback, restCallback, restPayload, type, loop, _loop;
 
     return regeneratorRuntime.wrap(function commonGenerator$(_context3) {
       while (1) {
@@ -87,6 +87,7 @@ function _default(_ref2) {
             } : _ref3$payload$request3, _ref3$payload$request4 = _ref3$payload$request.axiosConfig, axiosConfig = _ref3$payload$request4 === void 0 ? {} : _ref3$payload$request4, _ref3$payload$request5 = _ref3$payload$request.polling, polling = _ref3$payload$request5 === void 0 ? false : _ref3$payload$request5, _ref3$payload$request6 = _ref3$payload$request.delay, Delay = _ref3$payload$request6 === void 0 ? 8000 : _ref3$payload$request6, rest = _objectWithoutProperties(_ref3$payload$request, ["payload", "params", "query", "paramsSerializer", "axiosConfig", "polling", "delay"]), _ref3$payload$callbac = _ref3$payload.callback;
             _ref3$payload$callbac = _ref3$payload$callbac === void 0 ? {} : _ref3$payload$callbac;
             successCallback = _ref3$payload$callbac.successCallback, errorCallback = _ref3$payload$callbac.errorCallback, logoutCallback = _ref3$payload$callbac.logoutCallback, finalCallback = _ref3$payload$callbac.finalCallback, restCallback = _objectWithoutProperties(_ref3$payload$callbac, ["successCallback", "errorCallback", "logoutCallback", "finalCallback"]), restPayload = _objectWithoutProperties(_ref3$payload, ["request", "callback"]), type = _ref3.type;
+            loop = true;
             _loop = /*#__PURE__*/regeneratorRuntime.mark(function _loop() {
               var axios, CancelToken, source, action, commonData, actionBind, request, requestData, _yield$race, postData, cancelTask, data, statusKey, _ref4, _ref4$data, _ref4$data$status, successStatus, _ref4$data$message, successMessage, loader, _ref5, customMethod, _ref6, _ref6$response, _ref6$response$data, _ref6$response$data2, errorData, errorStatus, _ref6$response$data$m, errorMessage, _loader, Cancelled;
 
@@ -520,7 +521,7 @@ function _default(_ref2) {
 
                     case 134:
                       if (!Cancelled) {
-                        _context2.next = 138;
+                        _context2.next = 139;
                         break;
                       }
 
@@ -533,55 +534,45 @@ function _default(_ref2) {
                       return source.cancel();
 
                     case 138:
-                      return _context2.finish(125);
+                      loop = false;
 
                     case 139:
+                      return _context2.finish(125);
+
+                    case 140:
                       if (!polling) {
-                        _context2.next = 144;
+                        _context2.next = 145;
                         break;
                       }
 
-                      _context2.next = 142;
+                      _context2.next = 143;
                       return (0, _effects.call)(_reduxSaga.delay, Delay);
 
-                    case 142:
-                      _context2.next = 145;
+                    case 143:
+                      _context2.next = 146;
                       break;
 
-                    case 144:
-                      return _context2.abrupt("return", "break");
-
                     case 145:
+                      loop = false;
+
+                    case 146:
                     case "end":
                       return _context2.stop();
                   }
                 }
-              }, _loop, null, [[48, 98, 125, 139]]);
+              }, _loop, null, [[48, 98, 125, 140]]);
             });
 
-          case 6:
-            if (!true) {
-              _context3.next = 13;
-              break;
-            }
-
+          case 7:
             return _context3.delegateYield(_loop(), "t0", 8);
 
           case 8:
-            _ret = _context3.t0;
-
-            if (!(_ret === "break")) {
-              _context3.next = 11;
+            if (loop) {
+              _context3.next = 7;
               break;
             }
 
-            return _context3.abrupt("break", 13);
-
-          case 11:
-            _context3.next = 6;
-            break;
-
-          case 13:
+          case 9:
           case "end":
             return _context3.stop();
         }
