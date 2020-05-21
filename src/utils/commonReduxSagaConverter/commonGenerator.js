@@ -55,7 +55,8 @@ export default function({
     },
     type,
   }) {
-    while (true) {
+    let loop = true;
+    do {
       const axios = axiosInterceptors || Axios;
       const { CancelToken } = axios;
       const source = yield CancelToken.source();
@@ -293,13 +294,15 @@ export default function({
           method: constants.ON_FINALLY,
           cancelled: Cancelled,
         });
-        if (Cancelled)
+        if (Cancelled) {
           if (typeof source.cancel === 'function') yield source.cancel();
+          loop = false;
+        }
       }
       if (polling) {
         yield call(delay, Delay);
-      } else break;
-    }
+      } else loop = false;
+    } while (loop);
   }
 
   const generatorPattern = Object.keys(actionType).map(pattern =>
