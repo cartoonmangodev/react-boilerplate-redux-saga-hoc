@@ -230,8 +230,8 @@ export default function({
             commonData,
           });
       } catch (error) {
-        console.error(error);
-        if (process.env.NODE_ENV === 'test') console.error(error);
+        console.log(error);
+        if (process.env.NODE_ENV === 'test') console.log(error);
         const {
           response: {
             data: {
