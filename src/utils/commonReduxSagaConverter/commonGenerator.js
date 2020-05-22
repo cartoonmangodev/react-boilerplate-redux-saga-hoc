@@ -300,7 +300,7 @@ export default function({
           loop = false;
         }
       }
-      if (polling) {
+      if (polling && typeof window !== 'undefined') {
         const { cancel: CancelPolling } = yield race({
           posts: call(delay, Delay),
           cancel: take(action.cancel),
