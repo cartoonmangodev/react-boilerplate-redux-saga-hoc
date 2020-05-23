@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CUSTOM = exports.CANCEL = exports.CALL = exports.SUCCESS = exports.ERROR = exports.ON_TOAST = exports.ON_UNMOUNT = exports.ON_LOADING = exports.ON_REQUEST = exports.ON_CANCEL = exports.ON_FINALLY = exports.ON_SUCCESS = exports.ON_ERROR = exports.ON_CANCEL_ERROR = exports.API_LOADING_STATUS = void 0;
+exports.commonConstants = exports.CUSTOM = exports.CANCEL = exports.CALL = exports.SUCCESS = exports.ERROR = exports.ON_TOAST = exports.ON_UNMOUNT = exports.ON_LOADING = exports.ON_REQUEST = exports.ON_CANCEL = exports.ON_FINALLY = exports.ON_SUCCESS = exports.ON_ERROR = exports.ON_CANCEL_ERROR = exports.API_LOADING_STATUS = void 0;
 var API_LOADING_STATUS = 'app/API_LOADING_STATUS';
 exports.API_LOADING_STATUS = API_LOADING_STATUS;
 var ON_CANCEL_ERROR = 'API_CANCEL_ERROR';
@@ -34,3 +34,20 @@ var CANCEL = 'CANCEL';
 exports.CANCEL = CANCEL;
 var CUSTOM = 'CUSTOM_TASK';
 exports.CUSTOM = CUSTOM;
+var commonConstants = {
+  ON_CANCEL_ERROR: ON_CANCEL_ERROR,
+  ON_ERROR: ON_ERROR,
+  ON_SUCCESS: ON_SUCCESS,
+  ON_FINALLY: ON_FINALLY,
+  ON_CANCEL: ON_CANCEL,
+  ON_REQUEST: ON_REQUEST,
+  ON_LOADING: ON_LOADING,
+  ON_UNMOUNT: ON_UNMOUNT,
+  ON_TOAST: ON_TOAST,
+  ERROR: ERROR,
+  SUCCESS: SUCCESS,
+  CALL: CALL,
+  CANCEL: CANCEL,
+  CUSTOM: CUSTOM
+};
+exports.commonConstants = commonConstants;

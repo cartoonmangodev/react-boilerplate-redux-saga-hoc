@@ -114,6 +114,9 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
     WithHoc.propTypes = {
       // [reducerName]: PropTypes.object.isRequired,
     };
+    WithHoc.displayName = `withHoc(${WrapperComponent.displayName ||
+      WrapperComponent.name ||
+      'BaseComponent'})`;
     const MakeSelectAuthenticationState = makeSelectAuthenticationState({
       apiEndPoints: ApiEndPoints,
       initialState: newObject(initialState, InitialState),
