@@ -15,3 +15,20 @@ export const SUCCESS = 'SUCCESS';
 export const CALL = 'CALL';
 export const CANCEL = 'CANCEL';
 export const CUSTOM = 'CUSTOM_TASK';
+
+export const commonConstants = {
+  ON_CANCEL_ERROR,
+  ON_ERROR,
+  ON_SUCCESS,
+  ON_FINALLY,
+  ON_CANCEL,
+  ON_REQUEST,
+  ON_LOADING,
+  ON_UNMOUNT,
+  ON_TOAST,
+  ERROR,
+  SUCCESS,
+  CALL,
+  CANCEL,
+  CUSTOM,
+};

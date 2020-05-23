@@ -15,7 +15,7 @@ export {
   generateTimeStamp,
 } from './utils/helpers';
 export { default as store, nextStore } from './utils/configureStore';
-export * as commonConstants from './utils/commonReduxSagaConverter/commonConstants';
+export { commonConstants } from './utils/commonReduxSagaConverter/commonConstants';
 export {
   default as injectReducer,
   useInjectReducer,
