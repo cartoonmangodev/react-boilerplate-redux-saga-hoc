@@ -1,4 +1,3 @@
-import * as commonConstants from './utils/commonReduxSagaConverter/commonConstants';
 export { AuthenticationHOC as HOC } from './containers';
 export { default as Safe } from './utils/nullCheck';
 export { default as IndianStates } from './utils/indianStates';
@@ -16,7 +15,7 @@ export {
   generateTimeStamp,
 } from './utils/helpers';
 export { default as store, nextStore } from './utils/configureStore';
-export { commonConstants };
+export * as commonConstants from './utils/commonReduxSagaConverter/commonConstants';
 export {
   default as injectReducer,
   useInjectReducer,

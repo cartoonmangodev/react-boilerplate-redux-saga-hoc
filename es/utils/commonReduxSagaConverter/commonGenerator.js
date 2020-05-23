@@ -414,8 +414,8 @@ function _default(_ref2) {
                     case 98:
                       _context2.prev = 98;
                       _context2.t0 = _context2["catch"](48);
-                      console.error(_context2.t0);
-                      if (process.env.NODE_ENV === 'test') console.error(_context2.t0);
+                      console.log(_context2.t0);
+                      if (process.env.NODE_ENV === 'test') console.log(_context2.t0);
                       _ref6 = _context2.t0 || {}, _ref6$response = _ref6.response;
                       _ref6$response = _ref6$response === void 0 ? {} : _ref6$response;
                       _ref6$response$data = _ref6$response.data;
@@ -544,7 +544,7 @@ function _default(_ref2) {
                       return _context2.finish(125);
 
                     case 140:
-                      if (!polling) {
+                      if (!(polling && typeof window !== 'undefined')) {
                         _context2.next = 148;
                         break;
                       }

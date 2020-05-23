@@ -23,7 +23,7 @@ import Reducer from './reducer';
 import Saga from './generator';
 import nullcheck from '../../utils/nullCheck';
 import { getData, mapDispatchToProps } from '../../utils';
-import { commonConstants } from '../..';
+import { commonConstants } from '../../index';
 const safe = nullcheck;
 
 export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
@@ -93,8 +93,8 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
     },
   };
   // eslint-disable-next-line no-unused-vars
-  const AuthenticationHoc = (WrapperComponent, autoLoginCheck = true) => {
-    function Authentication(props) {
+  const hoc = (WrapperComponent, autoLoginCheck = true) => {
+    function WithHoc(props) {
       // const [language, setLanguage] = useState(getLanguage('EN'));
       // useEffect(() => {
       //   if (props.authentication.language !== language)
@@ -111,7 +111,7 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       );
     }
 
-    Authentication.propTypes = {
+    WithHoc.propTypes = {
       // [reducerName]: PropTypes.object.isRequired,
     };
     const MakeSelectAuthenticationState = makeSelectAuthenticationState({
@@ -139,7 +139,7 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       mapDispatchToProps(componentActions, componentData, reducerName),
     );
     if (nextJS)
-      Authentication.getInitialProps = async props => {
+      WithHoc.getInitialProps = async props => {
         const { res, req, store, ...rest } = props.ctx || props;
         let data = {
           res,
@@ -160,18 +160,18 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
           ...(data || {}),
         };
       };
-    if (nextJS) return withConnect(Authentication);
+    if (nextJS) return withConnect(WithHoc);
     return compose(
       withConnect,
       authenticationReducer,
       authenticationSaga,
-    )(Authentication);
+    )(WithHoc);
   };
   if (nextJS)
     return {
-      hoc: AuthenticationHoc,
+      hoc,
       saga,
       reducer: { name: reducerName, reducer },
     };
-  return AuthenticationHoc;
+  return hoc;
 };
