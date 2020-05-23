@@ -114,7 +114,7 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
     WithHoc.propTypes = {
       // [reducerName]: PropTypes.object.isRequired,
     };
-    WithHoc.displayName = `withHoc(${WrapperComponent.displayName ||
+    WithHoc.displayName = `withReactBoilerplateReduxSagaHoc(${WrapperComponent.displayName ||
       WrapperComponent.name ||
       'BaseComponent'})`;
     const MakeSelectAuthenticationState = makeSelectAuthenticationState({
