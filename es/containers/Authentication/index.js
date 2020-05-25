@@ -164,7 +164,7 @@ var _default = function _default(_ref) {
 
       WithHoc.propTypes = {// [reducerName]: PropTypes.object.isRequired,
       };
-      WithHoc.displayName = "withHoc(".concat(WrapperComponent.displayName || WrapperComponent.name || 'BaseComponent', ")");
+      WithHoc.displayName = "withReactBoilerplateReduxSagaHoc(".concat(WrapperComponent.displayName || WrapperComponent.name || 'BaseComponent', ")");
       var MakeSelectAuthenticationState = (0, _selectors.makeSelectAuthenticationState)({
         apiEndPoints: ApiEndPoints,
         initialState: (0, _helpers.newObject)(initialState, InitialState),

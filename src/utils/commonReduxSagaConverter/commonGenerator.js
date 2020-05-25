@@ -50,6 +50,7 @@ export default function({
         errorCallback,
         logoutCallback,
         finalCallback,
+        pollingCallback,
         ...restCallback
       } = {},
       ...restPayload
@@ -58,6 +59,7 @@ export default function({
   }) {
     let loop = true;
     do {
+      let pollingRequestConfig = {};
       const axios = axiosInterceptors || Axios;
       const { CancelToken } = axios;
       const source = yield CancelToken.source();
@@ -73,11 +75,13 @@ export default function({
         params,
         query,
         ...rest,
+        ...pollingRequestConfig,
         request: {
           payload,
           params,
           query,
           ...rest,
+          ...pollingRequestConfig,
         },
         callback: restCallback,
         ...restPayload,
@@ -128,7 +132,10 @@ export default function({
       if (request.effect) delete request.effect;
       try {
         const { posts: postData, cancel: cancelTask } = yield race({
-          posts: call(axios, { ...request, ...axiosConfig }),
+          posts: call(axios, {
+            ...request,
+            ...axiosConfig,
+          }),
           cancel: take(action.cancel),
         });
         let data = postData;
@@ -229,6 +236,29 @@ export default function({
             type,
             commonData,
           });
+        if (
+          polling &&
+          typeof window !== 'undefined' &&
+          typeof pollingCallback === 'function'
+        ) {
+          const {
+            data: {
+              status: successStatus = postData.status,
+              message: successMessage = '',
+            } = {},
+          } = data || {};
+          const pollingRes = yield call(pollingCallback, {
+            res: data,
+            data: data.data,
+            message: successMessage,
+            status: successStatus,
+          });
+          if (typeof pollingRes === 'boolean') loop = pollingRes;
+          else if (
+            Object.prototype.toString.call(pollingRes) !== '[object Object]'
+          )
+            pollingRequestConfig = pollingRes;
+        }
       } catch (error) {
         console.log(error);
         if (process.env.NODE_ENV === 'test') console.log(error);
