@@ -78,7 +78,7 @@ function _default(_ref2) {
       axiosInterceptors = _ref2.axiosInterceptors;
 
   function commonGenerator(_ref3) {
-    var _ref3$payload, _ref3$payload$request, _ref3$payload$request2, payload, params, query, _ref3$payload$request3, paramsSerializer, _ref3$payload$request4, axiosConfig, _ref3$payload$request5, polling, _ref3$payload$request6, Delay, rest, _ref3$payload$callbac, successCallback, errorCallback, logoutCallback, finalCallback, pollingCallback, restCallback, restPayload, type, loop, _loop;
+    var _ref3$payload, _ref3$payload$request, _ref3$payload$request2, payload, params, query, _ref3$payload$request3, paramsSerializer, _ref3$payload$request4, axiosConfig, _ref3$payload$request5, polling, _ref3$payload$request6, Delay, rest, _ref3$payload$callbac, successCallback, errorCallback, logoutCallback, finalCallback, pollingCallback, restCallback, restPayload, type, loop, count, _loop;
 
     return regeneratorRuntime.wrap(function commonGenerator$(_context3) {
       while (1) {
@@ -92,6 +92,7 @@ function _default(_ref2) {
             _ref3$payload$callbac = _ref3$payload$callbac === void 0 ? {} : _ref3$payload$callbac;
             successCallback = _ref3$payload$callbac.successCallback, errorCallback = _ref3$payload$callbac.errorCallback, logoutCallback = _ref3$payload$callbac.logoutCallback, finalCallback = _ref3$payload$callbac.finalCallback, pollingCallback = _ref3$payload$callbac.pollingCallback, restCallback = _objectWithoutProperties(_ref3$payload$callbac, ["successCallback", "errorCallback", "logoutCallback", "finalCallback", "pollingCallback"]), restPayload = _objectWithoutProperties(_ref3$payload, ["request", "callback"]), type = _ref3.type;
             loop = true;
+            count = 1;
             _loop = /*#__PURE__*/regeneratorRuntime.mark(function _loop() {
               var pollingRequestConfig, axios, CancelToken, source, action, commonData, actionBind, request, requestData, _yield$race, postData, cancelTask, data, statusKey, _ref4, _ref4$data, _ref4$data$status, successStatus, _ref4$data$message, successMessage, loader, _ref5, customMethod, _ref6, _ref6$data, _ref6$data$status, _successStatus, _ref6$data$message, _successMessage, pollingRes, _ref7, _ref7$response, _ref7$response$data, _ref7$response$data2, errorData, errorStatus, _ref7$response$data$m, errorMessage, _loader, Cancelled, _yield$race2, CancelPolling;
 
@@ -422,12 +423,13 @@ function _default(_ref2) {
                         res: data,
                         data: data.data,
                         message: _successMessage,
-                        status: _successStatus
+                        status: _successStatus,
+                        count: count
                       });
 
                     case 103:
                       pollingRes = _context2.sent;
-                      if (typeof pollingRes === 'boolean') loop = pollingRes;else if (Object.prototype.toString.call(pollingRes) !== '[object Object]') pollingRequestConfig = pollingRes;
+                      if (typeof pollingRes === 'boolean') loop = pollingRes;else if (Object.prototype.toString.call(pollingRes) === '[object Object]') pollingRequestConfig = pollingRes;
 
                     case 105:
                       _context2.next = 134;
@@ -567,27 +569,28 @@ function _default(_ref2) {
 
                     case 149:
                       if (!(polling && typeof window !== 'undefined')) {
-                        _context2.next = 157;
+                        _context2.next = 158;
                         break;
                       }
 
-                      _context2.next = 152;
+                      count += 1;
+                      _context2.next = 153;
                       return (0, _effects.race)({
                         posts: (0, _effects.call)(delay, Delay),
                         cancel: (0, _effects.take)(action.cancel)
                       });
 
-                    case 152:
+                    case 153:
                       _yield$race2 = _context2.sent;
                       CancelPolling = _yield$race2.cancel;
                       if (CancelPolling) loop = false;
-                      _context2.next = 158;
+                      _context2.next = 159;
                       break;
 
-                    case 157:
+                    case 158:
                       loop = false;
 
-                    case 158:
+                    case 159:
                     case "end":
                       return _context2.stop();
                   }
@@ -595,16 +598,16 @@ function _default(_ref2) {
               }, _loop, null, [[49, 107, 134, 149]]);
             });
 
-          case 7:
-            return _context3.delegateYield(_loop(), "t0", 8);
-
           case 8:
+            return _context3.delegateYield(_loop(), "t0", 9);
+
+          case 9:
             if (loop) {
-              _context3.next = 7;
+              _context3.next = 8;
               break;
             }
 
-          case 9:
+          case 10:
           case "end":
             return _context3.stop();
         }

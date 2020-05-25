@@ -109,12 +109,22 @@ export default function({
       };
       if (action.effect) yield delete action.effect;
       if (action.actions) yield delete action.actions;
-      if (params && typeof request.url === 'function')
-        request.url = yield request.url(params);
-      if (query) {
-        request.params = query;
+      if (
+        ((pollingRequestConfig && pollingRequestConfig.params) || params) &&
+        typeof request.url === 'function'
+      )
+        request.url = yield request.url(
+          (pollingRequestConfig && pollingRequestConfig.params) || params,
+        );
+      if (query || (pollingRequestConfig && pollingRequestConfig.query)) {
+        request.params =
+          (pollingRequestConfig && pollingRequestConfig.query) || query;
         request.paramsSerializer = function(param) {
-          return Qs.stringify(param, paramsSerializer);
+          return Qs.stringify(
+            param,
+            (pollingRequestConfig && pollingRequestConfig.paramsSerializer) ||
+              paramsSerializer,
+          );
         };
       }
       if (process.env.NODE_ENV !== 'test' || !action.test)
@@ -135,7 +145,8 @@ export default function({
         const { posts: postData, cancel: cancelTask } = yield race({
           posts: call(axios, {
             ...request,
-            ...axiosConfig,
+            ...((pollingRequestConfig && pollingRequestConfig.axiosConfig) ||
+              axiosConfig),
           }),
           cancel: take(action.cancel),
         });
