@@ -194,23 +194,23 @@ function _default(_ref2) {
                       return delete action.actions;
 
                     case 32:
-                      if (!(params && typeof request.url === 'function')) {
+                      if (!((pollingRequestConfig && pollingRequestConfig.params || params) && typeof request.url === 'function')) {
                         _context2.next = 36;
                         break;
                       }
 
                       _context2.next = 35;
-                      return request.url(params);
+                      return request.url(pollingRequestConfig && pollingRequestConfig.params || params);
 
                     case 35:
                       request.url = _context2.sent;
 
                     case 36:
-                      if (query) {
-                        request.params = query;
+                      if (query || pollingRequestConfig && pollingRequestConfig.query) {
+                        request.params = pollingRequestConfig && pollingRequestConfig.query || query;
 
                         request.paramsSerializer = function (param) {
-                          return _queryString.default.stringify(param, paramsSerializer);
+                          return _queryString.default.stringify(param, pollingRequestConfig && pollingRequestConfig.paramsSerializer || paramsSerializer);
                         };
                       }
 
@@ -252,7 +252,7 @@ function _default(_ref2) {
                       _context2.prev = 49;
                       _context2.next = 52;
                       return (0, _effects.race)({
-                        posts: (0, _effects.call)(axios, _objectSpread({}, request, {}, axiosConfig)),
+                        posts: (0, _effects.call)(axios, _objectSpread({}, request, {}, pollingRequestConfig && pollingRequestConfig.axiosConfig || axiosConfig)),
                         cancel: (0, _effects.take)(action.cancel)
                       });
 

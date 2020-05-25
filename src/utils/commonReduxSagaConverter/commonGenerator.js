@@ -59,8 +59,8 @@ export default function({
   }) {
     let loop = true;
     let count = 1;
+    let pollingRequestConfig = {};
     do {
-      let pollingRequestConfig = {};
       const axios = axiosInterceptors || Axios;
       const { CancelToken } = axios;
       const source = yield CancelToken.source();
@@ -119,6 +119,7 @@ export default function({
       if (query || (pollingRequestConfig && pollingRequestConfig.query)) {
         request.params =
           (pollingRequestConfig && pollingRequestConfig.query) || query;
+        // eslint-disable-next-line no-loop-func
         request.paramsSerializer = function(param) {
           return Qs.stringify(
             param,
