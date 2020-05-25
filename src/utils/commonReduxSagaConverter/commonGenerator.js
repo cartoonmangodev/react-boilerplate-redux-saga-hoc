@@ -58,6 +58,7 @@ export default function({
     type,
   }) {
     let loop = true;
+    let count = 1;
     do {
       let pollingRequestConfig = {};
       const axios = axiosInterceptors || Axios;
@@ -252,10 +253,11 @@ export default function({
             data: data.data,
             message: successMessage,
             status: successStatus,
+            count,
           });
           if (typeof pollingRes === 'boolean') loop = pollingRes;
           else if (
-            Object.prototype.toString.call(pollingRes) !== '[object Object]'
+            Object.prototype.toString.call(pollingRes) === '[object Object]'
           )
             pollingRequestConfig = pollingRes;
         }
@@ -331,6 +333,7 @@ export default function({
         }
       }
       if (polling && typeof window !== 'undefined') {
+        count += 1;
         const { cancel: CancelPolling } = yield race({
           posts: call(delay, Delay),
           cancel: take(action.cancel),
