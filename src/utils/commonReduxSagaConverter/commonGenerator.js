@@ -283,11 +283,15 @@ export default function({
                 error.response &&
                 error.response.data) ||
                 '',
-              status: errorStatus,
+              status: errorStatus = error.response &&
+                error.response.data &&
+                (error.response.data[action.api.errorStatusKey] ||
+                  error.response.status),
               message: errorMessage = (error.response &&
-                error.response &&
-                error.response[action.api.errorMessageKey]) ||
-                [],
+                error.response.data &&
+                (error.response.data[action.api.errorMessageKey] ||
+                  error.response.statusText)) ||
+                '',
             } = {},
           } = {},
         } = error || {};
@@ -297,6 +301,7 @@ export default function({
             errorData: responseErrorParser(errorData),
             message: errorMessage,
             status: errorStatus,
+            response: error && error.response,
             errors: errorData,
           });
         yield (action.error = action.error.bind({}, errorStatus, errorMessage));
