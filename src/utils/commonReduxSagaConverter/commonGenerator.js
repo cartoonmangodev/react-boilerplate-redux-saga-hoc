@@ -359,7 +359,7 @@ export default function({
           loop = false;
         }
       }
-      if (polling && typeof window !== 'undefined') {
+      if (polling && typeof window !== 'undefined' && loop) {
         if (pollingCount === 'unlimited' || pollingCount - 1 >= count) {
           count += 1;
           const { cancel: CancelPolling } = yield race({
