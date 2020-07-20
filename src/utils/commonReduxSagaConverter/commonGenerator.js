@@ -43,6 +43,8 @@ export default function({
         axiosConfig = {},
         polling = false,
         delay: Delay = 8000,
+        retry = 0,
+        pollingCount = 'unlimited',
         ...rest
       } = {},
       callback: {
@@ -274,63 +276,70 @@ export default function({
             pollingRequestConfig = pollingRes;
         }
       } catch (error) {
-        console.log(error);
-        if (process.env.NODE_ENV === 'test') console.log(error);
-        const {
-          response: {
-            data: {
-              [action.api.errorDataKey || 'error']: errorData = (error &&
-                error.response &&
-                error.response.data) ||
-                '',
-              status: errorStatus = error.response &&
-                error.response.data &&
-                (error.response.data[action.api.errorStatusKey] ||
-                  error.response.status),
-              message: errorMessage = (error.response &&
-                error.response.data &&
-                (error.response.data[action.api.errorMessageKey] ||
-                  error.response.statusText)) ||
-                '',
-            } = {},
-          } = {},
-        } = error || {};
-        if (typeof errorCallback === 'function')
-          yield errorCallback({
-            error,
-            errorData: responseErrorParser(errorData),
-            message: errorMessage,
-            status: errorStatus,
-            response: error && error.response,
-            errors: errorData,
-          });
-        yield (action.error = action.error.bind({}, errorStatus, errorMessage));
-        if (axios.isCancel(error) && action.cancel) {
-          yield call(loaderGenerator, {
-            type,
-            commonData,
-          });
-          yield call(requestResponseHandler, {
-            type,
-            action,
-            payload: commonData,
-            actionData: rest,
-            method: constants.ON_CANCEL_ERROR,
-          });
+        if (!polling && retry && retry > count) {
+          // console.log(count);
         } else {
-          const loader = yield call(requestResponseHandler, {
-            error,
-            type,
-            action,
-            payload: commonData,
-            actionData: rest,
-            method: constants.ON_ERROR,
-          });
-          if (loader)
+          if (process.env.NODE_ENV === 'test') console.log(error);
+          const {
+            response: {
+              data: {
+                [action.api.errorDataKey || 'error']: errorData = (error &&
+                  error.response &&
+                  error.response.data) ||
+                  '',
+                status: errorStatus = error.response &&
+                  error.response.data &&
+                  (error.response.data[action.api.errorStatusKey] ||
+                    error.response.status),
+                message: errorMessage = (error.response &&
+                  error.response.data &&
+                  (error.response.data[action.api.errorMessageKey] ||
+                    error.response.statusText)) ||
+                  '',
+              } = {},
+            } = {},
+          } = error || {};
+          if (typeof errorCallback === 'function')
+            yield errorCallback({
+              error,
+              errorData: responseErrorParser(errorData),
+              message: errorMessage,
+              status: errorStatus,
+              response: error && error.response,
+              errors: errorData,
+            });
+          yield (action.error = action.error.bind(
+            {},
+            errorStatus,
+            errorMessage,
+          ));
+          if (axios.isCancel(error) && action.cancel) {
             yield call(loaderGenerator, {
               type,
               commonData,
             });
+            yield call(requestResponseHandler, {
+              type,
+              action,
+              payload: commonData,
+              actionData: rest,
+              method: constants.ON_CANCEL_ERROR,
+            });
+          } else {
+            const loader = yield call(requestResponseHandler, {
+              error,
+              type,
+              action,
+              payload: commonData,
+              actionData: rest,
+              method: constants.ON_ERROR,
+            });
+            if (loader)
+              yield call(loaderGenerator, {
+                type,
+                commonData,
+              });
+          }
         }
       } finally {
         const Cancelled = yield cancelled();
@@ -350,12 +359,19 @@ export default function({
         }
       }
       if (polling && typeof window !== 'undefined') {
-        count += 1;
-        const { cancel: CancelPolling } = yield race({
-          posts: call(delay, Delay),
-          cancel: take(action.cancel),
-        });
-        if (CancelPolling) loop = false;
+        if (pollingCount === 'unlimited' || pollingCount >= count) {
+          count += 1;
+          const { cancel: CancelPolling } = yield race({
+            posts: call(delay, Delay),
+            cancel: take(action.cancel),
+          });
+          if (CancelPolling) loop = false;
+        } else loop = false;
+      } else if (!polling && retry) {
+        if (retry >= count) {
+          loop = true;
+          count += 1;
+        } else loop = false;
       } else loop = false;
     } while (loop);
   }
