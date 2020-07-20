@@ -95,7 +95,7 @@ function _default(_ref2) {
             count = 1;
             pollingRequestConfig = {};
             _loop = /*#__PURE__*/regeneratorRuntime.mark(function _loop() {
-              var axios, CancelToken, source, action, commonData, actionBind, request, requestData, _yield$race, postData, cancelTask, data, statusKey, _ref4, _ref4$data, _ref4$data$status, successStatus, _ref4$data$message, successMessage, loader, _ref5, customMethod, _ref6, _ref6$data, _ref6$data$status, _successStatus, _ref6$data$message, _successMessage, pollingRes, _ref7, _ref7$response, _ref7$response$data, _ref7$response$data2, errorData, errorStatus, _ref7$response$data$m, errorMessage, _loader, Cancelled, _yield$race2, CancelPolling;
+              var axios, CancelToken, source, action, commonData, actionBind, request, requestData, _yield$race, postData, cancelTask, data, statusKey, _ref4, _ref4$data, _ref4$data$status, successStatus, _ref4$data$message, successMessage, loader, _ref5, customMethod, _ref6, _ref6$data, _ref6$data$status, _successStatus, _ref6$data$message, _successMessage, pollingRes, _ref7, _ref7$response, _ref7$response$data, _ref7$response$data2, errorData, _ref7$response$data$s, errorStatus, _ref7$response$data$m, errorMessage, _loader, Cancelled, _yield$race2, CancelPolling;
 
               return regeneratorRuntime.wrap(function _loop$(_context2) {
                 while (1) {
@@ -444,7 +444,7 @@ function _default(_ref2) {
                       _ref7$response = _ref7$response === void 0 ? {} : _ref7$response;
                       _ref7$response$data = _ref7$response.data;
                       _ref7$response$data = _ref7$response$data === void 0 ? {} : _ref7$response$data;
-                      _ref7$response$data2 = _ref7$response$data[action.api.errorDataKey || 'error'], errorData = _ref7$response$data2 === void 0 ? _context2.t0 && _context2.t0.response && _context2.t0.response.data || '' : _ref7$response$data2, errorStatus = _ref7$response$data.status, _ref7$response$data$m = _ref7$response$data.message, errorMessage = _ref7$response$data$m === void 0 ? _context2.t0.response && _context2.t0.response && _context2.t0.response[action.api.errorMessageKey] || [] : _ref7$response$data$m;
+                      _ref7$response$data2 = _ref7$response$data[action.api.errorDataKey || 'error'], errorData = _ref7$response$data2 === void 0 ? _context2.t0 && _context2.t0.response && _context2.t0.response.data || '' : _ref7$response$data2, _ref7$response$data$s = _ref7$response$data.status, errorStatus = _ref7$response$data$s === void 0 ? _context2.t0.response && _context2.t0.response.data && (_context2.t0.response.data[action.api.errorStatusKey] || _context2.t0.response.status) : _ref7$response$data$s, _ref7$response$data$m = _ref7$response$data.message, errorMessage = _ref7$response$data$m === void 0 ? _context2.t0.response && _context2.t0.response.data && (_context2.t0.response.data[action.api.errorMessageKey] || _context2.t0.response.statusText) || '' : _ref7$response$data$m;
 
                       if (!(typeof errorCallback === 'function')) {
                         _context2.next = 118;
@@ -457,6 +457,7 @@ function _default(_ref2) {
                         errorData: (0, _index.responseErrorParser)(errorData),
                         message: errorMessage,
                         status: errorStatus,
+                        response: _context2.t0 && _context2.t0.response,
                         errors: errorData
                       });
 

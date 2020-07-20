@@ -1,1 +1,1 @@
-export { default as AuthenticationHOC } from './Authentication';
+export { default as HOC } from './Authentication';
