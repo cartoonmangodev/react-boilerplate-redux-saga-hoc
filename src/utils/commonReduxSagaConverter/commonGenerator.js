@@ -276,7 +276,7 @@ export default function({
             pollingRequestConfig = pollingRes;
         }
       } catch (error) {
-        if (!polling && retry && retry - 1 > count) {
+        if (!polling && retry && retry - 1 >= count) {
           // console.log(count);
         } else {
           if (process.env.NODE_ENV === 'test') console.log(error);
@@ -359,7 +359,7 @@ export default function({
         }
       }
       if (polling && typeof window !== 'undefined') {
-        if (pollingCount === 'unlimited' || pollingCount - 1 > count) {
+        if (pollingCount === 'unlimited' || pollingCount - 1 >= count) {
           count += 1;
           const { cancel: CancelPolling } = yield race({
             posts: call(delay, Delay),
