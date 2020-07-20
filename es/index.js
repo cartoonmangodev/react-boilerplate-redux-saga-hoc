@@ -8,7 +8,7 @@ Object.defineProperty(exports, "__esModule", {
 Object.defineProperty(exports, "HOC", {
   enumerable: true,
   get: function get() {
-    return _containers.AuthenticationHOC;
+    return _containers.HOC;
   }
 });
 Object.defineProperty(exports, "Safe", {
