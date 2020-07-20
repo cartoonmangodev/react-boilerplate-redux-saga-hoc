@@ -275,6 +275,7 @@ export default function({
           )
             pollingRequestConfig = pollingRes;
         }
+        if (!polling && retry) loop = false;
       } catch (error) {
         if (!polling && retry && retry - 1 >= count) {
           // console.log(count);
@@ -367,7 +368,7 @@ export default function({
           });
           if (CancelPolling) loop = false;
         } else loop = false;
-      } else if (!polling && retry) {
+      } else if (!polling && retry && loop) {
         if (retry - 1 >= count) {
           loop = true;
           count += 1;
