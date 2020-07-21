@@ -24,3 +24,4 @@ export { default as injectSaga, useInjectSaga } from './utils/utils/injectSaga';
 export { default as axios } from './config/axios';
 export { default as withReduxSaga } from './utils/utils/next/withReduxSaga';
 export { default as withRedux } from './utils/utils/next/withRedux';
+export { default as CustomError } from './utils/customError';

@@ -303,8 +303,8 @@ export default function({
                     error.response.status),
                 message: errorMessage = (error.response &&
                   error.response.data &&
-                  (error.response.data[action.api.errorMessageKey] ||
-                    error.response.statusText)) ||
+                  error.response.data[action.api.errorMessageKey]) ||
+                  (error.response && error.response.statusText) ||
                   '',
               } = {},
             } = {},
