@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /* eslint-disable no-console */
 /* eslint-disable func-names */
 import Qs from 'query-string';
@@ -36,6 +37,8 @@ export default function({
   function* commonGenerator({
     payload: {
       request: {
+        asyncFunction = null,
+        asyncFunctionParams = null,
         payload = {},
         params,
         query,
@@ -146,11 +149,17 @@ export default function({
       if (request.effect) delete request.effect;
       try {
         const { posts: postData, cancel: cancelTask } = yield race({
-          posts: call(axios, {
-            ...request,
-            ...((pollingRequestConfig && pollingRequestConfig.axiosConfig) ||
-              axiosConfig),
-          }),
+          posts: call(
+            typeof asyncFunction === 'function' ? asyncFunction : axios,
+            typeof asyncFunction === 'function'
+              ? asyncFunctionParams || {}
+              : {
+                  ...request,
+                  ...((pollingRequestConfig &&
+                    pollingRequestConfig.axiosConfig) ||
+                    axiosConfig),
+                },
+          ),
           cancel: take(action.cancel),
         });
         let data = postData;
