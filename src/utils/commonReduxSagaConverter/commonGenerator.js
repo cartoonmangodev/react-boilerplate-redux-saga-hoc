@@ -154,7 +154,11 @@ export default function({
             typeof asyncFunction === 'function'
               ? call(
                   asyncFunction,
-                  ...(Array.isArray(pollingRequestConfig || asyncFunctionParams)
+                  ...(Array.isArray(
+                    (pollingRequestConfig &&
+                      pollingRequestConfig.asyncFunctionParams) ||
+                      asyncFunctionParams,
+                  )
                     ? (pollingRequestConfig &&
                         pollingRequestConfig.asyncFunctionParams) ||
                       asyncFunctionParams
