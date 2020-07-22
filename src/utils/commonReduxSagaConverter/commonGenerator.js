@@ -4,6 +4,7 @@
 import Qs from 'query-string';
 import {
   call,
+  apply,
   put,
   cancelled,
   race,
@@ -149,17 +150,20 @@ export default function({
       if (request.effect) delete request.effect;
       try {
         const { posts: postData, cancel: cancelTask } = yield race({
-          posts: call(
-            typeof asyncFunction === 'function' ? asyncFunction : axios,
+          posts:
             typeof asyncFunction === 'function'
-              ? asyncFunctionParams || {}
-              : {
+              ? call(
+                  asyncFunction,
+                  ...(Array.isArray(pollingRequestConfig || asyncFunctionParams)
+                    ? pollingRequestConfig || asyncFunctionParams
+                    : []),
+                )
+              : call(axios, {
                   ...request,
                   ...((pollingRequestConfig &&
                     pollingRequestConfig.axiosConfig) ||
                     axiosConfig),
-                },
-          ),
+                }),
           cancel: take(action.cancel),
         });
         let data = postData;
