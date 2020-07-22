@@ -155,7 +155,9 @@ export default function({
               ? call(
                   asyncFunction,
                   ...(Array.isArray(pollingRequestConfig || asyncFunctionParams)
-                    ? pollingRequestConfig || asyncFunctionParams
+                    ? (pollingRequestConfig &&
+                        pollingRequestConfig.asyncFunctionParams) ||
+                      asyncFunctionParams
                     : []),
                 )
               : call(axios, {
