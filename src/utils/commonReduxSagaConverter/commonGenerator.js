@@ -4,7 +4,7 @@
 import Qs from 'query-string';
 import {
   call,
-  apply,
+  // apply,
   put,
   cancelled,
   race,

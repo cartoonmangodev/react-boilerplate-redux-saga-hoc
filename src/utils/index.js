@@ -209,6 +209,16 @@ export const getData = (data, def, loader = true, filter = []) => ({
     `${filter.length ? '.data.' : ''}${filter.join('.')}.infiniteEnd`,
     false,
   ),
+  isError: safe(
+    data,
+    `${filter.length ? '.data.' : ''}${filter.join('.')}.isError`,
+    false,
+  ),
+  toast: safe(
+    data,
+    `${filter.length ? '.data.' : ''}${filter.join('.')}.toast`,
+    false,
+  ),
 });
 
 export const mapDispatchToProps = (
