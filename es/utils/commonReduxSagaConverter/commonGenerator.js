@@ -516,7 +516,15 @@ function _default(_ref2) {
                     case 130:
                       _context2.next = 132;
                       return (0, _effects.call)(requestResponseHandler, {
-                        error: _context2.t0,
+                        error: {
+                          response: {
+                            data: {
+                              status: errorStatus,
+                              data: errorData,
+                              message: errorMessage
+                            }
+                          }
+                        },
                         type: type,
                         action: action,
                         payload: commonData,
