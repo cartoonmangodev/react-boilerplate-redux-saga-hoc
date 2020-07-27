@@ -217,7 +217,12 @@ export const getData = (data, def, loader = true, filter = []) => ({
   toast: safe(
     data,
     `${filter.length ? '.data.' : ''}${filter.join('.')}.toast`,
-    false,
+    {},
+  ),
+  error: safe(
+    data,
+    `${filter.length ? '.data.' : ''}${filter.join('.')}.error`,
+    {},
   ),
 });
 
