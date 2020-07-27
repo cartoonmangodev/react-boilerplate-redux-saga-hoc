@@ -32,6 +32,7 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 export default function({
   actionType = {},
+
   requestResponseHandler,
   axiosInterceptors,
 }) {
@@ -347,7 +348,15 @@ export default function({
             });
           } else {
             const loader = yield call(requestResponseHandler, {
-              error,
+              error: {
+                response: {
+                  data: {
+                    status: errorStatus,
+                    data: errorData,
+                    message: errorMessage,
+                  },
+                },
+              },
               type,
               action,
               payload: commonData,
