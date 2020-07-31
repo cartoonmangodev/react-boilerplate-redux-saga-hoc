@@ -175,7 +175,7 @@ export default function({
         });
         let data = postData;
         if (postData && postData.data) {
-          const statusKey = action.api.responseStatusCodeKey || 'status';
+          const statusKey = action.api.responseStatusCodeKey || '';
           data = {
             data: {
               status:
@@ -191,7 +191,8 @@ export default function({
               ],
               data:
                 (postData.data || {})[action.api.responseDataKey] ||
-                postData.data,
+                postData.data ||
+                postData,
             },
           };
           if (
@@ -203,7 +204,8 @@ export default function({
                 data: {
                   error:
                     (postData.data || {})[action.api.errorDataKey || 'error'] ||
-                    postData.data,
+                    postData.data ||
+                    postData,
                   status: data.data.status,
                   message: data.data.message,
                 },
