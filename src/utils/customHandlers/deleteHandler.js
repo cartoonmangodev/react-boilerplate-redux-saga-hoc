@@ -3,7 +3,8 @@ import { updateIn, generateTimeStamp } from '../helpers';
 export const deleteHandler = ({
   task: { key, id, subKey = [] } = {},
   successData = {},
-}) => ({ data = [] } = {}) => ({
+  successDataStatusCode,
+}) => ({ data = [], statusCode } = {}) => ({
   data:
     subKey.length > 0
       ? updateIn(
@@ -30,6 +31,7 @@ export const deleteHandler = ({
             [],
           )) ||
         data.filter(({ [key]: objId }) => objId !== id),
+  statusCode: successDataStatusCode || statusCode,
   lastUpdated: generateTimeStamp(),
   isError: false,
 });

@@ -44,6 +44,7 @@ export const filterArrayErrorHandler = ({ errorData, filter } = {}) => ({
               ? newObject(data, {
                   error: errorData || null,
                   isError: true,
+                  statusCode: 'ERROR',
                   lastUpdated: generateTimeStamp(),
                   isInfinite: undefined,
                   infiniteEnd: undefined,
@@ -57,6 +58,7 @@ export const filterArrayErrorHandler = ({ errorData, filter } = {}) => ({
       newObject(data, {
         error: errorData || null,
         isError: true,
+        statusCode: 'ERROR',
         lastUpdated: generateTimeStamp(),
         isInfinite: undefined,
         infiniteEnd: undefined,

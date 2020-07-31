@@ -7,7 +7,8 @@ export const dataHandler = ({
   task: { clearData, subKey = [] } = {},
   callback: { updateCallback } = {},
   successData = {},
-}) => ({ data: oldData = {} } = {}) => ({
+  successDataStatusCode,
+}) => ({ data: oldData = {}, statusCode } = {}) => ({
   data: (() => {
     if (subKey.length > 0) {
       const _oldCopyData = {
@@ -33,6 +34,7 @@ export const dataHandler = ({
       ? successData
       : newObject(oldData, successData);
   })(),
+  stausCode: successDataStatusCode || statusCode,
   error: false,
   lastUpdated: generateTimeStamp(),
   isInfinite: undefined,
