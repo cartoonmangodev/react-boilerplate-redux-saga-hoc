@@ -183,7 +183,9 @@ export default function({
                   (postData.data || {})[statusKey],
                 )
                   ? 200
-                  : (postData.data || {})[statusKey]) ||
+                  : (postData.data || {})[statusKey]) || postData.status,
+              statusCode:
+                (postData.data || {})[statusKey] ||
                 (postData.data || {}).status ||
                 postData.status,
               message: (postData.data || {})[

@@ -279,12 +279,12 @@ function _default(_ref2) {
                         break;
                       }
 
-                      statusKey = action.api.responseStatusCodeKey || 'status';
+                      statusKey = action.api.responseStatusCodeKey || '';
                       data = {
                         data: {
                           status: ((action.api.responseStatusCode || []).includes((postData.data || {})[statusKey]) ? 200 : (postData.data || {})[statusKey]) || (postData.data || {}).status || postData.status,
                           message: (postData.data || {})[action.api.responseMessageKey || 'message'],
-                          data: (postData.data || {})[action.api.responseDataKey] || postData.data
+                          data: (postData.data || {})[action.api.responseDataKey] || postData.data || postData
                         }
                       };
 
@@ -296,7 +296,7 @@ function _default(_ref2) {
                       throw new _customError.default({
                         response: {
                           data: {
-                            error: (postData.data || {})[action.api.errorDataKey || 'error'] || postData.data,
+                            error: (postData.data || {})[action.api.errorDataKey || 'error'] || postData.data || postData,
                             status: data.data.status,
                             message: data.data.message
                           }
