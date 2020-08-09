@@ -17,7 +17,8 @@ export const updateHandler = ({
   task: { key, id, subKey = [], values = {} } = {},
   callback: { updateCallback } = {},
   successData = {},
-}) => ({ data = [] } = {}) => ({
+  successDataStatusCode,
+}) => ({ data = [], statusCode } = {}) => ({
   data:
     subKey.length > 0
       ? updateIn(
@@ -112,6 +113,8 @@ export const updateHandler = ({
             );
           return updateData(data, successData, updateCallback);
         })(),
+  statusCode: successDataStatusCode || statusCode,
+
   lastUpdated: generateTimeStamp(),
   isError: false,
 });

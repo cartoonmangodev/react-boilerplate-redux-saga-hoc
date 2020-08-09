@@ -121,16 +121,18 @@ export const COMMON_REDUCER_HANDLER = (action, handlers) => {
   const {
     response: {
       customTask,
-      data: { data: successData = {} } = {},
+      data: { data: successData = {}, ...rest } = {},
       payload: { request: { query = {} } = {}, filter: Filter, error } = {},
       error: { data: errorData = {} } = {},
     } = {},
   } = action;
+  // console.log(rest, 'common reducer handler');
   const filter = _CheckFilter(Filter);
   const commonHandler = COMMON_HANDLER.bind(null, {
     handlers,
     successData,
     errorData,
+    successDataStatusCode: rest.statusCode,
     ...action.response.payload,
   });
   const ErrorHandler = (filter && filterArrayErrorHandler) || errorHandler;

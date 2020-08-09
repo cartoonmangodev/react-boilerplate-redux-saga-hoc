@@ -17,6 +17,7 @@ export const resetHandler = (
         status: '',
       }),
       isError: false,
+      statusCode: 200,
       infiniteEnd: typeof infiniteEnd === 'boolean' ? false : undefined,
       lastUpdated: generateTimeStamp(),
     })),

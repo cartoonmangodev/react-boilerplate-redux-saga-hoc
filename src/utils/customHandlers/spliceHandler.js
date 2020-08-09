@@ -5,7 +5,8 @@ export const spliceHandler = ({
   task: { clearData, spliceKey = [], subKey = [] } = {},
   callback: { updateCallback } = {},
   successData = {},
-}) => ({ data: oldData = {} } = {}) => ({
+  successDataStatusCode,
+}) => ({ data: oldData = {}, statusCode } = {}) => ({
   data: (() => {
     if (subKey.length > 0 && Array.isArray(getIn(oldData, subKey))) {
       const _oldCopyData = {
@@ -44,6 +45,7 @@ export const spliceHandler = ({
       : oldData;
     return updateCallback ? updateCallback(oldData, successData) : newData;
   })(),
+  statusCode: successDataStatusCode || statusCode,
   error: false,
   lastUpdated: generateTimeStamp(),
   isError: false,

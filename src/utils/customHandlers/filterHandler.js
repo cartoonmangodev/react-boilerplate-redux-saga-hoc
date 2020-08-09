@@ -12,8 +12,9 @@ const _CheckFilter = Filter =>
 
 export const commonFilterHandler = customHandler => ({
   filter = [],
+  successDataStatusCode,
   ...rest
-} = {}) => ({ data: Data = {} }) => ({
+} = {}) => ({ data: Data = {}, statusCode }) => ({
   data: (() => {
     const paramKey = { filter, ...rest };
     if (filter && filter.some(fil => Array.isArray(fil))) {
@@ -31,6 +32,7 @@ export const commonFilterHandler = customHandler => ({
       newObject(
         {
           ...data,
+          statusCode: successDataStatusCode || statusCode,
           lastUpdated: generateTimeStamp(),
           error: false,
           isError: false,

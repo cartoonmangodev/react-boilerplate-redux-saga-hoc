@@ -5,7 +5,8 @@ export const infiniteHandler = ({
   task: { clearData, subKey = [], limit, isAppendTop = false } = {},
   callback: { updateCallback } = {},
   successData = {},
-}) => ({ data: oldData = {} } = {}) => ({
+  successDataStatusCode,
+}) => ({ data: oldData = {}, statusCode } = {}) => ({
   data: (() => {
     if (subKey.length > 0 && Array.isArray(getIn(oldData, subKey))) {
       const _oldCopyData = {
@@ -40,6 +41,7 @@ export const infiniteHandler = ({
   })(),
   error: false,
   lastUpdated: generateTimeStamp(),
+  statusCode: successDataStatusCode || statusCode,
   isInfinite: true,
   isError: false,
   infiniteEnd:

@@ -125,7 +125,7 @@ export const commmonStateHandler = ({
   }
   if (
     ([ON_SUCCESS, ON_ERROR].includes(method) &&
-      [200, 201, 400, 403, 404, 409, 500].includes(statusCode) &&
+      // [200, 201, 400, 403, 404, 409, 500].includes(statusCode) &&
       Object.keys(constants).includes(type) &&
       !customTask) ||
     (customToast &&

@@ -184,10 +184,7 @@ export default function({
                 )
                   ? 200
                   : (postData.data || {})[statusKey]) || postData.status,
-              statusCode:
-                (postData.data || {})[statusKey] ||
-                (postData.data || {}).status ||
-                postData.status,
+              statusCode: (postData.data || {})[statusKey] || postData.status,
               message: (postData.data || {})[
                 action.api.responseMessageKey || 'message'
               ],
@@ -209,6 +206,8 @@ export default function({
                     postData.data ||
                     postData,
                   status: data.data.status,
+                  statusCode:
+                    (postData.data || {})[statusKey] || postData.status,
                   message: data.data.message,
                 },
               },
@@ -301,6 +300,7 @@ export default function({
         }
         if (!polling && retry) loop = false;
       } catch (error) {
+        console.error(error);
         if (!polling && retry && retry - 1 >= count) {
           // console.log(count);
         } else {

@@ -13,7 +13,8 @@ export const toggleKeyHandler = ({
   task: { key, id, toggleKey = [], subKey = [] } = {},
   callback: { updateCallback } = {},
   successData = {},
-}) => ({ data = {} } = {}) => ({
+  successDataStatusCode,
+}) => ({ data = {}, statusCode } = {}) => ({
   data:
     subKey.length > 0
       ? updateIn(
@@ -53,6 +54,8 @@ export const toggleKeyHandler = ({
         data.map(_data =>
           _data[key] === id ? toggleData(_data, toggleKey) : _data,
         ),
+  statusCode: successDataStatusCode || statusCode,
+
   lastUpdated: generateTimeStamp(),
   isError: false,
 });
