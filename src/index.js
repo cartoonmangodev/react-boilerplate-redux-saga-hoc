@@ -13,6 +13,7 @@ export {
   setIn,
   updateIn,
   generateTimeStamp,
+  toCapitalize,
 } from './utils/helpers';
 export { default as store, nextStore } from './utils/configureStore';
 export { commonConstants } from './utils/commonReduxSagaConverter/commonConstants';
