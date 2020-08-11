@@ -41,7 +41,7 @@ var infiniteHandler = function infiniteHandler(_ref) {
     return {
       data: function () {
         if (subKey.length > 0 && Array.isArray((0, _helpers.getIn)(oldData, subKey))) {
-          var _oldCopyData = _objectSpread({}, oldData, {}, successData, _defineProperty({}, subKey[0], oldData[subKey[0]])); // return _oldCopyData
+          var _oldCopyData = _objectSpread(_objectSpread(_objectSpread({}, oldData), successData), {}, _defineProperty({}, subKey[0], oldData[subKey[0]])); // return _oldCopyData
 
 
           return (0, _helpers.updateIn)(_oldCopyData, subKey, function (_oldData) {

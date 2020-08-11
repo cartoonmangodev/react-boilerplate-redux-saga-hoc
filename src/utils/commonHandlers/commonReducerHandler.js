@@ -76,6 +76,7 @@ const COMMON_HANDLER = (payload, data) => {
   let DATA = data;
   // const bindAction = Action => Action(payload);
   (payload.tasks || Array(1).fill(payload)).forEach(
+    // eslint-disable-next-line consistent-return
     ({ task = {}, filter } = {}) => {
       let customTaskBindAction = null;
       // const isMultiTask = Array.isArray(payload.tasks);

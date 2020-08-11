@@ -7,4 +7,6 @@ export { updateIn } from './updateIn';
 
 export const generateTimeStamp = () => new Date().getTime();
 export const toCapitalize = string =>
-  string.charAt(0).toUpperCase() + string.slice(1);
+  string && typeof string === 'string'
+    ? string.charAt(0).toUpperCase() + string.slice(1)
+    : null;

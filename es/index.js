@@ -83,6 +83,12 @@ Object.defineProperty(exports, "generateTimeStamp", {
     return _helpers.generateTimeStamp;
   }
 });
+Object.defineProperty(exports, "toCapitalize", {
+  enumerable: true,
+  get: function get() {
+    return _helpers.toCapitalize;
+  }
+});
 Object.defineProperty(exports, "store", {
   enumerable: true,
   get: function get() {

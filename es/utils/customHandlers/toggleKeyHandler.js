@@ -15,7 +15,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var toggleData = function toggleData(obj, keyArray) {
   return Object.keys(obj).reduce(function (acc, curr) {
-    return _objectSpread({}, acc, _defineProperty({}, curr, keyArray.includes(curr) ? !obj[curr] : obj[curr]));
+    return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, curr, keyArray.includes(curr) ? !obj[curr] : obj[curr]));
   }, {});
 };
 
@@ -41,7 +41,7 @@ var toggleKeyHandler = function toggleKeyHandler(_ref) {
         statusCode = _ref2.statusCode;
 
     return {
-      data: subKey.length > 0 ? (0, _helpers.updateIn)(_objectSpread({}, data, {}, successData, _defineProperty({}, subKey[0], data[subKey[0]])), subKey, function (_Data) {
+      data: subKey.length > 0 ? (0, _helpers.updateIn)(_objectSpread(_objectSpread(_objectSpread({}, data), successData), {}, _defineProperty({}, subKey[0], data[subKey[0]])), subKey, function (_Data) {
         return updateCallback ? updateCallback(_Data, successData) || _Data : !Array.isArray(_Data) && toggleData(_Data, toggleKey) || Array.isArray(id) && _Data.reduce(function (acc, curr) {
           return id.includes(curr[key]) ? acc.concat([toggleData(curr, toggleKey)]) : acc.concat([curr]);
         }, []) || _Data.map(function (_data) {

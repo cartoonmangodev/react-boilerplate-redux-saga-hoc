@@ -15,7 +15,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
@@ -70,7 +70,8 @@ var _CheckFilter = function _CheckFilter(Filter) {
 var COMMON_HANDLER = function COMMON_HANDLER(payload, data) {
   var DATA = data; // const bindAction = Action => Action(payload);
 
-  (payload.tasks || Array(1).fill(payload)).forEach(function () {
+  (payload.tasks || Array(1).fill(payload)).forEach( // eslint-disable-next-line consistent-return
+  function () {
     var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref$task = _ref.task,
         task = _ref$task === void 0 ? {} : _ref$task,
@@ -80,7 +81,7 @@ var COMMON_HANDLER = function COMMON_HANDLER(payload, data) {
     // if (isMultiTask)
 
     customTaskBindAction = function customTaskBindAction(Action) {
-      return Action(_objectSpread({}, payload, {
+      return Action(_objectSpread(_objectSpread({}, payload), {}, {
         filter: _CheckFilter(filter || payload.filter),
         successData: (task.response || {}).data || payload.successData
       }));

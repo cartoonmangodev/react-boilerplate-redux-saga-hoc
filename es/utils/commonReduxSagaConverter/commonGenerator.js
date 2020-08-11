@@ -31,7 +31,7 @@ function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableTo
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
@@ -126,23 +126,23 @@ function _default(_ref2) {
                     case 7:
                       action = _context2.sent;
                       _context2.next = 10;
-                      return action = _objectSpread({}, action, {
+                      return action = _objectSpread(_objectSpread({}, action), {}, {
                         error: action.error || action.actions[constants.ERROR],
                         success: action.success || action.actions[constants.SUCCESS],
                         customTask: action.custom || action.actions[constants.CUSTOM]
                       });
 
                     case 10:
-                      commonData = _objectSpread({
+                      commonData = _objectSpread(_objectSpread(_objectSpread({
                         payload: payload,
                         params: params,
                         query: query
-                      }, rest, {}, pollingRequestConfig, {
-                        request: _objectSpread({
+                      }, rest), pollingRequestConfig), {}, {
+                        request: _objectSpread(_objectSpread({
                           payload: payload,
                           params: params,
                           query: query
-                        }, rest, {}, pollingRequestConfig),
+                        }, rest), pollingRequestConfig),
                         callback: restCallback
                       }, restPayload);
 
@@ -177,7 +177,7 @@ function _default(_ref2) {
 
                     case 22:
                       _context2.next = 24;
-                      return _objectSpread({}, action.api || {}, {
+                      return _objectSpread(_objectSpread({}, action.api || {}), {}, {
                         cancelToken: source.token,
                         url: action.api.url,
                         method: action.api.method || 'GET',
@@ -264,7 +264,7 @@ function _default(_ref2) {
                       _context2.prev = 48;
                       _context2.next = 51;
                       return (0, _effects.race)({
-                        posts: typeof asyncFunction === 'function' ? _effects.call.apply(void 0, [asyncFunction].concat(_toConsumableArray(Array.isArray(pollingRequestConfig && pollingRequestConfig.asyncFunctionParams || asyncFunctionParams) ? pollingRequestConfig && pollingRequestConfig.asyncFunctionParams || asyncFunctionParams : []))) : (0, _effects.call)(axios, _objectSpread({}, request, {}, pollingRequestConfig && pollingRequestConfig.axiosConfig || axiosConfig)),
+                        posts: typeof asyncFunction === 'function' ? _effects.call.apply(void 0, [asyncFunction].concat(_toConsumableArray(Array.isArray(pollingRequestConfig && pollingRequestConfig.asyncFunctionParams || asyncFunctionParams) ? pollingRequestConfig && pollingRequestConfig.asyncFunctionParams || asyncFunctionParams : []))) : (0, _effects.call)(axios, _objectSpread(_objectSpread({}, request), pollingRequestConfig && pollingRequestConfig.axiosConfig || axiosConfig)),
                         cancel: (0, _effects.take)(action.cancel)
                       });
 

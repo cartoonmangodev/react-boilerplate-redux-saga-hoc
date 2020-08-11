@@ -45,7 +45,7 @@ Object.defineProperty(exports, "updateIn", {
     return _updateIn.updateIn;
   }
 });
-exports.generateTimeStamp = void 0;
+exports.toCapitalize = exports.generateTimeStamp = void 0;
 
 var _cloneObject = require("./cloneObject");
 
@@ -64,3 +64,9 @@ var generateTimeStamp = function generateTimeStamp() {
 };
 
 exports.generateTimeStamp = generateTimeStamp;
+
+var toCapitalize = function toCapitalize(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+exports.toCapitalize = toCapitalize;

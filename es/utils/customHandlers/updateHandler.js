@@ -47,7 +47,7 @@ var updateHandler = function updateHandler(_ref) {
         statusCode = _ref2.statusCode;
 
     return {
-      data: subKey.length > 0 ? (0, _helpers.updateIn)(_objectSpread({}, data, {}, successData, _defineProperty({}, subKey[0], data[subKey[0]])), subKey, function (_Data) {
+      data: subKey.length > 0 ? (0, _helpers.updateIn)(_objectSpread(_objectSpread(_objectSpread({}, data), successData), {}, _defineProperty({}, subKey[0], data[subKey[0]])), subKey, function (_Data) {
         return function () {
           var index = -1;
 

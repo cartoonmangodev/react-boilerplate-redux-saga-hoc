@@ -20,7 +20,7 @@ describe('<Dashboard />', function () {
   it('Expect to not log errors in console', function () {
     var spy = jest.spyOn(global.console, 'error');
     var dispatch = jest.fn();
-    (0, _reactTestingLibrary.render)(_react.default.createElement(_index.default, {
+    (0, _reactTestingLibrary.render)( /*#__PURE__*/_react.default.createElement(_index.default, {
       dispatch: dispatch
     }));
     expect(spy).not.toHaveBeenCalled();
@@ -35,7 +35,7 @@ describe('<Dashboard />', function () {
    */
 
   it.skip('Should render and match the snapshot', function () {
-    var _render = (0, _reactTestingLibrary.render)(_react.default.createElement(_index.default, null)),
+    var _render = (0, _reactTestingLibrary.render)( /*#__PURE__*/_react.default.createElement(_index.default, null)),
         firstChild = _render.container.firstChild;
 
     expect(firstChild).toMatchSnapshot();

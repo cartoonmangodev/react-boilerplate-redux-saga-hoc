@@ -15,7 +15,7 @@ function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableTo
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
@@ -52,7 +52,7 @@ var spliceHandler = function spliceHandler(_ref) {
     return {
       data: function () {
         if (subKey.length > 0 && Array.isArray((0, _helpers.getIn)(oldData, subKey))) {
-          var _oldCopyData = _objectSpread({}, oldData, {}, successData, _defineProperty({}, subKey[0], oldData[subKey[0]])); // return _oldCopyData
+          var _oldCopyData = _objectSpread(_objectSpread(_objectSpread({}, oldData), successData), {}, _defineProperty({}, subKey[0], oldData[subKey[0]])); // return _oldCopyData
 
 
           return (0, _helpers.updateIn)(_oldCopyData, subKey, function (_oldData) {
