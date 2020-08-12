@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable indent */
 /* eslint-disable no-console */
 /* eslint-disable func-names */
@@ -47,6 +48,7 @@ export default function({
         paramsSerializer = { arrayFormat: 'brackets' },
         axiosConfig = {},
         polling = false,
+        responseErrorParser: isResponseErrorParser = false,
         delay: Delay = 8000,
         retry = 0,
         pollingCount = 'unlimited',
@@ -311,6 +313,7 @@ export default function({
                 [action.api.errorDataKey || 'error']: errorData = (error &&
                   error.response &&
                   error.response.data) ||
+                  (error && error.response) ||
                   '',
                 status: errorStatus = error.response &&
                   error.response.data &&
@@ -327,7 +330,13 @@ export default function({
           if (typeof errorCallback === 'function')
             yield errorCallback({
               error,
-              errorData: responseErrorParser(errorData),
+              errorData: isResponseErrorParser
+                ? errorData &&
+                  typeof responseErrorParser(errorData) === 'object' &&
+                  Object.keys(responseErrorParser(errorData) || {}).length > 0
+                  ? responseErrorParser(errorData)
+                  : errorData
+                : errorData,
               message: errorMessage,
               status: errorStatus,
               response: error && error.response,

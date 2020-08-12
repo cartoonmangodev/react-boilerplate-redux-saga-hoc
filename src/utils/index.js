@@ -22,7 +22,7 @@ import nullcheck from './nullCheck';
 
 const safe = nullcheck;
 
-export const responseErrorParser = data =>
+export const responseErrorParser = (data = {}) =>
   (Array.isArray(data) &&
     data.reduce((acc, curr) => {
       const [key, message] = Object.entries(curr)[0];
