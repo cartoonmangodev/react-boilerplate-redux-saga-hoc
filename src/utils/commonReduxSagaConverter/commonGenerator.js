@@ -48,6 +48,7 @@ export default function({
         paramsSerializer = { arrayFormat: 'brackets' },
         axiosConfig = {},
         polling = false,
+        errorParser = false,
         responseErrorParser: isResponseErrorParser = false,
         delay: Delay = 8000,
         retry = 0,
@@ -337,6 +338,17 @@ export default function({
                   ? responseErrorParser(errorData)
                   : errorData
                 : errorData,
+              ...(typeof errorParser === 'function'
+                ? {
+                    errorParser: errorParser({
+                      error,
+                      errorData,
+                      status: errorStatus,
+                      response: error && error.response,
+                      message: errorMessage,
+                    }),
+                  }
+                : {}),
               message: errorMessage,
               status: errorStatus,
               response: error && error.response,
