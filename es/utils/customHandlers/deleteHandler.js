@@ -30,7 +30,7 @@ var deleteHandler = function deleteHandler(_ref) {
         statusCode = _ref2.statusCode;
 
     return {
-      data: subKey.length > 0 ? (0, _helpers.updateIn)(_objectSpread(_objectSpread(_objectSpread({}, data), successData), {}, _defineProperty({}, subKey[0], data[subKey[0]])), subKey, function (_data) {
+      data: subKey.length > 0 ? (0, _helpers.updateIn)(_objectSpread({}, data, {}, successData, _defineProperty({}, subKey[0], data[subKey[0]])), subKey, function (_data) {
         return !Array.isArray(_data) && {} || Array.isArray(id) && _data.reduce(function (acc, curr) {
           return id.includes(curr[key]) ? acc : acc.concat([curr]);
         }, []) || _data.filter(function (_ref3) {

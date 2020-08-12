@@ -45,7 +45,7 @@ function injectSagaFactory(store, isValid) {
     var args = arguments.length > 2 ? arguments[2] : undefined;
     if (!isValid) (0, _checkStore.default)(store);
 
-    var newDescriptor = _objectSpread(_objectSpread({}, descriptor), {}, {
+    var newDescriptor = _objectSpread({}, descriptor, {
       mode: descriptor.mode || _constants.DAEMON
     });
 
@@ -66,7 +66,7 @@ function injectSagaFactory(store, isValid) {
 
     if (!hasSaga || hasSaga && mode !== _constants.DAEMON && mode !== _constants.ONCE_TILL_UNMOUNT) {
       /* eslint-disable no-param-reassign */
-      store.injectedSagas[key] = _objectSpread(_objectSpread({}, newDescriptor), {}, {
+      store.injectedSagas[key] = _objectSpread({}, newDescriptor, {
         task: store.runSaga(saga, args)
       });
       /* eslint-enable no-param-reassign */

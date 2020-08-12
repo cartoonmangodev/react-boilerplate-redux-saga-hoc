@@ -15,7 +15,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var deletedData = function deletedData(obj, keyArray) {
   return Object.keys(obj).reduce(function (acc, curr) {
-    return keyArray.includes(curr) && acc || _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, curr, obj[curr]));
+    return keyArray.includes(curr) && acc || _objectSpread({}, acc, _defineProperty({}, curr, obj[curr]));
   }, {});
 };
 
@@ -41,7 +41,7 @@ var deleteKeyHandler = function deleteKeyHandler(_ref) {
         statusCode = _ref2.statusCode;
 
     return {
-      data: subKey.length > 0 ? (0, _helpers.updateIn)(_objectSpread(_objectSpread(_objectSpread({}, data), successData), {}, _defineProperty({}, subKey[0], data[subKey[0]])), subKey, function (_Data) {
+      data: subKey.length > 0 ? (0, _helpers.updateIn)(_objectSpread({}, data, {}, successData, _defineProperty({}, subKey[0], data[subKey[0]])), subKey, function (_Data) {
         return updateCallback ? updateCallback(_Data, successData) || _Data : !Array.isArray(_Data) && deletedData(_Data, deleteKey) || Array.isArray(id) && _Data.reduce(function (acc, curr) {
           return id.includes(curr[key]) ? acc.concat([deletedData(curr, deleteKey)]) : acc.concat([curr]);
         }, []) || _Data.map(function (_data) {

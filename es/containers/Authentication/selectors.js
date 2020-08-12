@@ -34,9 +34,9 @@ var makeSelectAuthenticationState = function makeSelectAuthenticationState(_ref)
   return function () {
     return (0, _reselect.createSelector)(selectAuthenticationDomain(initialState, generatorKey), function (substate) {
       return (0, _helpers.newObject)(Object.keys(InitialState).reduce(function (acc, key) {
-        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, key, substate[key]));
+        return _objectSpread({}, acc, _defineProperty({}, key, substate[key]));
       }, {}), Object.keys(apiEndPoints[generatorKey]).reduce(function (acc, key) {
-        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, key, substate[constants[key][_commonConstants.CALL]]));
+        return _objectSpread({}, acc, _defineProperty({}, key, substate[constants[key][_commonConstants.CALL]]));
       }, {}));
     });
   };

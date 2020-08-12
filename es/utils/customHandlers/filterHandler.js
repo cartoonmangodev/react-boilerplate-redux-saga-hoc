@@ -50,7 +50,7 @@ var commonFilterHandler = function commonFilterHandler(customHandler) {
           }
 
           return (0, _helpers.updateIn)(Data, filter, function (data) {
-            return (0, _helpers.newObject)(_objectSpread(_objectSpread({}, data), {}, {
+            return (0, _helpers.newObject)(_objectSpread({}, data, {
               statusCode: successDataStatusCode || statusCode,
               lastUpdated: (0, _helpers.generateTimeStamp)(),
               error: false,
