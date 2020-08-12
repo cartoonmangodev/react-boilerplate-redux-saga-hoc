@@ -59,13 +59,13 @@ const HANDLERS = [
 const CheckCustomHanderFormat = _handler =>
   _handler
     ? typeof _handler === 'function'
-      ? typeof _handler() === 'function'
-        ? typeof _handler()() !== 'function'
-          ? _handler
-          : null
-        : null
-      : null
-    : null;
+      ? // ? typeof _handler() === 'function'
+        // ? typeof _handler()() !== 'function'
+        _handler
+      : // : null
+        null
+    : // : null
+      null;
 const _CheckFilter = Filter =>
   Array.isArray(Filter) && Filter.length > 0
     ? Filter
