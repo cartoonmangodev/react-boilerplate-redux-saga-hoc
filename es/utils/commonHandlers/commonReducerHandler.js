@@ -126,6 +126,8 @@ var COMMON_REDUCER_HANDLER = function COMMON_REDUCER_HANDLER(action, handlers) {
   _action$response$payl2 = _action$response$payl2 === void 0 ? {} : _action$response$payl2;
   var _action$response$payl3 = _action$response$payl2.query,
       query = _action$response$payl3 === void 0 ? {} : _action$response$payl3,
+      _action$response$payl4 = _action$response$payl2.clearDataOnError,
+      clearDataOnError = _action$response$payl4 === void 0 ? false : _action$response$payl4,
       Filter = _action$response$payl.filter,
       error = _action$response$payl.error,
       _action$response$erro = _action$response.error;
@@ -145,7 +147,8 @@ var COMMON_REDUCER_HANDLER = function COMMON_REDUCER_HANDLER(action, handlers) {
   var commmonErrorHandler = ErrorHandler.bind(null, {
     errorData: customTask ? error : errorData,
     query: query,
-    filter: filter
+    filter: filter,
+    clearDataOnError: clearDataOnError
   });
   return [commonHandler, commmonErrorHandler];
 };

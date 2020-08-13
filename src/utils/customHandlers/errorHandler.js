@@ -17,7 +17,10 @@ import { updateIn, newObject, generateTimeStamp } from '../helpers';
 //   ),
 // });
 
-export const errorHandler = ({ errorData } = {}) => () => ({
+export const errorHandler = ({ errorData, clearDataOnError = false } = {}) => ({
+  data: Data = {},
+}) => ({
+  ...(clearDataOnError ? { data: Array.isArray(Data) ? [] : {} } : {}),
   error: errorData || null,
   isError: true,
   lastUpdated: generateTimeStamp(),
@@ -43,9 +46,9 @@ export const filterArrayErrorHandler = ({
         (accumulator, filterArray) =>
           updateIn(accumulator, _CheckFilter(filterArray), data =>
             _CheckFilter(filterArray).length > 0
-              ? newObject(data, {
+              ? newObject(data, ({ data: oldData }) => ({
                   ...(clearDataOnError
-                    ? { data: Array.isArray(data && data.data) ? [] : {} }
+                    ? { data: Array.isArray(oldData) ? [] : {} }
                     : {}),
                   error: errorData || null,
                   isError: true,
@@ -53,7 +56,7 @@ export const filterArrayErrorHandler = ({
                   lastUpdated: generateTimeStamp(),
                   isInfinite: undefined,
                   infiniteEnd: undefined,
-                })
+                }))
               : data,
           ),
         Data,
