@@ -153,9 +153,11 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
         if (WrapperComponent.getInitialProps)
           data = await WrapperComponent.getInitialProps({
             ...props,
-            ...mapDispatchToProps(componentActions, componentData, reducerName)(
-              store.dispatch,
-            ),
+            ...mapDispatchToProps(
+              componentActions,
+              componentData,
+              reducerName,
+            )(store.dispatch),
           });
         return {
           ...(data || {}),

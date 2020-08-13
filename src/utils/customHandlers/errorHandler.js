@@ -32,9 +32,11 @@ const _CheckFilter = Filter =>
     ? Filter.split('.')
     : [];
 
-export const filterArrayErrorHandler = ({ errorData, filter } = {}) => ({
-  data: Data = {},
-}) => ({
+export const filterArrayErrorHandler = ({
+  errorData,
+  filter,
+  clearDataOnError,
+} = {}) => ({ data: Data = {} }) => ({
   data: (() => {
     if (filter && filter.some(fil => Array.isArray(fil))) {
       return filter.reduce(
@@ -42,6 +44,9 @@ export const filterArrayErrorHandler = ({ errorData, filter } = {}) => ({
           updateIn(accumulator, _CheckFilter(filterArray), data =>
             _CheckFilter(filterArray).length > 0
               ? newObject(data, {
+                  ...(clearDataOnError
+                    ? { data: Array.isArray(data && data.data) ? [] : {} }
+                    : {}),
                   error: errorData || null,
                   isError: true,
                   statusCode: 'ERROR',

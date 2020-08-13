@@ -123,7 +123,11 @@ export const COMMON_REDUCER_HANDLER = (action, handlers) => {
     response: {
       customTask,
       data: { data: successData = {}, ...rest } = {},
-      payload: { request: { query = {} } = {}, filter: Filter, error } = {},
+      payload: {
+        request: { query = {}, clearDataOnError = false } = {},
+        filter: Filter,
+        error,
+      } = {},
       error: { data: errorData = {} } = {},
     } = {},
   } = action;
@@ -141,6 +145,7 @@ export const COMMON_REDUCER_HANDLER = (action, handlers) => {
     errorData: customTask ? error : errorData,
     query,
     filter,
+    clearDataOnError,
   });
 
   return [commonHandler, commmonErrorHandler];
