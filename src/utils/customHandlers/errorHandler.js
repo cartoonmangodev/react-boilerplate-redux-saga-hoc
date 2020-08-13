@@ -63,14 +63,15 @@ export const filterArrayErrorHandler = ({
       );
     }
     return updateIn(Data, filter, data =>
-      newObject(data, {
+      newObject(data, ({ data: oldData }) => ({
+        ...(clearDataOnError ? { data: Array.isArray(oldData) ? [] : {} } : {}),
         error: errorData || null,
         isError: true,
         statusCode: 'ERROR',
         lastUpdated: generateTimeStamp(),
         isInfinite: undefined,
         infiniteEnd: undefined,
-      }),
+      })),
     );
   })(),
 });
