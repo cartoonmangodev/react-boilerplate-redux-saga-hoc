@@ -381,7 +381,7 @@ export default function({
                 response: {
                   data: {
                     status: errorStatus,
-                    data: errorDataHandling ? errorData : {},
+                    data: errorDataHandling ? errorData : null,
                     message: errorMessage,
                   },
                 },
