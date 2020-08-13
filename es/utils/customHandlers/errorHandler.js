@@ -87,13 +87,18 @@ var filterArrayErrorHandler = function filterArrayErrorHandler() {
         }
 
         return (0, _helpers.updateIn)(Data, filter, function (data) {
-          return (0, _helpers.newObject)(data, {
-            error: errorData || null,
-            isError: true,
-            statusCode: 'ERROR',
-            lastUpdated: (0, _helpers.generateTimeStamp)(),
-            isInfinite: undefined,
-            infiniteEnd: undefined
+          return (0, _helpers.newObject)(data, function (_ref6) {
+            var oldData = _ref6.data;
+            return _objectSpread({}, clearDataOnError ? {
+              data: Array.isArray(oldData) ? [] : {}
+            } : {}, {
+              error: errorData || null,
+              isError: true,
+              statusCode: 'ERROR',
+              lastUpdated: (0, _helpers.generateTimeStamp)(),
+              isInfinite: undefined,
+              infiniteEnd: undefined
+            });
           });
         });
       }()

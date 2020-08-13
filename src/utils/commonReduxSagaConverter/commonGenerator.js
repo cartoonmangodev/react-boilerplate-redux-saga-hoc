@@ -47,6 +47,7 @@ export default function({
         query,
         paramsSerializer = { arrayFormat: 'brackets' },
         axiosConfig = {},
+        errorDataHandling = true,
         clearDataOnError = false,
         polling = false,
         errorParser = false,
@@ -92,6 +93,7 @@ export default function({
           payload,
           params,
           query,
+          errorDataHandling,
           clearDataOnError,
           ...rest,
           ...pollingRequestConfig,
@@ -379,7 +381,7 @@ export default function({
                 response: {
                   data: {
                     status: errorStatus,
-                    data: errorData,
+                    data: errorDataHandling ? errorData : {},
                     message: errorMessage,
                   },
                 },
