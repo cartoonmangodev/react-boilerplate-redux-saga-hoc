@@ -1,12 +1,22 @@
 /* eslint-disable */
-import { updateIn, newObject, generateTimeStamp } from '../helpers';
-
-const deletedData = (obj, keyArray) =>
-  Object.keys(obj).reduce(
-    (acc, curr) =>
-      (keyArray.includes(curr) && acc) || { ...acc, [curr]: obj[curr] },
-    {},
-  );
+import { updateIn, newObject, generateTimeStamp, deleteIn } from '../helpers';
+import _remove from 'lodash/remove';
+const deletedData = (obj = {}, keyArray = []) => {
+  let _obj = obj;
+  _obj =
+    Object.prototype.toString.call(obj) === '[object Object]'
+      ? { ..._obj }
+      : {};
+  if (Object.prototype.toString.call(obj) === '[object Object]') {
+    (Array.isArray(keyArray) ? keyArray : [keyArray]).forEach(_key => {
+      _obj = Array.isArray(_key)
+        ? deleteIn(_obj, _key)
+        : deleteIn(_obj, [_key]);
+    });
+    return _obj;
+  }
+  return obj;
+};
 export const deleteKeyHandler = ({
   task: { key, id, deleteKey = [], subKey = [] } = {},
   callback: { updateCallback } = {},
