@@ -534,7 +534,7 @@ function _default(_ref2) {
                           response: {
                             data: {
                               status: errorStatus,
-                              data: errorDataHandling ? errorData : {},
+                              data: errorDataHandling ? errorData : null,
                               message: errorMessage
                             }
                           }

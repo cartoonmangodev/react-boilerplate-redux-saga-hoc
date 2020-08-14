@@ -1,5 +1,7 @@
 # React Boilerplate Redux Saga HOC
 
+React Boilerplate Redux Saga HOC is a hoc for handling api calls as well as mataintaing redux state.
+
 ## # Installation
 
 This package requires **React 16.8.4 or later.**
@@ -18,21 +20,21 @@ yarn add react-boilerplate-redux-saga-hoc
 
 ## # Setup
 
-[Installing on create-react-app scafolding](https://react-boilerplate-redux-saga-hoc.now.sh/docs/getting-started/installation-setup#-installing-on-create-react-app-scafolding)
+[Installing on create-react-app scafolding](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/docs/getting-started/installation-setup#-installing-on-create-react-app-scafolding)
 
 #
 
-[Installing on React-Boilerplate scafolding](https://react-boilerplate-redux-saga-hoc.now.sh/docs/getting-started/installation-setup#-installing-on-react-boilerplate-scafolding)
+[Installing on React-Boilerplate scafolding](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/docs/getting-started/installation-setup#-installing-on-react-boilerplate-scafolding)
 
 #
 
-[Installing on React-Native](https://react-boilerplate-redux-saga-hoc.now.sh/docs/getting-started/installation-setup#-installing-on-react-native)
+[Installing on React-Native](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/docs/getting-started/installation-setup#-installing-on-react-native)
 
 #
 
-[Installing on Next-js](https://react-boilerplate-redux-saga-hoc.now.sh/docs/getting-started/installation-setup#-installing-on-next-js)
+[Installing on Next-js](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/docs/getting-started/installation-setup#-installing-on-next-js)
 
-> ### **Note:** Before proceeding further.[Please read the detail documentation from here](https://react-boilerplate-redux-saga-hoc.now.sh/)
+> ### **Note:** Before proceeding further.[Please read the detail documentation from here](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/)
 
 ## Why we created this hoc?
 
@@ -346,9 +348,9 @@ We already knows [redux](https://redux.js.org/) is a valuable tool for organisin
 
 ###
 
-> ### **Note:** Please read the detail documentation from [here](https://react-boilerplate-redux-saga-hoc.now.sh/)
+> ### **Note:** Please read the detail documentation from [here](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/)
 
-> ### **Important:** This package now also support nextJS.Please read nextjs setup documentation from [here](https://react-boilerplate-redux-saga-hoc.now.sh/docs/getting-started/installation-setup#-installing-on-next-js)
+> ### **Important:** This package now also support nextJS.Please read nextjs setup documentation from [here](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/docs/getting-started/installation-setup#-installing-on-next-js)
 
 ## Contributing
 
