@@ -70,6 +70,8 @@ This package also supports for both React and React native.So no need to worry a
 
 [# Store Configuration](#-store-configuration)
 
+[# Beginner Tutorial](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/docs/getting-started/beginnerTutorial)
+
 ---
 
 ### **Before Proceeding Further**
