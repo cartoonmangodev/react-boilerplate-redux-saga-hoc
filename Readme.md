@@ -20,6 +20,8 @@ yarn add react-boilerplate-redux-saga-hoc
 
 ## # Setup
 
+[# Beginner Tutorial](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/docs/getting-started/beginnerTutorial)
+
 [Installing on create-react-app scafolding](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/docs/getting-started/installation-setup#-installing-on-create-react-app-scafolding)
 
 #
@@ -69,8 +71,6 @@ This package also supports for both React and React native.So no need to worry a
 [# Basic usage](#-basic-usage)
 
 [# Store Configuration](#-store-configuration)
-
-[# Beginner Tutorial](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/docs/getting-started/beginnerTutorial)
 
 ---
 
