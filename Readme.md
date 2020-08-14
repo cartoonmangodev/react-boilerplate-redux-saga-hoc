@@ -20,6 +20,10 @@ yarn add react-boilerplate-redux-saga-hoc
 
 ## # Setup
 
+[ Beginner Tutorial](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/docs/getting-started/beginnerTutorial)
+
+#
+
 [Installing on create-react-app scafolding](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/docs/getting-started/installation-setup#-installing-on-create-react-app-scafolding)
 
 #
