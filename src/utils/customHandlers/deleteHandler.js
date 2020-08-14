@@ -24,7 +24,7 @@ export const deleteHandler = ({
               )) ||
             _data.filter(({ [key]: objId }) => objId !== id),
         )
-      : (!Array.isArray(data) && successData) ||
+      : (!Array.isArray(data) && data) ||
         (Array.isArray(id) &&
           data.reduce(
             (acc, curr) => (id.includes(curr[key]) ? acc : acc.concat([curr])),
