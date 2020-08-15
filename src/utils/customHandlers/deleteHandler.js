@@ -1,37 +1,43 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable indent */
-import { updateIn, generateTimeStamp } from '../helpers';
+/* eslint-disable no-nested-ternary */
+import { updateIn, generateTimeStamp, typeOf } from '../helpers';
+
+const executeTask = ({ id, key }, data) =>
+  !Array.isArray(data)
+    ? data
+    : Array.isArray(id)
+    ? data.reduce(
+        (acc, curr) => (id.includes(curr[key]) ? acc : acc.concat([curr])),
+        [],
+      )
+    : data.filter(({ [key]: objId }) => objId !== id);
+
 export const deleteHandler = ({
   task: { key, id, subKey = [] } = {},
   successData = {},
   successDataStatusCode,
-}) => ({ data = [], statusCode } = {}) => ({
-  data:
-    subKey.length > 0
-      ? updateIn(
-          {
-            ...data,
-            ...successData,
-            [subKey[0]]: data[subKey[0]],
-          },
-          subKey,
-          _data =>
-            (!Array.isArray(_data) && {}) ||
-            (Array.isArray(id) &&
-              _data.reduce(
-                (acc, curr) =>
-                  id.includes(curr[key]) ? acc : acc.concat([curr]),
-                [],
-              )) ||
-            _data.filter(({ [key]: objId }) => objId !== id),
-        )
-      : (!Array.isArray(data) && data) ||
-        (Array.isArray(id) &&
-          data.reduce(
-            (acc, curr) => (id.includes(curr[key]) ? acc : acc.concat([curr])),
-            [],
-          )) ||
-        data.filter(({ [key]: objId }) => objId !== id),
-  statusCode: successDataStatusCode || statusCode,
-  lastUpdated: generateTimeStamp(),
-  isError: false,
-});
+}) => ({ data = [], statusCode } = {}) => {
+  const commonData = {
+    key,
+    id,
+  };
+  const _successData = typeOf(successData) === 'object' ? successData : {};
+  return {
+    data:
+      subKey.length > 0
+        ? updateIn(
+            {
+              ...data,
+              ..._successData,
+              [subKey[0]]: data[subKey[0]],
+            },
+            subKey,
+            _data => executeTask(commonData, _data),
+          )
+        : executeTask(commonData, data),
+    statusCode: successDataStatusCode || statusCode,
+    lastUpdated: generateTimeStamp(),
+    isError: false,
+  };
+};

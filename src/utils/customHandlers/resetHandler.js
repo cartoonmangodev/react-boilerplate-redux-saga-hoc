@@ -22,46 +22,6 @@ export const resetHandler = (
       lastUpdated: generateTimeStamp(),
     })),
   }));
-// export const filterArrayResetHandler = ({   state,
-//   newState,
-//   action,
-//   filter,
-//   customType = undefined, } = {}) => ({
-//   data: Data = {},
-// }) => ({
-//   data: (() => {
-//     if (filter && filter.some(fil => Array.isArray(fil))) {
-//       return filter.reduce(
-//         (accumulator, filterArray) =>
-//           updateIn(accumulator, _CheckFilter(filterArray), data =>
-//             _CheckFilter(filterArray).length > 0
-//               ? newObject(data, ({ toast = {} }) => ({
-//                   isInfinite,
-//                   toast: newObject(toast, {
-//                     message: '',
-//                     status: '',
-//                     isError: null,
-//                     key: '',
-//                   }),
-//                 }))
-//               : data,
-//           ),
-//         Data,
-//       );
-//     }
-//     return updateIn(Data, filter, data =>
-//       newObject(data, ({ toast = {} }) => ({
-//         isInfinite,
-//         toast: newObject(toast, {
-//           message: '',
-//           status: '',
-//           isError: null,
-//           key: '',
-//         }),
-//       })),
-//     );
-//   })(),
-// });
 const _CheckFilter = Filter =>
   Array.isArray(Filter) && Filter.length > 0
     ? Filter
@@ -114,18 +74,6 @@ export const filterArrayResetHandler = (
             lastUpdated: generateTimeStamp(),
           })),
         );
-        // return updateIn(Data, filter, updateData =>
-        //   newObject(updateData, ({ data, toast, infiniteEnd }) => ({
-        //     data: (Array.isArray(data) && []) || {},
-        //     toast: newObject(toast, {
-        //       message: '',
-        //       status: '',
-        //     }),
-        //     isError: false,
-        //     infiniteEnd: typeof infiniteEnd === 'boolean' ? false : undefined,
-        //     lastUpdated: generateTimeStamp(),
-        //   })),
-        // );
       })(),
     })),
   }));

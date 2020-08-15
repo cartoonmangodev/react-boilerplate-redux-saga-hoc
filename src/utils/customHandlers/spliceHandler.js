@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { generateTimeStamp, updateIn, getIn } from '../helpers';
+import { generateTimeStamp, updateIn, getIn, typeOf } from '../helpers';
 import Safe from '../nullCheck';
 export const spliceHandler = ({
   task: { clearData, spliceKey = [], subKey = [] } = {},
@@ -11,7 +11,7 @@ export const spliceHandler = ({
     if (subKey.length > 0 && Array.isArray(getIn(oldData, subKey))) {
       const _oldCopyData = {
         ...oldData,
-        ...successData,
+        ...(typeOf(successData) === 'object' ? successData : {}),
         [subKey[0]]: oldData[subKey[0]],
       };
       // return _oldCopyData

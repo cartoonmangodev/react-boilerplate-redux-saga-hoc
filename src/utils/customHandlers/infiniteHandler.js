@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { generateTimeStamp, updateIn, getIn } from '../helpers';
+import { generateTimeStamp, updateIn, getIn, typeOf } from '../helpers';
 import Safe from '../nullCheck';
 export const infiniteHandler = ({
   task: { clearData, subKey = [], limit, isAppendTop = false } = {},
@@ -11,7 +11,7 @@ export const infiniteHandler = ({
     if (subKey.length > 0 && Array.isArray(getIn(oldData, subKey))) {
       const _oldCopyData = {
         ...oldData,
-        ...successData,
+        ...(typeOf(successData) === 'object' ? successData : {}),
         [subKey[0]]: oldData[subKey[0]],
       };
       // return _oldCopyData
@@ -33,10 +33,11 @@ export const infiniteHandler = ({
         ? getData.concat(oldData)
         : oldData.concat(getData)
       : getData;
-    const newData =
-      (clearData && successData) ||
-      (Array.isArray(successData) && appendData) ||
-      successData;
+    const newData = clearData
+      ? successData
+      : Array.isArray(successData)
+      ? appendData
+      : successData;
     return updateCallback ? updateCallback(oldData, successData) : newData;
   })(),
   error: false,

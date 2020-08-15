@@ -13,7 +13,7 @@ export const dataHandler = ({
     if (subKey.length > 0) {
       const _oldCopyData = {
         ...oldData,
-        ...successData,
+        ...(_checkIsNotObject(successData) ? {} : successData),
         [subKey[0]]: oldData[subKey[0]],
       };
       return updateIn(_oldCopyData, subKey, _oldData => {

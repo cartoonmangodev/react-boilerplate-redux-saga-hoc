@@ -1,5 +1,6 @@
-/* eslint-disable */
-import { updateIn, newObject, generateTimeStamp } from '../helpers';
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable indent */
+import { updateIn, newObject, generateTimeStamp, typeOf } from '../helpers';
 import Safe from '../nullCheck';
 const updateData = (data, successData, updateCallback) => {
   if (updateCallback) return updateCallback(data, successData) || data;
@@ -24,7 +25,7 @@ export const updateHandler = ({
       ? updateIn(
           {
             ...data,
-            ...successData,
+            ...(typeOf(successData) === 'object' ? successData : {}),
             [subKey[0]]: data[subKey[0]],
           },
           subKey,
@@ -39,12 +40,12 @@ export const updateHandler = ({
                   Safe(successData, `.${subKey.join('.')}`),
                   updateCallback,
                 );
-              else if (Array.isArray(id) && key && Array.isArray(_Data))
+              if (Array.isArray(id) && key && Array.isArray(_Data))
                 return _Data.reduce(
                   (acc, curr = {}) =>
                     id.includes(curr[key])
                       ? (() => {
-                          index = index + 1;
+                          index += 1;
                           return acc.concat([
                             updateData(
                               curr,
@@ -56,14 +57,14 @@ export const updateHandler = ({
                       : acc.concat([curr]),
                   [],
                 );
-              else if ((id === 0 || id) && key)
+              if ((id === 0 || id) && key)
                 return _Data.map(_data =>
                   _data[key] === id
                     ? (() => {
-                        index = index + 1;
+                        index += 1;
                         return updateData(
                           _data,
-                          values[_values ? index : curr[key]] || _data,
+                          values[_values ? index : _data[key]] || _data,
                           updateCallback,
                         );
                       })()
@@ -81,12 +82,12 @@ export const updateHandler = ({
           const _values = Array.isArray(values);
           if (!Array.isArray(data))
             return updateData(data, successData, updateCallback);
-          else if (Array.isArray(id) && key)
+          if (Array.isArray(id) && key)
             return data.reduce(
               (acc, curr = {}) =>
                 id.includes(curr[key])
                   ? (() => {
-                      index = index + 1;
+                      index += 1;
                       return acc.concat([
                         updateData(
                           curr,
@@ -98,11 +99,11 @@ export const updateHandler = ({
                   : acc.concat([curr]),
               [],
             );
-          else if ((id === 0 || id) && key)
+          if ((id === 0 || id) && key)
             return data.map(_data =>
               _data[key] === id
                 ? (() => {
-                    index = index + 1;
+                    index += 1;
                     return updateData(
                       _data,
                       values[_values ? index : _data[key]] || _data,

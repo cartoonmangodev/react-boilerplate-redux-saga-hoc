@@ -37,7 +37,7 @@ var deleteHandler = function deleteHandler(_ref) {
           var objId = _ref3[key];
           return objId !== id;
         });
-      }) : !Array.isArray(data) && successData || Array.isArray(id) && data.reduce(function (acc, curr) {
+      }) : !Array.isArray(data) && data || Array.isArray(id) && data.reduce(function (acc, curr) {
         return id.includes(curr[key]) ? acc : acc.concat([curr]);
       }, []) || data.filter(function (_ref4) {
         var objId = _ref4[key];
