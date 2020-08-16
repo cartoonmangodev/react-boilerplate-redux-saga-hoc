@@ -284,8 +284,8 @@ export const useHook = (name = null, array = []) => {
           `.getState()[${name}][${typeOf(e) === 'object' ? e.key : e}]`,
         ),
       )) ||
-      [],
-    store),
+      []),
+    store,
   ]);
   return Array.isArray(array) && array.length > 0
     ? { ...data }
