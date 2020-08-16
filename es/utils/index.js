@@ -11,6 +11,8 @@ var _redux = require("redux");
 
 var _reactRedux = require("react-redux");
 
+var _isEqual = _interopRequireDefault(require("lodash/isEqual"));
+
 var _commonConstants = require("./commonReduxSagaConverter/commonConstants");
 
 var _helpers = require("./helpers");
@@ -20,14 +22,6 @@ var _customHandlers = require("./customHandlers");
 var _nullCheck = _interopRequireDefault(require("./nullCheck"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -214,16 +208,31 @@ var useHook = function useHook() {
   var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
   var array = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
   var store = (0, _reactRedux.useStore)();
-  var data = (0, _react.useMemo)(function () {
-    var state = safe(store, ".getState()[".concat(name, "]"));
-    if (state && Array.isArray(array) && array.length > 0) return array.reduce(function (acc, e) {
-      return (0, _helpers.typeOf)(e) === 'object' ? _objectSpread({}, acc, _defineProperty({}, e.name || e.key, getData(safe(store, ".getState()[".concat(name, "][").concat(e.key, "]"), e.default || undefined, e.loader || false, Array.isArray(e.filter) ? e.filter : undefined)))) : _objectSpread({}, acc, _defineProperty({}, e, safe(store, ".getState()[".concat(name, "][").concat(e, "]"))));
-    }, {});
-    return {};
-  }, [].concat(_toConsumableArray(Array.isArray(array) && array.length > 0 && array.map(function (e) {
-    return safe(store, ".getState()[".concat(name, "][").concat((0, _helpers.typeOf)(e) === 'object' ? e.key : e, "]"));
-  }) || []), [store]));
-  return Array.isArray(array) && array.length > 0 ? _objectSpread({}, data) : safe(store, ".getState()[".concat(name, "]")) || safe(store, ".getState()") || {};
+
+  var _useState = (0, _react.useState)({}),
+      _useState2 = _slicedToArray(_useState, 2),
+      data = _useState2[0],
+      setData = _useState2[1];
+
+  (0, _react.useEffect)(function () {
+    var unSubscribe = store.subscribe(function () {
+      var state = safe(store, ".getState()[".concat(name, "]"));
+
+      if (state && Array.isArray(array) && array.length > 0) {
+        // eslint-disable-next-line consistent-return
+        // eslint-disable-next-line no-underscore-dangle
+        var _data = array.reduce(function (acc, e) {
+          return (0, _helpers.typeOf)(e) === 'object' ? _objectSpread({}, acc, _defineProperty({}, e.name || e.key, safe(getData(safe(store, ".getState()[".concat(name, "][").concat(e.key, "]")), undefined, e.loader || false, Array.isArray(e.filter) ? e.filter : undefined), "".concat(e.query && (0, _helpers.typeOf)(e.query) === 'string' ? e.query : ''), e.default || undefined))) : _objectSpread({}, acc, _defineProperty({}, e, safe(store, ".getState()[".concat(name, "][").concat(e, "]"))));
+        }, {});
+
+        if (!(0, _isEqual.default)(data, _data)) setData(_data);
+      } else setData(safe(store, ".getState()[".concat(name, "]")) || safe(store, ".getState()"));
+    });
+    return function () {
+      return unSubscribe();
+    };
+  }, [store.subscribe]);
+  return data;
 };
 
 exports.useHook = useHook;

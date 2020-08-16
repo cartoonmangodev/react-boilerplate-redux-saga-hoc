@@ -172,6 +172,14 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       WithHoc,
     );
   };
+  if (nextJS && (useHook || getDefaultConfig))
+    return {
+      hoc,
+      saga,
+      reducer: { name: reducerName, reducer },
+      actions: { ...componentActions },
+      ...componentData[`${reducerName}_hoc`],
+    };
   if (nextJS)
     return {
       hoc,
