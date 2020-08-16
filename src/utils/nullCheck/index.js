@@ -93,12 +93,12 @@ const nullCheck = (
   if (!obj || typeof obj !== 'object' || Object.keys(obj).length === 0) {
     //     if (errorDisplay) {
     if (typeof obj === 'object' && obj) {
-      console.log(obj);
-      console.log(
-        `%cRoot Object should contain minimum of one key : %c ${path}`,
-        'background: #000; color: orange; font-size: 12px;',
-        'background: #000; color: red; font-size: 12px;',
-      );
+      // console.log(obj);
+      // console.log(
+      //   `%cRoot Object should contain minimum of one key : %c ${path}`,
+      //   'background: #000; color: orange; font-size: 12px;',
+      //   'background: #000; color: red; font-size: 12px;',
+      // );
     } else {
       console.log(obj);
       console.log(

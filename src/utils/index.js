@@ -275,7 +275,18 @@ export const useHook = (name = null, array = []) => {
         {},
       );
     return {};
-  }, Array.isArray(array) && array.length > 0 && array.map(e => safe(store, `.getState()[${name}][${typeOf(e) === 'object' ? e.key : e}]`)));
+  }, [
+    ...((Array.isArray(array) &&
+      array.length > 0 &&
+      array.map(e =>
+        safe(
+          store,
+          `.getState()[${name}][${typeOf(e) === 'object' ? e.key : e}]`,
+        ),
+      )) ||
+      [],
+    store),
+  ]);
   return Array.isArray(array) && array.length > 0
     ? { ...data }
     : safe(store, `.getState()[${name}]`) || safe(store, `.getState()`) || {};
