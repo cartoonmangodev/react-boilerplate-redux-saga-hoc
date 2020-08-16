@@ -29,6 +29,12 @@ Object.defineProperty(exports, "FormValidator", {
     return _formValidation.default;
   }
 });
+Object.defineProperty(exports, "getData", {
+  enumerable: true,
+  get: function get() {
+    return _utils.getData;
+  }
+});
 Object.defineProperty(exports, "useTestHook", {
   enumerable: true,
   get: function get() {
@@ -169,6 +175,8 @@ var _nullCheck = _interopRequireDefault(require("./utils/nullCheck"));
 var _indianStates = _interopRequireDefault(require("./utils/indianStates"));
 
 var _formValidation = _interopRequireDefault(require("./utils/formValidation"));
+
+var _utils = require("./utils");
 
 var _hooks = require("./hooks");
 

@@ -1,6 +1,8 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable indent */
+import { useMemo } from 'react';
 import { bindActionCreators } from 'redux';
+import { useStore } from 'react-redux';
 // import { connect } from 'react-redux';
 import {
   ON_ERROR,
@@ -8,7 +10,7 @@ import {
   ON_LOADING,
   ON_TOAST,
 } from './commonReduxSagaConverter/commonConstants';
-import { newObject, generateTimeStamp } from './helpers';
+import { newObject, generateTimeStamp, typeOf } from './helpers';
 import {
   filterArrayToastEmptyHandler,
   filterArrayloadingHandler,
@@ -245,3 +247,42 @@ export const mapDispatchToProps = (
 //   null,
 //   mapDispatchToProps({ ...AuthenticationActions, ...DashboardActions }),
 // );
+
+export const useHook = (name, array = []) => {
+  const store = useStore();
+  const data = useMemo(
+    () => {
+      const state = safe(store, `.getState()[${name}]`);
+      if (state)
+        return array.reduce(
+          (acc, e) =>
+            typeOf(e) === 'object'
+              ? {
+                  ...acc,
+                  [e.name || e.key]: getData(
+                    safe(
+                      store,
+                      `.getState()[${name}][${e.key}]`,
+                      e.default || undefined,
+                      e.loader || false,
+                      Array.isArray(e.filter) ? e.filter : undefined,
+                    ),
+                  ),
+                }
+              : {
+                  ...acc,
+                  [e]: safe(store, `.getState()[${name}][${e}]`),
+                },
+          {},
+        );
+      return {};
+    },
+    array.map(e =>
+      safe(
+        store,
+        `.getState()[${name}][${typeOf(e) === 'object' ? e.key : e}]`,
+      ),
+    ),
+  );
+  return { ...data };
+};
