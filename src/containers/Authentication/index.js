@@ -160,9 +160,7 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
               reducerName,
             )(store.dispatch),
           });
-        return {
-          ...(data || {}),
-        };
+        return data || {};
       };
       return withConnect(WithHoc);
     }
