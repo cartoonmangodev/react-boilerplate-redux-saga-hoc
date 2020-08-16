@@ -38,6 +38,7 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
   reducer: reducerFunction,
   name: reducerName,
   axiosInterceptors,
+  useHook = false,
   // injectSaga,
   // injectReducer,
 } = {}) => {
@@ -137,12 +138,11 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       createReducer,
     );
     const authenticationSaga = injectSaga({ key: reducerName, saga });
-
     const withConnect = connect(
       mapStateToProps,
       mapDispatchToProps(componentActions, componentData, reducerName),
     );
-    if (nextJS)
+    if (nextJS) {
       WithHoc.getInitialProps = async props => {
         const { res, req, store, ...rest } = props.ctx || props;
         let data = {
@@ -164,12 +164,13 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
           ...(data || {}),
         };
       };
-    if (nextJS) return withConnect(WithHoc);
-    return compose(
-      withConnect,
-      authenticationReducer,
-      authenticationSaga,
-    )(WithHoc);
+      return withConnect(WithHoc);
+    }
+    return (useHook
+      ? compose(authenticationReducer, authenticationSaga)
+      : compose(withConnect, authenticationReducer, authenticationSaga))(
+      WithHoc,
+    );
   };
   if (nextJS)
     return {
@@ -180,7 +181,8 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
   if (getDefaultConfig)
     return {
       hoc,
-      ...componentData,
+      actions: { ...componentActions },
+      ...componentData[`${reducerName}_hoc`],
     };
   return hoc;
 };

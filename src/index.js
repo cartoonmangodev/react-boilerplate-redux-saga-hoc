@@ -4,7 +4,8 @@ export { default as IndianStates } from './utils/indianStates';
 // export * as Regex from './utils/regex';
 export { default as FormValidator } from './utils/formValidation';
 export { getData, useHook as useQueryHook } from './utils';
-export { useTestHook } from './hooks';
+export { useDispatch, useStore, useSelector } from 'react-redux';
+// export { useTestHook } from './hooks';
 export {
   cloneObject,
   newObject,
