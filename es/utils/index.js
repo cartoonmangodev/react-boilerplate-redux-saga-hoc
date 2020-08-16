@@ -202,19 +202,20 @@ var mapDispatchToProps = function mapDispatchToProps(actions, componentData, red
 
 exports.mapDispatchToProps = mapDispatchToProps;
 
-var useHook = function useHook(name) {
+var useHook = function useHook() {
+  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
   var array = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
   var store = (0, _reactRedux.useStore)();
   var data = (0, _react.useMemo)(function () {
     var state = safe(store, ".getState()[".concat(name, "]"));
-    if (state) return array.reduce(function (acc, e) {
+    if (state && Array.isArray(array) && array.length > 0) return array.reduce(function (acc, e) {
       return (0, _helpers.typeOf)(e) === 'object' ? _objectSpread({}, acc, _defineProperty({}, e.name || e.key, getData(safe(store, ".getState()[".concat(name, "][").concat(e.key, "]"), e.default || undefined, e.loader || false, Array.isArray(e.filter) ? e.filter : undefined)))) : _objectSpread({}, acc, _defineProperty({}, e, safe(store, ".getState()[".concat(name, "][").concat(e, "]"))));
     }, {});
     return {};
-  }, array.map(function (e) {
+  }, Array.isArray(array) && array.length > 0 && array.map(function (e) {
     return safe(store, ".getState()[".concat(name, "][").concat((0, _helpers.typeOf)(e) === 'object' ? e.key : e, "]"));
   }));
-  return _objectSpread({}, data);
+  return Array.isArray(array) && array.length > 0 ? _objectSpread({}, data) : safe(store, ".getState()[".concat(name, "]")) || safe(store, ".getState()") || {};
 };
 
 exports.useHook = useHook;
