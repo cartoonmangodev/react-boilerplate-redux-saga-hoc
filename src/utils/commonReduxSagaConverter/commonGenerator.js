@@ -33,7 +33,6 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 export default function({
   actionType = {},
-
   requestResponseHandler,
   axiosInterceptors,
 }) {
@@ -51,7 +50,7 @@ export default function({
         clearDataOnError = false,
         polling = false,
         errorParser = false,
-        responseErrorParser: isResponseErrorParser = false,
+        defaultErrorParser: isResponseErrorParser = false,
         delay: Delay = 8000,
         retry = 0,
         pollingCount = 'unlimited',

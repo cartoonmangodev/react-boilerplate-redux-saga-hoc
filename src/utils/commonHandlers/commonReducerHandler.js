@@ -107,7 +107,7 @@ const COMMON_HANDLER = (payload, data) => {
           (isFilter
             ? BindHandler(commonFilterHandler(customHandler))
             : BindHandler(customHandler)) || DATA;
-      else if (task.name === 'Dont-Update') return DATA;
+      else if (task.name === "Don't-Update-Data-Handler") return DATA;
       else
         DATA = isFilter
           ? BindHandler(commonFilterHandler(dataHandler))

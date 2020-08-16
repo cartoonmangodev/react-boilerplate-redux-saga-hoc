@@ -42,7 +42,7 @@ var dataHandler = function dataHandler(_ref) {
     return {
       data: function () {
         if (subKey.length > 0) {
-          var _oldCopyData = _objectSpread({}, oldData, {}, successData, _defineProperty({}, subKey[0], oldData[subKey[0]]));
+          var _oldCopyData = _objectSpread({}, oldData, {}, _checkIsNotObject(successData) ? {} : successData, _defineProperty({}, subKey[0], oldData[subKey[0]]));
 
           return (0, _helpers.updateIn)(_oldCopyData, subKey, function (_oldData) {
             if (clearData) return (0, _nullCheck.default)(successData, ".".concat(subKey.join('.')));

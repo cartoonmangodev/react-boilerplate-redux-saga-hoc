@@ -41,7 +41,7 @@ var infiniteHandler = function infiniteHandler(_ref) {
     return {
       data: function () {
         if (subKey.length > 0 && Array.isArray((0, _helpers.getIn)(oldData, subKey))) {
-          var _oldCopyData = _objectSpread({}, oldData, {}, successData, _defineProperty({}, subKey[0], oldData[subKey[0]])); // return _oldCopyData
+          var _oldCopyData = _objectSpread({}, oldData, {}, (0, _helpers.typeOf)(successData) === 'object' ? successData : {}, _defineProperty({}, subKey[0], oldData[subKey[0]])); // return _oldCopyData
 
 
           return (0, _helpers.updateIn)(_oldCopyData, subKey, function (_oldData) {
@@ -52,7 +52,7 @@ var infiniteHandler = function infiniteHandler(_ref) {
 
         var getData = Array.isArray(successData) ? successData : [];
         var appendData = Array.isArray(oldData) ? isAppendTop ? getData.concat(oldData) : oldData.concat(getData) : getData;
-        var newData = clearData && successData || Array.isArray(successData) && appendData || successData;
+        var newData = clearData ? successData : Array.isArray(successData) ? appendData : successData;
         return updateCallback ? updateCallback(oldData, successData) : newData;
       }(),
       error: false,

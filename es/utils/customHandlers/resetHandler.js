@@ -31,47 +31,7 @@ var resetHandler = function resetHandler(state, newState, _ref) {
       };
     }));
   });
-}; // export const filterArrayResetHandler = ({   state,
-//   newState,
-//   action,
-//   filter,
-//   customType = undefined, } = {}) => ({
-//   data: Data = {},
-// }) => ({
-//   data: (() => {
-//     if (filter && filter.some(fil => Array.isArray(fil))) {
-//       return filter.reduce(
-//         (accumulator, filterArray) =>
-//           updateIn(accumulator, _CheckFilter(filterArray), data =>
-//             _CheckFilter(filterArray).length > 0
-//               ? newObject(data, ({ toast = {} }) => ({
-//                   isInfinite,
-//                   toast: newObject(toast, {
-//                     message: '',
-//                     status: '',
-//                     isError: null,
-//                     key: '',
-//                   }),
-//                 }))
-//               : data,
-//           ),
-//         Data,
-//       );
-//     }
-//     return updateIn(Data, filter, data =>
-//       newObject(data, ({ toast = {} }) => ({
-//         isInfinite,
-//         toast: newObject(toast, {
-//           message: '',
-//           status: '',
-//           isError: null,
-//           key: '',
-//         }),
-//       })),
-//     );
-//   })(),
-// });
-
+};
 
 exports.resetHandler = resetHandler;
 
@@ -131,18 +91,7 @@ var filterArrayResetHandler = function filterArrayResetHandler(state, newState, 
                 lastUpdated: (0, _helpers.generateTimeStamp)()
               };
             });
-          }); // return updateIn(Data, filter, updateData =>
-          //   newObject(updateData, ({ data, toast, infiniteEnd }) => ({
-          //     data: (Array.isArray(data) && []) || {},
-          //     toast: newObject(toast, {
-          //       message: '',
-          //       status: '',
-          //     }),
-          //     isError: false,
-          //     infiniteEnd: typeof infiniteEnd === 'boolean' ? false : undefined,
-          //     lastUpdated: generateTimeStamp(),
-          //   })),
-          // );
+          });
         }()
       };
     }));
