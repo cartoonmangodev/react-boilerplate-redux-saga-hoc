@@ -104,7 +104,7 @@ var COMMON_HANDLER = function COMMON_HANDLER(payload, data) {
       return name === task.name;
     });
 
-    if (_handler) DATA = isFilter ? BindHandler((0, _customHandlers.commonFilterHandler)(_handler.handler)) : BindHandler(_handler.handler);else if (customHandler && task.name === 'Custom-Handler') DATA = (isFilter ? BindHandler((0, _customHandlers.commonFilterHandler)(customHandler)) : BindHandler(customHandler)) || DATA;else if (task.name === 'Dont-Update') return DATA;else DATA = isFilter ? BindHandler((0, _customHandlers.commonFilterHandler)(_customHandlers.dataHandler)) : BindHandler(_customHandlers.dataHandler);
+    if (_handler) DATA = isFilter ? BindHandler((0, _customHandlers.commonFilterHandler)(_handler.handler)) : BindHandler(_handler.handler);else if (customHandler && task.name === 'Custom-Handler') DATA = (isFilter ? BindHandler((0, _customHandlers.commonFilterHandler)(customHandler)) : BindHandler(customHandler)) || DATA;else if (task.name === "Don't-Update-Data-Handler") return DATA;else DATA = isFilter ? BindHandler((0, _customHandlers.commonFilterHandler)(_customHandlers.dataHandler)) : BindHandler(_customHandlers.dataHandler);
   });
   return DATA;
 };

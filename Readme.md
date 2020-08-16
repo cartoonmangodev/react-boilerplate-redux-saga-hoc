@@ -325,6 +325,45 @@ export default function App(props) {
 export default App;
 ```
 
+#Params
+
+## # task - `<Object>`
+
+|     Props      |              Description               |                                                                                                                           value                                                                                                                           | Default Value  |       type        |                                            usage                                             |
+| :------------: | :------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------: | :---------------: | :------------------------------------------------------------------------------------------: |
+|      name      |        Type of task to execute         | `Data-Handler` <br/> `Infinite-Handler` <br/>`Delete-Handler` <br/> `Update-Handler` <br/> `Update-Key-Handler` <br/>`Toggle-Key-Handler` <br/> `Splice-Data-Handler` <br/> `Delete-Key-Handler` <br/> `Don't-Update-Data-Handler` <br/> `Custom-Handler` | `Data-Handler` |     `string`      |                                  `{ name: 'Data-Handler' }`                                  |
+|   clearData    |       clear previous stored data       |                                                                                                                     `true` or `false`                                                                                                                     |    `false`     |     `boolean`     |                                    `{ clearData: true }`                                     |
+|     subKey     | for doing various tasks on deep object |                                                                                                                           `[]`                                                                                                                            |     `null`     |      `array`      |                              `{ subKey: ['data','filter-1'] }`                               |
+|     limit      |                                        |                                                                                                                         `number`                                                                                                                          |     `null`     |     `number`      |                          `{ name: 'Infinite-Handler', limit: 15 }`                           |
+|  isAppendTop   |                                        |                                                                                                                     `true` or `false`                                                                                                                     |    `false`     |     `boolean`     |                                   `{ isAppendTop: true }`                                    |
+|   deleteKey    |                                        |                                                                                                                           `[]`                                                                                                                            |     `null`     |      `array`      |                               `{ deleteKey: ['age','name'] }`                                |
+|       id       |                                        |                                                                                                                           `[]`                                                                                                                            |     `null`     |      `array`      |                                       `{ id: [1,2] }`                                        |
+|      key       |                                        |                                                                                                                         `string`                                                                                                                          |     `null`     |     `string`      |                                       `{ key: 'id' }`                                        |
+|   spliceKey    |                                        |                                                                                                                          `[2,4]`                                                                                                                          |     `null`     |      `array`      |                                    `{ spliceKey: [2,4] }`                                    |
+|   toggleKey    |                                        |                                                                                                                           `[]`                                                                                                                            |     `null`     |      `array`      |                               `{ toggleKey: ['age','name'] }`                                |
+|     values     |                                        |                                                                                                                        `[] or {}`                                                                                                                         |     `null`     | `array or object` |             `{values: {2: {name: 'ram'}}}` <br/> `{values: [{name: 'sundar'}]}`              |
+| updateCallback |                                        |                                                                                                                        `function`                                                                                                                         |     `null`     |    `function`     | `{updateCallback: (previousData,responseData) =>` <br/> `previousData.concat(responseData)}` |
+
+## # request - `<Object>`
+
+|        Props        |   value    |         Default Value         |   type   |                         usage                         |
+| :-----------------: | :--------: | :---------------------------: | :------: | :---------------------------------------------------: |
+|        query        |    `{}`    |             null              |  object  |                 `{query: { id: 20 }}`                 |
+|       params        |    `{}`    |             null              |  object  |                `{params: { id: 20 }}`                 |
+|       payload       |    `{}`    |             null              |  object  |                `{payload: { id: 20 }}`                |
+|     axiosConfig     |    `{}`    |             null              |  object  |                   `{headers: {} }`                    |
+|   paramSerializer   |    `{}`    | `{ arrayFormat: 'brackets' }` |  object  |       `{ arrayFormat: 'comma|bracket|index' }`        |
+|    asyncFunction    | `function` |             null              | function |    `{asyncFunction : async (url) => fetch(url)}`}     |
+| asyncFunctionParams |  `array`   |             null              |  array   | `{asyncFunctionParams: ['https://www.example.com/']}` |
+|        retry        |  `number`  |               0               |  number  |                     `{retry: 3}`                      |
+|     errorParser     | `function` |             null              | function |               `{errorParser: () => {}}`               |
+|       polling       | `boolean`  |             false             | boolean  |                   `{polling: true}`                   |
+|    pollingCount     |  `number`  |           Infinite            |  number  |                  `{pollingCount: 4}`                  |
+|        delay        |  `number`  |             8000              |  number  |                   `{delay: 10000}`                    |
+|  clearDataOnError   | `boolean`  |             false             | boolean  |              `{clearDataOnError: false}`              |
+|  errorDataHandling  | `boolean`  |             true              | boolean  |             `{errorDataHandling: false}`              |
+| defaultErrorParser  | `boolean`  |             false             | boolean  |             `{defaultErrorParser: true}`              |
+
 # Before Proceeding Further
 
 We already knows [redux](https://redux.js.org/) is a valuable tool for organising your state and also [redux-saga](https://redux-saga.js.org/) is a powerful middleware for handling side Effects.With the help of those two tools we have created a package for handling api calls and storing data in an organised way.
