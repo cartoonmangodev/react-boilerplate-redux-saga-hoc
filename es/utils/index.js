@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.useHook = exports.mapDispatchToProps = exports.getData = exports.commmonStateHandler = exports.responseErrorParser = void 0;
+exports.useActionsHook = exports.useHook = exports.mapDispatchToProps = exports.getData = exports.commmonStateHandler = exports.responseErrorParser = void 0;
 
 var _react = require("react");
 
@@ -43,6 +43,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 // import { componentActions as DashboardActions } from '../containers/Dashboard/actions';
 // import { componentActions as AuthenticationActions } from '../containers/Authentication/actions';
+var cache = {};
 var safe = _nullCheck.default;
 
 var responseErrorParser = function responseErrorParser() {
@@ -236,3 +237,21 @@ var useHook = function useHook() {
 };
 
 exports.useHook = useHook;
+
+var useActionsHook = function useActionsHook(name, actions) {
+  var _useState3 = (0, _react.useState)({}),
+      _useState4 = _slicedToArray(_useState3, 2),
+      dispatchAction = _useState4[0],
+      setDispatchAction = _useState4[1];
+
+  var dispatch = (0, _reactRedux.useDispatch)();
+  (0, _react.useEffect)(function () {
+    if (cache[name]) setDispatchAction(cache[name]);else {
+      cache[name] = (0, _redux.bindActionCreators)(actions, dispatch);
+      setDispatchAction(cache[name]);
+    }
+  }, []);
+  return dispatchAction;
+};
+
+exports.useActionsHook = useActionsHook;

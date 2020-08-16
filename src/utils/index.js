@@ -291,15 +291,15 @@ export const useHook = (name = null, array = []) => {
   return data;
 };
 
-export const useActionsHook = (name, actions) => {
+export const useActionsHook = (name, actions, isDev = true) => {
   const [dispatchAction, setDispatchAction] = useState({});
   const dispatch = useDispatch();
   useEffect(() => {
-    if (cache[name]) setDispatchAction(cache[name]);
+    if (cache[name] && !isDev) setDispatchAction(cache[name]);
     else {
       cache[name] = bindActionCreators(actions, dispatch);
       setDispatchAction(cache[name]);
     }
-  }, []);
+  }, [actions]);
   return dispatchAction;
 };
