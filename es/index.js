@@ -89,6 +89,12 @@ Object.defineProperty(exports, "toCapitalize", {
     return _helpers.toCapitalize;
   }
 });
+Object.defineProperty(exports, "typeOf", {
+  enumerable: true,
+  get: function get() {
+    return _helpers.typeOf;
+  }
+});
 Object.defineProperty(exports, "store", {
   enumerable: true,
   get: function get() {

@@ -26,10 +26,14 @@ import { getData, mapDispatchToProps } from '../../utils';
 import { commonConstants } from '../../index';
 const safe = nullcheck;
 
-export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
+export default ({
+  handlers = [],
+  nextJS = false,
+  createReducer = null,
+  getDefaultConfig = false,
+}) => ({
   apiEndPoints = {},
   initialState = {},
-  getDefaultConfig = false,
   dontReset: dontResetOnLogout = {},
   isMobile = false,
   saga: sagaFunction,

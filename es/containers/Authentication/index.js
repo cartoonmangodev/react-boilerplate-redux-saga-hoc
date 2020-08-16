@@ -82,6 +82,8 @@ var _default = function _default(_ref) {
         apiEndPoints = _ref2$apiEndPoints === void 0 ? {} : _ref2$apiEndPoints,
         _ref2$initialState = _ref2.initialState,
         initialState = _ref2$initialState === void 0 ? {} : _ref2$initialState,
+        _ref2$getDefaultConfi = _ref2.getDefaultConfig,
+        getDefaultConfig = _ref2$getDefaultConfi === void 0 ? false : _ref2$getDefaultConfi,
         _ref2$dontReset = _ref2.dontReset,
         dontResetOnLogout = _ref2$dontReset === void 0 ? {} : _ref2$dontReset,
         _ref2$isMobile = _ref2.isMobile,
@@ -235,6 +237,9 @@ var _default = function _default(_ref) {
         reducer: reducer
       }
     };
+    if (getDefaultConfig) return _objectSpread({
+      hoc: hoc
+    }, componentData);
     return hoc;
   };
 };
