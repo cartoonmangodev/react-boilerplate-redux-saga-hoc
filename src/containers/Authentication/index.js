@@ -29,6 +29,7 @@ const safe = nullcheck;
 export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
   apiEndPoints = {},
   initialState = {},
+  getDefaultConfig = false,
   dontReset: dontResetOnLogout = {},
   isMobile = false,
   saga: sagaFunction,
@@ -175,6 +176,11 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       hoc,
       saga,
       reducer: { name: reducerName, reducer },
+    };
+  if (getDefaultConfig)
+    return {
+      hoc,
+      ...componentData,
     };
   return hoc;
 };

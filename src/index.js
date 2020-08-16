@@ -14,6 +14,7 @@ export {
   updateIn,
   generateTimeStamp,
   toCapitalize,
+  typeOf,
 } from './utils/helpers';
 export { default as store, nextStore } from './utils/configureStore';
 export { commonConstants } from './utils/commonReduxSagaConverter/commonConstants';
