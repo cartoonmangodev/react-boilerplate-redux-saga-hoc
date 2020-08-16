@@ -248,43 +248,35 @@ export const mapDispatchToProps = (
 //   mapDispatchToProps({ ...AuthenticationActions, ...DashboardActions }),
 // );
 
-export const useHook = (name, array = []) => {
+export const useHook = (name = null, array = []) => {
   const store = useStore();
-  const data = useMemo(
-    () => {
-      const state = safe(store, `.getState()[${name}]`);
-      if (state)
-        return array.reduce(
-          (acc, e) =>
-            typeOf(e) === 'object'
-              ? {
-                  ...acc,
-                  [e.name || e.key]: getData(
-                    safe(
-                      store,
-                      `.getState()[${name}][${e.key}]`,
-                      e.default || undefined,
-                      e.loader || false,
-                      Array.isArray(e.filter) ? e.filter : undefined,
-                    ),
+  const data = useMemo(() => {
+    const state = safe(store, `.getState()[${name}]`);
+    if (state && Array.isArray(array) && array.length > 0)
+      return array.reduce(
+        (acc, e) =>
+          typeOf(e) === 'object'
+            ? {
+                ...acc,
+                [e.name || e.key]: getData(
+                  safe(
+                    store,
+                    `.getState()[${name}][${e.key}]`,
+                    e.default || undefined,
+                    e.loader || false,
+                    Array.isArray(e.filter) ? e.filter : undefined,
                   ),
-                }
-              : {
-                  ...acc,
-                  [e]: safe(store, `.getState()[${name}][${e}]`),
-                },
-          {},
-        );
-      return {};
-    },
-    array.map(e =>
-      safe(
-        store,
-        `.getState()[${name}][${typeOf(e) === 'object' ? e.key : e}]`,
-      ),
-    ),
-  );
+                ),
+              }
+            : {
+                ...acc,
+                [e]: safe(store, `.getState()[${name}][${e}]`),
+              },
+        {},
+      );
+    return {};
+  }, Array.isArray(array) && array.length > 0 && array.map(e => safe(store, `.getState()[${name}][${typeOf(e) === 'object' ? e.key : e}]`)));
   return Array.isArray(array) && array.length > 0
     ? { ...data }
-    : safe(store, `.getState()[${name}]`) || safe(store, `.getState()`);
+    : safe(store, `.getState()[${name}]`) || safe(store, `.getState()`) || {};
 };
