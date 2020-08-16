@@ -1,8 +1,9 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable indent */
-import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { useStore } from 'react-redux';
+import isEqual from 'lodash/isEqual';
 // import { connect } from 'react-redux';
 import {
   ON_ERROR,
@@ -250,44 +251,42 @@ export const mapDispatchToProps = (
 
 export const useHook = (name = null, array = []) => {
   const store = useStore();
-  const data = useMemo(() => {
-    const state = safe(store, `.getState()[${name}]`);
-    if (state && Array.isArray(array) && array.length > 0)
-      return array.reduce(
-        (acc, e) =>
-          typeOf(e) === 'object'
-            ? {
-                ...acc,
-                [e.name || e.key]: getData(
-                  safe(
-                    store,
-                    `.getState()[${name}][${e.key}]`,
+  const [data, setData] = useState({});
+  useEffect(() => {
+    const unSubscribe = store.subscribe(() => {
+      const state = safe(store, `.getState()[${name}]`);
+      if (state && Array.isArray(array) && array.length > 0) {
+        // eslint-disable-next-line consistent-return
+        // eslint-disable-next-line no-underscore-dangle
+        const _data = array.reduce(
+          (acc, e) =>
+            typeOf(e) === 'object'
+              ? {
+                  ...acc,
+                  [e.name || e.key]: safe(
+                    getData(
+                      safe(store, `.getState()[${name}][${e.key}]`),
+                      undefined,
+                      e.loader || false,
+                      Array.isArray(e.filter) ? e.filter : undefined,
+                    ),
+                    `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
                     e.default || undefined,
-                    e.loader || false,
-                    Array.isArray(e.filter) ? e.filter : undefined,
                   ),
-                ),
-              }
-            : {
-                ...acc,
-                [e]: safe(store, `.getState()[${name}][${e}]`),
-              },
-        {},
-      );
-    return {};
-  }, [
-    ...((Array.isArray(array) &&
-      array.length > 0 &&
-      array.map(e =>
-        safe(
-          store,
-          `.getState()[${name}][${typeOf(e) === 'object' ? e.key : e}]`,
-        ),
-      )) ||
-      []),
-    store,
-  ]);
-  return Array.isArray(array) && array.length > 0
-    ? { ...data }
-    : safe(store, `.getState()[${name}]`) || safe(store, `.getState()`) || {};
+                }
+              : {
+                  ...acc,
+                  [e]: safe(store, `.getState()[${name}][${e}]`),
+                },
+          {},
+        );
+        if (!isEqual(data, _data)) setData(_data);
+      } else
+        setData(
+          safe(store, `.getState()[${name}]`) || safe(store, `.getState()`),
+        );
+    });
+    return () => unSubscribe();
+  }, [store.subscribe]);
+  return data;
 };
