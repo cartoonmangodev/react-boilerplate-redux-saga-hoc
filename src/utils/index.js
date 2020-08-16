@@ -2,7 +2,7 @@
 /* eslint-disable indent */
 import { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
-import { useStore } from 'react-redux';
+import { useStore, useDispatch } from 'react-redux';
 import isEqual from 'lodash/isEqual';
 // import { connect } from 'react-redux';
 import {
@@ -22,7 +22,7 @@ import {
 import nullcheck from './nullCheck';
 // import { componentActions as DashboardActions } from '../containers/Dashboard/actions';
 // import { componentActions as AuthenticationActions } from '../containers/Authentication/actions';
-
+const cache = {};
 const safe = nullcheck;
 
 export const responseErrorParser = (data = {}) =>
@@ -289,4 +289,17 @@ export const useHook = (name = null, array = []) => {
     return () => unSubscribe();
   }, [store.subscribe]);
   return data;
+};
+
+export const useActionsHook = (name, actions) => {
+  const [dispatchAction, setDispatchAction] = useState({});
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (cache[name]) setDispatchAction(cache[name]);
+    else {
+      cache[name] = bindActionCreators(actions, dispatch);
+      setDispatchAction(cache[name]);
+    }
+  }, []);
+  return dispatchAction;
 };

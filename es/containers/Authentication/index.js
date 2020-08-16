@@ -215,7 +215,7 @@ var _default = function _default(_ref) {
                     data = _context.sent;
 
                   case 6:
-                    return _context.abrupt("return", _objectSpread({}, data || {}));
+                    return _context.abrupt("return", data || {});
 
                   case 7:
                   case "end":
@@ -236,6 +236,15 @@ var _default = function _default(_ref) {
       return (useHook ? (0, _redux.compose)(authenticationReducer, authenticationSaga) : (0, _redux.compose)(withConnect, authenticationReducer, authenticationSaga))(WithHoc);
     };
 
+    if (nextJS && (useHook || getDefaultConfig)) return _objectSpread({
+      hoc: hoc,
+      saga: saga,
+      reducer: {
+        name: reducerName,
+        reducer: reducer
+      },
+      actions: _objectSpread({}, componentActions)
+    }, componentData["".concat(reducerName, "_hoc")]);
     if (nextJS) return {
       hoc: hoc,
       saga: saga,
