@@ -284,5 +284,7 @@ export const useHook = (name, array = []) => {
       ),
     ),
   );
-  return { ...data };
+  return Array.isArray(array) && array.length > 0
+    ? { ...data }
+    : safe(store, `.getState()[${name}]`) || safe(store, `.getState()`);
 };
