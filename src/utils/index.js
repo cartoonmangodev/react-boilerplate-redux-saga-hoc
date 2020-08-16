@@ -255,7 +255,7 @@ export const useHook = (name = null, array = []) => {
     safe(store, `.getState()[${name}]`) || safe(store, `.getState()`),
   );
   useEffect(() => {
-    const unSubscribe = store.subscribe(() => {
+    const execute = () => {
       const state = safe(store, `.getState()[${name}]`);
       if (state && Array.isArray(array) && array.length > 0) {
         // eslint-disable-next-line consistent-return
@@ -287,6 +287,9 @@ export const useHook = (name = null, array = []) => {
         setData(
           safe(store, `.getState()[${name}]`) || safe(store, `.getState()`),
         );
+    };
+    const unSubscribe = store.subscribe(() => {
+      execute();
     });
     return () => unSubscribe();
   }, [store.subscribe]);
