@@ -37,7 +37,7 @@ export const dataHandler = ({
   stausCode: successDataStatusCode || statusCode,
   error: false,
   lastUpdated: generateTimeStamp(),
-  isInfinite: undefined,
-  infiniteEnd: undefined,
+  isInfinite: null,
+  infiniteEnd: null,
   isError: false,
 });

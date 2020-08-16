@@ -220,9 +220,9 @@ var useHook = function useHook() {
       return (0, _helpers.typeOf)(e) === 'object' ? _objectSpread({}, acc, _defineProperty({}, e.name || e.key, getData(safe(store, ".getState()[".concat(name, "][").concat(e.key, "]"), e.default || undefined, e.loader || false, Array.isArray(e.filter) ? e.filter : undefined)))) : _objectSpread({}, acc, _defineProperty({}, e, safe(store, ".getState()[".concat(name, "][").concat(e, "]"))));
     }, {});
     return {};
-  }, _toConsumableArray((Array.isArray(array) && array.length > 0 && array.map(function (e) {
+  }, [].concat(_toConsumableArray(Array.isArray(array) && array.length > 0 && array.map(function (e) {
     return safe(store, ".getState()[".concat(name, "][").concat((0, _helpers.typeOf)(e) === 'object' ? e.key : e, "]"));
-  }) || [], store)));
+  }) || []), [store]));
   return Array.isArray(array) && array.length > 0 ? _objectSpread({}, data) : safe(store, ".getState()[".concat(name, "]")) || safe(store, ".getState()") || {};
 };
 

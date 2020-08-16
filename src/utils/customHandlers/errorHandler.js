@@ -24,8 +24,8 @@ export const errorHandler = ({ errorData, clearDataOnError = false } = {}) => ({
   error: errorData || null,
   isError: true,
   lastUpdated: generateTimeStamp(),
-  isInfinite: undefined,
-  infiniteEnd: undefined,
+  isInfinite: null,
+  infiniteEnd: null,
 });
 
 const _CheckFilter = Filter =>
@@ -54,8 +54,8 @@ export const filterArrayErrorHandler = ({
                   isError: true,
                   statusCode: 'ERROR',
                   lastUpdated: generateTimeStamp(),
-                  isInfinite: undefined,
-                  infiniteEnd: undefined,
+                  isInfinite: null,
+                  infiniteEnd: null,
                 }))
               : data,
           ),
@@ -69,8 +69,8 @@ export const filterArrayErrorHandler = ({
         isError: true,
         statusCode: 'ERROR',
         lastUpdated: generateTimeStamp(),
-        isInfinite: undefined,
-        infiniteEnd: undefined,
+        isInfinite: null,
+        infiniteEnd: null,
       })),
     );
   })(),
