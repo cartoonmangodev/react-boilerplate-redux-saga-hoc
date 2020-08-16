@@ -251,7 +251,9 @@ export const mapDispatchToProps = (
 
 export const useHook = (name = null, array = []) => {
   const store = useStore();
-  const [data, setData] = useState({});
+  const [data, setData] = useState(
+    safe(store, `.getState()[${name}]`) || safe(store, `.getState()`),
+  );
   useEffect(() => {
     const unSubscribe = store.subscribe(() => {
       const state = safe(store, `.getState()[${name}]`);
