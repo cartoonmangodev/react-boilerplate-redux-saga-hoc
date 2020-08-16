@@ -4,7 +4,7 @@
  * Dashboard
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useStore } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 import axios from '../../config/axios';
@@ -178,11 +178,16 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       saga,
       reducer: { name: reducerName, reducer },
     };
-  if (getDefaultConfig)
+  if (getDefaultConfig || useHook) {
+    const store = useStore();
     return {
       hoc,
-      actions: { ...componentActions },
-      ...componentData[`${reducerName}_hoc`],
+      ...mapDispatchToProps(
+        componentActions,
+        componentData,
+        reducerName,
+      )(store.dispatch)[`${reducerName}_hoc`],
     };
+  }
   return hoc;
 };
