@@ -240,7 +240,7 @@ const AuthenticationHOC = HOC({
       url: 'https://jsonplaceholder.typicode.com/posts/',
       method: 'GET',
       responseStatusCode: [900],
-      responseStatusKey: 'code',
+      responseStatusCodeKey: 'code',
       responseDataKey: 'data',
       responseMessageKey: 'message',
     },
