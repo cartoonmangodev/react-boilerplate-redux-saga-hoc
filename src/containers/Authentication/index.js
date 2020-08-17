@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /* eslint-disable func-names */
 /* eslint-disable import/no-unresolved */
 /**
@@ -165,7 +166,14 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       return withConnect(WithHoc);
     }
     return (useHook
-      ? compose(authenticationReducer, authenticationSaga)
+      ? compose(
+          connect(
+            null,
+            mapDispatchToProps(componentActions, componentData, reducerName),
+          ),
+          authenticationReducer,
+          authenticationSaga,
+        )
       : compose(withConnect, authenticationReducer, authenticationSaga))(
       WithHoc,
     );
