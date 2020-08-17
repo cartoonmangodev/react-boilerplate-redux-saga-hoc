@@ -216,7 +216,7 @@ var useHook = function useHook() {
       setData = _useState2[1];
 
   (0, _react.useEffect)(function () {
-    var unSubscribe = store.subscribe(function () {
+    var execute = function execute() {
       var state = safe(store, ".getState()[".concat(name, "]"));
 
       if (state && Array.isArray(array) && array.length > 0) {
@@ -228,6 +228,10 @@ var useHook = function useHook() {
 
         if (!(0, _isEqual.default)(data, _data)) setData(_data);
       } else setData(safe(store, ".getState()[".concat(name, "]")) || safe(store, ".getState()"));
+    };
+
+    var unSubscribe = store.subscribe(function () {
+      execute();
     });
     return function () {
       return unSubscribe();

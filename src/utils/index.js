@@ -251,13 +251,12 @@ export const mapDispatchToProps = (
 
 export const useHook = (name = null, array = []) => {
   const store = useStore();
-  const [data, setData] = useState(
-    safe(store, `.getState()[${name}]`) || safe(store, `.getState()`),
-  );
+  const [data, setData] = useState({});
+  const [initial, setInitial] = useState(true);
   useEffect(() => {
     const execute = () => {
-      const state = safe(store, `.getState()[${name}]`);
-      if (state && Array.isArray(array) && array.length > 0) {
+      // const state = safe(store, `.getState()[${name}]`);
+      if (name && Array.isArray(array) && array.length > 0) {
         // eslint-disable-next-line consistent-return
         // eslint-disable-next-line no-underscore-dangle
         const _data = array.reduce(
@@ -282,17 +281,21 @@ export const useHook = (name = null, array = []) => {
                 },
           {},
         );
-        if (!isEqual(data, _data)) setData(_data);
-      } else
-        setData(
-          safe(store, `.getState()[${name}]`) || safe(store, `.getState()`),
-        );
+        if (!isEqual(_data, data)) {
+          setData(_data);
+        }
+      } else if (name) setData(safe(store, `.getState()[${name}]`));
+      else setData(safe(store, `.getState()`) || {});
     };
+    if (initial) {
+      execute();
+      setInitial(false);
+    }
     const unSubscribe = store.subscribe(() => {
       execute();
     });
     return () => unSubscribe();
-  }, [store.subscribe]);
+  }, []);
   return data;
 };
 
