@@ -23,6 +23,7 @@ import nullcheck from './nullCheck';
 // import { componentActions as DashboardActions } from '../containers/Dashboard/actions';
 // import { componentActions as AuthenticationActions } from '../containers/Authentication/actions';
 const cache = {};
+const cacheActions = {};
 const safe = nullcheck;
 
 export const responseErrorParser = (data = {}) =>
@@ -299,15 +300,15 @@ export const useHook = (name = null, array = []) => {
   return data;
 };
 
-export const useActionsHook = (name, actions, isDev = true) => {
+export const useActionsHook = (name, actions) => {
   const [dispatchAction, setDispatchAction] = useState({});
   const dispatch = useDispatch();
   useEffect(() => {
-    if (cache[name] && !isDev) setDispatchAction(cache[name]);
-    else {
+    if (!isEqual(cacheActions[name], actions)) {
+      cacheActions[name] = actions;
       cache[name] = bindActionCreators(actions, dispatch);
       setDispatchAction(cache[name]);
-    }
-  }, [actions]);
+    } else setDispatchAction(cache[name]);
+  }, [isEqual(cacheActions[name], actions)]);
   return dispatchAction;
 };
