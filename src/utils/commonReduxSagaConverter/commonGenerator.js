@@ -238,6 +238,20 @@ export default function({
             successStatus,
             successMessage,
           ));
+          let successCallbackResponse = null;
+          if (typeof successCallback === 'function')
+            successCallbackResponse = yield successCallback({
+              res: data,
+              data: data.data,
+              message: successMessage,
+              status: successStatus,
+            });
+          if (
+            successCallbackResponse &&
+            Object.prototype.toString.call(successCallbackResponse) ===
+              '[object Object]'
+          )
+            commonData.task = successCallbackResponse;
           const loader = yield call(requestResponseHandler, {
             data,
             type,
@@ -251,13 +265,7 @@ export default function({
               type,
               commonData,
             });
-          if (typeof successCallback === 'function')
-            yield successCallback({
-              res: data,
-              data: data.data,
-              message: successMessage,
-              status: successStatus,
-            });
+
           if (typeof logoutCallback === 'function')
             setTimeout(() => logoutCallback(data), 500);
         } else if (cancelTask && typeof source.cancel === 'function') {

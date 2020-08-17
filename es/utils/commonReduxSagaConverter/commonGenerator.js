@@ -107,7 +107,7 @@ function _default(_ref2) {
             count = 1;
             pollingRequestConfig = {};
             _loop = /*#__PURE__*/regeneratorRuntime.mark(function _loop() {
-              var axios, CancelToken, source, action, commonData, actionBind, request, requestData, _yield$race, postData, cancelTask, data, statusKey, _ref4, _ref4$data, _ref4$data$status, successStatus, _ref4$data$message, successMessage, loader, _ref5, customMethod, _ref6, _ref6$data, _ref6$data$status, _successStatus, _ref6$data$message, _successMessage, pollingRes, _ref7, _ref7$response, _ref7$response$data, _ref7$response$data2, errorData, _ref7$response$data$s, errorStatus, _ref7$response$data$m, errorMessage, _loader, Cancelled, _yield$race2, CancelPolling;
+              var axios, CancelToken, source, action, url, commonData, actionBind, request, requestData, _yield$race, postData, cancelTask, data, statusKey, _ref4, _ref4$data, _ref4$data$status, successStatus, _ref4$data$message, successMessage, loader, _ref5, customMethod, _ref6, _ref6$data, _ref6$data$status, _successStatus, _ref6$data$message, _successMessage, pollingRes, _ref7, _ref7$response, _ref7$response$data, _ref7$response$data2, errorData, _ref7$response$data$s, errorStatus, _ref7$response$data$m, errorMessage, _loader, Cancelled, _yield$race2, CancelPolling;
 
               return regeneratorRuntime.wrap(function _loop$(_context2) {
                 while (1) {
@@ -133,6 +133,13 @@ function _default(_ref2) {
                       });
 
                     case 10:
+                      url = '';
+
+                      if (typeof action.api === 'string') {
+                        url = action.api;
+                        action.api = {};
+                      }
+
                       commonData = _objectSpread({
                         payload: payload,
                         params: params,
@@ -153,73 +160,73 @@ function _default(_ref2) {
                       };
 
                       if (!(typeof action.error === 'function')) {
-                        _context2.next = 17;
+                        _context2.next = 19;
                         break;
                       }
 
-                      _context2.next = 15;
+                      _context2.next = 17;
                       return actionBind(action.error, constants.ON_ERROR);
 
-                    case 15:
-                      _context2.next = 17;
+                    case 17:
+                      _context2.next = 19;
                       return action.error = _context2.sent;
 
-                    case 17:
+                    case 19:
                       if (!(typeof action.success === 'function')) {
-                        _context2.next = 22;
+                        _context2.next = 24;
                         break;
                       }
 
-                      _context2.next = 20;
-                      return actionBind(action.success, constants.ON_SUCCESS);
-
-                    case 20:
                       _context2.next = 22;
-                      return action.success = _context2.sent;
+                      return actionBind(action.success, constants.ON_SUCCESS);
 
                     case 22:
                       _context2.next = 24;
+                      return action.success = _context2.sent;
+
+                    case 24:
+                      _context2.next = 26;
                       return _objectSpread({}, action.api || {}, {
                         cancelToken: source.token,
-                        url: action.api.url,
+                        url: action.api.url || url,
                         method: action.api.method || 'GET',
                         data: payload,
                         headers: headers
                       });
 
-                    case 24:
+                    case 26:
                       request = _context2.sent;
 
                       if (!action.effect) {
-                        _context2.next = 28;
+                        _context2.next = 30;
                         break;
                       }
 
-                      _context2.next = 28;
+                      _context2.next = 30;
                       return delete action.effect;
 
-                    case 28:
+                    case 30:
                       if (!action.actions) {
-                        _context2.next = 31;
+                        _context2.next = 33;
                         break;
                       }
 
-                      _context2.next = 31;
+                      _context2.next = 33;
                       return delete action.actions;
 
-                    case 31:
+                    case 33:
                       if (!((pollingRequestConfig && pollingRequestConfig.params || params) && typeof request.url === 'function')) {
-                        _context2.next = 35;
+                        _context2.next = 37;
                         break;
                       }
 
-                      _context2.next = 34;
+                      _context2.next = 36;
                       return request.url(pollingRequestConfig && pollingRequestConfig.params || params);
 
-                    case 34:
+                    case 36:
                       request.url = _context2.sent;
 
-                    case 35:
+                    case 37:
                       if (query || pollingRequestConfig && pollingRequestConfig.query) {
                         request.params = pollingRequestConfig && pollingRequestConfig.query || query; // eslint-disable-next-line no-loop-func
 
@@ -229,15 +236,15 @@ function _default(_ref2) {
                       }
 
                       if (!(process.env.NODE_ENV !== 'test' || !action.test)) {
-                        _context2.next = 39;
+                        _context2.next = 41;
                         break;
                       }
 
-                      _context2.next = 39;
+                      _context2.next = 41;
                       return delete request.headers;
 
-                    case 39:
-                      _context2.next = 41;
+                    case 41:
+                      _context2.next = 43;
                       return (0, _effects.call)(requestResponseHandler, {
                         type: type,
                         action: action,
@@ -247,37 +254,37 @@ function _default(_ref2) {
                         method: constants.ON_REQUEST
                       });
 
-                    case 41:
+                    case 43:
                       requestData = _context2.sent;
-                      _context2.next = 44;
+                      _context2.next = 46;
                       return request = requestData || request;
 
-                    case 44:
+                    case 46:
                       if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(request.method)) {
-                        _context2.next = 47;
+                        _context2.next = 49;
                         break;
                       }
 
-                      _context2.next = 47;
+                      _context2.next = 49;
                       return delete request.data;
 
-                    case 47:
+                    case 49:
                       if (request.effect) delete request.effect;
-                      _context2.prev = 48;
-                      _context2.next = 51;
+                      _context2.prev = 50;
+                      _context2.next = 53;
                       return (0, _effects.race)({
                         posts: typeof asyncFunction === 'function' ? _effects.call.apply(void 0, [asyncFunction].concat(_toConsumableArray(Array.isArray(pollingRequestConfig && pollingRequestConfig.asyncFunctionParams || asyncFunctionParams) ? pollingRequestConfig && pollingRequestConfig.asyncFunctionParams || asyncFunctionParams : []))) : (0, _effects.call)(axios, _objectSpread({}, request, {}, pollingRequestConfig && pollingRequestConfig.axiosConfig || axiosConfig)),
                         cancel: (0, _effects.take)(action.cancel)
                       });
 
-                    case 51:
+                    case 53:
                       _yield$race = _context2.sent;
                       postData = _yield$race.posts;
                       cancelTask = _yield$race.cancel;
                       data = postData;
 
                       if (!(postData && postData.data)) {
-                        _context2.next = 60;
+                        _context2.next = 62;
                         break;
                       }
 
@@ -292,7 +299,7 @@ function _default(_ref2) {
                       };
 
                       if (!(action.api.errorHandlerStatusCode && (action.api.errorHandlerStatusCode || []).includes(data.data.status))) {
-                        _context2.next = 60;
+                        _context2.next = 62;
                         break;
                       }
 
@@ -307,20 +314,20 @@ function _default(_ref2) {
                         }
                       });
 
-                    case 60:
+                    case 62:
                       if (!data) {
-                        _context2.next = 78;
+                        _context2.next = 80;
                         break;
                       }
 
                       _ref4 = data || {}, _ref4$data = _ref4.data;
                       _ref4$data = _ref4$data === void 0 ? {} : _ref4$data;
                       _ref4$data$status = _ref4$data.status, successStatus = _ref4$data$status === void 0 ? postData.status : _ref4$data$status, _ref4$data$message = _ref4$data.message, successMessage = _ref4$data$message === void 0 ? '' : _ref4$data$message;
-                      _context2.next = 66;
+                      _context2.next = 68;
                       return action.success = action.success.bind({}, successStatus, successMessage);
 
-                    case 66:
-                      _context2.next = 68;
+                    case 68:
+                      _context2.next = 70;
                       return (0, _effects.call)(requestResponseHandler, {
                         data: data,
                         type: type,
@@ -330,27 +337,27 @@ function _default(_ref2) {
                         method: constants.ON_SUCCESS
                       });
 
-                    case 68:
+                    case 70:
                       loader = _context2.sent;
 
                       if (!loader) {
-                        _context2.next = 72;
+                        _context2.next = 74;
                         break;
                       }
 
-                      _context2.next = 72;
+                      _context2.next = 74;
                       return (0, _effects.call)(loaderGenerator, {
                         type: type,
                         commonData: commonData
                       });
 
-                    case 72:
+                    case 74:
                       if (!(typeof successCallback === 'function')) {
-                        _context2.next = 75;
+                        _context2.next = 77;
                         break;
                       }
 
-                      _context2.next = 75;
+                      _context2.next = 77;
                       return successCallback({
                         res: data,
                         data: data.data,
@@ -358,31 +365,31 @@ function _default(_ref2) {
                         status: successStatus
                       });
 
-                    case 75:
+                    case 77:
                       if (typeof logoutCallback === 'function') setTimeout(function () {
                         return logoutCallback(data);
                       }, 500);
-                      _context2.next = 96;
+                      _context2.next = 98;
                       break;
 
-                    case 78:
+                    case 80:
                       if (!(cancelTask && typeof source.cancel === 'function')) {
-                        _context2.next = 89;
+                        _context2.next = 91;
                         break;
                       }
 
-                      _context2.next = 81;
+                      _context2.next = 83;
                       return source.cancel();
 
-                    case 81:
+                    case 83:
                       _ref5 = cancelTask || {}, customMethod = _ref5.response.method;
 
                       if (customMethod) {
-                        _context2.next = 85;
+                        _context2.next = 87;
                         break;
                       }
 
-                      _context2.next = 85;
+                      _context2.next = 87;
                       return (0, _effects.call)(requestResponseHandler, {
                         type: type,
                         action: action,
@@ -392,49 +399,49 @@ function _default(_ref2) {
                         axiosCancel: cancelTask
                       });
 
-                    case 85:
-                      _context2.next = 87;
+                    case 87:
+                      _context2.next = 89;
                       return (0, _effects.call)(loaderGenerator, {
                         type: type,
                         commonData: commonData
                       });
 
-                    case 87:
-                      _context2.next = 96;
+                    case 89:
+                      _context2.next = 98;
                       break;
 
-                    case 89:
+                    case 91:
                       if (!(process.env.NODE_ENV === 'test' && action.success)) {
-                        _context2.next = 94;
+                        _context2.next = 96;
                         break;
                       }
 
-                      _context2.next = 92;
+                      _context2.next = 94;
                       return (0, _effects.put)(action.success({
                         data: data
                       }));
 
-                    case 92:
-                      _context2.next = 96;
+                    case 94:
+                      _context2.next = 98;
                       break;
 
-                    case 94:
-                      _context2.next = 96;
+                    case 96:
+                      _context2.next = 98;
                       return (0, _effects.call)(loaderGenerator, {
                         type: type,
                         commonData: commonData
                       });
 
-                    case 96:
+                    case 98:
                       if (!(polling && typeof window !== 'undefined' && typeof pollingCallback === 'function')) {
-                        _context2.next = 104;
+                        _context2.next = 106;
                         break;
                       }
 
                       _ref6 = data || {}, _ref6$data = _ref6.data;
                       _ref6$data = _ref6$data === void 0 ? {} : _ref6$data;
                       _ref6$data$status = _ref6$data.status, _successStatus = _ref6$data$status === void 0 ? postData.status : _ref6$data$status, _ref6$data$message = _ref6$data.message, _successMessage = _ref6$data$message === void 0 ? '' : _ref6$data$message;
-                      _context2.next = 102;
+                      _context2.next = 104;
                       return (0, _effects.call)(pollingCallback, {
                         res: data,
                         data: data.data,
@@ -443,29 +450,29 @@ function _default(_ref2) {
                         count: count
                       });
 
-                    case 102:
+                    case 104:
                       pollingRes = _context2.sent;
                       if (typeof pollingRes === 'boolean') loop = pollingRes;else if (Object.prototype.toString.call(pollingRes) === '[object Object]') pollingRequestConfig = pollingRes;
 
-                    case 104:
+                    case 106:
                       if (!polling && retry) loop = false;
-                      _context2.next = 137;
+                      _context2.next = 139;
                       break;
 
-                    case 107:
-                      _context2.prev = 107;
-                      _context2.t0 = _context2["catch"](48);
+                    case 109:
+                      _context2.prev = 109;
+                      _context2.t0 = _context2["catch"](50);
                       console.error(_context2.t0);
 
                       if (!(!polling && retry && retry - 1 >= count)) {
-                        _context2.next = 113;
+                        _context2.next = 115;
                         break;
                       }
 
-                      _context2.next = 137;
+                      _context2.next = 139;
                       break;
 
-                    case 113:
+                    case 115:
                       if (process.env.NODE_ENV === 'test') console.log(_context2.t0);
                       _ref7 = _context2.t0 || {}, _ref7$response = _ref7.response;
                       _ref7$response = _ref7$response === void 0 ? {} : _ref7$response;
@@ -474,11 +481,11 @@ function _default(_ref2) {
                       _ref7$response$data2 = _ref7$response$data[action.api.errorDataKey || 'error'], errorData = _ref7$response$data2 === void 0 ? _context2.t0 && _context2.t0.response && _context2.t0.response.data || _context2.t0 && _context2.t0.response || '' : _ref7$response$data2, _ref7$response$data$s = _ref7$response$data.status, errorStatus = _ref7$response$data$s === void 0 ? _context2.t0.response && _context2.t0.response.data && (_context2.t0.response.data[action.api.errorStatusKey] || _context2.t0.response.status) : _ref7$response$data$s, _ref7$response$data$m = _ref7$response$data.message, errorMessage = _ref7$response$data$m === void 0 ? _context2.t0.response && _context2.t0.response.data && _context2.t0.response.data[action.api.errorMessageKey] || _context2.t0.response && _context2.t0.response.statusText || '' : _ref7$response$data$m;
 
                       if (!(typeof errorCallback === 'function')) {
-                        _context2.next = 122;
+                        _context2.next = 124;
                         break;
                       }
 
-                      _context2.next = 122;
+                      _context2.next = 124;
                       return errorCallback(_objectSpread({
                         error: _context2.t0,
                         errorData: isResponseErrorParser ? errorData && _typeof((0, _index.responseErrorParser)(errorData)) === 'object' && Object.keys((0, _index.responseErrorParser)(errorData) || {}).length > 0 ? (0, _index.responseErrorParser)(errorData) : errorData : errorData
@@ -497,24 +504,24 @@ function _default(_ref2) {
                         errors: errorData
                       }));
 
-                    case 122:
-                      _context2.next = 124;
+                    case 124:
+                      _context2.next = 126;
                       return action.error = action.error.bind({}, errorStatus, errorMessage);
 
-                    case 124:
+                    case 126:
                       if (!(axios.isCancel(_context2.t0) && action.cancel)) {
-                        _context2.next = 131;
+                        _context2.next = 133;
                         break;
                       }
 
-                      _context2.next = 127;
+                      _context2.next = 129;
                       return (0, _effects.call)(loaderGenerator, {
                         type: type,
                         commonData: commonData
                       });
 
-                    case 127:
-                      _context2.next = 129;
+                    case 129:
+                      _context2.next = 131;
                       return (0, _effects.call)(requestResponseHandler, {
                         type: type,
                         action: action,
@@ -523,12 +530,12 @@ function _default(_ref2) {
                         method: constants.ON_CANCEL_ERROR
                       });
 
-                    case 129:
-                      _context2.next = 137;
+                    case 131:
+                      _context2.next = 139;
                       break;
 
-                    case 131:
-                      _context2.next = 133;
+                    case 133:
+                      _context2.next = 135;
                       return (0, _effects.call)(requestResponseHandler, {
                         error: {
                           response: {
@@ -546,34 +553,34 @@ function _default(_ref2) {
                         method: constants.ON_ERROR
                       });
 
-                    case 133:
+                    case 135:
                       _loader = _context2.sent;
 
                       if (!_loader) {
-                        _context2.next = 137;
+                        _context2.next = 139;
                         break;
                       }
 
-                      _context2.next = 137;
+                      _context2.next = 139;
                       return (0, _effects.call)(loaderGenerator, {
                         type: type,
                         commonData: commonData
                       });
 
-                    case 137:
-                      _context2.prev = 137;
-                      _context2.next = 140;
+                    case 139:
+                      _context2.prev = 139;
+                      _context2.next = 142;
                       return (0, _effects.cancelled)();
 
-                    case 140:
+                    case 142:
                       Cancelled = _context2.sent;
 
                       if (!(typeof finalCallback === 'function')) {
-                        _context2.next = 144;
+                        _context2.next = 146;
                         break;
                       }
 
-                      _context2.next = 144;
+                      _context2.next = 146;
                       return finalCallback({
                         type: type,
                         action: action,
@@ -581,8 +588,8 @@ function _default(_ref2) {
                         Cancelled: Cancelled
                       });
 
-                    case 144:
-                      _context2.next = 146;
+                    case 146:
+                      _context2.next = 148;
                       return (0, _effects.call)(requestResponseHandler, {
                         type: type,
                         action: action,
@@ -592,59 +599,59 @@ function _default(_ref2) {
                         cancelled: Cancelled
                       });
 
-                    case 146:
+                    case 148:
                       if (!Cancelled) {
-                        _context2.next = 151;
+                        _context2.next = 153;
                         break;
                       }
 
                       if (!(typeof source.cancel === 'function')) {
-                        _context2.next = 150;
+                        _context2.next = 152;
                         break;
                       }
 
-                      _context2.next = 150;
+                      _context2.next = 152;
                       return source.cancel();
 
-                    case 150:
+                    case 152:
                       loop = false;
 
-                    case 151:
-                      return _context2.finish(137);
+                    case 153:
+                      return _context2.finish(139);
 
-                    case 152:
+                    case 154:
                       if (!(polling && typeof window !== 'undefined' && loop)) {
-                        _context2.next = 165;
+                        _context2.next = 167;
                         break;
                       }
 
                       if (!(pollingCount === 'unlimited' || pollingCount - 1 >= count)) {
-                        _context2.next = 162;
+                        _context2.next = 164;
                         break;
                       }
 
                       count += 1;
-                      _context2.next = 157;
+                      _context2.next = 159;
                       return (0, _effects.race)({
                         posts: (0, _effects.call)(delay, Delay),
                         cancel: (0, _effects.take)(action.cancel)
                       });
 
-                    case 157:
+                    case 159:
                       _yield$race2 = _context2.sent;
                       CancelPolling = _yield$race2.cancel;
                       if (CancelPolling) loop = false;
-                      _context2.next = 163;
+                      _context2.next = 165;
                       break;
 
-                    case 162:
+                    case 164:
                       loop = false;
 
-                    case 163:
-                      _context2.next = 166;
+                    case 165:
+                      _context2.next = 168;
                       break;
 
-                    case 165:
+                    case 167:
                       if (!polling && retry && loop) {
                         if (retry - 1 >= count) {
                           loop = true;
@@ -652,12 +659,12 @@ function _default(_ref2) {
                         } else loop = false;
                       } else loop = false;
 
-                    case 166:
+                    case 168:
                     case "end":
                       return _context2.stop();
                   }
                 }
-              }, _loop, null, [[48, 107, 137, 152]]);
+              }, _loop, null, [[50, 109, 139, 154]]);
             });
 
           case 9:
