@@ -112,11 +112,11 @@ export default function({
           action.error,
           constants.ON_ERROR,
         ));
-      if (typeof action.success === 'function')
-        yield (action.success = yield actionBind(
-          action.success,
-          constants.ON_SUCCESS,
-        ));
+      // if (typeof action.success === 'function')
+      // yield (action.success = yield actionBind(
+      //   action.success,
+      //   constants.ON_SUCCESS,
+      // ));
       let request = yield {
         ...(action.api || {}),
         cancelToken: source.token,
@@ -233,11 +233,7 @@ export default function({
               message: successMessage = '',
             } = {},
           } = data || {};
-          yield (action.success = action.success.bind(
-            {},
-            successStatus,
-            successMessage,
-          ));
+
           let successCallbackResponse = null;
           if (typeof successCallback === 'function')
             successCallbackResponse = yield successCallback({
@@ -253,6 +249,21 @@ export default function({
               '[object Object]'
           )
             commonData.task = successCallbackResponse;
+          if (typeof action.success === 'function')
+            yield (action.success = action.success.bind(
+              {},
+              type,
+              constants.ON_SUCCESS,
+              commonData,
+              successStatus,
+              successMessage,
+            ));
+          // yield (action.success = action.success.bind(
+          //   {},
+          //   successStatus,
+          //   successMessage,
+          // ));
+
           const loader = yield call(requestResponseHandler, {
             data,
             type,
