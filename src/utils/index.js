@@ -250,12 +250,11 @@ export const mapDispatchToProps = (
 //   mapDispatchToProps({ ...AuthenticationActions, ...DashboardActions }),
 // );
 
-let previousData = {};
-export const useHook = (name = null, array = []) => {
+const previousData = {};
+export const useHook = (name = null, array = [], key) => {
   const store = useStore();
   const [data, setData] = useState({});
   const [initial, setInitial] = useState(true);
-  const [key] = useState(generateTimeStamp());
   const execute = () => {
     // console.log(previousData, "data");
     // const state = safe(store, `.getState()[${name}]`);
@@ -288,13 +287,13 @@ export const useHook = (name = null, array = []) => {
       );
     } else if (name) _data = safe(store, `.getState()[${name}]`);
     else _data = safe(store, `.getState()`) || {};
-    if (!isEqual(_data, previousData[key])) {
-      previousData[key] = _data;
+    if (!isEqual(_data, previousData[key || name])) {
+      previousData[key || name] = _data;
       setData(_data);
     }
   };
   useEffect(() => {
-    previousData[key] = {};
+    previousData[key || name] = {};
     if (initial) {
       execute();
       setInitial(false);
