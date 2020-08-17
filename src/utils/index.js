@@ -250,53 +250,55 @@ export const mapDispatchToProps = (
 //   mapDispatchToProps({ ...AuthenticationActions, ...DashboardActions }),
 // );
 
+let previousData = {};
 export const useHook = (name = null, array = []) => {
   const store = useStore();
   const [data, setData] = useState({});
   const [initial, setInitial] = useState(true);
-  useEffect(() => {
-    const execute = () => {
-      // const state = safe(store, `.getState()[${name}]`);
+  const execute = () => {
+    // console.log(previousData, "data");
+    // const state = safe(store, `.getState()[${name}]`);
+    // eslint-disable-next-line no-underscore-dangle
+    let _data = {};
+    if (name && Array.isArray(array) && array.length > 0) {
+      // eslint-disable-next-line consistent-return
       // eslint-disable-next-line no-underscore-dangle
-      let _data = {};
-      if (name && Array.isArray(array) && array.length > 0) {
-        // eslint-disable-next-line consistent-return
-        // eslint-disable-next-line no-underscore-dangle
-        _data = array.reduce(
-          (acc, e) =>
-            typeOf(e) === 'object'
-              ? {
-                  ...acc,
-                  [e.name || e.key]: safe(
-                    getData(
-                      safe(store, `.getState()[${name}][${e.key}]`),
-                      undefined,
-                      e.loader || false,
-                      Array.isArray(e.filter) ? e.filter : undefined,
-                    ),
-                    `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
-                    e.default || undefined,
+      _data = array.reduce(
+        (acc, e) =>
+          typeOf(e) === 'object'
+            ? {
+                ...acc,
+                [e.name || e.key]: safe(
+                  getData(
+                    safe(store, `.getState()[${name}][${e.key}]`),
+                    undefined,
+                    e.loader || false,
+                    Array.isArray(e.filter) ? e.filter : undefined,
                   ),
-                }
-              : {
-                  ...acc,
-                  [e]: safe(store, `.getState()[${name}][${e}]`),
-                },
-          {},
-        );
-      } else if (name) _data = safe(store, `.getState()[${name}]`);
-      else _data = safe(store, `.getState()`) || {};
-      if (!isEqual(_data, data)) {
-        setData(_data);
-      }
-    };
+                  `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
+                  e.default || undefined,
+                ),
+              }
+            : {
+                ...acc,
+                [e]: safe(store, `.getState()[${name}][${e}]`),
+              },
+        {},
+      );
+    } else if (name) _data = safe(store, `.getState()[${name}]`);
+    else _data = safe(store, `.getState()`) || {};
+    if (!isEqual(_data, previousData)) {
+      previousData = _data;
+      console.log('hello');
+      setData(_data);
+    }
+  };
+  useEffect(() => {
     if (initial) {
       execute();
       setInitial(false);
     }
-    const unSubscribe = store.subscribe(() => {
-      execute();
-    });
+    const unSubscribe = store.subscribe(execute);
     return () => unSubscribe();
   }, []);
   return data;
