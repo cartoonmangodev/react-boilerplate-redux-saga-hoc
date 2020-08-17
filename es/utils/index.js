@@ -205,6 +205,7 @@ var mapDispatchToProps = function mapDispatchToProps(actions, componentData, red
 
 
 exports.mapDispatchToProps = mapDispatchToProps;
+var previousData = {};
 
 var useHook = function useHook() {
   var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -221,33 +222,34 @@ var useHook = function useHook() {
       initial = _useState4[0],
       setInitial = _useState4[1];
 
-  (0, _react.useEffect)(function () {
-    var execute = function execute() {
-      // const state = safe(store, `.getState()[${name}]`);
+  var execute = function execute() {
+    // console.log(previousData, "data");
+    // const state = safe(store, `.getState()[${name}]`);
+    // eslint-disable-next-line no-underscore-dangle
+    var _data = {};
+
+    if (name && Array.isArray(array) && array.length > 0) {
+      // eslint-disable-next-line consistent-return
       // eslint-disable-next-line no-underscore-dangle
-      var _data = {};
+      _data = array.reduce(function (acc, e) {
+        return (0, _helpers.typeOf)(e) === 'object' ? _objectSpread({}, acc, _defineProperty({}, e.name || e.key, safe(getData(safe(store, ".getState()[".concat(name, "][").concat(e.key, "]")), undefined, e.loader || false, Array.isArray(e.filter) ? e.filter : undefined), "".concat(e.query && (0, _helpers.typeOf)(e.query) === 'string' ? e.query : ''), e.default || undefined))) : _objectSpread({}, acc, _defineProperty({}, e, safe(store, ".getState()[".concat(name, "][").concat(e, "]"))));
+      }, {});
+    } else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
 
-      if (name && Array.isArray(array) && array.length > 0) {
-        // eslint-disable-next-line consistent-return
-        // eslint-disable-next-line no-underscore-dangle
-        _data = array.reduce(function (acc, e) {
-          return (0, _helpers.typeOf)(e) === 'object' ? _objectSpread({}, acc, _defineProperty({}, e.name || e.key, safe(getData(safe(store, ".getState()[".concat(name, "][").concat(e.key, "]")), undefined, e.loader || false, Array.isArray(e.filter) ? e.filter : undefined), "".concat(e.query && (0, _helpers.typeOf)(e.query) === 'string' ? e.query : ''), e.default || undefined))) : _objectSpread({}, acc, _defineProperty({}, e, safe(store, ".getState()[".concat(name, "][").concat(e, "]"))));
-        }, {});
-      } else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
+    if (!(0, _isEqual.default)(_data, previousData)) {
+      previousData = _data;
+      console.log('hello');
+      setData(_data);
+    }
+  };
 
-      if (!(0, _isEqual.default)(_data, data)) {
-        setData(_data);
-      }
-    };
-
+  (0, _react.useEffect)(function () {
     if (initial) {
       execute();
       setInitial(false);
     }
 
-    var unSubscribe = store.subscribe(function () {
-      execute();
-    });
+    var unSubscribe = store.subscribe(execute);
     return function () {
       return unSubscribe();
     };
