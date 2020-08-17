@@ -178,7 +178,7 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       WithHoc,
     );
   };
-  if (nextJS && (useHook || getDefaultConfig))
+  if (nextJS && getDefaultConfig)
     return {
       hoc,
       saga,
@@ -192,7 +192,7 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       saga,
       reducer: { name: reducerName, reducer },
     };
-  if (getDefaultConfig || useHook) {
+  if (getDefaultConfig) {
     return {
       hoc,
       actions: { ...componentActions },

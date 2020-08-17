@@ -233,7 +233,7 @@ var _default = function _default(_ref) {
         return withConnect(WithHoc);
       }
 
-      return (useHook ? (0, _redux.compose)(authenticationReducer, authenticationSaga) : (0, _redux.compose)(withConnect, authenticationReducer, authenticationSaga))(WithHoc);
+      return (useHook ? (0, _redux.compose)((0, _reactRedux.connect)(null, (0, _utils.mapDispatchToProps)(componentActions, componentData, reducerName)), authenticationReducer, authenticationSaga) : (0, _redux.compose)(withConnect, authenticationReducer, authenticationSaga))(WithHoc);
     };
 
     if (nextJS && (useHook || getDefaultConfig)) return _objectSpread({
