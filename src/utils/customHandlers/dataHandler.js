@@ -34,7 +34,7 @@ export const dataHandler = ({
       ? successData
       : newObject(oldData, successData);
   })(),
-  stausCode: successDataStatusCode || statusCode,
+  statusCode: successDataStatusCode || statusCode,
   error: false,
   lastUpdated: generateTimeStamp(),
   isInfinite: null,

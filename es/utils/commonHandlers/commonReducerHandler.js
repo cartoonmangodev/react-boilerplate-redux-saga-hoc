@@ -57,6 +57,9 @@ var HANDLERS = [{
 }, {
   name: 'Splice-Data-Handler',
   handler: _customHandlers.spliceHandler
+}, {
+  name: "Don't-Update-Data-Handler",
+  handler: _customHandlers.dontUpdateDataHandler
 }];
 
 var CheckCustomHanderFormat = function CheckCustomHanderFormat(_handler) {
