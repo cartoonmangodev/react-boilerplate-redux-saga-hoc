@@ -82,6 +82,11 @@ export default function({
         success: action.success || action.actions[constants.SUCCESS],
         customTask: action.custom || action.actions[constants.CUSTOM],
       });
+      let url = '';
+      if (typeof action.api === 'string') {
+        url = action.api;
+        action.api = {};
+      }
       const commonData = {
         payload,
         params,
@@ -115,7 +120,7 @@ export default function({
       let request = yield {
         ...(action.api || {}),
         cancelToken: source.token,
-        url: action.api.url,
+        url: action.api.url || url,
         method: action.api.method || 'GET',
         data: payload,
         headers,
