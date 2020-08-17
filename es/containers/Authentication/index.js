@@ -236,7 +236,7 @@ var _default = function _default(_ref) {
       return (useHook ? (0, _redux.compose)((0, _reactRedux.connect)(null, (0, _utils.mapDispatchToProps)(componentActions, componentData, reducerName)), authenticationReducer, authenticationSaga) : (0, _redux.compose)(withConnect, authenticationReducer, authenticationSaga))(WithHoc);
     };
 
-    if (nextJS && (useHook || getDefaultConfig)) return _objectSpread({
+    if (nextJS && getDefaultConfig) return _objectSpread({
       hoc: hoc,
       saga: saga,
       reducer: {
@@ -254,7 +254,7 @@ var _default = function _default(_ref) {
       }
     };
 
-    if (getDefaultConfig || useHook) {
+    if (getDefaultConfig) {
       return _objectSpread({
         hoc: hoc,
         actions: _objectSpread({}, componentActions)

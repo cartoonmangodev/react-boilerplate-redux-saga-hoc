@@ -257,10 +257,12 @@ export const useHook = (name = null, array = []) => {
   useEffect(() => {
     const execute = () => {
       // const state = safe(store, `.getState()[${name}]`);
+      // eslint-disable-next-line no-underscore-dangle
+      let _data = {};
       if (name && Array.isArray(array) && array.length > 0) {
         // eslint-disable-next-line consistent-return
         // eslint-disable-next-line no-underscore-dangle
-        const _data = array.reduce(
+        _data = array.reduce(
           (acc, e) =>
             typeOf(e) === 'object'
               ? {
@@ -282,11 +284,11 @@ export const useHook = (name = null, array = []) => {
                 },
           {},
         );
-        if (!isEqual(_data, data)) {
-          setData(_data);
-        }
-      } else if (name) setData(safe(store, `.getState()[${name}]`));
-      else setData(safe(store, `.getState()`) || {});
+      } else if (name) _data = safe(store, `.getState()[${name}]`);
+      else _data = safe(store, `.getState()`) || {};
+      if (!isEqual(_data, data)) {
+        setData(_data);
+      }
     };
     if (initial) {
       execute();
