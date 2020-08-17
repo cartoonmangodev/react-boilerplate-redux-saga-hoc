@@ -15,4 +15,5 @@ export { resetHandler, filterArrayResetHandler } from './resetHandler';
 export { updateKeyHandler } from './updateKeyHandler';
 export { toggleKeyHandler } from './toggleKeyHandler';
 export { dataHandler } from './dataHandler';
+export { dontUpdateDataHandler } from './dont-update-Handler';
 export { spliceHandler } from './spliceHandler';

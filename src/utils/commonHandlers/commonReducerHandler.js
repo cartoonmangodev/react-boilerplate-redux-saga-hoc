@@ -19,6 +19,7 @@ import {
   updateHandler,
   errorHandler,
   updateKeyHandler,
+  dontUpdateDataHandler,
 } from '../customHandlers';
 
 const HANDLERS = [
@@ -53,6 +54,10 @@ const HANDLERS = [
   {
     name: 'Splice-Data-Handler',
     handler: spliceHandler,
+  },
+  {
+    name: "Don't-Update-Data-Handler",
+    handler: dontUpdateDataHandler,
   },
 ];
 
