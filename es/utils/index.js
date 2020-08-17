@@ -44,6 +44,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 // import { componentActions as DashboardActions } from '../containers/Dashboard/actions';
 // import { componentActions as AuthenticationActions } from '../containers/Authentication/actions';
 var cache = {};
+var cacheActions = {};
 var safe = _nullCheck.default;
 
 var responseErrorParser = function responseErrorParser() {
@@ -254,8 +255,6 @@ var useHook = function useHook() {
 exports.useHook = useHook;
 
 var useActionsHook = function useActionsHook(name, actions) {
-  var isDev = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-
   var _useState5 = (0, _react.useState)({}),
       _useState6 = _slicedToArray(_useState5, 2),
       dispatchAction = _useState6[0],
@@ -263,11 +262,12 @@ var useActionsHook = function useActionsHook(name, actions) {
 
   var dispatch = (0, _reactRedux.useDispatch)();
   (0, _react.useEffect)(function () {
-    if (cache[name] && !isDev) setDispatchAction(cache[name]);else {
+    if (!(0, _isEqual.default)(cacheActions[name], actions)) {
+      cacheActions[name] = actions;
       cache[name] = (0, _redux.bindActionCreators)(actions, dispatch);
       setDispatchAction(cache[name]);
-    }
-  }, [actions]);
+    } else setDispatchAction(cache[name]);
+  }, [(0, _isEqual.default)(cacheActions[name], actions)]);
   return dispatchAction;
 };
 

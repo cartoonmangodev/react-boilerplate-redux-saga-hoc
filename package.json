@@ -48,7 +48,10 @@
   "license": "MIT",
   "peerDependencies": {
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "redux": "^4.0.1",
+    "redux-saga": "0.16.2",
+    "react-redux": "^7.0.2"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -60,9 +63,6 @@
     "prop-types": "^15.7.2",
     "query-string": "^5.0.1",
     "react-is": "^16.8.6",
-    "react-redux": "^7.0.2",
-    "redux": "^4.0.0",
-    "reselect": "^4.0.0",
     "serialize-javascript": "^3.1.0"
   },
   "devDependencies": {
@@ -95,6 +95,8 @@
     "react-testing-library": "^5.9.0",
     "redux": "^4.0.1",
     "redux-saga": "0.16.2",
+    "react-redux": "^7.0.2",
+    "reselect": "^4.0.0",
     "rimraf": "^2.6.3",
     "rollup": "^1.8.0",
     "rollup-plugin-babel": "^4.3.2",
