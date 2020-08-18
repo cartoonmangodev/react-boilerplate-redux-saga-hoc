@@ -40,29 +40,48 @@ yarn add react-boilerplate-redux-saga-hoc
 
 > ### **Note:** Before proceeding further.[Please read the detail documentation from here](https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs/)
 
-## Why we created this hoc?
+## # Before Start
 
-we are repeatedly creating constants, reducer, actions, saga whenever we want to call the api.Actually we are doing the same thing again and again that will make us to feel disconnected from coding.To avoid that, we have created a hoc for you to handle those repeated things.
+### 1. Why we created this hoc?
 
-## Do i need basic knowledge of redux-saga to use this hoc?
+---
 
-No need to have basic knowledge about redux-saga.We are using saga to handle api calls,because saga is a great library for handling all the side effects.
+    we are repeatedly creating constants, reducer, actions, saga whenever we want to make the API call.
+    We are doing the same thing again and again that will make most of the developers feel disconnected from coding.
+    To avoid that, we have created a Hoc for you to handle those repeated things.
 
-## Who can use this hoc?
+### 2. Do i need the basic knowledge about redux-saga to use this hoc?
 
-A person who want's to do development faster and also don't want to create constants, reducer, saga, actions again and again.
+---
+
+    No need to have basic knowledge about redux-saga.
+    We are using redux-saga to handle API calls because Redux-Saga is a great library for handling all the side effects.
+
+### 3. Who can use this hoc?
+
+---
+
+    A person who wants to do development faster and also who doesn't want to create constants, reducer, saga, actions repeatedly.
 
 ## # Overview
 
-React Boilerplate Redux Saga HOC is a hoc for handling api calls as well as mataintaing redux state.With the help of this hoc no need to worry about handling multipe api calls.Because when you connect this hoc with the component it will create constants, reducer, saga, actions and also provides helper function to call those api as well as manupulating the state.
+    React Boilerplate Redux-Saga HOC is a Hoc for handling API calls as well as maintain redux state.
+    With the help of this Hoc no need to worry about handling multiple API calls.
+    Because when you connect this Hoc with the component it will automatically create constants, reducer, saga, actions for you.
+    And also provides a method to call the API as well as manipulating the state.
 
-No need create constants, saga, reducer, actions everytime when you create a project or when you want to call the api.Just connect this hoc to the component and forget about creating reducer, saga, actions, constants.Hoc will do all things for you.
+###
 
-It also handles success, errors, loader, canceling api calls when you are unmounting the component.Most of the developer failed to cancel the calls while unmounting component.This will create unwanted network traffic as well as unwanted storage space.No worry hoc will provide a method for canceling api as well as clearing those unwanted data.
+    It also handles success, errors, loader, canceling API calls when you are unmounting the component.
+    Most of the developers failed to cancel the API calls while unmounting the component.
+    That will create unwanted network traffic and also affect the performance of the application.
+    No worry Hoc will handle those things.
 
-All you need to do is just connect this hoc to your component and add the api configuration thats it.You are ready to call the api.No matter how many api's hoc will handle for you.
+###
 
-This package also supports for both React and React native.So no need to worry about basic configuration and also no seperate coding need.Just use the configuration on both react and react-native.
+    This package also supports both React and React native.
+    So no need to worry about basic configuration and also no separate coding needed.
+    Just use the configuration on both react and react-native.
 
 <!-- ## # Contents
 
@@ -303,9 +322,10 @@ function basicExample(props) {
 
   /* useQuery hook for getting data from the reducer */
 
-  const {
-    [TEST_API]: { loader, data, lastUpdated, isError, error, toast },
-  } = useQuery(reducerName, [TEST_API]);
+  const { loader, data, lastUpdated, isError, error, toast } = useQuery(
+    reducerName,
+    TEST_API,
+  );
 
   useEffect(() => {
     TEST_API_CALL();
