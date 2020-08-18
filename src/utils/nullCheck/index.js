@@ -65,7 +65,7 @@ const errorLog = () => {
 
 const nullCheck = (
   Error,
-  obj,
+  obj = {},
   path,
   def,
   callBack,
@@ -91,26 +91,10 @@ const nullCheck = (
   );
   const parent = propNames.splice(0, 1);
   if (!obj || typeof obj !== 'object' || Object.keys(obj).length === 0) {
-    //     if (errorDisplay) {
-    if (typeof obj === 'object' && obj) {
-      // console.log(obj);
-      // console.log(
-      //   `%cRoot Object should contain minimum of one key : %c ${path}`,
-      //   'background: #000; color: orange; font-size: 12px;',
-      //   'background: #000; color: red; font-size: 12px;',
-      // );
-    } else {
-      console.log(obj);
-      console.log(
-        obj,
-        `%cRoot should be Array or Object : %c ${path}`,
-        'background: #000; color: orange; font-size: 12px;',
-        'background: #000; color: red; font-size: 12px;',
-      );
-    }
-    errorLog(new Error());
-    const _tempData = typeof obj === 'object' && obj ? obj : returnDefaultData;
-    return typeof callBack === 'function' ? callBack(_tempData) : _tempData;
+    if (errorDisplay) errorLog(new Error());
+    return typeof callBack === 'function'
+      ? callBack(returnDefaultData)
+      : returnDefaultData;
   }
   let data = obj;
   let error = parent;
