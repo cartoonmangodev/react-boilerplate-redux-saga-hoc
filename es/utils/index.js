@@ -229,7 +229,7 @@ var useHook = function useHook() {
     var _data = {};
 
     var _checkFilter = function _checkFilter(e) {
-      return e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : null : null;
+      return e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : undefined : undefined;
     };
 
     if (name && Array.isArray(array) && array.length > 0) {

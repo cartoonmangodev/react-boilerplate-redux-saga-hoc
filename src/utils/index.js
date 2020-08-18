@@ -269,44 +269,42 @@ export const useHook = (name = null, array = [], config = {}) => {
           ? [e.filter]
           : undefined
         : undefined;
-    if (name && Array.isArray(array) && array.length > 0) {
+    const _getData = (e, isString) =>
+      safe(
+        getData(
+          safe(store, `.getState()[${name}][${isString ? array : e.key}]`),
+          e.query ? undefined : e.default || undefined,
+          e.initialLoaderState || false,
+          _checkFilter(e),
+        ),
+        `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
+        e.query ? e.default || undefined : undefined,
+      );
+    if (
+      name &&
+      ((Array.isArray(array) && array.length > 0) ||
+        (typeOf(array) === 'object' && Object.keys(array).length > 0))
+    ) {
       // eslint-disable-next-line consistent-return
       // eslint-disable-next-line no-underscore-dangle
-      _data = array.reduce(
+      _data = (typeOf(array) === 'object' ? [array] : array).reduce(
         (acc, e) =>
           typeOf(e) === 'object'
-            ? {
-                ...acc,
-                [e.name || e.key]: safe(
-                  getData(
-                    safe(store, `.getState()[${name}][${e.key}]`),
-                    e.query ? undefined : e.default || undefined,
-                    e.initialLoaderState || false,
-                    _checkFilter(e),
-                  ),
-                  `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
-                  e.query ? e.default || undefined : undefined,
-                ),
-              }
+            ? typeOf(array) === 'object'
+              ? _getData(e)
+              : {
+                  ...acc,
+                  [e.name || e.key]: _getData(e),
+                }
+            : typeOf(array) === 'object'
+            ? safe(store, `.getState()[${name}][${e}]`)
             : {
                 ...acc,
                 [e]: safe(store, `.getState()[${name}][${e}]`),
               },
         {},
       );
-    } else if (typeof array === 'string')
-      _data = safe(
-        getData(
-          safe(store, `.getState()[${name}][${array}]`),
-          config.query ? undefined : config.default || undefined,
-          config.initialLoaderState || false,
-          _checkFilter(config),
-        ),
-        `${
-          config.query && typeOf(config.query) === 'string' ? config.query : ''
-        }`,
-        config.query ? config.default || undefined : undefined,
-      );
+    } else if (typeof array === 'string') _data = _getData(config, true);
     else if (name) _data = safe(store, `.getState()[${name}]`);
     else _data = safe(store, `.getState()`) || {};
     const index = previousDataKey.indexOf(_key);
