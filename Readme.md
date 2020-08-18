@@ -206,7 +206,7 @@ This package also supports for both React and React native.So no need to worry a
 
 ## # Basic usage
 
-## # Store Configuration
+### # Store Configuration
 
     Note:
     - No need to configure store seperately.
@@ -318,6 +318,48 @@ function basicExample(props) {
 export default compose(AuthHoc)(basicExample);
 ```
 
+1. **This is the image from Redux Store for initial state after connecting hoc to the component**
+
+![  ](./images/4.png)
+
+### **# Things to Remember**
+
+    - The image which we seeing above are the two endpoints which we created before.
+    - Hoc will create Constants, Reducer, Saga, Actions for You.
+    - No Need worry about creating seperate actions, reducers for every end-points.It will handle by itsself.
+    - Just provide the configuration.Hoc will handle all the task for you.
+
+2. **This is the image from Console where hoc will provide actions, constants for handling tasks**
+
+![  ](./images/6.png)
+
+### **# Things to Remember**
+
+    - Hoc will create 3 actions for you for handling api calls,handing data..etc
+    - REGISTER_API_CALL: ƒ () - for handling api calls
+    - REGISTER_API_CANCEL: ƒ () - for handling api cancel request
+    - REGISTER_API_CUSTOM_TASK ƒ () - for handling custom task without doing api calls
+    - CALL, CANCEL, CUSTOM_TASK will be created for every api end points
+
+1. **state from Redux Store before api gets success or failure**
+
+![  ](./images/1.png)
+
+### **# Things to Remember**
+
+    - Loader will change to true if api call triggers
+    - Toast will reset to initial state
+
+4. **This is state from Redux Store after api gets success**
+
+![  ](./images/3.png)
+
+### **# Things to Remember**
+
+    - Loader will change to false if api call gets success or failure
+    - Toast will be stored into to toast key
+    - Data will be stored into the data key
+
 ### # using useQuery hook in different ways
 
 ```js
@@ -383,48 +425,6 @@ const data = useQuery(reducerName, TEST_API, {
 const data = useQuery(); // Don't use this use this until its required it will render the component every time reducer change
 const data = useQuery(reducerName); // Don't use this until its required it will render the component every time reducer data change
 ```
-
-1. **This is the image from Redux Store for initial state after connecting hoc to the component**
-
-![  ](./images/4.png)
-
-### **# Things to Remember**
-
-    - The image which we seeing above are the two endpoints which we created before.
-    - Hoc will create Constants, Reducer, Saga, Actions for You.
-    - No Need worry about creating seperate actions, reducers for every end-points.It will handle by itsself.
-    - Just provide the configuration.Hoc will handle all the task for you.
-
-2. **This is the image from Console where hoc will provide actions, constants for handling tasks**
-
-![  ](./images/6.png)
-
-### **# Things to Remember**
-
-    - Hoc will create 3 actions for you for handling api calls,handing data..etc
-    - REGISTER_API_CALL: ƒ () - for handling api calls
-    - REGISTER_API_CANCEL: ƒ () - for handling api cancel request
-    - REGISTER_API_CUSTOM_TASK ƒ () - for handling custom task without doing api calls
-    - CALL, CANCEL, CUSTOM_TASK will be created for every api end points
-
-1. **state from Redux Store before api gets success or failure**
-
-![  ](./images/1.png)
-
-### **# Things to Remember**
-
-    - Loader will change to true if api call triggers
-    - Toast will reset to initial state
-
-4. **This is state from Redux Store after api gets success**
-
-![  ](./images/3.png)
-
-### **# Things to Remember**
-
-    - Loader will change to false if api call gets success or failure
-    - Toast will be stored into to toast key
-    - Data will be stored into the data key
 
 #Params
 
