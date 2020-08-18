@@ -228,13 +228,17 @@ var useHook = function useHook() {
     // eslint-disable-next-line no-underscore-dangle
     var _data = {};
 
+    var _checkFilter = function _checkFilter(e) {
+      return e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : null : null;
+    };
+
     if (name && Array.isArray(array) && array.length > 0) {
       // eslint-disable-next-line consistent-return
       // eslint-disable-next-line no-underscore-dangle
       _data = array.reduce(function (acc, e) {
-        return (0, _helpers.typeOf)(e) === 'object' ? _objectSpread({}, acc, _defineProperty({}, e.name || e.key, safe(getData(safe(store, ".getState()[".concat(name, "][").concat(e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, Array.isArray(e.filter) ? e.filter : undefined), "".concat(e.query && (0, _helpers.typeOf)(e.query) === 'string' ? e.query : ''), e.query ? e.default || undefined : undefined))) : _objectSpread({}, acc, _defineProperty({}, e, safe(store, ".getState()[".concat(name, "][").concat(e, "]"))));
+        return (0, _helpers.typeOf)(e) === 'object' ? _objectSpread({}, acc, _defineProperty({}, e.name || e.key, safe(getData(safe(store, ".getState()[".concat(name, "][").concat(e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e)), "".concat(e.query && (0, _helpers.typeOf)(e.query) === 'string' ? e.query : ''), e.query ? e.default || undefined : undefined))) : _objectSpread({}, acc, _defineProperty({}, e, safe(store, ".getState()[".concat(name, "][").concat(e, "]"))));
       }, {});
-    } else if (typeof array === 'string') _data = safe(getData(safe(store, ".getState()[".concat(name, "][").concat(array, "]")), config.query ? undefined : config.default || undefined, config.initialLoaderState || false, Array.isArray(config.filter) ? config.filter : undefined), "".concat(config.query && (0, _helpers.typeOf)(config.query) === 'string' ? config.query : ''), config.query ? config.default || undefined : undefined);else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
+    } else if (typeof array === 'string') _data = safe(getData(safe(store, ".getState()[".concat(name, "][").concat(array, "]")), config.query ? undefined : config.default || undefined, config.initialLoaderState || false, _checkFilter(config)), "".concat(config.query && (0, _helpers.typeOf)(config.query) === 'string' ? config.query : ''), config.query ? config.default || undefined : undefined);else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
 
     var index = previousDataKey.indexOf(_key);
 

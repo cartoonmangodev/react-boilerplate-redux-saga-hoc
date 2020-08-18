@@ -267,8 +267,8 @@ export const useHook = (name = null, array = [], config = {}) => {
           ? e.filter
           : typeof e.filter === 'string'
           ? [e.filter]
-          : null
-        : null;
+          : undefined
+        : undefined;
     if (name && Array.isArray(array) && array.length > 0) {
       // eslint-disable-next-line consistent-return
       // eslint-disable-next-line no-underscore-dangle
