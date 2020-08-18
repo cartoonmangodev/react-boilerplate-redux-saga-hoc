@@ -211,6 +211,7 @@ var previousData = {};
 var useHook = function useHook() {
   var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
   var array = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var store = (0, _reactRedux.useStore)();
 
   var _useState = (0, _react.useState)({}),
@@ -223,13 +224,17 @@ var useHook = function useHook() {
       _key = _useState4[0];
 
   var execute = function execute() {
+    // const state = safe(store, `.getState()[${name}]`);
+    // eslint-disable-next-line no-underscore-dangle
     var _data = {};
 
     if (name && Array.isArray(array) && array.length > 0) {
+      // eslint-disable-next-line consistent-return
+      // eslint-disable-next-line no-underscore-dangle
       _data = array.reduce(function (acc, e) {
         return (0, _helpers.typeOf)(e) === 'object' ? _objectSpread({}, acc, _defineProperty({}, e.name || e.key, safe(getData(safe(store, ".getState()[".concat(name, "][").concat(e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, Array.isArray(e.filter) ? e.filter : undefined), "".concat(e.query && (0, _helpers.typeOf)(e.query) === 'string' ? e.query : ''), e.query ? e.default || undefined : undefined))) : _objectSpread({}, acc, _defineProperty({}, e, safe(store, ".getState()[".concat(name, "][").concat(e, "]"))));
       }, {});
-    } else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
+    } else if (typeof array === 'string') _data = safe(getData(safe(store, ".getState()[".concat(name, "][").concat(array, "]")), config.query ? undefined : config.default || undefined, config.initialLoaderState || false, Array.isArray(config.filter) ? config.filter : undefined), "".concat(config.query && (0, _helpers.typeOf)(config.query) === 'string' ? config.query : ''), config.query ? config.default || undefined : undefined);else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
 
     var index = previousDataKey.indexOf(_key);
 

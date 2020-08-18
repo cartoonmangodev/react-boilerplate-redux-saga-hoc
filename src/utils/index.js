@@ -261,6 +261,14 @@ export const useHook = (name = null, array = [], config = {}) => {
     // const state = safe(store, `.getState()[${name}]`);
     // eslint-disable-next-line no-underscore-dangle
     let _data = {};
+    const _checkFilter = e =>
+      e.filter
+        ? Array.isArray(e.filter)
+          ? e.filter
+          : typeof e.filter === 'string'
+          ? [e.filter]
+          : null
+        : null;
     if (name && Array.isArray(array) && array.length > 0) {
       // eslint-disable-next-line consistent-return
       // eslint-disable-next-line no-underscore-dangle
@@ -274,7 +282,7 @@ export const useHook = (name = null, array = [], config = {}) => {
                     safe(store, `.getState()[${name}][${e.key}]`),
                     e.query ? undefined : e.default || undefined,
                     e.initialLoaderState || false,
-                    Array.isArray(e.filter) ? e.filter : undefined,
+                    _checkFilter(e),
                   ),
                   `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
                   e.query ? e.default || undefined : undefined,
@@ -292,7 +300,7 @@ export const useHook = (name = null, array = [], config = {}) => {
           safe(store, `.getState()[${name}][${array}]`),
           config.query ? undefined : config.default || undefined,
           config.initialLoaderState || false,
-          Array.isArray(config.filter) ? config.filter : undefined,
+          _checkFilter(config),
         ),
         `${
           config.query && typeOf(config.query) === 'string' ? config.query : ''
