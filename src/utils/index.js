@@ -253,13 +253,17 @@ export const mapDispatchToProps = (
 
 const previousDataKey = [];
 const previousData = {};
-export const useHook = (name = null, array = []) => {
+export const useHook = (name = null, array = [], config = {}) => {
   const store = useStore();
   const [data, setData] = useState({});
   const [_key] = useState({});
   const execute = () => {
+    // const state = safe(store, `.getState()[${name}]`);
+    // eslint-disable-next-line no-underscore-dangle
     let _data = {};
     if (name && Array.isArray(array) && array.length > 0) {
+      // eslint-disable-next-line consistent-return
+      // eslint-disable-next-line no-underscore-dangle
       _data = array.reduce(
         (acc, e) =>
           typeOf(e) === 'object'
@@ -282,7 +286,20 @@ export const useHook = (name = null, array = []) => {
               },
         {},
       );
-    } else if (name) _data = safe(store, `.getState()[${name}]`);
+    } else if (typeof array === 'string')
+      _data = safe(
+        getData(
+          safe(store, `.getState()[${name}][${array}]`),
+          config.query ? undefined : config.default || undefined,
+          config.initialLoaderState || false,
+          Array.isArray(config.filter) ? config.filter : undefined,
+        ),
+        `${
+          config.query && typeOf(config.query) === 'string' ? config.query : ''
+        }`,
+        config.query ? config.default || undefined : undefined,
+      );
+    else if (name) _data = safe(store, `.getState()[${name}]`);
     else _data = safe(store, `.getState()`) || {};
     const index = previousDataKey.indexOf(_key);
     if (!isEqual(_data, previousData[index])) {
