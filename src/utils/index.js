@@ -255,6 +255,7 @@ export const useHook = (name = null, array = [], key) => {
   const store = useStore();
   const [data, setData] = useState({});
   const [initial, setInitial] = useState(true);
+  const [_key] = useState(generateTimeStamp());
   const execute = () => {
     // console.log(previousData, "data");
     // const state = safe(store, `.getState()[${name}]`);
@@ -272,7 +273,7 @@ export const useHook = (name = null, array = [], key) => {
                   getData(
                     safe(store, `.getState()[${name}][${e.key}]`),
                     undefined,
-                    e.loader || false,
+                    e.initialLoaderState || false,
                     Array.isArray(e.filter) ? e.filter : undefined,
                   ),
                   `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
@@ -287,13 +288,13 @@ export const useHook = (name = null, array = [], key) => {
       );
     } else if (name) _data = safe(store, `.getState()[${name}]`);
     else _data = safe(store, `.getState()`) || {};
-    if (!isEqual(_data, previousData[key || name])) {
-      previousData[key || name] = _data;
+    if (!isEqual(_data, previousData[`${key || name}_${_key}`])) {
+      previousData[`${key || name}_${_key}`] = _data;
       setData(_data);
     }
   };
   useEffect(() => {
-    previousData[key || name] = {};
+    previousData[`${key || name}_${_key}`] = {};
     if (initial) {
       execute();
       setInitial(false);
