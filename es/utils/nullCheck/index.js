@@ -69,7 +69,11 @@ var errorLog = function errorLog() {
  */
 
 
-var nullCheck = function nullCheck(Error, obj, path, def, callBack) {
+var nullCheck = function nullCheck(Error) {
+  var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var path = arguments.length > 2 ? arguments[2] : undefined;
+  var def = arguments.length > 3 ? arguments[3] : undefined;
+  var callBack = arguments.length > 4 ? arguments[4] : undefined;
   var func = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : [];
   var errorDisplay = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
   var returnDefaultData = def || null;
@@ -90,23 +94,8 @@ var nullCheck = function nullCheck(Error, obj, path, def, callBack) {
   var parent = propNames.splice(0, 1);
 
   if (!obj || _typeof(obj) !== 'object' || Object.keys(obj).length === 0) {
-    //     if (errorDisplay) {
-    if (_typeof(obj) === 'object' && obj) {// console.log(obj);
-      // console.log(
-      //   `%cRoot Object should contain minimum of one key : %c ${path}`,
-      //   'background: #000; color: orange; font-size: 12px;',
-      //   'background: #000; color: red; font-size: 12px;',
-      // );
-    } else {
-      console.log(obj);
-      console.log(obj, "%cRoot should be Array or Object : %c ".concat(path), 'background: #000; color: orange; font-size: 12px;', 'background: #000; color: red; font-size: 12px;');
-    }
-
-    errorLog(new Error());
-
-    var _tempData = _typeof(obj) === 'object' && obj ? obj : returnDefaultData;
-
-    return typeof callBack === 'function' ? callBack(_tempData) : _tempData;
+    if (errorDisplay) errorLog(new Error());
+    return typeof callBack === 'function' ? callBack(returnDefaultData) : returnDefaultData;
   }
 
   var data = obj;

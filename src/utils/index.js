@@ -272,12 +272,12 @@ export const useHook = (name = null, array = [], key) => {
                 [e.name || e.key]: safe(
                   getData(
                     safe(store, `.getState()[${name}][${e.key}]`),
-                    undefined,
+                    e.query ? undefined : e.default || undefined,
                     e.initialLoaderState || false,
                     Array.isArray(e.filter) ? e.filter : undefined,
                   ),
                   `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
-                  e.default || undefined,
+                  e.query ? e.default || undefined : undefined,
                 ),
               }
             : {
