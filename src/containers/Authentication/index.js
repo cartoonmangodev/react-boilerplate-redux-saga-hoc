@@ -93,6 +93,7 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       initialState,
       axios: axiosInterceptors || axios,
       resetState,
+      reducerName,
     },
   };
   // eslint-disable-next-line no-unused-vars
