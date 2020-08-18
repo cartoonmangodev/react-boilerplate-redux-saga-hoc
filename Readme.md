@@ -329,10 +329,17 @@ function basicExample(props) {
 
   useEffect(() => {
     TEST_API_CALL();
-    return () => TEST_API_CANCEL(); /* for cancelling api calls on unmounting */
+    /* for cancelling api calls on unmounting */
+    return () => TEST_API_CANCEL();
   }, []);
 
-  return <div>{data.map({ title }(<li>{title}</li>))}</div>;
+  return (
+    <ul>
+      {data.map(({ title, id }) => (
+        <li key={id}>{title}</li>
+      ))}
+    </ul>
+  );
 }
 
 export default compose(AuthHoc)(basicExample);
