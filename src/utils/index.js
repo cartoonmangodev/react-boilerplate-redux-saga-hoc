@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable indent */
 import { useState, useEffect } from 'react';
@@ -250,20 +251,15 @@ export const mapDispatchToProps = (
 //   mapDispatchToProps({ ...AuthenticationActions, ...DashboardActions }),
 // );
 
+const previousDataKey = [];
 const previousData = {};
-export const useHook = (name = null, array = [], key) => {
+export const useHook = (name = null, array = []) => {
   const store = useStore();
   const [data, setData] = useState({});
-  const [initial, setInitial] = useState(true);
-  const [_key] = useState(generateTimeStamp());
+  const [_key] = useState({});
   const execute = () => {
-    // console.log(previousData, "data");
-    // const state = safe(store, `.getState()[${name}]`);
-    // eslint-disable-next-line no-underscore-dangle
     let _data = {};
     if (name && Array.isArray(array) && array.length > 0) {
-      // eslint-disable-next-line consistent-return
-      // eslint-disable-next-line no-underscore-dangle
       _data = array.reduce(
         (acc, e) =>
           typeOf(e) === 'object'
@@ -288,19 +284,23 @@ export const useHook = (name = null, array = [], key) => {
       );
     } else if (name) _data = safe(store, `.getState()[${name}]`);
     else _data = safe(store, `.getState()`) || {};
-    if (!isEqual(_data, previousData[`${key || name}_${_key}`])) {
-      previousData[`${key || name}_${_key}`] = _data;
+    const index = previousDataKey.indexOf(_key);
+    if (!isEqual(_data, previousData[index])) {
+      // previousData[`${key || name}_${_key}`] = _data;
+      previousData[index] = _data;
       setData(_data);
     }
   };
   useEffect(() => {
-    previousData[`${key || name}_${_key}`] = {};
-    if (initial) {
-      execute();
-      setInitial(false);
-    }
+    const { length } = previousDataKey;
+    previousDataKey.push(_key);
+    previousData[length] = {};
+    execute();
     const unSubscribe = store.subscribe(execute);
-    return () => unSubscribe();
+    return () => {
+      delete previousData[length];
+      unSubscribe();
+    };
   }, []);
   return data;
 };

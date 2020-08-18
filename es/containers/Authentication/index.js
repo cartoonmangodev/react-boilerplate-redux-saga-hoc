@@ -144,7 +144,8 @@ var _default = function _default(_ref) {
       constants: constants,
       initialState: initialState,
       axios: axiosInterceptors || _axios.default,
-      resetState: resetState
+      resetState: resetState,
+      reducerName: reducerName
     }); // eslint-disable-next-line no-unused-vars
 
 
