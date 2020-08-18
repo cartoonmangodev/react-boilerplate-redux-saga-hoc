@@ -206,100 +206,6 @@ This package also supports for both React and React native.So no need to worry a
 
 ## # Basic usage
 
-```js
-/** App.js **/
-
-import React, { useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { Provider } from 'react-redux';
-import { compose } from 'redux';
-
-import {
-  HOC as HocConfigure,
-  commonConstants,
-  store as configureStore,
-} from 'react-boilerplate-redux-saga-hoc';
-
-const initialState = {};
-
-const connected_react_router_enable = false; // By default it will be False.
-/*
-Note: Enable this true if you are using this package in your app https://www.npmjs.com/package (connected-react-router)
-Note: Please dont't enable to true if you using react-native
-Note: React Boilerplate by default using connected-react-router so you can enable to true if you are using react boilerplate https://github.com/react-boilerplate/react-boilerplate
-*/
-const store = configureStore(initialState, connected_react_router_enable);
-const HOC = HocConfigure({ handlers: [] });
-/* Note: You can pass custom handler in HocConfigure.You will learn more about handlers in later below  */
-const AuthenticationHOC = HOC({
-  initialState: {
-    profile: {},
-  },
-  apiEndPoints: {
-    TEST_API: {
-      url: 'https://jsonplaceholder.typicode.com/posts/',
-      method: 'GET',
-      responseStatusCode: [900],
-      responseStatusCodeKey: 'code',
-      responseDataKey: 'data',
-      responseMessageKey: 'message',
-    },
-    REGISTER_API: {
-      url: `users/user-signup/`,
-      method: 'POST',
-    },
-  },
-  name: 'Auth',
-});
-
-const CustomComponent = compose(AuthenticationHOC)(props => {
-  const {
-    ON_SUCCESS,
-    ON_UNMOUNT,
-    ON_ERROR,
-    ON_LOADING,
-    ON_TOAST,
-  } = commonConstants;
-
-  const {
-    Auth_data: { TEST_API, REGISTER_API },
-    Auth_hoc: {
-      actions: { TEST_API_CUSTOM_TASK, TEST_API_CALL, TEST_API_CANCEL },
-    },
-    getData,
-  } = props;
-
-  useEffect(() => {
-    TEST_API_CALL();
-    return () => {
-      TEST_API_CANCEL(ON_UNMOUNT);
-    };
-  }, []);
-
-  const { loader, data } = useMemo(() => getData(TEST_API, [], true), [
-    TEST_API,
-  ]);
-
-  return (
-    <div>
-      {data.map(({ title }) => (
-        <li>{title}</li>
-      ))}
-    </div>
-  );
-});
-
-export default function App(props) {
-  return (
-    <Provider store={store}>
-      <CustomComponent />
-    </Provider>
-  );
-}
-
-export default App;
-```
-
 ## # Store Configuration
 
     Note:
@@ -324,6 +230,201 @@ export default function App(props) {
 
 export default App;
 ```
+
+### # creating config file
+
+```js
+/* config.js */
+import { HOC as HocConfigure } from 'react-boilerplate-redux-saga-hoc';
+
+const HOC = HocConfigure({
+  handlers: [],
+});
+
+const TEST_API =
+  'https://jsonplaceholder.typicode.com/posts/'; /* Default method GET */
+
+const REGISTER_API = { url: '/user/register', method: 'POST' };
+
+// const TEST_POSTS_API = {
+//   url: "https://jsonplaceholder.typicode.com/posts/",
+//   method: "POST",
+// };
+
+// const TEST_WITH_CONFIG_API = {
+//   url: "https://jsonplaceholder.typicode.com/posts/",
+//   method: "GET",
+//   responseStatusCode: [900] /* optional */,
+//   responseStatusCodeKey: "code" /* optional */,
+//   responseDataKey: "data" /* optional */,
+//   responseMessageKey: "message" /* optional */,
+// };
+
+const AuthHoc = HOC({
+  initialState: {
+    profile: {},
+  },
+  useHook: true /* This will avoid unwanted rendering on every state changes */,
+  dontReset: {
+    TEST_API /* If you pass anything on don't reset it wont reset the paricular state on setting to reset */,
+  },
+  apiEndPoints: { TEST_API, REGISTER_API },
+  constantReducer: ({ type, state, resetState }) => {
+    /* For handling custom action */
+    if (type === 'logout') return resetState;
+    return state;
+  },
+  name: 'Auth' /* Reducer name */,
+});
+
+export { AuthHoc };
+```
+
+### # connecting hoc to component and making api calls
+
+```js
+/* basic-example.js */
+import React, { useEffect } from 'react';
+import {
+  HOC as HocConfigure,
+  useQuery,
+} from 'react-boilerplate-redux-saga-hoc';
+import { compose } from 'redux';
+import { AuthHoc } from './config';
+
+function basicExample(props) {
+  const {
+    Auth_hoc: {
+      reducerConstants: { TEST_API },
+      reducerName,
+      actions: { TEST_API_CALL, TEST_API_CANCEL },
+    },
+  } = props;
+
+  /* useQuery hook for getting data from the reducer */
+
+  const {
+    [TEST_API]: { loader, data, lastUpdated, isError, error, toast },
+  } = useQuery(reducerName, [TEST_API]);
+
+  useEffect(() => {
+    TEST_API_CALL();
+    return () => TEST_API_CANCEL(); /* for cancelling api calls on unmounting */
+  }, []);
+
+  return <div>{data.map({ title }(<li>{title}</li>))}</div>;
+}
+
+export default compose(AuthHoc)(basicExample);
+```
+
+### # using useQuery hook in different ways
+
+```js
+/* accessing multiple data  at single query */
+const {
+  test_data: testData,
+  test,
+  test_deep: testDeep,
+  [TEST_API]: testGetApi,
+} = useQuery(
+  reducerName /* can pass any reducer key such as 'Auth' , 'router' , ..etc*/,
+  [
+    {
+      key: TEST_API,
+      name: 'test',
+      initialLoaderState: true,
+    },
+    {
+      key: TEST_API,
+      name: 'test_deep',
+      query: '.data[0]',
+      initialLoaderState: false,
+    },
+    {
+      key: TEST_API,
+      name: 'test_data',
+      query: '.data',
+      initialLoaderState: false,
+      default: [], // Default for data key it also check's type of data..if type is object return [].Don't pass if you dont want to type check
+    },
+    TEST_API,
+  ],
+);
+
+/* query can be used in different ways based on your requirement */
+
+/* pass array of string instead of object */
+
+const {
+  [TEST_API]: { loader, data, lastUpdated, isError, error, toast },
+} = useQuery(reducerName, [TEST_API]);
+
+/* Pass an object instead of array */
+const data = useQuery(reducerName, {
+  key: TEST_API,
+  query: '.data',
+  default: [],
+});
+
+/* pass a string insted of array */
+const { loader, data, lastUpdated, isError, error, toast } = useQuery(
+  reducerName,
+  TEST_API,
+);
+
+/* Pass a config as a third parameter its optional */
+const data = useQuery(reducerName, TEST_API, {
+  query: '.data',
+  default: [],
+});
+
+/* for getting whole reducer data */
+const data = useQuery(); // Don't use this use this until its required it will render the component every time reducer change
+const data = useQuery(reducerName); // Don't use this until its required it will render the component every time reducer data change
+```
+
+1. **This is the image from Redux Store for initial state after connecting hoc to the component**
+
+![  ](./images/4.png)
+
+### **# Things to Remember**
+
+    - The image which we seeing above are the two endpoints which we created before.
+    - Hoc will create Constants, Reducer, Saga, Actions for You.
+    - No Need worry about creating seperate actions, reducers for every end-points.It will handle by itsself.
+    - Just provide the configuration.Hoc will handle all the task for you.
+
+2. **This is the image from Console where hoc will provide actions, constants for handling tasks**
+
+![  ](./images/6.png)
+
+### **# Things to Remember**
+
+    - Hoc will create 3 actions for you for handling api calls,handing data..etc
+    - REGISTER_API_CALL: ƒ () - for handling api calls
+    - REGISTER_API_CANCEL: ƒ () - for handling api cancel request
+    - REGISTER_API_CUSTOM_TASK ƒ () - for handling custom task without doing api calls
+    - CALL, CANCEL, CUSTOM_TASK will be created for every api end points
+
+1. **state from Redux Store before api gets success or failure**
+
+![  ](./images/1.png)
+
+### **# Things to Remember**
+
+    - Loader will change to true if api call triggers
+    - Toast will reset to initial state
+
+4. **This is state from Redux Store after api gets success**
+
+![  ](./images/3.png)
+
+### **# Things to Remember**
+
+    - Loader will change to false if api call gets success or failure
+    - Toast will be stored into to toast key
+    - Data will be stored into the data key
 
 #Params
 
