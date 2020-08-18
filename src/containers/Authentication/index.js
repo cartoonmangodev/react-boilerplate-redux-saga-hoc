@@ -96,6 +96,7 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       reducerName,
     },
   };
+  const commonProps = useHook ? { safe } : { safe, getData };
   // eslint-disable-next-line no-unused-vars
   const hoc = (WrapperComponent, autoLoginCheck = true) => {
     function WithHoc(props) {
@@ -107,10 +108,9 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       // console.log(props, '================');
       return (
         <WrapperComponent
-          safe={safe}
           // language={language}
+          {...commonProps}
           {...props}
-          getData={getData}
         />
       );
     }

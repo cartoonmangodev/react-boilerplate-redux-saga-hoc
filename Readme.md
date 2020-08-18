@@ -299,7 +299,7 @@ const AuthHoc = HOC({
 export { AuthHoc };
 ```
 
-### # connecting hoc to component and making api calls
+### # connecting hoc to the component and make the api calls
 
 ```js
 /* basic-example.js */
