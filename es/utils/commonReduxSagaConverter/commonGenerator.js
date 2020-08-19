@@ -475,7 +475,7 @@ function _default(_ref2) {
                     case 112:
                       _context2.prev = 112;
                       _context2.t0 = _context2["catch"](50);
-                      console.error(_context2.t0);
+                      console.log(_context2.t0, _context2.t0 && _context2.t0.constructor);
 
                       if (!(!polling && retry && retry - 1 >= count)) {
                         _context2.next = 118;

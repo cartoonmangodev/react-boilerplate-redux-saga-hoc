@@ -43,7 +43,7 @@ export default function({
         asyncFunction = null,
         asyncFunctionParams = null,
         payload = {},
-        params,
+        params = {},
         query,
         paramsSerializer = { arrayFormat: 'brackets' },
         axiosConfig = {},
@@ -211,6 +211,7 @@ export default function({
             (action.api.errorHandlerStatusCode || []).includes(data.data.status)
           ) {
             throw new CustomError({
+              isAxiosError: true,
               response: {
                 data: {
                   error:
@@ -218,9 +219,8 @@ export default function({
                     postData.data ||
                     postData,
                   status: data.data.status,
-                  statusCode:
-                    (postData.data || {})[statusKey] || postData.status,
-                  message: data.data.message,
+                  statusCode: data.data.status,
+                  message: data.data.message || 'Error',
                 },
               },
             });
@@ -325,8 +325,9 @@ export default function({
         }
         if (!polling && retry) loop = false;
       } catch (error) {
-        console.log(error, error && error.constructor);
-        if (!polling && retry && retry - 1 >= count) {
+        if (error && typeof error === 'object' && !error.isAxiosError)
+          throw new Error(error);
+        else if (!polling && retry && retry - 1 >= count) {
           // console.log(count);
         } else {
           if (process.env.NODE_ENV === 'test') console.log(error);
