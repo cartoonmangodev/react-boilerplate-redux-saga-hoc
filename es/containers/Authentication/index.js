@@ -75,7 +75,9 @@ var _default = function _default(_ref) {
       _ref$nextJS = _ref.nextJS,
       nextJS = _ref$nextJS === void 0 ? false : _ref$nextJS,
       _ref$createReducer = _ref.createReducer,
-      createReducer = _ref$createReducer === void 0 ? null : _ref$createReducer;
+      createReducer = _ref$createReducer === void 0 ? null : _ref$createReducer,
+      _ref$useHook = _ref.useHook,
+      useHook = _ref$useHook === void 0 ? false : _ref$useHook;
   return function () {
     var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref2$apiEndPoints = _ref2.apiEndPoints,
@@ -96,7 +98,7 @@ var _default = function _default(_ref) {
         reducerName = _ref2.name,
         axiosInterceptors = _ref2.axiosInterceptors,
         _ref2$useHook = _ref2.useHook,
-        useHook = _ref2$useHook === void 0 ? false : _ref2$useHook;
+        _useHook = _ref2$useHook === void 0 ? false : _ref2$useHook;
 
     var ApiEndPoints = _defineProperty({}, reducerName, apiEndPoints);
 
@@ -148,7 +150,7 @@ var _default = function _default(_ref) {
       reducerName: reducerName
     });
 
-    var commonProps = useHook ? {
+    var commonProps = useHook || _useHook ? {
       safe: safe
     } : {
       safe: safe,
@@ -236,7 +238,7 @@ var _default = function _default(_ref) {
         return withConnect(WithHoc);
       }
 
-      return (useHook ? (0, _redux.compose)((0, _reactRedux.connect)(null, (0, _utils.mapDispatchToProps)(componentActions, componentData, reducerName)), authenticationReducer, authenticationSaga) : (0, _redux.compose)(withConnect, authenticationReducer, authenticationSaga))(WithHoc);
+      return (useHook || _useHook ? (0, _redux.compose)((0, _reactRedux.connect)(null, (0, _utils.mapDispatchToProps)(componentActions, componentData, reducerName)), authenticationReducer, authenticationSaga) : (0, _redux.compose)(withConnect, authenticationReducer, authenticationSaga))(WithHoc);
     };
 
     if (nextJS && getDefaultConfig) return _objectSpread({

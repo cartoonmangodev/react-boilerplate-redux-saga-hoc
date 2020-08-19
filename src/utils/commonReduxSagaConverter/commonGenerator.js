@@ -325,7 +325,7 @@ export default function({
         }
         if (!polling && retry) loop = false;
       } catch (error) {
-        console.error(error);
+        console.log(error, error && error.constructor);
         if (!polling && retry && retry - 1 >= count) {
           // console.log(count);
         } else {
