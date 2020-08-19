@@ -15,6 +15,7 @@ import {
 import * as constants from './commonConstants';
 import { responseErrorParser } from '../index';
 import Axios from '../../config/axios';
+import { typeOf } from '../helpers';
 // import { headers } from '../../../utils/constants';
 import * as commonActions from './commonActions';
 import CustomError from '../customError';
@@ -247,12 +248,16 @@ export default function({
               message: successMessage,
               status: successStatus,
             });
-          if (
-            successCallbackResponse &&
-            Object.prototype.toString.call(successCallbackResponse) ===
-              '[object Object]'
-          )
-            commonData.task = successCallbackResponse;
+          if (successCallbackResponse)
+            if (typeOf(successCallbackResponse) === 'object') {
+              if (typeOf(successCallbackResponse.task) === 'object')
+                commonData.task = successCallbackResponse.task;
+              if (successCallbackResponse.filter)
+                commonData.filter = successCallbackResponse.filter;
+              if (successCallbackResponse.tasks)
+                commonData.tasks = successCallbackResponse.tasks;
+            } else if (typeOf(successCallbackResponse) === 'array')
+              commonData.tasks = successCallbackResponse;
           const loader = yield call(requestResponseHandler, {
             data,
             type,

@@ -27,7 +27,12 @@ import { getData, mapDispatchToProps } from '../../utils';
 import { commonConstants } from '../../index';
 const safe = nullcheck;
 
-export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
+export default ({
+  handlers = [],
+  nextJS = false,
+  createReducer = null,
+  useHook = false,
+}) => ({
   apiEndPoints = {},
   initialState = {},
   getDefaultConfig = false,
@@ -39,7 +44,7 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
   reducer: reducerFunction,
   name: reducerName,
   axiosInterceptors,
-  useHook = false,
+  useHook: _useHook = false,
   // injectSaga,
   // injectReducer,
 } = {}) => {
@@ -96,7 +101,7 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       reducerName,
     },
   };
-  const commonProps = useHook ? { safe } : { safe, getData };
+  const commonProps = useHook || _useHook ? { safe } : { safe, getData };
   // eslint-disable-next-line no-unused-vars
   const hoc = (WrapperComponent, autoLoginCheck = true) => {
     function WithHoc(props) {
@@ -166,7 +171,7 @@ export default ({ handlers = [], nextJS = false, createReducer = null }) => ({
       };
       return withConnect(WithHoc);
     }
-    return (useHook
+    return (useHook || _useHook
       ? compose(
           connect(
             null,
