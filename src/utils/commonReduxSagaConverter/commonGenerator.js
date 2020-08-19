@@ -131,10 +131,13 @@ export default function({
       if (
         ((pollingRequestConfig && pollingRequestConfig.params) || params) &&
         typeof request.url === 'function'
-      )
+      ) {
+        if (typeOf(params) !== 'object')
+          throw new Error('Params should be object ');
         request.url = yield request.url(
           (pollingRequestConfig && pollingRequestConfig.params) || params,
         );
+      }
       if (query || (pollingRequestConfig && pollingRequestConfig.query)) {
         request.params =
           (pollingRequestConfig && pollingRequestConfig.query) || query;
