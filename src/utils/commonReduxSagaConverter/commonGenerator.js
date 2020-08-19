@@ -133,7 +133,9 @@ export default function({
         typeof request.url === 'function'
       ) {
         if (typeOf(params) !== 'object')
-          throw new Error('Params should be object ');
+          throw new Error(
+            `key 'params' should be object not a ${typeOf(params)}`,
+          );
         request.url = yield request.url(
           (pollingRequestConfig && pollingRequestConfig.params) || params,
         );
