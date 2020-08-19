@@ -61,7 +61,7 @@ yarn add react-boilerplate-redux-saga-hoc
 
 ---
 
-    A person who wants to do development faster and also who doesn't want to create constants, reducer, saga, actions repeatedly.
+    A person who wants to do development faster and also doesn't want to create constants, reducer, saga, actions repeatedly.
 
 ## # Overview
 
