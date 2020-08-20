@@ -311,7 +311,7 @@ var useMutation = function useMutation() {
         _ref17$filter = _ref17.filter,
         filter = _ref17$filter === void 0 ? [] : _ref17$filter;
     if (!type) checkKey(null, 'key', 'string', 'valid string');
-    if (type) (0, _invariant.default)(type.includes('_CALL'), 'Expected a valid reducer key');
+    if (type) (0, _invariant.default)(type.includes('_CALL') && type.slice(-5) === '_CALL', '`key` is invalid.Expected a valid reducer key.');
     checkKey(filter, 'filter', 'array');
     checkKey(value, 'value', 'object');
     checkKey(type, 'key', 'string');
