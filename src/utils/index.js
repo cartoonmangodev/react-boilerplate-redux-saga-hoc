@@ -366,7 +366,7 @@ export const useMutation = () => {
     dispatch({
       type,
       response: {
-        type,
+        type: type.slice(0, -4).concat('CUSTOM_TASK'),
         method: ON_SUCCESS,
         statusCode: 200,
         mutation: true,

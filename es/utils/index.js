@@ -221,20 +221,7 @@ var useHook = function useHook() {
   var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var store = (0, _reactRedux.useStore)();
 
-  var _useState = (0, _react.useState)({}),
-      _useState2 = _slicedToArray(_useState, 2),
-      data = _useState2[0],
-      setData = _useState2[1];
-
-  var _useState3 = (0, _react.useState)({}),
-      _useState4 = _slicedToArray(_useState3, 1),
-      _key = _useState4[0];
-
-  if (name) checkKey(null, 'reducer name', 'string', 'valid string');
-
-  var execute = function execute() {
-    // const state = safe(store, `.getState()[${name}]`);
-    // eslint-disable-next-line no-underscore-dangle
+  var _GetData = function _GetData() {
     var _data = {};
 
     var _checkFilter = function _checkFilter(e) {
@@ -252,6 +239,25 @@ var useHook = function useHook() {
         return (0, _helpers.typeOf)(e) === 'object' ? (0, _helpers.typeOf)(array) === 'object' ? _getData(e) : _objectSpread({}, acc, _defineProperty({}, e.name || e.key, _getData(e))) : (0, _helpers.typeOf)(array) === 'object' ? safe(store, ".getState()[".concat(name, "][").concat(e, "]")) : _objectSpread({}, acc, _defineProperty({}, e, safe(store, ".getState()[".concat(name, "][").concat(e, "]"))));
       }, {});
     } else if (typeof array === 'string') _data = _getData(config, true);else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
+
+    return _data;
+  };
+
+  var _useState = (0, _react.useState)(_GetData()),
+      _useState2 = _slicedToArray(_useState, 2),
+      data = _useState2[0],
+      setData = _useState2[1];
+
+  var _useState3 = (0, _react.useState)({}),
+      _useState4 = _slicedToArray(_useState3, 1),
+      _key = _useState4[0];
+
+  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
+
+  var execute = function execute() {
+    // const state = safe(store, `.getState()[${name}]`);
+    // eslint-disable-next-line no-underscore-dangle
+    var _data = _GetData();
 
     var index = previousDataKey.indexOf(_key);
 

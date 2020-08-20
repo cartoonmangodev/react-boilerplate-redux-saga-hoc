@@ -76,7 +76,7 @@ export default function({
         ...restCallback
       } = {},
       ...restPayload
-    },
+    } = {},
     type,
   }) {
     let loop = true;
