@@ -49,6 +49,7 @@ export default function({
 }) {
   function* commonGenerator({
     payload: {
+      resolve,
       request: {
         asyncFunction = null,
         asyncFunctionParams = null,
@@ -434,6 +435,7 @@ export default function({
           }
         }
       } finally {
+        if (resolve && typeOf(resolve) === 'function') resolve();
         const Cancelled = yield cancelled();
         if (typeof finalCallback === 'function')
           yield finalCallback({ type, action, payload: commonData, Cancelled });
