@@ -21,47 +21,46 @@ function _objectWithoutProperties(source, excluded) { if (source == null) return
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 
-var _checkIsNotObject = data => Object.prototype.toString.call(data) !== '[object Object]';
+var _checkIsNotObject = function _checkIsNotObject(data) {
+  return Object.prototype.toString.call(data) !== '[object Object]';
+};
 
-var dataHandler = (_ref) => {
-  var {
-    mutation: isMutation,
-    task: {
-      clearData,
-      subKey = []
-    } = {},
-    callback: {
-      updateCallback
-    } = {},
-    successData = {},
-    successDataStatusCode
-  } = _ref;
+var dataHandler = function dataHandler(_ref) {
+  var isMutation = _ref.mutation,
+      _ref$task = _ref.task;
+  _ref$task = _ref$task === void 0 ? {} : _ref$task;
+  var clearData = _ref$task.clearData,
+      _ref$task$subKey = _ref$task.subKey,
+      subKey = _ref$task$subKey === void 0 ? [] : _ref$task$subKey,
+      _ref$callback = _ref.callback;
+  _ref$callback = _ref$callback === void 0 ? {} : _ref$callback;
+  var updateCallback = _ref$callback.updateCallback,
+      _ref$successData = _ref.successData,
+      successData = _ref$successData === void 0 ? {} : _ref$successData,
+      successDataStatusCode = _ref.successDataStatusCode;
   return function () {
     var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        {
-      data: oldData = {},
-      statusCode
-    } = _ref2,
+        _ref2$data = _ref2.data,
+        oldData = _ref2$data === void 0 ? {} : _ref2$data,
+        statusCode = _ref2.statusCode,
         rest = _objectWithoutProperties(_ref2, ["data", "statusCode"]);
 
     return isMutation ? _objectSpread({
       data: oldData,
-      statusCode
+      statusCode: statusCode
     }, rest, {}, successData) : {
-      data: (() => {
+      data: function () {
         if (subKey.length > 0) {
-          var _oldCopyData = _objectSpread({}, oldData, {}, _checkIsNotObject(successData) ? {} : successData, {
-            [subKey[0]]: oldData[subKey[0]]
-          });
+          var _oldCopyData = _objectSpread({}, oldData, {}, _checkIsNotObject(successData) ? {} : successData, _defineProperty({}, subKey[0], oldData[subKey[0]]));
 
-          return (0, _helpers.updateIn)(_oldCopyData, subKey, _oldData => {
+          return (0, _helpers.updateIn)(_oldCopyData, subKey, function (_oldData) {
             if (clearData) return (0, _nullCheck.default)(successData, ".".concat(subKey.join('.')));
             return updateCallback ? updateCallback(_oldData, (0, _nullCheck.default)(successData, ".".concat(subKey.join('.')))) : _checkIsNotObject((0, _nullCheck.default)(successData, ".".concat(subKey.join('.')))) || _checkIsNotObject((0, _nullCheck.default)(_oldData, ".".concat(subKey.join('.')))) ? (0, _nullCheck.default)(successData, ".".concat(subKey.join('.'))) : (0, _helpers.newObject)(_oldData, (0, _nullCheck.default)(successData, ".".concat(subKey.join('.'))));
           });
         }
 
         return updateCallback ? updateCallback(oldData, successData) : _checkIsNotObject(successData) || _checkIsNotObject(oldData) || clearData ? successData : (0, _helpers.newObject)(oldData, successData);
-      })(),
+      }(),
       statusCode: successDataStatusCode || statusCode,
       error: false,
       lastUpdated: (0, _helpers.generateTimeStamp)(),

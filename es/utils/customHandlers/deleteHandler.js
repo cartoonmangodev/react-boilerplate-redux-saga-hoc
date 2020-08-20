@@ -13,45 +13,44 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var executeTask = (_ref, data) => {
-  var {
-    id,
-    key
-  } = _ref;
-  return !Array.isArray(data) ? data : Array.isArray(id) ? data.reduce((acc, curr) => id.includes(curr[key]) ? acc : acc.concat([curr]), []) : data.filter((_ref2) => {
-    var {
-      [key]: objId
-    } = _ref2;
+var executeTask = function executeTask(_ref, data) {
+  var id = _ref.id,
+      key = _ref.key;
+  return !Array.isArray(data) ? data : Array.isArray(id) ? data.reduce(function (acc, curr) {
+    return id.includes(curr[key]) ? acc : acc.concat([curr]);
+  }, []) : data.filter(function (_ref2) {
+    var objId = _ref2[key];
     return objId !== id;
   });
 };
 
-var deleteHandler = (_ref3) => {
-  var {
-    task: {
-      key,
-      id,
-      subKey = []
-    } = {},
-    successData = {},
-    successDataStatusCode
-  } = _ref3;
+var deleteHandler = function deleteHandler(_ref3) {
+  var _ref3$task = _ref3.task;
+  _ref3$task = _ref3$task === void 0 ? {} : _ref3$task;
+  var key = _ref3$task.key,
+      id = _ref3$task.id,
+      _ref3$task$subKey = _ref3$task.subKey,
+      subKey = _ref3$task$subKey === void 0 ? [] : _ref3$task$subKey,
+      _ref3$successData = _ref3.successData,
+      successData = _ref3$successData === void 0 ? {} : _ref3$successData,
+      successDataStatusCode = _ref3.successDataStatusCode;
   return function () {
-    var {
-      data = [],
-      statusCode
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref4$data = _ref4.data,
+        data = _ref4$data === void 0 ? [] : _ref4$data,
+        statusCode = _ref4.statusCode;
+
     var commonData = {
-      key,
-      id
+      key: key,
+      id: id
     };
 
     var _successData = (0, _helpers.typeOf)(successData) === 'object' ? successData : {};
 
     return {
-      data: subKey.length > 0 ? (0, _helpers.updateIn)(_objectSpread({}, data, {}, _successData, {
-        [subKey[0]]: data[subKey[0]]
-      }), subKey, _data => executeTask(commonData, _data)) : executeTask(commonData, data),
+      data: subKey.length > 0 ? (0, _helpers.updateIn)(_objectSpread({}, data, {}, _successData, _defineProperty({}, subKey[0], data[subKey[0]])), subKey, function (_data) {
+        return executeTask(commonData, _data);
+      }) : executeTask(commonData, data),
       statusCode: successDataStatusCode || statusCode,
       lastUpdated: (0, _helpers.generateTimeStamp)(),
       isError: false

@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.convertWeight = void 0;
 
-var convertWeight = (value, convertTo) => value ? (convertTo === 'lbs' ? value * 2.205 : value / 2.205).toFixed(2) : '';
+var convertWeight = function convertWeight(value, convertTo) {
+  return value ? (convertTo === 'lbs' ? value * 2.205 : value / 2.205).toFixed(2) : '';
+};
 
 exports.convertWeight = convertWeight;

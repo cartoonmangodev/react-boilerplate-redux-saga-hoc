@@ -27,14 +27,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //   ),
 // });
 var errorHandler = function errorHandler() {
-  var {
-    errorData,
-    clearDataOnError = false
-  } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  return (_ref) => {
-    var {
-      data: Data = {}
-    } = _ref;
+  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      errorData = _ref.errorData,
+      _ref$clearDataOnError = _ref.clearDataOnError,
+      clearDataOnError = _ref$clearDataOnError === void 0 ? false : _ref$clearDataOnError;
+
+  return function (_ref2) {
+    var _ref2$data = _ref2.data,
+        Data = _ref2$data === void 0 ? {} : _ref2$data;
     return _objectSpread({}, clearDataOnError ? {
       data: Array.isArray(Data) ? [] : {}
     } : {}, {
@@ -49,25 +49,46 @@ var errorHandler = function errorHandler() {
 
 exports.errorHandler = errorHandler;
 
-var _CheckFilter = Filter => Array.isArray(Filter) && Filter.length > 0 ? Filter : Filter && typeof Filter === 'string' ? Filter.split('.') : [];
+var _CheckFilter = function _CheckFilter(Filter) {
+  return Array.isArray(Filter) && Filter.length > 0 ? Filter : Filter && typeof Filter === 'string' ? Filter.split('.') : [];
+};
 
 var filterArrayErrorHandler = function filterArrayErrorHandler() {
-  var {
-    errorData,
-    filter,
-    clearDataOnError
-  } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  return (_ref2) => {
-    var {
-      data: Data = {}
-    } = _ref2;
+  var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      errorData = _ref3.errorData,
+      filter = _ref3.filter,
+      clearDataOnError = _ref3.clearDataOnError;
+
+  return function (_ref4) {
+    var _ref4$data = _ref4.data,
+        Data = _ref4$data === void 0 ? {} : _ref4$data;
     return {
-      data: (() => {
-        if (filter && filter.some(fil => Array.isArray(fil))) {
-          return filter.reduce((accumulator, filterArray) => (0, _helpers.updateIn)(accumulator, _CheckFilter(filterArray), data => _CheckFilter(filterArray).length > 0 ? (0, _helpers.newObject)(data, (_ref3) => {
-            var {
-              data: oldData
-            } = _ref3;
+      data: function () {
+        if (filter && filter.some(function (fil) {
+          return Array.isArray(fil);
+        })) {
+          return filter.reduce(function (accumulator, filterArray) {
+            return (0, _helpers.updateIn)(accumulator, _CheckFilter(filterArray), function (data) {
+              return _CheckFilter(filterArray).length > 0 ? (0, _helpers.newObject)(data, function (_ref5) {
+                var oldData = _ref5.data;
+                return _objectSpread({}, clearDataOnError ? {
+                  data: Array.isArray(oldData) ? [] : {}
+                } : {}, {
+                  error: errorData || null,
+                  isError: true,
+                  statusCode: 'ERROR',
+                  lastUpdated: (0, _helpers.generateTimeStamp)(),
+                  isInfinite: null,
+                  infiniteEnd: null
+                });
+              }) : data;
+            });
+          }, Data);
+        }
+
+        return (0, _helpers.updateIn)(Data, filter, function (data) {
+          return (0, _helpers.newObject)(data, function (_ref6) {
+            var oldData = _ref6.data;
             return _objectSpread({}, clearDataOnError ? {
               data: Array.isArray(oldData) ? [] : {}
             } : {}, {
@@ -78,25 +99,9 @@ var filterArrayErrorHandler = function filterArrayErrorHandler() {
               isInfinite: null,
               infiniteEnd: null
             });
-          }) : data), Data);
-        }
-
-        return (0, _helpers.updateIn)(Data, filter, data => (0, _helpers.newObject)(data, (_ref4) => {
-          var {
-            data: oldData
-          } = _ref4;
-          return _objectSpread({}, clearDataOnError ? {
-            data: Array.isArray(oldData) ? [] : {}
-          } : {}, {
-            error: errorData || null,
-            isError: true,
-            statusCode: 'ERROR',
-            lastUpdated: (0, _helpers.generateTimeStamp)(),
-            isInfinite: null,
-            infiniteEnd: null
           });
-        }));
-      })()
+        });
+      }()
     };
   };
 };

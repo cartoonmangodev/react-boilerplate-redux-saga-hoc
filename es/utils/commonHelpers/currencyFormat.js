@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.formatOrdinalSuffix = exports.formatPriceWithUnit = exports.formatPriceWithComma = void 0;
 
-var formatPriceWithComma = price => {
+var formatPriceWithComma = function formatPriceWithComma(price) {
   var formattedPrice;
 
   if (price) {
@@ -20,7 +20,7 @@ var formatPriceWithComma = price => {
 
 exports.formatPriceWithComma = formatPriceWithComma;
 
-var formatPriceWithUnit = value => {
+var formatPriceWithUnit = function formatPriceWithUnit(value) {
   var val = Math.abs(value);
 
   if (val >= 10000000) {
@@ -38,7 +38,7 @@ var formatPriceWithUnit = value => {
 
 exports.formatPriceWithUnit = formatPriceWithUnit;
 
-var formatOrdinalSuffix = value => {
+var formatOrdinalSuffix = function formatOrdinalSuffix(value) {
   if (value > 3 && value < 21) return "".concat(value, "th"); // thanks kennebec
 
   switch (value % 10) {

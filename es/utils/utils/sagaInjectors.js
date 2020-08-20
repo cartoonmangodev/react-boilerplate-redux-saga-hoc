@@ -31,12 +31,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var allowedModes = [_constants.RESTART_ON_REMOUNT, _constants.DAEMON, _constants.ONCE_TILL_UNMOUNT];
 
-var checkKey = key => (0, _invariant.default)((0, _isString.default)(key) && !(0, _isEmpty.default)(key), '(app/utils...) injectSaga: Expected `key` to be a non empty string');
+var checkKey = function checkKey(key) {
+  return (0, _invariant.default)((0, _isString.default)(key) && !(0, _isEmpty.default)(key), '(app/utils...) injectSaga: Expected `key` to be a non empty string');
+};
 
-var checkDescriptor = descriptor => {
+var checkDescriptor = function checkDescriptor(descriptor) {
   var shape = {
     saga: _isFunction.default,
-    mode: _mode => (0, _isString.default)(_mode) && allowedModes.includes(_mode)
+    mode: function mode(_mode) {
+      return (0, _isString.default)(_mode) && allowedModes.includes(_mode);
+    }
   };
   (0, _invariant.default)((0, _conformsTo.default)(descriptor, shape), '(app/utils...) injectSaga: Expected a valid saga descriptor');
 };
@@ -51,10 +55,8 @@ function injectSagaFactory(store, isValid) {
       mode: descriptor.mode || _constants.DAEMON
     });
 
-    var {
-      saga,
-      mode
-    } = newDescriptor;
+    var saga = newDescriptor.saga,
+        mode = newDescriptor.mode;
     checkKey(key);
     checkDescriptor(newDescriptor);
     var hasSaga = Reflect.has(store.injectedSagas, key);

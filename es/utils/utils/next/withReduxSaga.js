@@ -11,97 +11,122 @@ var _reduxSaga = require("redux-saga");
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-function _await(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
-  }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-  if (!value || !value.then) {
-    value = Promise.resolve(value);
-  }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
-  return then ? value.then(then) : value;
-}
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-function _empty() {}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _awaitIgnored(value, direct) {
-  if (!direct) {
-    return value && value.then ? value.then(_empty) : Promise.resolve();
-  }
-}
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-function _invokeIgnored(body) {
-  var result = body();
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-  if (result && result.then) {
-    return result.then(_empty);
-  }
-}
+function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
-function _invoke(body, then) {
-  var result = body();
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-  if (result && result.then) {
-    return result.then(then);
-  }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
-  return then(result);
-}
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
-function _call(body, then, direct) {
-  if (direct) {
-    return then ? then(body()) : body();
-  }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-  try {
-    var result = Promise.resolve(body());
-    return then ? result.then(then) : result;
-  } catch (e) {
-    return Promise.reject(e);
-  }
-}
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function withReduxSaga(BaseComponent) {
-  class WrappedComponent extends _react.Component {
-    static getInitialProps(props) {
-      return _call(function () {
-        var {
-          isServer,
-          store
-        } = props.ctx || props;
-        var pageProps = {};
-        return _await(_invoke(function () {
-          if (BaseComponent.getInitialProps) {
-            return _await(BaseComponent.getInitialProps(props), function (_BaseComponent$getIni) {
-              pageProps = _BaseComponent$getIni;
-            });
-          }
-        }, function () {
-          // Stop saga on the server
-          return _invoke(function () {
-            if (isServer) {
-              store.dispatch(_reduxSaga.END);
-              return _invokeIgnored(function () {
-                if (store.sagaTask.toPromise) return _awaitIgnored(store.sagaTask.toPromise());else return _awaitIgnored(store.sagaTask.done);
-              });
+  var WrappedComponent = /*#__PURE__*/function (_Component) {
+    _inherits(WrappedComponent, _Component);
+
+    var _super = _createSuper(WrappedComponent);
+
+    function WrappedComponent() {
+      _classCallCheck(this, WrappedComponent);
+
+      return _super.apply(this, arguments);
+    }
+
+    _createClass(WrappedComponent, [{
+      key: "render",
+      value: function render() {
+        return _react.default.createElement(BaseComponent, this.props);
+      }
+    }], [{
+      key: "getInitialProps",
+      value: function () {
+        var _getInitialProps = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(props) {
+          var _ref, isServer, store, pageProps;
+
+          return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  _ref = props.ctx || props, isServer = _ref.isServer, store = _ref.store;
+                  pageProps = {};
+
+                  if (!BaseComponent.getInitialProps) {
+                    _context.next = 6;
+                    break;
+                  }
+
+                  _context.next = 5;
+                  return BaseComponent.getInitialProps(props);
+
+                case 5:
+                  pageProps = _context.sent;
+
+                case 6:
+                  if (!isServer) {
+                    _context.next = 15;
+                    break;
+                  }
+
+                  store.dispatch(_reduxSaga.END);
+
+                  if (!store.sagaTask.toPromise) {
+                    _context.next = 13;
+                    break;
+                  }
+
+                  _context.next = 11;
+                  return store.sagaTask.toPromise();
+
+                case 11:
+                  _context.next = 15;
+                  break;
+
+                case 13:
+                  _context.next = 15;
+                  return store.sagaTask.done;
+
+                case 15:
+                  return _context.abrupt("return", pageProps);
+
+                case 16:
+                case "end":
+                  return _context.stop();
+              }
             }
-          }, function () {
-            return pageProps;
-          });
+          }, _callee);
         }));
-      });
-    }
 
-    render() {
-      return _react.default.createElement(BaseComponent, this.props);
-    }
+        function getInitialProps(_x) {
+          return _getInitialProps.apply(this, arguments);
+        }
 
-  }
+        return getInitialProps;
+      }()
+    }]);
+
+    return WrappedComponent;
+  }(_react.Component);
 
   _defineProperty(WrappedComponent, "displayName", "withReduxSaga(".concat(BaseComponent.displayName || BaseComponent.name || 'BaseComponent', ")"));
 

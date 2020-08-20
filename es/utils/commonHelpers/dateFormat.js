@@ -19,7 +19,7 @@ function formatDate(date) {
   return date ? "".concat(dayToDisplay, " ").concat(monthToDisplay, " ").concat(year) : date;
 }
 
-var getDate = date => {
+var getDate = function getDate(date) {
   var day = new Date(date);
   var dd = day.getDate();
   var mm = day.getMonth() + 1;

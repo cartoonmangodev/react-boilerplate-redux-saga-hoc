@@ -31,7 +31,9 @@ function createReducer() {
   //   : null;
   // const History = history ? require('./utils/history').default : '';
   var reducer = Object.keys(injectedReducers).length > 0 ? injectedReducers : {
-    global: () => ({})
+    global: function global() {
+      return {};
+    }
   }; // const reducer = history
   //   ? {
   //       ..._reducer,

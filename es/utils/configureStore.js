@@ -22,6 +22,20 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function configureStore() {
   var initialState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var middleWare = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
@@ -34,7 +48,7 @@ function configureStore() {
 
   /* istanbul ignore next */
 
-  if (process.env.NODE_ENV !== 'production' && typeof window === 'object') {
+  if (process.env.NODE_ENV !== 'production' && (typeof window === "undefined" ? "undefined" : _typeof(window)) === 'object') {
     /* eslint-disable no-underscore-dangle */
     if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({}); // NOTE: Uncomment the code below to restore support for Redux Saga
     // Dev Tools once it supports redux-saga version 1.x.x
@@ -52,8 +66,8 @@ function configureStore() {
 
   var middlewares = [sagaMiddleware].concat(middleWare // isWeb ? [routerMiddleware(History)] : [],
   );
-  var enhancers = [(0, _redux.applyMiddleware)(...middlewares)];
-  var store = (0, _redux.createStore)((0, _reducers.default)({}), initialState, composeEnhancers(...enhancers)); // Extensions
+  var enhancers = [_redux.applyMiddleware.apply(void 0, _toConsumableArray(middlewares))];
+  var store = (0, _redux.createStore)((0, _reducers.default)({}), initialState, composeEnhancers.apply(void 0, enhancers)); // Extensions
 
   store.runSaga = sagaMiddleware.run;
   store.injectedReducers = {}; // Reducer registry
@@ -63,8 +77,8 @@ function configureStore() {
 
   /* istanbul ignore next */
 
-  if (typeof module === 'object' && module.hot) {
-    module.hot.accept('./reducers', () => {
+  if ((typeof module === "undefined" ? "undefined" : _typeof(module)) === 'object' && module.hot) {
+    module.hot.accept('./reducers', function () {
       store.replaceReducer((0, _reducers.default)(store.injectedReducers));
     });
   } // global._redux_store = store;
@@ -73,17 +87,17 @@ function configureStore() {
   return store;
 }
 
-var nextStore = (_ref) => {
-  var {
-    saga,
-    reducer
-  } = _ref;
+var nextStore = function nextStore(_ref) {
+  var saga = _ref.saga,
+      reducer = _ref.reducer;
   return function () {
     var initialState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var {
-      isServer,
-      req = null
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        isServer = _ref2.isServer,
+        _ref2$req = _ref2.req,
+        req = _ref2$req === void 0 ? null : _ref2$req;
+
     var composeEnhancers = _redux.compose;
     var monitor = null; // if (typeof window !== "undefined")
     //   monitor = window["__SAGA_MONITOR_EXTENSION__"];
@@ -95,7 +109,7 @@ var nextStore = (_ref) => {
 
     /* istanbul ignore next */
 
-    if (process.env.NODE_ENV !== 'production' && typeof window === 'object') {
+    if (process.env.NODE_ENV !== 'production' && (typeof window === "undefined" ? "undefined" : _typeof(window)) === 'object') {
       /* eslint-disable no-underscore-dangle */
       if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({}); // NOTE: Uncomment the code below to restore support for Redux Saga
       // Dev Tools once it supports redux-saga version 1.x.x
@@ -112,10 +126,10 @@ var nextStore = (_ref) => {
     // 2. routerMiddleware: Syncs the location/URL path to the state
 
     var middlewares = [sagaMiddleware];
-    var enhancers = [(0, _redux.applyMiddleware)(...middlewares)];
-    var store = (0, _redux.createStore)((0, _redux.combineReducers)(reducer.reduce((acc, e) => _objectSpread({}, acc, {
-      [e.name]: e.reducer
-    }), {})), initialState, composeEnhancers(...enhancers)); // Extensions
+    var enhancers = [_redux.applyMiddleware.apply(void 0, middlewares)];
+    var store = (0, _redux.createStore)((0, _redux.combineReducers)(reducer.reduce(function (acc, e) {
+      return _objectSpread({}, acc, _defineProperty({}, e.name, e.reducer));
+    }, {})), initialState, composeEnhancers.apply(void 0, enhancers)); // Extensions
 
     store.runSaga = sagaMiddleware.run; // store.sagaTask = sagaMiddleware;
 
@@ -126,9 +140,21 @@ var nextStore = (_ref) => {
     store.tasks = {};
 
     if (req || !isServer) {
-      store.sagaTask = sagaMiddleware.run(function* rootSaga() {
-        yield (0, _effects.all)(saga.map(_effects.fork));
-      });
+      store.sagaTask = sagaMiddleware.run( /*#__PURE__*/regeneratorRuntime.mark(function rootSaga() {
+        return regeneratorRuntime.wrap(function rootSaga$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return (0, _effects.all)(saga.map(_effects.fork));
+
+              case 2:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, rootSaga);
+      }));
     } // Make reducers hot reloadable, see http://mxs.is/googmo
 
     /* istanbul ignore next */

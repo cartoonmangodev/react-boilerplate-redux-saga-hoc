@@ -17,38 +17,48 @@ function _objectWithoutProperties(source, excluded) { if (source == null) return
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 
-var _CheckFilter = Filter => Array.isArray(Filter) && Filter.length > 0 ? Filter : Filter && typeof Filter === 'string' ? Filter.split('.') : [];
+var _CheckFilter = function _CheckFilter(Filter) {
+  return Array.isArray(Filter) && Filter.length > 0 ? Filter : Filter && typeof Filter === 'string' ? Filter.split('.') : [];
+};
 
-var commonFilterHandler = customHandler => function () {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      {
-    filter = [],
-    successDataStatusCode
-  } = _ref,
-      rest = _objectWithoutProperties(_ref, ["filter", "successDataStatusCode"]);
+var commonFilterHandler = function commonFilterHandler(customHandler) {
+  return function () {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref$filter = _ref.filter,
+        filter = _ref$filter === void 0 ? [] : _ref$filter,
+        successDataStatusCode = _ref.successDataStatusCode,
+        rest = _objectWithoutProperties(_ref, ["filter", "successDataStatusCode"]);
 
-  return (_ref2) => {
-    var {
-      data: Data = {},
-      statusCode
-    } = _ref2;
-    return {
-      data: (() => {
-        var paramKey = _objectSpread({
-          filter
-        }, rest);
+    return function (_ref2) {
+      var _ref2$data = _ref2.data,
+          Data = _ref2$data === void 0 ? {} : _ref2$data,
+          statusCode = _ref2.statusCode;
+      return {
+        data: function () {
+          var paramKey = _objectSpread({
+            filter: filter
+          }, rest);
 
-        if (filter && filter.some(fil => Array.isArray(fil))) {
-          return filter.reduce((accumulator, filterArray) => (0, _helpers.updateIn)(accumulator, _CheckFilter(filterArray), data => _CheckFilter(filterArray).length > 0 ? (0, _helpers.newObject)(data, customHandler(paramKey)) : data), Data);
-        }
+          if (filter && filter.some(function (fil) {
+            return Array.isArray(fil);
+          })) {
+            return filter.reduce(function (accumulator, filterArray) {
+              return (0, _helpers.updateIn)(accumulator, _CheckFilter(filterArray), function (data) {
+                return _CheckFilter(filterArray).length > 0 ? (0, _helpers.newObject)(data, customHandler(paramKey)) : data;
+              });
+            }, Data);
+          }
 
-        return (0, _helpers.updateIn)(Data, filter, data => (0, _helpers.newObject)(_objectSpread({}, data, {
-          statusCode: successDataStatusCode || statusCode,
-          lastUpdated: (0, _helpers.generateTimeStamp)(),
-          error: false,
-          isError: false
-        }), customHandler(paramKey)));
-      })()
+          return (0, _helpers.updateIn)(Data, filter, function (data) {
+            return (0, _helpers.newObject)(_objectSpread({}, data, {
+              statusCode: successDataStatusCode || statusCode,
+              lastUpdated: (0, _helpers.generateTimeStamp)(),
+              error: false,
+              isError: false
+            }), customHandler(paramKey));
+          });
+        }()
+      };
     };
   };
 };

@@ -59,11 +59,15 @@ var _setIn = require("./setIn");
 
 var _updateIn = require("./updateIn");
 
-var generateTimeStamp = () => new Date().getTime();
+var generateTimeStamp = function generateTimeStamp() {
+  return new Date().getTime();
+};
 
 exports.generateTimeStamp = generateTimeStamp;
 
-var toCapitalize = string => string && typeof string === 'string' ? string.charAt(0).toUpperCase() + string.slice(1) : null;
+var toCapitalize = function toCapitalize(string) {
+  return string && typeof string === 'string' ? string.charAt(0).toUpperCase() + string.slice(1) : null;
+};
 
 exports.toCapitalize = toCapitalize;
 var type = {
@@ -77,6 +81,8 @@ var type = {
   '[object Symbol]': 'symbol'
 };
 
-var typeOf = _obj => type[Object.prototype.toString.call(_obj)];
+var typeOf = function typeOf(_obj) {
+  return type[Object.prototype.toString.call(_obj)];
+};
 
 exports.typeOf = typeOf;

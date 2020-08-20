@@ -17,23 +17,29 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var selectAuthenticationDomain = (initialState, generatorKey) => state => state[generatorKey] || initialState;
+var selectAuthenticationDomain = function selectAuthenticationDomain(initialState, generatorKey) {
+  return function (state) {
+    return state[generatorKey] || initialState;
+  };
+};
 
 exports.selectAuthenticationDomain = selectAuthenticationDomain;
 
-var makeSelectAuthenticationState = (_ref) => {
-  var {
-    apiEndPoints,
-    initialState,
-    InitialState,
-    generatorKey,
-    constants
-  } = _ref;
-  return () => (0, _reselect.createSelector)(selectAuthenticationDomain(initialState, generatorKey), substate => (0, _helpers.newObject)(Object.keys(InitialState).reduce((acc, key) => _objectSpread({}, acc, {
-    [key]: substate[key]
-  }), {}), Object.keys(apiEndPoints[generatorKey]).reduce((acc, key) => _objectSpread({}, acc, {
-    [key]: substate[constants[key][_commonConstants.CALL]]
-  }), {})));
+var makeSelectAuthenticationState = function makeSelectAuthenticationState(_ref) {
+  var apiEndPoints = _ref.apiEndPoints,
+      initialState = _ref.initialState,
+      InitialState = _ref.InitialState,
+      generatorKey = _ref.generatorKey,
+      constants = _ref.constants;
+  return function () {
+    return (0, _reselect.createSelector)(selectAuthenticationDomain(initialState, generatorKey), function (substate) {
+      return (0, _helpers.newObject)(Object.keys(InitialState).reduce(function (acc, key) {
+        return _objectSpread({}, acc, _defineProperty({}, key, substate[key]));
+      }, {}), Object.keys(apiEndPoints[generatorKey]).reduce(function (acc, key) {
+        return _objectSpread({}, acc, _defineProperty({}, key, substate[constants[key][_commonConstants.CALL]]));
+      }, {}));
+    });
+  };
 };
 
 exports.makeSelectAuthenticationState = makeSelectAuthenticationState;

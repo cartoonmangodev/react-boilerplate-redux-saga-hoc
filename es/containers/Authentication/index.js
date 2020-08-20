@@ -1,5 +1,7 @@
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -45,7 +47,7 @@ var _index = require("../../index");
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -53,41 +55,9 @@ function _objectWithoutProperties(source, excluded) { if (source == null) return
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 
-function _await(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
-  }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
-  if (!value || !value.then) {
-    value = Promise.resolve(value);
-  }
-
-  return then ? value.then(then) : value;
-}
-
-function _invoke(body, then) {
-  var result = body();
-
-  if (result && result.then) {
-    return result.then(then);
-  }
-
-  return then(result);
-}
-
-function _async(f) {
-  return function () {
-    for (var args = [], i = 0; i < arguments.length; i++) {
-      args[i] = arguments[i];
-    }
-
-    try {
-      return Promise.resolve(f.apply(this, args));
-    } catch (e) {
-      return Promise.reject(e);
-    }
-  };
-}
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
@@ -95,41 +65,61 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var safe = _nullCheck.default; // const shape = {
 //   reducerName: isString,
 // };
 
-var checkKey = (key, name, dataType) => {
+var checkKey = function checkKey(key, name, dataType) {
   (0, _invariant.default)((0, _helpers.typeOf)(key) === dataType, "(react-boilerplate-redux-saga-hoc)  Expected `".concat(name, "` to be a ").concat(dataType));
 };
 
-var _default = (_ref) => {
-  var {
-    handlers = [],
-    nextJS = false,
-    createReducer = null,
-    useHook = false,
-    useHocHook = false
-  } = _ref;
+var _default = function _default(_ref) {
+  var _ref$handlers = _ref.handlers,
+      handlers = _ref$handlers === void 0 ? [] : _ref$handlers,
+      _ref$nextJS = _ref.nextJS,
+      nextJS = _ref$nextJS === void 0 ? false : _ref$nextJS,
+      _ref$createReducer = _ref.createReducer,
+      createReducer = _ref$createReducer === void 0 ? null : _ref$createReducer,
+      _ref$useHook = _ref.useHook,
+      useHook = _ref$useHook === void 0 ? false : _ref$useHook,
+      _ref$useHocHook = _ref.useHocHook,
+      useHocHook = _ref$useHocHook === void 0 ? false : _ref$useHocHook;
   return function () {
-    var {
-      apiEndPoints = {},
-      initialState = {},
-      getDefaultConfig = false,
-      dontReset: dontResetOnLogout = {},
-      isMobile = false,
-      saga: sagaFunction,
-      constantSaga = [],
-      constantReducer,
-      reducer: reducerFunction,
-      name: reducerName,
-      axiosInterceptors,
-      useHook: _useHook = false // injectSaga,
-      // injectReducer,
+    var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref2$apiEndPoints = _ref2.apiEndPoints,
+        apiEndPoints = _ref2$apiEndPoints === void 0 ? {} : _ref2$apiEndPoints,
+        _ref2$initialState = _ref2.initialState,
+        initialState = _ref2$initialState === void 0 ? {} : _ref2$initialState,
+        _ref2$getDefaultConfi = _ref2.getDefaultConfig,
+        getDefaultConfig = _ref2$getDefaultConfi === void 0 ? false : _ref2$getDefaultConfi,
+        _ref2$dontReset = _ref2.dontReset,
+        dontResetOnLogout = _ref2$dontReset === void 0 ? {} : _ref2$dontReset,
+        _ref2$isMobile = _ref2.isMobile,
+        isMobile = _ref2$isMobile === void 0 ? false : _ref2$isMobile,
+        sagaFunction = _ref2.saga,
+        _ref2$constantSaga = _ref2.constantSaga,
+        constantSaga = _ref2$constantSaga === void 0 ? [] : _ref2$constantSaga,
+        constantReducer = _ref2.constantReducer,
+        reducerFunction = _ref2.reducer,
+        reducerName = _ref2.name,
+        axiosInterceptors = _ref2.axiosInterceptors,
+        _ref2$useHook = _ref2.useHook,
+        _useHook = _ref2$useHook === void 0 ? false : _ref2$useHook;
 
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     (0, _invariant.default)((0, _isString.default)(reducerName) && !(0, _isEmpty.default)(reducerName), '(react-boilerplate-redux-saga-hoc)  Expected `name` to be a non empty string');
     checkKey(apiEndPoints, 'apiEndPoints', 'object');
     checkKey(initialState, 'initialState', 'object');
@@ -140,81 +130,81 @@ var _default = (_ref) => {
     if (constantReducer) checkKey(constantReducer, 'constantReducer', 'function');
     if (reducerFunction) checkKey(reducerFunction, 'reducer', 'function');
     if (createReducer) checkKey(createReducer, 'createReducer', 'function');
-    var ApiEndPoints = {
-      [reducerName]: apiEndPoints
-    };
-    var {
-      constants,
-      initialState: InitialState,
-      resetState,
-      actions: Action,
-      sagaConfig
-    } = (0, _constants.default)({
+
+    var ApiEndPoints = _defineProperty({}, reducerName, apiEndPoints);
+
+    var _generateConstants = (0, _constants.default)({
       apiEndPoints: ApiEndPoints,
       generatorKey: reducerName,
-      dontResetOnLogout
-    });
-    var {
-      componentActions // actions,
-      // sagaActions,
-      // cancelActions,
+      dontResetOnLogout: dontResetOnLogout
+    }),
+        constants = _generateConstants.constants,
+        InitialState = _generateConstants.initialState,
+        resetState = _generateConstants.resetState,
+        Action = _generateConstants.actions,
+        sagaConfig = _generateConstants.sagaConfig;
 
-    } = (0, _actions.default)(Action);
-    var {
-      saga
-    } = (0, _generator.default)({
-      sagaConfig,
-      constants,
-      sagaFunction,
-      axiosInterceptors,
-      constantSaga
-    });
+    var _generateAction = (0, _actions.default)(Action),
+        componentActions = _generateAction.componentActions;
+
+    var _Saga = (0, _generator.default)({
+      sagaConfig: sagaConfig,
+      constants: constants,
+      sagaFunction: sagaFunction,
+      axiosInterceptors: axiosInterceptors,
+      constantSaga: constantSaga
+    }),
+        saga = _Saga.saga;
+
     var reducer = (0, _reducer.default)({
-      constants,
+      constants: constants,
       InitialState: (0, _helpers.newObject)(initialState, InitialState),
-      reducerFunction,
-      resetState,
-      constantReducer,
-      isMobile,
-      handlers
+      reducerFunction: reducerFunction,
+      resetState: resetState,
+      constantReducer: constantReducer,
+      isMobile: isMobile,
+      handlers: handlers
     });
-    var componentData = {
-      ["".concat(reducerName, "_hoc")]: {
-        reducerConstants: Object.entries(constants).reduce((acc, _ref2) => {
-          var [key, value] = _ref2;
-          return _objectSpread({}, acc, {
-            [key]: value[_index.commonConstants.CALL]
-          });
-        }, {}),
-        constants,
-        initialState,
-        axios: axiosInterceptors || _axios.default,
-        resetState,
-        reducerName
-      }
-    };
+
+    var componentData = _defineProperty({}, "".concat(reducerName, "_hoc"), {
+      reducerConstants: Object.entries(constants).reduce(function (acc, _ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2),
+            key = _ref4[0],
+            value = _ref4[1];
+
+        return _objectSpread({}, acc, _defineProperty({}, key, value[_index.commonConstants.CALL]));
+      }, {}),
+      constants: constants,
+      initialState: initialState,
+      axios: axiosInterceptors || _axios.default,
+      resetState: resetState,
+      reducerName: reducerName
+    });
+
     var commonProps = useHook || _useHook ? {
-      safe
+      safe: safe
     } : {
-      safe,
+      safe: safe,
       getData: _utils.getData
     }; // eslint-disable-next-line no-underscore-dangle
 
-    var _useHocHook = () => {
+    var _useHocHook = function _useHocHook() {
       (0, _injectSaga.useInjectSaga)({
         key: reducerName,
-        saga
+        saga: saga
       });
       (0, _injectReducer.useInjectReducer)({
         key: reducerName,
-        reducer
+        reducer: reducer
       }, createReducer);
       var dispatch = (0, _reactRedux.useDispatch)();
 
-      var [state] = _react.default.useState(_objectSpread({}, componentData["".concat(reducerName, "_hoc")], {
+      var _React$useState = _react.default.useState(_objectSpread({}, componentData["".concat(reducerName, "_hoc")], {
         actions: (0, _redux.bindActionCreators)(componentActions, dispatch),
-        dispatch
-      }));
+        dispatch: dispatch
+      })),
+          _React$useState2 = _slicedToArray(_React$useState, 1),
+          state = _React$useState2[0];
 
       return state;
     };
@@ -243,45 +233,62 @@ var _default = (_ref) => {
         initialState: (0, _helpers.newObject)(initialState, InitialState),
         InitialState: initialState,
         generatorKey: reducerName,
-        constants
+        constants: constants
       });
-      var mapStateToProps = (0, _reselect.createStructuredSelector)({
-        ["".concat(reducerName, "_data")]: MakeSelectAuthenticationState()
-      });
+      var mapStateToProps = (0, _reselect.createStructuredSelector)(_defineProperty({}, "".concat(reducerName, "_data"), MakeSelectAuthenticationState()));
       var authenticationReducer = (0, _injectReducer.default)({
         key: reducerName,
-        reducer
+        reducer: reducer
       }, createReducer);
       var authenticationSaga = (0, _injectSaga.default)({
         key: reducerName,
-        saga
+        saga: saga
       });
       var withConnect = (0, _reactRedux.connect)(mapStateToProps, (0, _utils.mapDispatchToProps)(componentActions, componentData, reducerName));
 
       if (nextJS) {
-        WithHoc.getInitialProps = _async(function (props) {
-          var _ref3 = props.ctx || props,
-              {
-            res,
-            req,
-            store
-          } = _ref3,
-              rest = _objectWithoutProperties(_ref3, ["res", "req", "store"]);
+        WithHoc.getInitialProps = /*#__PURE__*/function () {
+          var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(props) {
+            var _ref6, res, req, store, rest, data;
 
-          var data = _objectSpread({
-            res,
-            req,
-            store
-          }, rest);
+            return regeneratorRuntime.wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    _ref6 = props.ctx || props, res = _ref6.res, req = _ref6.req, store = _ref6.store, rest = _objectWithoutProperties(_ref6, ["res", "req", "store"]);
+                    data = _objectSpread({
+                      res: res,
+                      req: req,
+                      store: store
+                    }, rest);
 
-          return _invoke(function () {
-            if (WrapperComponent.getInitialProps) return _await(WrapperComponent.getInitialProps(_objectSpread({}, props, {}, (0, _utils.mapDispatchToProps)(componentActions, componentData, reducerName)(store.dispatch))), function (_WrapperComponent$get) {
-              data = _WrapperComponent$get;
-            });
-          }, function () {
-            return data || {};
-          });
-        });
+                    if (!WrapperComponent.getInitialProps) {
+                      _context.next = 6;
+                      break;
+                    }
+
+                    _context.next = 5;
+                    return WrapperComponent.getInitialProps(_objectSpread({}, props, {}, (0, _utils.mapDispatchToProps)(componentActions, componentData, reducerName)(store.dispatch)));
+
+                  case 5:
+                    data = _context.sent;
+
+                  case 6:
+                    return _context.abrupt("return", data || {});
+
+                  case 7:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+          }));
+
+          return function (_x) {
+            return _ref5.apply(this, arguments);
+          };
+        }();
+
         return withConnect(WithHoc);
       }
 
@@ -289,28 +296,28 @@ var _default = (_ref) => {
     };
 
     if (nextJS && getDefaultConfig) return _objectSpread({
-      hoc,
-      saga,
+      hoc: hoc,
+      saga: saga,
       hook: useHocHook,
       reducer: {
         name: reducerName,
-        reducer
+        reducer: reducer
       },
       actions: _objectSpread({}, componentActions)
     }, componentData["".concat(reducerName, "_hoc")]);
     if (nextJS) return {
-      hoc,
-      saga,
+      hoc: hoc,
+      saga: saga,
       hook: useHocHook,
       reducer: {
         name: reducerName,
-        reducer
+        reducer: reducer
       }
     };
 
     if (getDefaultConfig) {
       return _objectSpread({
-        hoc,
+        hoc: hoc,
         actions: _objectSpread({}, componentActions)
       }, componentData["".concat(reducerName, "_hoc")]);
     }

@@ -31,6 +31,18 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 // import { componentActions as DashboardActions } from '../containers/Dashboard/actions';
 // import { componentActions as AuthenticationActions } from '../containers/Authentication/actions';
 var cache = {};
@@ -39,139 +51,110 @@ var safe = _nullCheck.default;
 
 var responseErrorParser = function responseErrorParser() {
   var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  return Array.isArray(data) && data.reduce((acc, curr) => {
-    var [key, message] = Object.entries(curr)[0];
+  return Array.isArray(data) && data.reduce(function (acc, curr) {
+    var _Object$entries$ = _slicedToArray(Object.entries(curr)[0], 2),
+        key = _Object$entries$[0],
+        message = _Object$entries$[1];
+
     var payloadKey = key.split(',')[1];
-    return _objectSpread({}, acc, {
-      [payloadKey]: message
-    });
+    return _objectSpread({}, acc, _defineProperty({}, payloadKey, message));
   }, {}) || {};
 };
 
 exports.responseErrorParser = responseErrorParser;
 
-var commmonStateHandler = (_ref) => {
-  var {
-    state,
-    action,
-    newState,
-    method,
-    constants,
-    updateState
-  } = _ref;
+var commmonStateHandler = function commmonStateHandler(_ref) {
+  var state = _ref.state,
+      action = _ref.action,
+      newState = _ref.newState,
+      method = _ref.method,
+      constants = _ref.constants,
+      updateState = _ref.updateState;
 
   /** This action for initial call  */
-  var {
-    payload: {
-      filter,
-      task = {}
-    } = {}
-  } = action;
+  var _action$payload = action.payload;
+  _action$payload = _action$payload === void 0 ? {} : _action$payload;
+  var filter = _action$payload.filter,
+      _action$payload$task = _action$payload.task,
+      task = _action$payload$task === void 0 ? {} : _action$payload$task;
   /** This action for after api gets success or failure  */
 
-  var {
-    response: {
-      type,
-      statusCode,
-      message,
-      status,
-      customTask,
-      payload: {
-        filter: responseFilter,
-        loader: customLoader,
-        toast: customToast
-      } = {}
-    } = {}
-  } = action;
+  var _action$response = action.response;
+  _action$response = _action$response === void 0 ? {} : _action$response;
+  var type = _action$response.type,
+      statusCode = _action$response.statusCode,
+      message = _action$response.message,
+      status = _action$response.status,
+      customTask = _action$response.customTask,
+      _action$response$payl = _action$response.payload;
+  _action$response$payl = _action$response$payl === void 0 ? {} : _action$response$payl;
+  var responseFilter = _action$response$payl.filter,
+      customLoader = _action$response$payl.loader,
+      customToast = _action$response$payl.toast;
   var loader = Object.keys(constants).includes(action.type);
   var State = (0, _helpers.newObject)(state);
 
   if ((method === _commonConstants.ON_LOADING || loader || [_commonConstants.ON_SUCCESS, _commonConstants.ON_ERROR].includes(method)) && !customTask || customLoader && customTask && (Array.isArray(method) ? method : [method]).includes(_commonConstants.ON_LOADING)) {
-    if ((status || loader) && filter) State = newState((_ref2) => {
-      var {
-        [type || action.type]: obj
-      } = _ref2;
-      return {
-        [type || action.type]: (0, _helpers.newObject)(obj, (0, _customHandlers.filterArrayToastEmptyHandler)({
-          isInfinite: task.name === 'Infinite-Handler',
-          filter: Array.isArray(filter) && filter || [filter]
-        })(obj))
-      };
-    });else if (status || loader) State = newState((_ref3) => {
-      var {
-        [type || action.type]: obj
-      } = _ref3;
-      return {
-        [type || action.type]: (0, _helpers.newObject)(obj, (_ref4) => {
-          var {
-            toast = {}
-          } = _ref4;
-          return {
-            toast: (0, _helpers.newObject)(toast, {
-              message: '',
-              status: '',
-              isError: false,
-              key: ''
-            })
-          };
-        })
-      };
+    if ((status || loader) && filter) State = newState(function (_ref2) {
+      var obj = _ref2[type || action.type];
+      return _defineProperty({}, type || action.type, (0, _helpers.newObject)(obj, (0, _customHandlers.filterArrayToastEmptyHandler)({
+        isInfinite: task.name === 'Infinite-Handler',
+        filter: Array.isArray(filter) && filter || [filter]
+      })(obj)));
+    });else if (status || loader) State = newState(function (_ref4) {
+      var obj = _ref4[type || action.type];
+      return _defineProperty({}, type || action.type, (0, _helpers.newObject)(obj, function (_ref5) {
+        var _ref5$toast = _ref5.toast,
+            toast = _ref5$toast === void 0 ? {} : _ref5$toast;
+        return {
+          toast: (0, _helpers.newObject)(toast, {
+            message: '',
+            status: '',
+            isError: false,
+            key: ''
+          })
+        };
+      }));
     });
-    if (filter || responseFilter || customTask && customLoader) State = (0, _helpers.newObject)(State, (_ref5) => {
-      var {
-        [type || action.type]: obj
-      } = _ref5;
-      return {
-        [type || action.type]: (0, _helpers.newObject)(obj, (0, _customHandlers.filterArrayloadingHandler)({
-          filter: Array.isArray(filter || responseFilter) && (filter || responseFilter) || [filter || responseFilter],
-          loader: customTask && customLoader ? customLoader : [_commonConstants.ON_SUCCESS, _commonConstants.ON_ERROR].includes(method) ? false : status || loader
-        })(obj))
-      };
-    });else State = (0, _helpers.newObject)(State, (_ref6) => {
-      var {
-        [type || action.type]: obj
-      } = _ref6;
-      return {
-        [type || action.type]: (0, _helpers.newObject)(obj, {
-          loading: customTask && customLoader ? customLoader : {
-            status: [_commonConstants.ON_SUCCESS, _commonConstants.ON_ERROR].includes(method) ? false : status || loader,
-            lastUpdated: (0, _helpers.generateTimeStamp)()
-          }
-        })
-      };
+    if (filter || responseFilter || customTask && customLoader) State = (0, _helpers.newObject)(State, function (_ref7) {
+      var obj = _ref7[type || action.type];
+      return _defineProperty({}, type || action.type, (0, _helpers.newObject)(obj, (0, _customHandlers.filterArrayloadingHandler)({
+        filter: Array.isArray(filter || responseFilter) && (filter || responseFilter) || [filter || responseFilter],
+        loader: customTask && customLoader ? customLoader : [_commonConstants.ON_SUCCESS, _commonConstants.ON_ERROR].includes(method) ? false : status || loader
+      })(obj)));
+    });else State = (0, _helpers.newObject)(State, function (_ref9) {
+      var obj = _ref9[type || action.type];
+      return _defineProperty({}, type || action.type, (0, _helpers.newObject)(obj, {
+        loading: customTask && customLoader ? customLoader : {
+          status: [_commonConstants.ON_SUCCESS, _commonConstants.ON_ERROR].includes(method) ? false : status || loader,
+          lastUpdated: (0, _helpers.generateTimeStamp)()
+        }
+      }));
     });
     if (method === _commonConstants.ON_LOADING || loader) return State;
   }
 
   if ([_commonConstants.ON_SUCCESS, _commonConstants.ON_ERROR].includes(method) && // [200, 201, 400, 403, 404, 409, 500].includes(statusCode) &&
   Object.keys(constants).includes(type) && !customTask || customToast && customTask && (Array.isArray(method) ? method : [method]).includes(_commonConstants.ON_TOAST)) {
-    if (responseFilter) State = (0, _helpers.newObject)(State, (_ref7) => {
-      var {
-        [type]: obj
-      } = _ref7;
-      return {
-        [type]: (0, _helpers.newObject)(obj, (0, _customHandlers.filterArrayToastHandler)(_objectSpread({
-          statusCode,
-          filter: Array.isArray(responseFilter) && responseFilter || [responseFilter],
-          message,
-          type
-        }, customToast && customTask && (Array.isArray(method) ? method : [method]).includes(_commonConstants.ON_TOAST) ? customToast : {}))(obj))
-      };
-    });else State = (0, _helpers.newObject)(State, (_ref8) => {
-      var {
-        [type]: obj
-      } = _ref8;
-      return {
-        [type]: (0, _helpers.newObject)(obj, {
-          toast: _objectSpread({
-            isError: ![200, 201].includes(statusCode),
-            status: statusCode,
-            message,
-            key: type,
-            lastUpdated: (0, _helpers.generateTimeStamp)()
-          }, customToast && customTask && (Array.isArray(method) ? method : [method]).includes(_commonConstants.ON_TOAST) ? customToast : {})
-        })
-      };
+    if (responseFilter) State = (0, _helpers.newObject)(State, function (_ref11) {
+      var obj = _ref11[type];
+      return _defineProperty({}, type, (0, _helpers.newObject)(obj, (0, _customHandlers.filterArrayToastHandler)(_objectSpread({
+        statusCode: statusCode,
+        filter: Array.isArray(responseFilter) && responseFilter || [responseFilter],
+        message: message,
+        type: type
+      }, customToast && customTask && (Array.isArray(method) ? method : [method]).includes(_commonConstants.ON_TOAST) ? customToast : {}))(obj)));
+    });else State = (0, _helpers.newObject)(State, function (_ref13) {
+      var obj = _ref13[type];
+      return _defineProperty({}, type, (0, _helpers.newObject)(obj, {
+        toast: _objectSpread({
+          isError: ![200, 201].includes(statusCode),
+          status: statusCode,
+          message: message,
+          key: type,
+          lastUpdated: (0, _helpers.generateTimeStamp)()
+        }, customToast && customTask && (Array.isArray(method) ? method : [method]).includes(_commonConstants.ON_TOAST) ? customToast : {})
+      }));
     });
   }
 
@@ -181,8 +164,8 @@ var commmonStateHandler = (_ref) => {
   return updateState({
     state: State,
     newState: changeState,
-    action,
-    reset
+    action: action,
+    reset: reset
   });
 };
 
@@ -205,18 +188,19 @@ var getData = function getData(data, def) {
 
 exports.getData = getData;
 
-var mapDispatchToProps = (actions, componentData, reducerName) => dispatch => _objectSpread({
-  dispatch
-}, actions && Object.keys(actions).length ? (0, _helpers.newObject)(componentData, (_ref9) => {
-  var {
-    ["".concat(reducerName, "_hoc")]: data
-  } = _ref9;
-  return {
-    ["".concat(reducerName, "_hoc")]: (0, _helpers.newObject)(data, {
-      actions: (0, _redux.bindActionCreators)(actions, dispatch)
-    })
+var mapDispatchToProps = function mapDispatchToProps(actions, componentData, reducerName) {
+  return function (dispatch) {
+    return _objectSpread({
+      dispatch: dispatch
+    }, actions && Object.keys(actions).length ? (0, _helpers.newObject)(componentData, function (_ref15) {
+      var data = _ref15["".concat(reducerName, "_hoc")];
+
+      return _defineProperty({}, "".concat(reducerName, "_hoc"), (0, _helpers.newObject)(data, {
+        actions: (0, _redux.bindActionCreators)(actions, dispatch)
+      }));
+    }) : {});
   };
-}) : {}); // export const connectHoc = connect(
+}; // export const connectHoc = connect(
 //   null,
 //   mapDispatchToProps({ ...AuthenticationActions, ...DashboardActions }),
 // );
@@ -224,11 +208,11 @@ var mapDispatchToProps = (actions, componentData, reducerName) => dispatch => _o
 
 exports.mapDispatchToProps = mapDispatchToProps;
 
-var checkKey = (key, name, dataType, message) => {
+var checkKey = function checkKey(key, name, dataType, message) {
   (0, _invariant.default)((0, _helpers.typeOf)(key) === dataType, "(react-boilerplate-redux-saga-hoc)  Expected `".concat(name, "` to be  ").concat(message || dataType));
 };
 
-var checkKeyWithMessage = (key, dataType, message) => {
+var checkKeyWithMessage = function checkKeyWithMessage(key, dataType, message) {
   (0, _invariant.default)((0, _helpers.typeOf)(key) === dataType, message);
 };
 
@@ -241,31 +225,40 @@ var useHook = function useHook() {
   var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var store = (0, _reactRedux.useStore)();
 
-  var _GetData = () => {
+  var _GetData = function _GetData() {
     var _data = {};
 
-    var _checkFilter = e => e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : undefined : undefined;
+    var _checkFilter = function _checkFilter(e) {
+      return e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : undefined : undefined;
+    };
 
-    var _getData = (e, isString) => safe(getData(safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e)), "".concat(e.query && (0, _helpers.typeOf)(e.query) === 'string' ? e.query : ''), e.query ? e.default || undefined : undefined);
+    var _getData = function _getData(e, isString) {
+      return safe(getData(safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e)), "".concat(e.query && (0, _helpers.typeOf)(e.query) === 'string' ? e.query : ''), e.query ? e.default || undefined : undefined);
+    };
 
     if (name && (Array.isArray(array) && array.length > 0 || (0, _helpers.typeOf)(array) === 'object' && Object.keys(array).length > 0)) {
       // eslint-disable-next-line consistent-return
       // eslint-disable-next-line no-underscore-dangle
-      _data = ((0, _helpers.typeOf)(array) === 'object' ? [array] : array).reduce((acc, e) => (0, _helpers.typeOf)(e) === 'object' ? (0, _helpers.typeOf)(array) === 'object' ? _getData(e) : _objectSpread({}, acc, {
-        [e.name || e.key]: _getData(e)
-      }) : (0, _helpers.typeOf)(array) === 'object' ? safe(store, ".getState()[".concat(name, "][").concat(e, "]")) : _objectSpread({}, acc, {
-        [e]: safe(store, ".getState()[".concat(name, "][").concat(e, "]"))
-      }), {});
+      _data = ((0, _helpers.typeOf)(array) === 'object' ? [array] : array).reduce(function (acc, e) {
+        return (0, _helpers.typeOf)(e) === 'object' ? (0, _helpers.typeOf)(array) === 'object' ? _getData(e) : _objectSpread({}, acc, _defineProperty({}, e.name || e.key, _getData(e))) : (0, _helpers.typeOf)(array) === 'object' ? safe(store, ".getState()[".concat(name, "][").concat(e, "]")) : _objectSpread({}, acc, _defineProperty({}, e, safe(store, ".getState()[".concat(name, "][").concat(e, "]"))));
+      }, {});
     } else if (typeof array === 'string') _data = _getData(config, true);else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
 
     return _data;
   };
 
-  var [data, setData] = (0, _react.useState)(_GetData());
-  var [_key] = (0, _react.useState)({});
+  var _useState = (0, _react.useState)(_GetData()),
+      _useState2 = _slicedToArray(_useState, 2),
+      data = _useState2[0],
+      setData = _useState2[1];
+
+  var _useState3 = (0, _react.useState)({}),
+      _useState4 = _slicedToArray(_useState3, 1),
+      _key = _useState4[0];
+
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
 
-  var execute = () => {
+  var execute = function execute() {
     // const state = safe(store, `.getState()[${name}]`);
     // eslint-disable-next-line no-underscore-dangle
     var _data = _GetData();
@@ -279,15 +272,13 @@ var useHook = function useHook() {
     }
   };
 
-  (0, _react.useEffect)(() => {
-    var {
-      length
-    } = previousDataKey;
+  (0, _react.useEffect)(function () {
+    var length = previousDataKey.length;
     previousDataKey.push(_key);
     previousData[length] = {};
     execute();
     var unSubscribe = store.subscribe(execute);
-    return () => {
+    return function () {
       delete previousData[length];
       unSubscribe();
     };
@@ -297,10 +288,14 @@ var useHook = function useHook() {
 
 exports.useHook = useHook;
 
-var useActionsHook = (name, actions) => {
-  var [dispatchAction, setDispatchAction] = (0, _react.useState)({});
+var useActionsHook = function useActionsHook(name, actions) {
+  var _useState5 = (0, _react.useState)({}),
+      _useState6 = _slicedToArray(_useState5, 2),
+      dispatchAction = _useState6[0],
+      setDispatchAction = _useState6[1];
+
   var dispatch = (0, _reactRedux.useDispatch)();
-  (0, _react.useEffect)(() => {
+  (0, _react.useEffect)(function () {
     if (!(0, _isEqual.default)(cacheActions[name], actions)) {
       cacheActions[name] = actions;
       cache[name] = (0, _redux.bindActionCreators)(actions, dispatch);
@@ -312,20 +307,19 @@ var useActionsHook = (name, actions) => {
 
 exports.useActionsHook = useActionsHook;
 
-var useMutation = reducerName => {
+var useMutation = function useMutation(reducerName) {
   if (!reducerName) checkKeyWithMessage(reducerName, 'string', 'useMutation(`reducerkey`) : Expected a valid reducer key');
   var store = (0, _reactRedux.useStore)();
-  (0, _react.useEffect)(() => {
+  (0, _react.useEffect)(function () {
     if (reducerName) checkKeyWithMessage(reducerName, 'string', 'useMutation(`reducerkey`) : Expected a reducer key to be string');
     if (!store.getState()[reducerName]) checkKeyWithMessage(null, 'string', " reducerName '".concat(reducerName, "' not a valid reducer key."));
   }, []);
   var dispatch = (0, _reactRedux.useDispatch)();
-  return (_ref10) => {
-    var {
-      key: type,
-      value,
-      filter = []
-    } = _ref10;
+  return function (_ref17) {
+    var type = _ref17.key,
+        value = _ref17.value,
+        _ref17$filter = _ref17.filter,
+        filter = _ref17$filter === void 0 ? [] : _ref17$filter;
     if (!type) checkKey(null, 'key', 'string', 'valid string');
 
     var _reducer_keys = Object.keys(store.getState()[reducerName]);
@@ -338,7 +332,7 @@ var useMutation = reducerName => {
     if (type.includes('_CALL') && type.slice(-5) === '_CALL') dispatch({
       type: type.slice(0, -4).concat('CUSTOM_TASK'),
       response: {
-        type,
+        type: type,
         method: _commonConstants.ON_SUCCESS,
         statusCode: 200,
         mutation: true,
@@ -347,13 +341,13 @@ var useMutation = reducerName => {
           data: value
         },
         payload: {
-          filter
+          filter: filter
         }
       }
     });else dispatch({
-      type,
-      value,
-      filter
+      type: type,
+      value: value,
+      filter: filter
     });
   };
 };

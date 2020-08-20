@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.timeCovert = void 0;
 
-var timeCovert = t => {
+var timeCovert = function timeCovert(t) {
   switch (t) {
     case '09:00-10:00':
       return '09:00 AM to 10:00 AM';

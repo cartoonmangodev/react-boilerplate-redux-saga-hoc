@@ -22,7 +22,7 @@ var deletedData = function deletedData() {
   _obj = (0, _helpers.typeOf)(obj) === 'object' ? _objectSpread({}, _obj) : _obj;
 
   if ((0, _helpers.typeOf)(obj) === 'object') {
-    (Array.isArray(keyArray) ? keyArray : [keyArray]).forEach(_key => {
+    (Array.isArray(keyArray) ? keyArray : [keyArray]).forEach(function (_key) {
       _obj = Array.isArray(_key) ? (0, _helpers.deleteIn)(_obj, _key) : (0, _helpers.deleteIn)(_obj, [_key]);
     });
     return _obj;
@@ -31,47 +31,51 @@ var deletedData = function deletedData() {
   return obj;
 };
 
-var executeTask = (_ref, data) => {
-  var {
-    updateCallback,
-    successData,
-    deleteKey,
-    id,
-    key
-  } = _ref;
-  return updateCallback ? updateCallback(data, successData) || data : !Array.isArray(data) ? deletedData(data, deleteKey) : Array.isArray(id) ? data.reduce((acc, curr) => id.includes(curr[key]) ? acc.concat([deletedData(curr, deleteKey)]) : acc.concat([curr]), []) : data.map(_data => _data[key] === id ? deletedData(_data, deleteKey) : _data);
+var executeTask = function executeTask(_ref, data) {
+  var updateCallback = _ref.updateCallback,
+      successData = _ref.successData,
+      deleteKey = _ref.deleteKey,
+      id = _ref.id,
+      key = _ref.key;
+  return updateCallback ? updateCallback(data, successData) || data : !Array.isArray(data) ? deletedData(data, deleteKey) : Array.isArray(id) ? data.reduce(function (acc, curr) {
+    return id.includes(curr[key]) ? acc.concat([deletedData(curr, deleteKey)]) : acc.concat([curr]);
+  }, []) : data.map(function (_data) {
+    return _data[key] === id ? deletedData(_data, deleteKey) : _data;
+  });
 };
 
-var deleteKeyHandler = (_ref2) => {
-  var {
-    task: {
-      key,
-      id,
-      deleteKey = [],
-      subKey = []
-    } = {},
-    callback: {
-      updateCallback
-    } = {},
-    successData = {},
-    successDataStatusCode
-  } = _ref2;
+var deleteKeyHandler = function deleteKeyHandler(_ref2) {
+  var _ref2$task = _ref2.task;
+  _ref2$task = _ref2$task === void 0 ? {} : _ref2$task;
+  var key = _ref2$task.key,
+      id = _ref2$task.id,
+      _ref2$task$deleteKey = _ref2$task.deleteKey,
+      deleteKey = _ref2$task$deleteKey === void 0 ? [] : _ref2$task$deleteKey,
+      _ref2$task$subKey = _ref2$task.subKey,
+      subKey = _ref2$task$subKey === void 0 ? [] : _ref2$task$subKey,
+      _ref2$callback = _ref2.callback;
+  _ref2$callback = _ref2$callback === void 0 ? {} : _ref2$callback;
+  var updateCallback = _ref2$callback.updateCallback,
+      _ref2$successData = _ref2.successData,
+      successData = _ref2$successData === void 0 ? {} : _ref2$successData,
+      successDataStatusCode = _ref2.successDataStatusCode;
   return function () {
-    var {
-      data = {},
-      statusCode
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref3$data = _ref3.data,
+        data = _ref3$data === void 0 ? {} : _ref3$data,
+        statusCode = _ref3.statusCode;
+
     var commonData = {
-      updateCallback,
-      successData,
-      deleteKey,
-      id,
-      key
+      updateCallback: updateCallback,
+      successData: successData,
+      deleteKey: deleteKey,
+      id: id,
+      key: key
     };
     return {
-      data: subKey.length > 0 ? (0, _helpers.updateIn)(_objectSpread({}, data, {}, successData, {
-        [subKey[0]]: data[subKey[0]]
-      }), subKey, _Data => executeTask(commonData, _Data)) : executeTask(commonData, data),
+      data: subKey.length > 0 ? (0, _helpers.updateIn)(_objectSpread({}, data, {}, successData, _defineProperty({}, subKey[0], data[subKey[0]])), subKey, function (_Data) {
+        return executeTask(commonData, _Data);
+      }) : executeTask(commonData, data),
       statusCode: successDataStatusCode || statusCode,
       lastUpdated: (0, _helpers.generateTimeStamp)(),
       isError: false
