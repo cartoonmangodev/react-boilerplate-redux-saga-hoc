@@ -10,6 +10,9 @@ import invariant from 'invariant';
 import { createStructuredSelector } from 'reselect';
 import { compose, bindActionCreators } from 'redux';
 import isString from 'lodash/isString';
+import isFunction from 'lodash/isFunction';
+import isArray from 'lodash/isArray';
+import isObject from 'lodash/isObject';
 import isEmpty from 'lodash/isEmpty';
 import axios from '../../config/axios';
 // import { getLanguage } from '../../config/Language/index';
@@ -35,6 +38,14 @@ const safe = nullcheck;
 // const shape = {
 //   reducerName: isString,
 // };
+const checkKey = (key, name, type) => {
+  invariant(
+    type(key),
+    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a ${typeOf(
+      type,
+    )}`,
+  );
+};
 
 export default ({
   handlers = [],
@@ -60,8 +71,14 @@ export default ({
 } = {}) => {
   invariant(
     isString(reducerName) && !isEmpty(reducerName),
-    `(react-boilerplate-redux-saga-hoc) name: Expected a valid string `,
+    '(react-boilerplate-redux-saga-hoc)  Expected `name` to be a non empty string',
   );
+  checkKey(apiEndPoints, 'apiEndPoints', isObject);
+  checkKey(initialState, 'initialState', isObject);
+  checkKey(dontResetOnLogout, 'dontReset', isObject);
+  checkKey(sagaFunction, 'saga', isFunction);
+  checkKey(constantSaga, 'constantSaga', isArray);
+  if (constantReducer) checkKey(constantReducer, 'constantReducer', isFunction);
 
   const ApiEndPoints = {
     [reducerName]: apiEndPoints,

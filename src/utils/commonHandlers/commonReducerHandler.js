@@ -1,7 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable indent */
-import { newObject } from '../helpers';
+import isFunction from 'lodash/isFunction';
+import isObject from 'lodash/isObject';
+import invariant from 'invariant';
+
+import { newObject, typeOf } from '../helpers';
 import {
   ON_ERROR,
   ON_SUCCESS,
@@ -60,6 +64,14 @@ const HANDLERS = [
     handler: dontUpdateDataHandler,
   },
 ];
+const checkKey = (key, name, type) => {
+  invariant(
+    type(key),
+    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a ${typeOf(
+      type,
+    )}`,
+  );
+};
 
 const CheckCustomHanderFormat = _handler =>
   _handler
@@ -86,6 +98,7 @@ const COMMON_HANDLER = (payload, data) => {
       let customTaskBindAction = null;
       // const isMultiTask = Array.isArray(payload.tasks);
       // if (isMultiTask)
+      if (task.response) checkKey(task.response, 'task { response }', isObject);
       customTaskBindAction = Action =>
         Action({
           ...payload,
@@ -103,11 +116,12 @@ const COMMON_HANDLER = (payload, data) => {
         Array.isArray(payload.handlers) ? payload.handlers : [],
       ).find(({ name }) => name === task.name);
 
-      if (_handler)
+      if (_handler) {
+        checkKey(_handler.handler, _handler.name, isFunction);
         DATA = isFilter
           ? BindHandler(commonFilterHandler(_handler.handler))
           : BindHandler(_handler.handler);
-      else if (customHandler && task.name === 'Custom-Handler')
+      } else if (customHandler && task.name === 'Custom-Handler')
         DATA =
           (isFilter
             ? BindHandler(commonFilterHandler(customHandler))
