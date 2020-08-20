@@ -5,14 +5,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.formatOrdinalSuffix = exports.formatPriceWithUnit = exports.formatPriceWithComma = void 0;
 
-var formatPriceWithComma = function formatPriceWithComma(price) {
-  var formattedPrice;
+const formatPriceWithComma = price => {
+  let formattedPrice;
 
   if (price) {
     formattedPrice = new Intl.NumberFormat('en-IN', {
       maximumSignificantDigits: 3
     }).format(price);
-    return "INR ".concat(formattedPrice);
+    return `INR ${formattedPrice}`;
   }
 
   return 'INR 0';
@@ -20,17 +20,17 @@ var formatPriceWithComma = function formatPriceWithComma(price) {
 
 exports.formatPriceWithComma = formatPriceWithComma;
 
-var formatPriceWithUnit = function formatPriceWithUnit(value) {
-  var val = Math.abs(value);
+const formatPriceWithUnit = value => {
+  let val = Math.abs(value);
 
   if (val >= 10000000) {
-    val = "".concat(val / 10000000);
-    return val <= 1 ? "".concat(val, " Crore") : "".concat(val, " Crores");
+    val = `${val / 10000000}`;
+    return val <= 1 ? `${val} Crore` : `${val} Crores`;
   }
 
   if (val >= 100000) {
-    val = "".concat(val / 100000);
-    return val <= 1 ? "".concat(val, " Lakh") : "".concat(val, " Lakhs");
+    val = `${val / 100000}`;
+    return val <= 1 ? `${val} Lakh` : `${val} Lakhs`;
   }
 
   return val;
@@ -38,21 +38,21 @@ var formatPriceWithUnit = function formatPriceWithUnit(value) {
 
 exports.formatPriceWithUnit = formatPriceWithUnit;
 
-var formatOrdinalSuffix = function formatOrdinalSuffix(value) {
-  if (value > 3 && value < 21) return "".concat(value, "th"); // thanks kennebec
+const formatOrdinalSuffix = value => {
+  if (value > 3 && value < 21) return `${value}th`; // thanks kennebec
 
   switch (value % 10) {
     case 1:
-      return "".concat(value, "st");
+      return `${value}st`;
 
     case 2:
-      return "".concat(value, "nd");
+      return `${value}nd`;
 
     case 3:
-      return "".concat(value, "rd");
+      return `${value}rd`;
 
     default:
-      return "".concat(value, "th");
+      return `${value}th`;
   }
 };
 

@@ -5,43 +5,43 @@ Object.defineProperty(exports, "__esModule", {
 });
 Object.defineProperty(exports, "cloneObject", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return _cloneObject.cloneObject;
   }
 });
 Object.defineProperty(exports, "newObject", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return _cloneObject.newObject;
   }
 });
 Object.defineProperty(exports, "deleteIn", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return _deleteIn.deleteIn;
   }
 });
 Object.defineProperty(exports, "getIn", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return _getIn.getIn;
   }
 });
 Object.defineProperty(exports, "objectEquals", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return _objectEquals.objectEquals;
   }
 });
 Object.defineProperty(exports, "setIn", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return _setIn.setIn;
   }
 });
 Object.defineProperty(exports, "updateIn", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return _updateIn.updateIn;
   }
 });
@@ -59,18 +59,14 @@ var _setIn = require("./setIn");
 
 var _updateIn = require("./updateIn");
 
-var generateTimeStamp = function generateTimeStamp() {
-  return new Date().getTime();
-};
+const generateTimeStamp = () => new Date().getTime();
 
 exports.generateTimeStamp = generateTimeStamp;
 
-var toCapitalize = function toCapitalize(string) {
-  return string && typeof string === 'string' ? string.charAt(0).toUpperCase() + string.slice(1) : null;
-};
+const toCapitalize = string => string && typeof string === 'string' ? string.charAt(0).toUpperCase() + string.slice(1) : null;
 
 exports.toCapitalize = toCapitalize;
-var type = {
+const type = {
   '[object Null]': 'null',
   '[object Undefined]': 'undefined',
   '[object String]': 'string',
@@ -81,8 +77,6 @@ var type = {
   '[object Symbol]': 'symbol'
 };
 
-var typeOf = function typeOf(_obj) {
-  return type[Object.prototype.toString.call(_obj)];
-};
+const typeOf = _obj => type[Object.prototype.toString.call(_obj)];
 
 exports.typeOf = typeOf;

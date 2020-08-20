@@ -23,46 +23,34 @@ var _constants = require("./constants");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+const allowedModes = [_constants.RESTART_ON_REMOUNT, _constants.DAEMON, _constants.ONCE_TILL_UNMOUNT];
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+const checkKey = key => (0, _invariant.default)((0, _isString.default)(key) && !(0, _isEmpty.default)(key), '(app/utils...) injectSaga: Expected `key` to be a non empty string');
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var allowedModes = [_constants.RESTART_ON_REMOUNT, _constants.DAEMON, _constants.ONCE_TILL_UNMOUNT];
-
-var checkKey = function checkKey(key) {
-  return (0, _invariant.default)((0, _isString.default)(key) && !(0, _isEmpty.default)(key), '(app/utils...) injectSaga: Expected `key` to be a non empty string');
-};
-
-var checkDescriptor = function checkDescriptor(descriptor) {
-  var shape = {
+const checkDescriptor = descriptor => {
+  const shape = {
     saga: _isFunction.default,
-    mode: function mode(_mode) {
-      return (0, _isString.default)(_mode) && allowedModes.includes(_mode);
-    }
+    mode: mode => (0, _isString.default)(mode) && allowedModes.includes(mode)
   };
   (0, _invariant.default)((0, _conformsTo.default)(descriptor, shape), '(app/utils...) injectSaga: Expected a valid saga descriptor');
 };
 
 function injectSagaFactory(store, isValid) {
-  return function injectSaga(key) {
-    var descriptor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var args = arguments.length > 2 ? arguments[2] : undefined;
+  return function injectSaga(key, descriptor = {}, args) {
     if (!isValid) (0, _checkStore.default)(store);
-
-    var newDescriptor = _objectSpread({}, descriptor, {
+    const newDescriptor = { ...descriptor,
       mode: descriptor.mode || _constants.DAEMON
-    });
-
-    var saga = newDescriptor.saga,
-        mode = newDescriptor.mode;
+    };
+    const {
+      saga,
+      mode
+    } = newDescriptor;
     checkKey(key);
     checkDescriptor(newDescriptor);
-    var hasSaga = Reflect.has(store.injectedSagas, key);
+    let hasSaga = Reflect.has(store.injectedSagas, key);
 
     if (process.env.NODE_ENV !== 'production') {
-      var oldDescriptor = store.injectedSagas[key]; // enable hot reloading of daemon and once-till-unmount sagas
+      const oldDescriptor = store.injectedSagas[key]; // enable hot reloading of daemon and once-till-unmount sagas
 
       if (hasSaga && oldDescriptor.saga !== saga) {
         oldDescriptor.task.cancel();
@@ -72,9 +60,9 @@ function injectSagaFactory(store, isValid) {
 
     if (!hasSaga || hasSaga && mode !== _constants.DAEMON && mode !== _constants.ONCE_TILL_UNMOUNT) {
       /* eslint-disable no-param-reassign */
-      store.injectedSagas[key] = _objectSpread({}, newDescriptor, {
+      store.injectedSagas[key] = { ...newDescriptor,
         task: store.runSaga(saga, args)
-      });
+      };
       /* eslint-enable no-param-reassign */
     }
   };
@@ -86,7 +74,7 @@ function ejectSagaFactory(store, isValid) {
     checkKey(key);
 
     if (Reflect.has(store.injectedSagas, key)) {
-      var descriptor = store.injectedSagas[key];
+      const descriptor = store.injectedSagas[key];
 
       if (descriptor.mode && descriptor.mode !== _constants.DAEMON) {
         descriptor.task.cancel(); // Clean up in production; in development we need `descriptor.saga` for hot reloading

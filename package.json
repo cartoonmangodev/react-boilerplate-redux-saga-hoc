@@ -49,9 +49,9 @@
   "peerDependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-redux": "^7.0.2",
     "redux": "^4.0.1",
-    "redux-saga": "0.16.2",
-    "react-redux": "^7.0.2"
+    "redux-saga": "0.16.2"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -63,8 +63,8 @@
     "prop-types": "^15.7.2",
     "query-string": "^5.0.1",
     "react-is": "^16.8.6",
-    "serialize-javascript": "^3.1.0",
-    "reselect": "^4.0.0"
+    "reselect": "^4.0.0",
+    "serialize-javascript": "^3.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.3",
@@ -78,6 +78,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.7.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "codecov": "^3.3.0",
     "create-react-class": "^15.6.3",
     "cross-env": "^5.2.0",
@@ -93,10 +94,10 @@
     "prettier": "^1.16.4",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-redux": "^7.0.2",
     "react-testing-library": "^5.9.0",
     "redux": "^4.0.1",
     "redux-saga": "0.16.2",
-    "react-redux": "^7.0.2",
     "reselect": "^4.0.0",
     "rimraf": "^2.6.3",
     "rollup": "^1.8.0",

@@ -6,25 +6,25 @@ Object.defineProperty(exports, "__esModule", {
 exports.getCookie = exports.deleteCookie = exports.setCookie = void 0;
 
 /* eslint-disable no-plusplus */
-var setCookie = function setCookie(name, value) {
-  document.cookie = "".concat(name, "=").concat(value, "; Path=/;");
+const setCookie = (name, value) => {
+  document.cookie = `${name}=${value}; Path=/;`;
 };
 
 exports.setCookie = setCookie;
 
-var deleteCookie = function deleteCookie(name) {
-  document.cookie = "".concat(name, "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;");
+const deleteCookie = name => {
+  document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 };
 
 exports.deleteCookie = deleteCookie;
 
-var getCookie = function getCookie(cname) {
-  var name = "".concat(cname, "=");
-  var decodedCookie = decodeURIComponent(document.cookie);
-  var ca = decodedCookie.split(';');
+const getCookie = cname => {
+  const name = `${cname}=`;
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(';');
 
-  for (var i = 0; i < ca.length; i++) {
-    var c = ca[i];
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
 
     while (c.charAt(0) === ' ') {
       c = c.substring(1);

@@ -8,14 +8,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // import { someAction } from '../actions';
 
 /* eslint-disable default-case, no-param-reassign */
-describe('dashboardReducer', function () {
-  var state;
-  beforeEach(function () {
+describe('dashboardReducer', () => {
+  let state;
+  beforeEach(() => {
     state = {// default state params here
     };
   });
-  it('returns the initial state', function () {
-    var expectedResult = state;
+  it('returns the initial state', () => {
+    const expectedResult = state;
     expect((0, _reducer.default)(undefined, {})).toEqual(expectedResult);
   });
   /**

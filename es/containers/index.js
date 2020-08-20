@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 Object.defineProperty(exports, "HOC", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return _Authentication.default;
   }
 });

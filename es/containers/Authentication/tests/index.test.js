@@ -16,16 +16,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  *
  */
 // import 'jest-dom/extend-expect'; // add some helpful assertions
-describe('<Dashboard />', function () {
-  it('Expect to not log errors in console', function () {
-    var spy = jest.spyOn(global.console, 'error');
-    var dispatch = jest.fn();
+describe('<Dashboard />', () => {
+  it('Expect to not log errors in console', () => {
+    const spy = jest.spyOn(global.console, 'error');
+    const dispatch = jest.fn();
     (0, _reactTestingLibrary.render)(_react.default.createElement(_index.default, {
       dispatch: dispatch
     }));
     expect(spy).not.toHaveBeenCalled();
   });
-  it('Expect to have additional unit tests specified', function () {
+  it('Expect to have additional unit tests specified', () => {
     expect(true).toEqual(false);
   });
   /**
@@ -34,10 +34,12 @@ describe('<Dashboard />', function () {
    * @see {@link https://jestjs.io/docs/en/api#testskipname-fn}
    */
 
-  it.skip('Should render and match the snapshot', function () {
-    var _render = (0, _reactTestingLibrary.render)(_react.default.createElement(_index.default, null)),
-        firstChild = _render.container.firstChild;
-
+  it.skip('Should render and match the snapshot', () => {
+    const {
+      container: {
+        firstChild
+      }
+    } = (0, _reactTestingLibrary.render)(_react.default.createElement(_index.default, null));
     expect(firstChild).toMatchSnapshot();
   });
 });
