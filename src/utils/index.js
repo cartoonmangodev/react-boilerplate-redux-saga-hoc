@@ -266,65 +266,65 @@ export const useHook = (name = null, array = [], config = {}) => {
   const store = useStore();
   const [data, setData] = useState({});
   const [_key] = useState({});
-  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
-  useEffect(() => {
-    const execute = () => {
-      // const state = safe(store, `.getState()[${name}]`);
+  if (name) checkKey(null, 'reducer name', 'string', 'valid string');
+  const execute = () => {
+    // const state = safe(store, `.getState()[${name}]`);
+    // eslint-disable-next-line no-underscore-dangle
+    let _data = {};
+    const _checkFilter = e =>
+      e.filter
+        ? Array.isArray(e.filter)
+          ? e.filter
+          : typeof e.filter === 'string'
+          ? [e.filter]
+          : undefined
+        : undefined;
+    const _getData = (e, isString) =>
+      safe(
+        getData(
+          safe(store, `.getState()[${name}][${isString ? array : e.key}]`),
+          e.query ? undefined : e.default || undefined,
+          e.initialLoaderState || false,
+          _checkFilter(e),
+        ),
+        `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
+        e.query ? e.default || undefined : undefined,
+      );
+    if (
+      name &&
+      ((Array.isArray(array) && array.length > 0) ||
+        (typeOf(array) === 'object' && Object.keys(array).length > 0))
+    ) {
+      // eslint-disable-next-line consistent-return
       // eslint-disable-next-line no-underscore-dangle
-      let _data = {};
-      const _checkFilter = e =>
-        e.filter
-          ? Array.isArray(e.filter)
-            ? e.filter
-            : typeof e.filter === 'string'
-            ? [e.filter]
-            : undefined
-          : undefined;
-      const _getData = (e, isString) =>
-        safe(
-          getData(
-            safe(store, `.getState()[${name}][${isString ? array : e.key}]`),
-            e.query ? undefined : e.default || undefined,
-            e.initialLoaderState || false,
-            _checkFilter(e),
-          ),
-          `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
-          e.query ? e.default || undefined : undefined,
-        );
-      if (
-        name &&
-        ((Array.isArray(array) && array.length > 0) ||
-          (typeOf(array) === 'object' && Object.keys(array).length > 0))
-      ) {
-        // eslint-disable-next-line consistent-return
-        // eslint-disable-next-line no-underscore-dangle
-        _data = (typeOf(array) === 'object' ? [array] : array).reduce(
-          (acc, e) =>
-            typeOf(e) === 'object'
-              ? typeOf(array) === 'object'
-                ? _getData(e)
-                : {
-                    ...acc,
-                    [e.name || e.key]: _getData(e),
-                  }
-              : typeOf(array) === 'object'
-              ? safe(store, `.getState()[${name}][${e}]`)
+      _data = (typeOf(array) === 'object' ? [array] : array).reduce(
+        (acc, e) =>
+          typeOf(e) === 'object'
+            ? typeOf(array) === 'object'
+              ? _getData(e)
               : {
                   ...acc,
-                  [e]: safe(store, `.getState()[${name}][${e}]`),
-                },
-          {},
-        );
-      } else if (typeof array === 'string') _data = _getData(config, true);
-      else if (name) _data = safe(store, `.getState()[${name}]`);
-      else _data = safe(store, `.getState()`) || {};
-      const index = previousDataKey.indexOf(_key);
-      if (!isEqual(_data, previousData[index])) {
-        // previousData[`${key || name}_${_key}`] = _data;
-        previousData[index] = _data;
-        setData(_data);
-      }
-    };
+                  [e.name || e.key]: _getData(e),
+                }
+            : typeOf(array) === 'object'
+            ? safe(store, `.getState()[${name}][${e}]`)
+            : {
+                ...acc,
+                [e]: safe(store, `.getState()[${name}][${e}]`),
+              },
+        {},
+      );
+    } else if (typeof array === 'string') _data = _getData(config, true);
+    else if (name) _data = safe(store, `.getState()[${name}]`);
+    else _data = safe(store, `.getState()`) || {};
+    const index = previousDataKey.indexOf(_key);
+    if (!isEqual(_data, previousData[index])) {
+      // previousData[`${key || name}_${_key}`] = _data;
+      previousData[index] = _data;
+      setData(_data);
+    }
+  };
+  useEffect(() => {
     const { length } = previousDataKey;
     previousDataKey.push(_key);
     previousData[length] = {};
