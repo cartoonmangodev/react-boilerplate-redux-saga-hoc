@@ -9,7 +9,13 @@ exports.default = getInjectors;
 
 var _invariant = _interopRequireDefault(require("invariant"));
 
-var _lodash = require("lodash");
+var _isEmpty = _interopRequireDefault(require("lodash/isEmpty"));
+
+var _isFunction = _interopRequireDefault(require("lodash/isFunction"));
+
+var _isString = _interopRequireDefault(require("lodash/isString"));
+
+var _conformsTo = _interopRequireDefault(require("lodash/conformsTo"));
 
 var _checkStore = _interopRequireDefault(require("./checkStore"));
 
@@ -26,17 +32,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var allowedModes = [_constants.RESTART_ON_REMOUNT, _constants.DAEMON, _constants.ONCE_TILL_UNMOUNT];
 
 var checkKey = function checkKey(key) {
-  return (0, _invariant.default)((0, _lodash.isString)(key) && !(0, _lodash.isEmpty)(key), '(app/utils...) injectSaga: Expected `key` to be a non empty string');
+  return (0, _invariant.default)((0, _isString.default)(key) && !(0, _isEmpty.default)(key), '(app/utils...) injectSaga: Expected `key` to be a non empty string');
 };
 
 var checkDescriptor = function checkDescriptor(descriptor) {
   var shape = {
-    saga: _lodash.isFunction,
+    saga: _isFunction.default,
     mode: function mode(_mode) {
-      return (0, _lodash.isString)(_mode) && allowedModes.includes(_mode);
+      return (0, _isString.default)(_mode) && allowedModes.includes(_mode);
     }
   };
-  (0, _invariant.default)((0, _lodash.conformsTo)(descriptor, shape), '(app/utils...) injectSaga: Expected a valid saga descriptor');
+  (0, _invariant.default)((0, _conformsTo.default)(descriptor, shape), '(app/utils...) injectSaga: Expected a valid saga descriptor');
 };
 
 function injectSagaFactory(store, isValid) {

@@ -8,7 +8,11 @@ exports.default = getInjectors;
 
 var _invariant = _interopRequireDefault(require("invariant"));
 
-var _lodash = require("lodash");
+var _isEmpty = _interopRequireDefault(require("lodash/isEmpty"));
+
+var _isFunction = _interopRequireDefault(require("lodash/isFunction"));
+
+var _isString = _interopRequireDefault(require("lodash/isString"));
 
 var _checkStore = _interopRequireDefault(require("./checkStore"));
 
@@ -19,7 +23,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function injectReducerFactory(store, isValid) {
   return function injectReducer(key, reducer, customCreateReducer) {
     if (!isValid) (0, _checkStore.default)(store);
-    (0, _invariant.default)((0, _lodash.isString)(key) && !(0, _lodash.isEmpty)(key) && (0, _lodash.isFunction)(reducer), '(app/utils...) injectReducer: Expected `reducer` to be a reducer function'); // Check `store.injectedReducers[key] === reducer` for hot reloading when a key is the same but a reducer is different
+    (0, _invariant.default)((0, _isString.default)(key) && !(0, _isEmpty.default)(key) && (0, _isFunction.default)(reducer), '(app/utils...) injectReducer: Expected `reducer` to be a reducer function'); // Check `store.injectedReducers[key] === reducer` for hot reloading when a key is the same but a reducer is different
 
     if (Reflect.has(store.injectedReducers, key) && store.injectedReducers[key] === reducer) return;
     store.injectedReducers[key] = reducer; // eslint-disable-line no-param-reassign

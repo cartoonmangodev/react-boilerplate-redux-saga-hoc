@@ -35,10 +35,10 @@ export default ({ key, reducer }, createReducer) => WrappedComponent => {
   return hoistNonReactStatics(ReducerInjector, WrappedComponent);
 };
 
-const useInjectReducer = ({ key, reducer }) => {
+const useInjectReducer = ({ key, reducer }, createReducer) => {
   const context = React.useContext(ReactReduxContext);
   React.useEffect(() => {
-    getInjectors(context.store).injectReducer(key, reducer);
+    getInjectors(context.store).injectReducer(key, reducer, createReducer);
   }, []);
 };
 

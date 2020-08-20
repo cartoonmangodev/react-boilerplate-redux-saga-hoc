@@ -5,9 +5,9 @@
  * Dashboard
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { compose } from 'redux';
+import { compose, bindActionCreators } from 'redux';
 import axios from '../../config/axios';
 // import { getLanguage } from '../../config/Language/index';
 import generateConstants from './constants';
@@ -15,8 +15,10 @@ import generateConstants from './constants';
 // import injectSaga from '../../../../../app/utils/injectSaga';
 // eslint-disable-next-line import/no-useless-path-segments
 // import injectReducer from '../../../../../app/utils/injectReducer';
-import injectSaga from '../../utils/utils/injectSaga';
-import injectReducer from '../../utils/utils/injectReducer';
+import injectSaga, { useInjectSaga } from '../../utils/utils/injectSaga';
+import injectReducer, {
+  useInjectReducer,
+} from '../../utils/utils/injectReducer';
 import { newObject } from '../../utils/helpers';
 import { makeSelectAuthenticationState } from './selectors';
 import generateAction from './actions';
@@ -32,6 +34,7 @@ export default ({
   nextJS = false,
   createReducer = null,
   useHook = false,
+  useHocHook = false,
 }) => ({
   apiEndPoints = {},
   initialState = {},
@@ -102,6 +105,26 @@ export default ({
     },
   };
   const commonProps = useHook || _useHook ? { safe } : { safe, getData };
+  if (useHocHook) {
+    // eslint-disable-next-line no-underscore-dangle
+    const _useHocHook = () => {
+      useInjectSaga({ key: reducerName, saga });
+      useInjectReducer(
+        {
+          key: reducerName,
+          reducer,
+        },
+        createReducer,
+      );
+      const dispatch = useDispatch();
+      const [state] = React.useState({
+        ...componentData[`${reducerName}_hoc`],
+        actions: bindActionCreators(componentActions, dispatch),
+      });
+      return state;
+    };
+    return _useHocHook;
+  }
   // eslint-disable-next-line no-unused-vars
   const hoc = (WrapperComponent, autoLoginCheck = true) => {
     function WithHoc(props) {
