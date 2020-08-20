@@ -5,14 +5,13 @@ const _checkIsNotObject = data =>
   Object.prototype.toString.call(data) !== '[object Object]';
 export const dataHandler = ({
   mutation: isMutation,
-  updatedData = {},
   task: { clearData, subKey = [] } = {},
   callback: { updateCallback } = {},
   successData = {},
   successDataStatusCode,
 }) => ({ data: oldData = {}, statusCode, ...rest } = {}) =>
   isMutation
-    ? { data: oldData, statusCode, ...rest, ...updatedData }
+    ? { data: oldData, statusCode, ...rest, ...successData }
     : {
         data: (() => {
           if (subKey.length > 0) {

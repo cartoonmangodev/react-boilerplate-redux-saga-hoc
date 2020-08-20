@@ -95,7 +95,7 @@ var COMMON_HANDLER = function COMMON_HANDLER(payload, data) {
     var customTaskBindAction = null; // const isMultiTask = Array.isArray(payload.tasks);
     // if (isMultiTask)
 
-    if (task.response) checkKey(task.response, 'task { response }', 'object');
+    if (task.response) checkKey(task.response, 'task { response  : { data }}', 'object');
 
     customTaskBindAction = function customTaskBindAction(Action) {
       return Action(_objectSpread({}, payload, {
