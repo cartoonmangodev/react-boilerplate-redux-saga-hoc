@@ -1,5 +1,7 @@
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -17,9 +19,9 @@ var _axios = _interopRequireDefault(require("../../config/axios"));
 
 var _constants = _interopRequireDefault(require("./constants"));
 
-var _injectSaga = _interopRequireDefault(require("../../utils/utils/injectSaga"));
+var _injectSaga = _interopRequireWildcard(require("../../utils/utils/injectSaga"));
 
-var _injectReducer = _interopRequireDefault(require("../../utils/utils/injectReducer"));
+var _injectReducer = _interopRequireWildcard(require("../../utils/utils/injectReducer"));
 
 var _helpers = require("../../utils/helpers");
 
@@ -36,6 +38,10 @@ var _nullCheck = _interopRequireDefault(require("../../utils/nullCheck"));
 var _utils = require("../../utils");
 
 var _index = require("../../index");
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -77,7 +83,9 @@ var _default = function _default(_ref) {
       _ref$createReducer = _ref.createReducer,
       createReducer = _ref$createReducer === void 0 ? null : _ref$createReducer,
       _ref$useHook = _ref.useHook,
-      useHook = _ref$useHook === void 0 ? false : _ref$useHook;
+      useHook = _ref$useHook === void 0 ? false : _ref$useHook,
+      _ref$useHocHook = _ref.useHocHook,
+      useHocHook = _ref$useHocHook === void 0 ? false : _ref$useHocHook;
   return function () {
     var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref2$apiEndPoints = _ref2.apiEndPoints,
@@ -155,7 +163,33 @@ var _default = function _default(_ref) {
     } : {
       safe: safe,
       getData: _utils.getData
-    }; // eslint-disable-next-line no-unused-vars
+    };
+
+    if (useHocHook) {
+      // eslint-disable-next-line no-underscore-dangle
+      var _useHocHook = function _useHocHook() {
+        (0, _injectSaga.useInjectSaga)({
+          key: reducerName,
+          saga: saga
+        });
+        (0, _injectReducer.useInjectReducer)({
+          key: reducerName,
+          reducer: reducer
+        }, createReducer);
+        var dispatch = (0, _reactRedux.useDispatch)();
+
+        var _React$useState = _react.default.useState(_objectSpread({}, componentData["".concat(reducerName, "_hoc")], {
+          actions: (0, _redux.bindActionCreators)(componentActions, dispatch)
+        })),
+            _React$useState2 = _slicedToArray(_React$useState, 1),
+            state = _React$useState2[0];
+
+        return state;
+      };
+
+      return _useHocHook;
+    } // eslint-disable-next-line no-unused-vars
+
 
     var hoc = function hoc(WrapperComponent) {
       var autoLoginCheck = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;

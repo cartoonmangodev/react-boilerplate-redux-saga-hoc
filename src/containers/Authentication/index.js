@@ -120,6 +120,7 @@ export default ({
       const [state] = React.useState({
         ...componentData[`${reducerName}_hoc`],
         actions: bindActionCreators(componentActions, dispatch),
+        dispatch,
       });
       return state;
     };
