@@ -1,10 +1,3 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getIn = getIn;
-
 /* eslint-disable no-nested-ternary */
 
 /* eslint-disable indent */
@@ -23,3 +16,5 @@ function getIn(obj, arr) {
 
   return arr.length > 0 ? get() : obj;
 }
+
+export { getIn };
