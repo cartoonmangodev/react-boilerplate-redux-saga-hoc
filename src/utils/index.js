@@ -252,70 +252,79 @@ export const mapDispatchToProps = (
 //   mapDispatchToProps({ ...AuthenticationActions, ...DashboardActions }),
 // );
 
+const checkKey = (key, name, dataType, message) => {
+  invariant(
+    typeOf(key) === dataType,
+    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be  ${message ||
+      dataType}`,
+  );
+};
+
 const previousDataKey = [];
 const previousData = {};
 export const useHook = (name = null, array = [], config = {}) => {
   const store = useStore();
   const [data, setData] = useState({});
   const [_key] = useState({});
-  const execute = () => {
-    // const state = safe(store, `.getState()[${name}]`);
-    // eslint-disable-next-line no-underscore-dangle
-    let _data = {};
-    const _checkFilter = e =>
-      e.filter
-        ? Array.isArray(e.filter)
-          ? e.filter
-          : typeof e.filter === 'string'
-          ? [e.filter]
-          : undefined
-        : undefined;
-    const _getData = (e, isString) =>
-      safe(
-        getData(
-          safe(store, `.getState()[${name}][${isString ? array : e.key}]`),
-          e.query ? undefined : e.default || undefined,
-          e.initialLoaderState || false,
-          _checkFilter(e),
-        ),
-        `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
-        e.query ? e.default || undefined : undefined,
-      );
-    if (
-      name &&
-      ((Array.isArray(array) && array.length > 0) ||
-        (typeOf(array) === 'object' && Object.keys(array).length > 0))
-    ) {
-      // eslint-disable-next-line consistent-return
+  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
+  useEffect(() => {
+    const execute = () => {
+      // const state = safe(store, `.getState()[${name}]`);
       // eslint-disable-next-line no-underscore-dangle
-      _data = (typeOf(array) === 'object' ? [array] : array).reduce(
-        (acc, e) =>
-          typeOf(e) === 'object'
-            ? typeOf(array) === 'object'
-              ? _getData(e)
+      let _data = {};
+      const _checkFilter = e =>
+        e.filter
+          ? Array.isArray(e.filter)
+            ? e.filter
+            : typeof e.filter === 'string'
+            ? [e.filter]
+            : undefined
+          : undefined;
+      const _getData = (e, isString) =>
+        safe(
+          getData(
+            safe(store, `.getState()[${name}][${isString ? array : e.key}]`),
+            e.query ? undefined : e.default || undefined,
+            e.initialLoaderState || false,
+            _checkFilter(e),
+          ),
+          `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
+          e.query ? e.default || undefined : undefined,
+        );
+      if (
+        name &&
+        ((Array.isArray(array) && array.length > 0) ||
+          (typeOf(array) === 'object' && Object.keys(array).length > 0))
+      ) {
+        // eslint-disable-next-line consistent-return
+        // eslint-disable-next-line no-underscore-dangle
+        _data = (typeOf(array) === 'object' ? [array] : array).reduce(
+          (acc, e) =>
+            typeOf(e) === 'object'
+              ? typeOf(array) === 'object'
+                ? _getData(e)
+                : {
+                    ...acc,
+                    [e.name || e.key]: _getData(e),
+                  }
+              : typeOf(array) === 'object'
+              ? safe(store, `.getState()[${name}][${e}]`)
               : {
                   ...acc,
-                  [e.name || e.key]: _getData(e),
-                }
-            : typeOf(array) === 'object'
-            ? safe(store, `.getState()[${name}][${e}]`)
-            : {
-                ...acc,
-                [e]: safe(store, `.getState()[${name}][${e}]`),
-              },
-        {},
-      );
-    } else if (typeof array === 'string') _data = _getData(config, true);
-    else if (name) _data = safe(store, `.getState()[${name}]`);
-    else _data = safe(store, `.getState()`) || {};
-    const index = previousDataKey.indexOf(_key);
-    if (!isEqual(_data, previousData[index])) {
-      // previousData[`${key || name}_${_key}`] = _data;
-      previousData[index] = _data;
-      setData(_data);
-    }
-  };
-  useEffect(() => {
+                  [e]: safe(store, `.getState()[${name}][${e}]`),
+                },
+          {},
+        );
+      } else if (typeof array === 'string') _data = _getData(config, true);
+      else if (name) _data = safe(store, `.getState()[${name}]`);
+      else _data = safe(store, `.getState()`) || {};
+      const index = previousDataKey.indexOf(_key);
+      if (!isEqual(_data, previousData[index])) {
+        // previousData[`${key || name}_${_key}`] = _data;
+        previousData[index] = _data;
+        setData(_data);
+      }
+    };
     const { length } = previousDataKey;
     previousDataKey.push(_key);
     previousData[length] = {};
@@ -340,13 +349,6 @@ export const useActionsHook = (name, actions) => {
     } else setDispatchAction(cache[name]);
   }, [isEqual(cacheActions[name], actions)]);
   return dispatchAction;
-};
-const checkKey = (key, name, dataType, message) => {
-  invariant(
-    typeOf(key) === dataType,
-    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be  ${message ||
-      dataType}`,
-  );
 };
 
 export const useMutation = () => {
