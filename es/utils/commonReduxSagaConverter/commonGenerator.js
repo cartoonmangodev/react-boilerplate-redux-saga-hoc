@@ -98,7 +98,7 @@ function _default(_ref2) {
       axiosInterceptors = _ref2.axiosInterceptors;
 
   function commonGenerator(_ref3) {
-    var _ref3$payload, _ref3$payload$request, _ref3$payload$request2, asyncFunction, _ref3$payload$request3, asyncFunctionParams, _ref3$payload$request4, payload, _ref3$payload$request5, params, query, _ref3$payload$request6, paramsSerializer, _ref3$payload$request7, axiosConfig, _ref3$payload$request8, errorDataHandling, _ref3$payload$request9, clearDataOnError, _ref3$payload$request10, polling, _ref3$payload$request11, errorParser, _ref3$payload$request12, isResponseErrorParser, _ref3$payload$request13, Delay, _ref3$payload$request14, retry, _ref3$payload$request15, pollingCount, rest, _ref3$payload$callbac, successCallback, errorCallback, logoutCallback, finalCallback, pollingCallback, restCallback, restPayload, type, loop, count, pollingRequestConfig, _loop;
+    var _ref3$payload, resolve, _ref3$payload$request, _ref3$payload$request2, asyncFunction, _ref3$payload$request3, asyncFunctionParams, _ref3$payload$request4, payload, _ref3$payload$request5, params, query, _ref3$payload$request6, paramsSerializer, _ref3$payload$request7, axiosConfig, _ref3$payload$request8, errorDataHandling, _ref3$payload$request9, clearDataOnError, _ref3$payload$request10, polling, _ref3$payload$request11, errorParser, _ref3$payload$request12, isResponseErrorParser, _ref3$payload$request13, Delay, _ref3$payload$request14, retry, _ref3$payload$request15, pollingCount, rest, _ref3$payload$callbac, successCallback, errorCallback, logoutCallback, finalCallback, pollingCallback, restCallback, restPayload, type, loop, count, pollingRequestConfig, _loop;
 
     return regeneratorRuntime.wrap(function commonGenerator$(_context3) {
       while (1) {
@@ -106,13 +106,13 @@ function _default(_ref2) {
           case 0:
             _ref3$payload = _ref3.payload;
             _ref3$payload = _ref3$payload === void 0 ? {} : _ref3$payload;
-            _ref3$payload$request = _ref3$payload.request;
+            resolve = _ref3$payload.resolve, _ref3$payload$request = _ref3$payload.request;
             _ref3$payload$request = _ref3$payload$request === void 0 ? {} : _ref3$payload$request;
             _ref3$payload$request2 = _ref3$payload$request.asyncFunction, asyncFunction = _ref3$payload$request2 === void 0 ? null : _ref3$payload$request2, _ref3$payload$request3 = _ref3$payload$request.asyncFunctionParams, asyncFunctionParams = _ref3$payload$request3 === void 0 ? null : _ref3$payload$request3, _ref3$payload$request4 = _ref3$payload$request.payload, payload = _ref3$payload$request4 === void 0 ? {} : _ref3$payload$request4, _ref3$payload$request5 = _ref3$payload$request.params, params = _ref3$payload$request5 === void 0 ? {} : _ref3$payload$request5, query = _ref3$payload$request.query, _ref3$payload$request6 = _ref3$payload$request.paramsSerializer, paramsSerializer = _ref3$payload$request6 === void 0 ? {
               arrayFormat: 'brackets'
             } : _ref3$payload$request6, _ref3$payload$request7 = _ref3$payload$request.axiosConfig, axiosConfig = _ref3$payload$request7 === void 0 ? {} : _ref3$payload$request7, _ref3$payload$request8 = _ref3$payload$request.errorDataHandling, errorDataHandling = _ref3$payload$request8 === void 0 ? true : _ref3$payload$request8, _ref3$payload$request9 = _ref3$payload$request.clearDataOnError, clearDataOnError = _ref3$payload$request9 === void 0 ? false : _ref3$payload$request9, _ref3$payload$request10 = _ref3$payload$request.polling, polling = _ref3$payload$request10 === void 0 ? false : _ref3$payload$request10, _ref3$payload$request11 = _ref3$payload$request.errorParser, errorParser = _ref3$payload$request11 === void 0 ? false : _ref3$payload$request11, _ref3$payload$request12 = _ref3$payload$request.defaultErrorParser, isResponseErrorParser = _ref3$payload$request12 === void 0 ? false : _ref3$payload$request12, _ref3$payload$request13 = _ref3$payload$request.delay, Delay = _ref3$payload$request13 === void 0 ? 8000 : _ref3$payload$request13, _ref3$payload$request14 = _ref3$payload$request.retry, retry = _ref3$payload$request14 === void 0 ? 0 : _ref3$payload$request14, _ref3$payload$request15 = _ref3$payload$request.pollingCount, pollingCount = _ref3$payload$request15 === void 0 ? 'unlimited' : _ref3$payload$request15, rest = _objectWithoutProperties(_ref3$payload$request, ["asyncFunction", "asyncFunctionParams", "payload", "params", "query", "paramsSerializer", "axiosConfig", "errorDataHandling", "clearDataOnError", "polling", "errorParser", "defaultErrorParser", "delay", "retry", "pollingCount"]), _ref3$payload$callbac = _ref3$payload.callback;
             _ref3$payload$callbac = _ref3$payload$callbac === void 0 ? {} : _ref3$payload$callbac;
-            successCallback = _ref3$payload$callbac.successCallback, errorCallback = _ref3$payload$callbac.errorCallback, logoutCallback = _ref3$payload$callbac.logoutCallback, finalCallback = _ref3$payload$callbac.finalCallback, pollingCallback = _ref3$payload$callbac.pollingCallback, restCallback = _objectWithoutProperties(_ref3$payload$callbac, ["successCallback", "errorCallback", "logoutCallback", "finalCallback", "pollingCallback"]), restPayload = _objectWithoutProperties(_ref3$payload, ["request", "callback"]), type = _ref3.type;
+            successCallback = _ref3$payload$callbac.successCallback, errorCallback = _ref3$payload$callbac.errorCallback, logoutCallback = _ref3$payload$callbac.logoutCallback, finalCallback = _ref3$payload$callbac.finalCallback, pollingCallback = _ref3$payload$callbac.pollingCallback, restCallback = _objectWithoutProperties(_ref3$payload$callbac, ["successCallback", "errorCallback", "logoutCallback", "finalCallback", "pollingCallback"]), restPayload = _objectWithoutProperties(_ref3$payload, ["resolve", "request", "callback"]), type = _ref3.type;
             loop = true;
             count = 1;
             pollingRequestConfig = {};
@@ -602,18 +602,19 @@ function _default(_ref2) {
 
                     case 146:
                       _context2.prev = 146;
-                      _context2.next = 149;
+                      if (resolve && (0, _helpers.typeOf)(resolve) === 'function') resolve();
+                      _context2.next = 150;
                       return (0, _effects.cancelled)();
 
-                    case 149:
+                    case 150:
                       Cancelled = _context2.sent;
 
                       if (!(typeof finalCallback === 'function')) {
-                        _context2.next = 153;
+                        _context2.next = 154;
                         break;
                       }
 
-                      _context2.next = 153;
+                      _context2.next = 154;
                       return finalCallback({
                         type: type,
                         action: action,
@@ -621,8 +622,8 @@ function _default(_ref2) {
                         Cancelled: Cancelled
                       });
 
-                    case 153:
-                      _context2.next = 155;
+                    case 154:
+                      _context2.next = 156;
                       return (0, _effects.call)(requestResponseHandler, {
                         type: type,
                         action: action,
@@ -632,59 +633,59 @@ function _default(_ref2) {
                         cancelled: Cancelled
                       });
 
-                    case 155:
+                    case 156:
                       if (!Cancelled) {
-                        _context2.next = 160;
+                        _context2.next = 161;
                         break;
                       }
 
                       if (!(typeof source.cancel === 'function')) {
-                        _context2.next = 159;
+                        _context2.next = 160;
                         break;
                       }
 
-                      _context2.next = 159;
+                      _context2.next = 160;
                       return source.cancel();
 
-                    case 159:
+                    case 160:
                       loop = false;
 
-                    case 160:
+                    case 161:
                       return _context2.finish(146);
 
-                    case 161:
+                    case 162:
                       if (!(polling && typeof window !== 'undefined' && loop)) {
-                        _context2.next = 174;
+                        _context2.next = 175;
                         break;
                       }
 
                       if (!(pollingCount === 'unlimited' || pollingCount - 1 >= count)) {
-                        _context2.next = 171;
+                        _context2.next = 172;
                         break;
                       }
 
                       count += 1;
-                      _context2.next = 166;
+                      _context2.next = 167;
                       return (0, _effects.race)({
                         posts: (0, _effects.call)(delay, Delay),
                         cancel: (0, _effects.take)(action.cancel)
                       });
 
-                    case 166:
+                    case 167:
                       _yield$race2 = _context2.sent;
                       CancelPolling = _yield$race2.cancel;
                       if (CancelPolling) loop = false;
-                      _context2.next = 172;
+                      _context2.next = 173;
                       break;
-
-                    case 171:
-                      loop = false;
 
                     case 172:
-                      _context2.next = 175;
+                      loop = false;
+
+                    case 173:
+                      _context2.next = 176;
                       break;
 
-                    case 174:
+                    case 175:
                       if (!polling && retry && loop) {
                         if (retry - 1 >= count) {
                           loop = true;
@@ -692,12 +693,12 @@ function _default(_ref2) {
                         } else loop = false;
                       } else loop = false;
 
-                    case 175:
+                    case 176:
                     case "end":
                       return _context2.stop();
                   }
                 }
-              }, _loop, null, [[51, 113, 146, 161]]);
+              }, _loop, null, [[51, 113, 146, 162]]);
             });
 
           case 11:

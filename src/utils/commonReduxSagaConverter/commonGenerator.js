@@ -340,7 +340,16 @@ export default function({
             pollingRequestConfig = pollingRes;
         }
         if (!polling && retry) loop = false;
+        if (resolve && typeOf(resolve) === 'function')
+          resolve({
+            status: 'SUCCESS',
+            response: postData,
+            posts: data,
+            data: data.data,
+          });
       } catch (error) {
+        if (resolve && typeOf(resolve) === 'function')
+          resolve({ status: 'ERROR', error, respone: error && error.response });
         if (error && typeof error === 'object' && !error.isAxiosError)
           throw new Error(error);
         else if (!polling && retry && retry - 1 >= count) {
@@ -435,7 +444,6 @@ export default function({
           }
         }
       } finally {
-        if (resolve && typeOf(resolve) === 'function') resolve();
         const Cancelled = yield cancelled();
         if (typeof finalCallback === 'function')
           yield finalCallback({ type, action, payload: commonData, Cancelled });
