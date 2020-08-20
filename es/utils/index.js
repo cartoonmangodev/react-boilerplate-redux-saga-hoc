@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.useActionsHook = exports.useHook = exports.mapDispatchToProps = exports.getData = exports.commmonStateHandler = exports.responseErrorParser = void 0;
+exports.useMutation = exports.useActionsHook = exports.useHook = exports.mapDispatchToProps = exports.getData = exports.commmonStateHandler = exports.responseErrorParser = void 0;
 
 var _react = require("react");
 
@@ -12,6 +12,8 @@ var _redux = require("redux");
 var _reactRedux = require("react-redux");
 
 var _isEqual = _interopRequireDefault(require("lodash/isEqual"));
+
+var _invariant = _interopRequireDefault(require("invariant"));
 
 var _commonConstants = require("./commonReduxSagaConverter/commonConstants");
 
@@ -287,3 +289,36 @@ var useActionsHook = function useActionsHook(name, actions) {
 };
 
 exports.useActionsHook = useActionsHook;
+
+var checkKey = function checkKey(key, name, dataType, message) {
+  (0, _invariant.default)((0, _helpers.typeOf)(key) === dataType, "(react-boilerplate-redux-saga-hoc)  Expected `".concat(name, "` to be  ").concat(message || dataType));
+};
+
+var useMutation = function useMutation() {
+  var dispatch = (0, _reactRedux.useDispatch)();
+  return function (_ref17) {
+    var type = _ref17.key,
+        value = _ref17.value,
+        _ref17$filter = _ref17.filter,
+        filter = _ref17$filter === void 0 ? [] : _ref17$filter;
+    if (!type) checkKey(null, 'key', 'string', 'valid string');
+    checkKey(filter, 'filter', 'array');
+    checkKey(value, 'value', 'object');
+    checkKey(type, 'key', 'string');
+    dispatch({
+      type: type,
+      response: {
+        type: type,
+        method: _commonConstants.ON_SUCCESS,
+        statusCode: 200,
+        mutation: true,
+        update: value,
+        payload: {
+          filter: filter
+        }
+      }
+    });
+  };
+};
+
+exports.useMutation = useMutation;

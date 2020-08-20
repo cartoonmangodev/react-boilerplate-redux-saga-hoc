@@ -22,7 +22,10 @@ var _checkIsNotObject = function _checkIsNotObject(data) {
 };
 
 var dataHandler = function dataHandler(_ref) {
-  var _ref$task = _ref.task;
+  var isMutation = _ref.mutation,
+      _ref$updatedData = _ref.updatedData,
+      updatedData = _ref$updatedData === void 0 ? {} : _ref$updatedData,
+      _ref$task = _ref.task;
   _ref$task = _ref$task === void 0 ? {} : _ref$task;
   var clearData = _ref$task.clearData,
       _ref$task$subKey = _ref$task.subKey,
@@ -39,7 +42,7 @@ var dataHandler = function dataHandler(_ref) {
         oldData = _ref2$data === void 0 ? {} : _ref2$data,
         statusCode = _ref2.statusCode;
 
-    return {
+    return isMutation ? _objectSpread({}, oldData, {}, updatedData) : {
       data: function () {
         if (subKey.length > 0) {
           var _oldCopyData = _objectSpread({}, oldData, {}, _checkIsNotObject(successData) ? {} : successData, _defineProperty({}, subKey[0], oldData[subKey[0]]));

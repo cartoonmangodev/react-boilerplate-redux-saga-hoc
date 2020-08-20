@@ -363,6 +363,7 @@ export const useMutation = () => {
         method: ON_SUCCESS,
         statusCode: 200,
         mutation: true,
+        customTask: true,
         update: value,
         payload: {
           filter,

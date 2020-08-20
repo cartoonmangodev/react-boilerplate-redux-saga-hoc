@@ -186,34 +186,30 @@ var _default = function _default(_ref) {
     } : {
       safe: safe,
       getData: _utils.getData
+    }; // eslint-disable-next-line no-underscore-dangle
+
+    var _useHocHook = function _useHocHook() {
+      (0, _injectSaga.useInjectSaga)({
+        key: reducerName,
+        saga: saga
+      });
+      (0, _injectReducer.useInjectReducer)({
+        key: reducerName,
+        reducer: reducer
+      }, createReducer);
+      var dispatch = (0, _reactRedux.useDispatch)();
+
+      var _React$useState = _react.default.useState(_objectSpread({}, componentData["".concat(reducerName, "_hoc")], {
+        actions: (0, _redux.bindActionCreators)(componentActions, dispatch),
+        dispatch: dispatch
+      })),
+          _React$useState2 = _slicedToArray(_React$useState, 1),
+          state = _React$useState2[0];
+
+      return state;
     };
 
-    if (useHocHook) {
-      // eslint-disable-next-line no-underscore-dangle
-      var _useHocHook = function _useHocHook() {
-        (0, _injectSaga.useInjectSaga)({
-          key: reducerName,
-          saga: saga
-        });
-        (0, _injectReducer.useInjectReducer)({
-          key: reducerName,
-          reducer: reducer
-        }, createReducer);
-        var dispatch = (0, _reactRedux.useDispatch)();
-
-        var _React$useState = _react.default.useState(_objectSpread({}, componentData["".concat(reducerName, "_hoc")], {
-          actions: (0, _redux.bindActionCreators)(componentActions, dispatch),
-          dispatch: dispatch
-        })),
-            _React$useState2 = _slicedToArray(_React$useState, 1),
-            state = _React$useState2[0];
-
-        return state;
-      };
-
-      return _useHocHook;
-    } // eslint-disable-next-line no-unused-vars
-
+    if (useHocHook && !nextJS) return _useHocHook; // eslint-disable-next-line no-unused-vars
 
     var hoc = function hoc(WrapperComponent) {
       var autoLoginCheck = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
@@ -302,6 +298,7 @@ var _default = function _default(_ref) {
     if (nextJS && getDefaultConfig) return _objectSpread({
       hoc: hoc,
       saga: saga,
+      useHocHook: useHocHook,
       reducer: {
         name: reducerName,
         reducer: reducer
@@ -311,6 +308,7 @@ var _default = function _default(_ref) {
     if (nextJS) return {
       hoc: hoc,
       saga: saga,
+      useHocHook: useHocHook,
       reducer: {
         name: reducerName,
         reducer: reducer
