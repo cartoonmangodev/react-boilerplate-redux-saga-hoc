@@ -1,39 +1,53 @@
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+"use strict";
 
-import { put } from 'redux-saga/effects'; // import { responseErrorParser } from '../index';
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DEFAULT_SAGA_HANDLER = DEFAULT_SAGA_HANDLER;
 
-import { ON_ERROR, ON_SUCCESS, ON_REQUEST, ON_CANCEL } from '../commonReduxSagaConverter/commonConstants';
-export function* DEFAULT_SAGA_HANDLER(_ref) {
-  var method = _ref.method,
-      action = _ref.action,
-      successData = _ref.successData,
-      requestData = _ref.requestData,
-      successStatus = _ref.successStatus,
-      restSuccessData = _ref.restSuccessData,
-      errorStatus = _ref.errorStatus,
-      errorData = _ref.errorData;
+var _effects = require("redux-saga/effects");
+
+var _commonConstants = require("../commonReduxSagaConverter/commonConstants");
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function* DEFAULT_SAGA_HANDLER(_ref) {
+  var {
+    method,
+    action,
+    successData,
+    requestData,
+    successStatus,
+    restSuccessData,
+    errorStatus,
+    errorData
+  } = _ref;
 
   switch (method) {
-    case ON_REQUEST:
+    case _commonConstants.ON_REQUEST:
       return requestData;
 
-    case ON_CANCEL:
+    case _commonConstants.ON_CANCEL:
       return true;
 
-    case ON_SUCCESS:
+    case _commonConstants.ON_SUCCESS:
       if ([200, 201].includes(successStatus)) {
-        yield put(action.success(_extends({
+        yield (0, _effects.put)(action.success(_objectSpread({
           data: successData
         }, restSuccessData)));
       } else return true;
 
       break;
 
-    case ON_ERROR:
+    case _commonConstants.ON_ERROR:
       {
-        if (errorStatus) yield put(action.error({
+        if (errorStatus) yield (0, _effects.put)(action.error({
           data: errorData
-        }));else yield put(action.error({
+        }));else yield (0, _effects.put)(action.error({
           data: {}
         }));
         break;

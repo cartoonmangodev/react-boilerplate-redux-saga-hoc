@@ -1,17 +1,22 @@
+"use strict";
+
+var _reducer = _interopRequireDefault(require("../reducer"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 // import produce from 'immer';
-import dashboardReducer from '../reducer'; // import { someAction } from '../actions';
+// import { someAction } from '../actions';
 
 /* eslint-disable default-case, no-param-reassign */
-
-describe('dashboardReducer', function () {
+describe('dashboardReducer', () => {
   var state;
-  beforeEach(function () {
+  beforeEach(() => {
     state = {// default state params here
     };
   });
-  it('returns the initial state', function () {
+  it('returns the initial state', () => {
     var expectedResult = state;
-    expect(dashboardReducer(undefined, {})).toEqual(expectedResult);
+    expect((0, _reducer.default)(undefined, {})).toEqual(expectedResult);
   });
   /**
    * Example state change comparison

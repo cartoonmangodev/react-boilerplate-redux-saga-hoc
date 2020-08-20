@@ -1,6 +1,8 @@
+"use strict";
+
 // import { selectDashboardDomain } from '../selectors';
-describe('selectDashboardDomain', function () {
-  it('Expect to have unit tests specified', function () {
+describe('selectDashboardDomain', () => {
+  it('Expect to have unit tests specified', () => {
     expect(true).toEqual(false);
   });
 });

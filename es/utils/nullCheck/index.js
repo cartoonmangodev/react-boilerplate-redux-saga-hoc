@@ -1,3 +1,10 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
 /* eslint-disable no-console */
 
 /* eslint-disable indent */
@@ -23,22 +30,18 @@ var CONSTRUCTOR_CHECK = {
   boolean: Boolean
 };
 
-var errorConsole = function errorConsole(parentObj, error, path, func, notFound) {
-  if (func === void 0) {
-    func = [];
-  }
-
-  if (!func) console.log("%c" + (notFound ? '%c key' : parentObj + " %c is undefined") + "%c \"" + error + "\" %cnot found " + (notFound ? "in %c\"" + parentObj + "\"%c object" : '%c%c') + " %c " + path + " %c is invalid", 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: green; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px');else console.log("%c" + parentObj + " %c is found %c \"" + error + "\" %c not a function %c " + path + " %c is invalid", 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px');
+var errorConsole = function errorConsole(parentObj, error, path) {
+  var func = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+  var notFound = arguments.length > 4 ? arguments[4] : undefined;
+  if (!func) console.log("%c".concat(notFound ? '%c key' : "".concat(parentObj, " %c is undefined"), "%c \"").concat(error, "\" %cnot found ").concat(notFound ? "in %c\"".concat(parentObj, "\"%c object") : '%c%c', " %c ").concat(path, " %c is invalid"), 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: green; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px');else console.log("%c".concat(parentObj, " %c is found %c \"").concat(error, "\" %c not a function %c ").concat(path, " %c is invalid"), 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px');
 };
 
-var errorLog = function errorLog() {
+var errorLog = () => {
   var e = new Error();
   var stack = e.stack.toString().split(/\r\n|\n/);
   console.log('Error :');
   stack.splice(0, 1);
-  stack.map(function (err, index) {
-    return console.log("[" + stack[stack.length - 1 - index] + " ]");
-  }); // console.log(`[ Error ${stack[stack.length - 1]} ]`);
+  stack.map((err, index) => console.log("[".concat(stack[stack.length - 1 - index], " ]"))); // console.log(`[ Error ${stack[stack.length - 1]} ]`);
 };
 /**
  * Required parameter for nullcheck
@@ -50,19 +53,13 @@ var errorLog = function errorLog() {
  */
 
 
-var nullCheck = function nullCheck(Error, obj, path, def, callBack, func, errorDisplay) {
-  if (obj === void 0) {
-    obj = {};
-  }
-
-  if (func === void 0) {
-    func = [];
-  }
-
-  if (errorDisplay === void 0) {
-    errorDisplay = false;
-  }
-
+var nullCheck = function nullCheck(Error) {
+  var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var path = arguments.length > 2 ? arguments[2] : undefined;
+  var def = arguments.length > 3 ? arguments[3] : undefined;
+  var callBack = arguments.length > 4 ? arguments[4] : undefined;
+  var func = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : [];
+  var errorDisplay = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
   var returnDefaultData = def || null;
 
   if (typeof path !== 'string') {
@@ -75,9 +72,7 @@ var nullCheck = function nullCheck(Error, obj, path, def, callBack, func, errorD
   }
 
   var propNames = path.split(/\.|\[|\(/);
-  propNames = propNames.map(function (prop) {
-    return prop.replace(/\]|\(/g, '').replace(/\)/, '()');
-  });
+  propNames = propNames.map(prop => prop.replace(/\]|\(/g, '').replace(/\)/, '()'));
   var parent = propNames.splice(0, 1);
 
   if (!obj || typeof obj !== 'object' || Object.keys(obj).length === 0) {
@@ -94,7 +89,7 @@ var nullCheck = function nullCheck(Error, obj, path, def, callBack, func, errorD
 
   for (var key = 0; key < propNames.length; key++) {
     if (data[propNames[key]] || typeof data === 'boolean' || Object.prototype.hasOwnProperty.call(data, propNames[key])) {
-      if (Number(propNames[key]) || Number(propNames[key]) === 0) error = error + "[" + propNames[key] + "]";else error = error + "." + propNames[key];
+      if (Number(propNames[key]) || Number(propNames[key]) === 0) error = "".concat(error, "[").concat(propNames[key], "]");else error = "".concat(error, ".").concat(propNames[key]);
       data = data[propNames[key]];
       if (!data && typeof data !== 'boolean' && key === propNames.length - 1) return typeof callBack === 'function' ? callBack(def || data) : def || data;
 
@@ -131,13 +126,13 @@ var nullCheck = function nullCheck(Error, obj, path, def, callBack, func, errorD
         }
       }
     } else if (propNames[key] === '()') {
-      error = "" + error + propNames[key];
+      error = "".concat(error).concat(propNames[key]);
 
       if (typeof data === 'function') {
         if (CONSTRUCTOR_CHECK[typeof type]) {
           if (func && func[index]) data = CONSTRUCTOR_CHECK[typeof type].prototype[propNames[key - 1]].apply(type, func[index]);else data = CONSTRUCTOR_CHECK[typeof type].prototype[propNames[key - 1]].call(type);
         } else {
-          if (func && func[index]) data = data.apply({}, [].concat(func[index]));else data = data();
+          if (func && func[index]) data = data.apply({}, [...func[index]]);else data = data();
         }
 
         if (!data && typeof data !== 'boolean' && key === propNames.length - 1) return typeof callBack === 'function' ? callBack(def || data) : def || data;
@@ -196,7 +191,7 @@ var nullCheck = function nullCheck(Error, obj, path, def, callBack, func, errorD
 
       index += 1;
     } else {
-      if (Number(propNames[key]) || Number(propNames[key]) === 0) error = error + "[" + propNames[key] + "]";else error = error + "." + propNames[key];
+      if (Number(propNames[key]) || Number(propNames[key]) === 0) error = "".concat(error, "[").concat(propNames[key], "]");else error = "".concat(error, ".").concat(propNames[key]);
 
       if (errorDisplay) {
         errorLog(new Error());
@@ -213,4 +208,6 @@ var nullCheck = function nullCheck(Error, obj, path, def, callBack, func, errorD
   return typeof callBack === 'function' ? callBack(verifyData) : verifyData;
 };
 
-export default nullCheck.bind(null, Error);
+var _default = nullCheck.bind(null, Error);
+
+exports.default = _default;

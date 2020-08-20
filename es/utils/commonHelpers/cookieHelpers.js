@@ -1,12 +1,25 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getCookie = exports.deleteCookie = exports.setCookie = void 0;
+
 /* eslint-disable no-plusplus */
-export var setCookie = function setCookie(name, value) {
-  document.cookie = name + "=" + value + "; Path=/;";
+var setCookie = (name, value) => {
+  document.cookie = "".concat(name, "=").concat(value, "; Path=/;");
 };
-export var deleteCookie = function deleteCookie(name) {
-  document.cookie = name + "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+
+exports.setCookie = setCookie;
+
+var deleteCookie = name => {
+  document.cookie = "".concat(name, "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;");
 };
-export var getCookie = function getCookie(cname) {
-  var name = cname + "=";
+
+exports.deleteCookie = deleteCookie;
+
+var getCookie = cname => {
+  var name = "".concat(cname, "=");
   var decodedCookie = decodeURIComponent(document.cookie);
   var ca = decodedCookie.split(';');
 
@@ -24,3 +37,5 @@ export var getCookie = function getCookie(cname) {
 
   return '';
 };
+
+exports.getCookie = getCookie;

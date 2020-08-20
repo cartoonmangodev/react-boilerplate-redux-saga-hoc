@@ -1,3 +1,16 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = validateForm;
+
+var validate = _interopRequireWildcard(require("./Validator"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
 /**
  * this method handles form validations
  * @param <object> validationData - date to validate
@@ -13,24 +26,23 @@
  * }
  * validationData : { <field_key>: { type: <from above types>, value: <value to validate> }}
  */
-import * as validate from './Validator'; // import findKey from 'lodash/isEmpty';
+// import findKey from 'lodash/isEmpty';
 
 /* eslint-disable no-underscore-dangle */
-
-export default function validateForm(validationData) {
+function validateForm(validationData) {
   // let value = this[`${type}Ref`].value(),
   var error = {
     isError: false
   }; // eslint-disable-next-line
 
-  Object.entries(validationData).map(function (_ref) {
-    var key = _ref[0],
-        formObject = _ref[1];
-    var type = formObject.type,
-        value = formObject.value,
-        message = formObject.message,
-        _formObject$optional = formObject.optional,
-        optional = _formObject$optional === void 0 ? false : _formObject$optional; // const isEmpty = validate._isEmpty(validationData[value].value);
+  Object.entries(validationData).map((_ref) => {
+    var [key, formObject] = _ref;
+    var {
+      type,
+      value,
+      message,
+      optional = false
+    } = formObject; // const isEmpty = validate._isEmpty(validationData[value].value);
 
     var isEmpty;
 
@@ -51,7 +63,7 @@ export default function validateForm(validationData) {
             typeMatch.hasPassed = validate._isValidEmail(value);
 
             if (!typeMatch.hasPassed) {
-              error["" + key] = message || 'Please enter Valid Email eg. (abc@abc.com)';
+              error["".concat(key)] = message || 'Please enter Valid Email eg. (abc@abc.com)';
             }
 
             break;
@@ -60,7 +72,7 @@ export default function validateForm(validationData) {
             typeMatch.hasPassed = validate._isValidMobile(value);
 
             if (!typeMatch.hasPassed) {
-              error["" + key] = message || 'Please enter Valid Mobile Number';
+              error["".concat(key)] = message || 'Please enter Valid Mobile Number';
             }
 
             break;
@@ -69,7 +81,7 @@ export default function validateForm(validationData) {
             typeMatch.hasPassed = validate._isValidPassword(value);
 
             if (!typeMatch.hasPassed) {
-              error["" + key] = message || 'Passwords must contain at least 6 characters to 20 characters';
+              error["".concat(key)] = message || 'Passwords must contain at least 6 characters to 20 characters';
             }
 
             break;
@@ -82,7 +94,7 @@ export default function validateForm(validationData) {
               typeMatch.hasPassed = validate._isMatching(password, value);
 
               if (!typeMatch.hasPassed) {
-                error["" + key] = message || 'Password & Confirm password do not match';
+                error["".concat(key)] = message || 'Password & Confirm password do not match';
               }
 
               break;
@@ -92,7 +104,7 @@ export default function validateForm(validationData) {
             typeMatch.hasPassed = validate._isValidString(value);
 
             if (!typeMatch.hasPassed) {
-              error["" + key] = message || 'Invalid format';
+              error["".concat(key)] = message || 'Invalid format';
             }
 
             break;
@@ -101,11 +113,11 @@ export default function validateForm(validationData) {
             typeMatch.hasPassed = validate._isValidName(value);
 
             if (!typeMatch.hasPassed) {
-              error["" + key] = message || 'Invalid format';
+              error["".concat(key)] = message || 'Invalid format';
             }
 
             if (validationData[value] && value.length < 3) {
-              error["" + key] = message || 'Name Must Be Greater Than 2 Characters';
+              error["".concat(key)] = message || 'Name Must Be Greater Than 2 Characters';
             }
 
             break;
@@ -114,7 +126,7 @@ export default function validateForm(validationData) {
             typeMatch.hasPassed = validate._isValidNumber(value);
 
             if (!typeMatch.hasPassed) {
-              error["" + key] = message || 'Invalid format';
+              error["".concat(key)] = message || 'Invalid format';
             }
 
             break;
@@ -123,7 +135,7 @@ export default function validateForm(validationData) {
             typeMatch.hasPassed = validate._isValidFloatNumber(value);
 
             if (!typeMatch.hasPassed) {
-              error["" + key] = message || 'Invalid format';
+              error["".concat(key)] = message || 'Invalid format';
             }
 
             break;
@@ -132,7 +144,7 @@ export default function validateForm(validationData) {
             typeMatch.hasPassed = validate._isPostiveInteger(value);
 
             if (!typeMatch.hasPassed) {
-              error["" + key] = message || 'Enter a valid input';
+              error["".concat(key)] = message || 'Enter a valid input';
             }
 
             break;
@@ -141,7 +153,7 @@ export default function validateForm(validationData) {
             typeMatch.hasPassed = validate._isValidArray(value);
 
             if (typeMatch.hasPassed) {
-              error["" + key] = message || 'Please upload Images';
+              error["".concat(key)] = message || 'Please upload Images';
             }
 
             break;
@@ -150,7 +162,7 @@ export default function validateForm(validationData) {
             typeMatch.hasPassed = validate._isValidTextAreaInput(value);
 
             if (typeMatch.hasPassed) {
-              error["" + key] = message || 'Description should be of mininum 5 characters';
+              error["".concat(key)] = message || 'Description should be of mininum 5 characters';
             }
 
             break;
@@ -159,7 +171,7 @@ export default function validateForm(validationData) {
             typeMatch.hasPassed = validate._isValidTextAreaInput(value);
 
             if (typeMatch.hasPassed) {
-              error["" + key] = message || 'Description should be of mininum 5 characters';
+              error["".concat(key)] = message || 'Description should be of mininum 5 characters';
             }
 
             break;

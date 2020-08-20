@@ -1,14 +1,25 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _axios = _interopRequireDefault(require("axios"));
+
+var _promise = _interopRequireDefault(require("promise"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /**
  * This is axios intercepter which intercepts all the incoming and outgoing requests
  */
-import axios from 'axios';
-import promise from 'promise'; // import { BASE_URL, authentication } from '../shared/config/apiEndPoints';
+// import { BASE_URL, authentication } from '../shared/config/apiEndPoints';
 // import { SPECIFIC_ERROR_HANDLER } from './errorHandler';
-
-var request = axios;
+var request = _axios.default;
 request.defaults.withCredentials = true; // request.defaults.headers.common.origin = 'www.example.com'; // for cookie based auth
 
-request.interceptors.request.use(function (config) {
+request.interceptors.request.use(config => {
   // if (!config.baseURL) {
   //   request.defaults.baseURL = BASE_URL;
   //   config.baseURL = BASE_URL; // eslint-disable-line no-param-reassign
@@ -21,12 +32,10 @@ request.interceptors.request.use(function (config) {
 
   return config;
 }, // SPECIFIC_ERROR_HANDLER([], error);
-function (error) {
-  return promise.reject(error);
-}); // eslint-disable-next-line arrow-body-style
+error => _promise.default.reject(error)); // eslint-disable-next-line arrow-body-style
 
 request.interceptors.response.use( // eslint-disable-next-line arrow-body-style
-function (response) {
+response => {
   // if (response.config.url === BASE_URL + authentication.VERIFY_OTP_API.url) {
   //   // CookieManager.get(response.config.url).then(async res => {
   //   // `res` will be true or false depending on success.
@@ -41,7 +50,6 @@ function (response) {
   //   // });
   // }
   return response;
-}, function (error) {
-  return Promise.reject(error);
-});
-export default request;
+}, error => Promise.reject(error));
+var _default = request;
+exports.default = _default;

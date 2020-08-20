@@ -1,35 +1,39 @@
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+"use strict";
 
-import { createSelector } from 'reselect';
-import { CALL } from '../../utils/commonReduxSagaConverter/commonConstants'; // import * as apiEndPoints from '../../config/apiEndPoints';
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.makeSelectAuthenticationState = exports.selectAuthenticationDomain = void 0;
 
-import { newObject } from '../../utils/helpers';
+var _reselect = require("reselect");
 
-var selectAuthenticationDomain = function selectAuthenticationDomain(initialState, generatorKey) {
-  return function (state) {
-    return state[generatorKey] || initialState;
-  };
+var _commonConstants = require("../../utils/commonReduxSagaConverter/commonConstants");
+
+var _helpers = require("../../utils/helpers");
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var selectAuthenticationDomain = (initialState, generatorKey) => state => state[generatorKey] || initialState;
+
+exports.selectAuthenticationDomain = selectAuthenticationDomain;
+
+var makeSelectAuthenticationState = (_ref) => {
+  var {
+    apiEndPoints,
+    initialState,
+    InitialState,
+    generatorKey,
+    constants
+  } = _ref;
+  return () => (0, _reselect.createSelector)(selectAuthenticationDomain(initialState, generatorKey), substate => (0, _helpers.newObject)(Object.keys(InitialState).reduce((acc, key) => _objectSpread({}, acc, {
+    [key]: substate[key]
+  }), {}), Object.keys(apiEndPoints[generatorKey]).reduce((acc, key) => _objectSpread({}, acc, {
+    [key]: substate[constants[key][_commonConstants.CALL]]
+  }), {})));
 };
 
-var makeSelectAuthenticationState = function makeSelectAuthenticationState(_ref) {
-  var apiEndPoints = _ref.apiEndPoints,
-      initialState = _ref.initialState,
-      InitialState = _ref.InitialState,
-      generatorKey = _ref.generatorKey,
-      constants = _ref.constants;
-  return function () {
-    return createSelector(selectAuthenticationDomain(initialState, generatorKey), function (substate) {
-      return newObject(Object.keys(InitialState).reduce(function (acc, key) {
-        var _extends2;
-
-        return _extends({}, acc, (_extends2 = {}, _extends2[key] = substate[key], _extends2));
-      }, {}), Object.keys(apiEndPoints[generatorKey]).reduce(function (acc, key) {
-        var _extends3;
-
-        return _extends({}, acc, (_extends3 = {}, _extends3[key] = substate[constants[key][CALL]], _extends3));
-      }, {}));
-    });
-  };
-};
-
-export { selectAuthenticationDomain, makeSelectAuthenticationState };
+exports.makeSelectAuthenticationState = makeSelectAuthenticationState;

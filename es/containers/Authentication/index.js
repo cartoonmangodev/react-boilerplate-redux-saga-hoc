@@ -1,3 +1,56 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _reactRedux = require("react-redux");
+
+var _invariant = _interopRequireDefault(require("invariant"));
+
+var _reselect = require("reselect");
+
+var _redux = require("redux");
+
+var _isString = _interopRequireDefault(require("lodash/isString"));
+
+var _isEmpty = _interopRequireDefault(require("lodash/isEmpty"));
+
+var _axios = _interopRequireDefault(require("../../config/axios"));
+
+var _constants = _interopRequireDefault(require("./constants"));
+
+var _injectSaga = _interopRequireWildcard(require("../../utils/utils/injectSaga"));
+
+var _injectReducer = _interopRequireWildcard(require("../../utils/utils/injectReducer"));
+
+var _helpers = require("../../utils/helpers");
+
+var _selectors = require("./selectors");
+
+var _actions = _interopRequireDefault(require("./actions"));
+
+var _reducer = _interopRequireDefault(require("./reducer"));
+
+var _generator = _interopRequireDefault(require("./generator"));
+
+var _nullCheck = _interopRequireDefault(require("../../utils/nullCheck"));
+
+var _utils = require("../../utils");
+
+var _index = require("../../index");
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 
 function _await(value, then, direct) {
@@ -38,83 +91,46 @@ function _async(f) {
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
-/* eslint-disable indent */
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-/* eslint-disable func-names */
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-/* eslint-disable import/no-unresolved */
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-/**
- * Dashboard
- */
-import React from 'react';
-import { connect, useDispatch } from 'react-redux';
-import invariant from 'invariant';
-import { createStructuredSelector } from 'reselect';
-import { compose, bindActionCreators } from 'redux';
-import isString from 'lodash/isString';
-import isEmpty from 'lodash/isEmpty';
-import axios from '../../config/axios'; // import { getLanguage } from '../../config/Language/index';
-
-import generateConstants from './constants'; // eslint-disable-next-line import/no-useless-path-segments
-// import injectSaga from '../../../../../app/utils/injectSaga';
-// eslint-disable-next-line import/no-useless-path-segments
-// import injectReducer from '../../../../../app/utils/injectReducer';
-
-import injectSaga, { useInjectSaga } from '../../utils/utils/injectSaga';
-import injectReducer, { useInjectReducer } from '../../utils/utils/injectReducer';
-import { newObject, typeOf } from '../../utils/helpers';
-import { makeSelectAuthenticationState } from './selectors';
-import generateAction from './actions';
-import Reducer from './reducer';
-import Saga from './generator';
-import nullcheck from '../../utils/nullCheck';
-import { getData, mapDispatchToProps } from '../../utils';
-import { commonConstants } from '../../index';
-var safe = nullcheck; // const shape = {
+var safe = _nullCheck.default; // const shape = {
 //   reducerName: isString,
 // };
 
-var checkKey = function checkKey(key, name, dataType) {
-  invariant(typeOf(key) === dataType, "(react-boilerplate-redux-saga-hoc)  Expected `" + name + "` to be a " + dataType);
+var checkKey = (key, name, dataType) => {
+  (0, _invariant.default)((0, _helpers.typeOf)(key) === dataType, "(react-boilerplate-redux-saga-hoc)  Expected `".concat(name, "` to be a ").concat(dataType));
 };
 
-export default (function (_ref) {
-  var _ref$handlers = _ref.handlers,
-      handlers = _ref$handlers === void 0 ? [] : _ref$handlers,
-      _ref$nextJS = _ref.nextJS,
-      nextJS = _ref$nextJS === void 0 ? false : _ref$nextJS,
-      _ref$createReducer = _ref.createReducer,
-      createReducer = _ref$createReducer === void 0 ? null : _ref$createReducer,
-      _ref$useHook = _ref.useHook,
-      useHook = _ref$useHook === void 0 ? false : _ref$useHook,
-      _ref$useHocHook = _ref.useHocHook,
-      useHocHook = _ref$useHocHook === void 0 ? false : _ref$useHocHook;
-  return function (_temp) {
-    var _ApiEndPoints, _componentData;
+var _default = (_ref) => {
+  var {
+    handlers = [],
+    nextJS = false,
+    createReducer = null,
+    useHook = false,
+    useHocHook = false
+  } = _ref;
+  return function () {
+    var {
+      apiEndPoints = {},
+      initialState = {},
+      getDefaultConfig = false,
+      dontReset: dontResetOnLogout = {},
+      isMobile = false,
+      saga: sagaFunction,
+      constantSaga = [],
+      constantReducer,
+      reducer: reducerFunction,
+      name: reducerName,
+      axiosInterceptors,
+      useHook: _useHook = false // injectSaga,
+      // injectReducer,
 
-    var _ref2 = _temp === void 0 ? {} : _temp,
-        _ref2$apiEndPoints = _ref2.apiEndPoints,
-        apiEndPoints = _ref2$apiEndPoints === void 0 ? {} : _ref2$apiEndPoints,
-        _ref2$initialState = _ref2.initialState,
-        initialState = _ref2$initialState === void 0 ? {} : _ref2$initialState,
-        _ref2$getDefaultConfi = _ref2.getDefaultConfig,
-        getDefaultConfig = _ref2$getDefaultConfi === void 0 ? false : _ref2$getDefaultConfi,
-        _ref2$dontReset = _ref2.dontReset,
-        dontResetOnLogout = _ref2$dontReset === void 0 ? {} : _ref2$dontReset,
-        _ref2$isMobile = _ref2.isMobile,
-        isMobile = _ref2$isMobile === void 0 ? false : _ref2$isMobile,
-        sagaFunction = _ref2.saga,
-        _ref2$constantSaga = _ref2.constantSaga,
-        constantSaga = _ref2$constantSaga === void 0 ? [] : _ref2$constantSaga,
-        constantReducer = _ref2.constantReducer,
-        reducerFunction = _ref2.reducer,
-        reducerName = _ref2.name,
-        axiosInterceptors = _ref2.axiosInterceptors,
-        _ref2$useHook = _ref2.useHook,
-        _useHook = _ref2$useHook === void 0 ? false : _ref2$useHook;
-
-    invariant(isString(reducerName) && !isEmpty(reducerName), '(react-boilerplate-redux-saga-hoc)  Expected `name` to be a non empty string');
+    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    (0, _invariant.default)((0, _isString.default)(reducerName) && !(0, _isEmpty.default)(reducerName), '(react-boilerplate-redux-saga-hoc)  Expected `name` to be a non empty string');
     checkKey(apiEndPoints, 'apiEndPoints', 'object');
     checkKey(initialState, 'initialState', 'object');
     checkKey(dontResetOnLogout, 'dontReset', 'object');
@@ -124,89 +140,89 @@ export default (function (_ref) {
     if (constantReducer) checkKey(constantReducer, 'constantReducer', 'function');
     if (reducerFunction) checkKey(reducerFunction, 'reducer', 'function');
     if (createReducer) checkKey(createReducer, 'createReducer', 'function');
-    var ApiEndPoints = (_ApiEndPoints = {}, _ApiEndPoints[reducerName] = apiEndPoints, _ApiEndPoints);
-
-    var _generateConstants = generateConstants({
+    var ApiEndPoints = {
+      [reducerName]: apiEndPoints
+    };
+    var {
+      constants,
+      initialState: InitialState,
+      resetState,
+      actions: Action,
+      sagaConfig
+    } = (0, _constants.default)({
       apiEndPoints: ApiEndPoints,
       generatorKey: reducerName,
-      dontResetOnLogout: dontResetOnLogout
-    }),
-        constants = _generateConstants.constants,
-        InitialState = _generateConstants.initialState,
-        resetState = _generateConstants.resetState,
-        Action = _generateConstants.actions,
-        sagaConfig = _generateConstants.sagaConfig;
-
-    var _generateAction = generateAction(Action),
-        componentActions = _generateAction.componentActions;
-
-    var _Saga = Saga({
-      sagaConfig: sagaConfig,
-      constants: constants,
-      sagaFunction: sagaFunction,
-      axiosInterceptors: axiosInterceptors,
-      constantSaga: constantSaga
-    }),
-        saga = _Saga.saga;
-
-    var reducer = Reducer({
-      constants: constants,
-      InitialState: newObject(initialState, InitialState),
-      reducerFunction: reducerFunction,
-      resetState: resetState,
-      constantReducer: constantReducer,
-      isMobile: isMobile,
-      handlers: handlers
+      dontResetOnLogout
     });
-    var componentData = (_componentData = {}, _componentData[reducerName + "_hoc"] = {
-      reducerConstants: Object.entries(constants).reduce(function (acc, _ref3) {
-        var _extends2;
+    var {
+      componentActions // actions,
+      // sagaActions,
+      // cancelActions,
 
-        var key = _ref3[0],
-            value = _ref3[1];
-        return _extends({}, acc, (_extends2 = {}, _extends2[key] = value[commonConstants.CALL], _extends2));
-      }, {}),
-      constants: constants,
-      initialState: initialState,
-      axios: axiosInterceptors || axios,
-      resetState: resetState,
-      reducerName: reducerName
-    }, _componentData);
+    } = (0, _actions.default)(Action);
+    var {
+      saga
+    } = (0, _generator.default)({
+      sagaConfig,
+      constants,
+      sagaFunction,
+      axiosInterceptors,
+      constantSaga
+    });
+    var reducer = (0, _reducer.default)({
+      constants,
+      InitialState: (0, _helpers.newObject)(initialState, InitialState),
+      reducerFunction,
+      resetState,
+      constantReducer,
+      isMobile,
+      handlers
+    });
+    var componentData = {
+      ["".concat(reducerName, "_hoc")]: {
+        reducerConstants: Object.entries(constants).reduce((acc, _ref2) => {
+          var [key, value] = _ref2;
+          return _objectSpread({}, acc, {
+            [key]: value[_index.commonConstants.CALL]
+          });
+        }, {}),
+        constants,
+        initialState,
+        axios: axiosInterceptors || _axios.default,
+        resetState,
+        reducerName
+      }
+    };
     var commonProps = useHook || _useHook ? {
-      safe: safe
+      safe
     } : {
-      safe: safe,
-      getData: getData
+      safe,
+      getData: _utils.getData
     }; // eslint-disable-next-line no-underscore-dangle
 
-    var _useHocHook = function _useHocHook() {
-      useInjectSaga({
+    var _useHocHook = () => {
+      (0, _injectSaga.useInjectSaga)({
         key: reducerName,
-        saga: saga
+        saga
       });
-      useInjectReducer({
+      (0, _injectReducer.useInjectReducer)({
         key: reducerName,
-        reducer: reducer
+        reducer
       }, createReducer);
-      var dispatch = useDispatch();
+      var dispatch = (0, _reactRedux.useDispatch)();
 
-      var _React$useState = React.useState(_extends({}, componentData[reducerName + "_hoc"], {
-        actions: bindActionCreators(componentActions, dispatch),
-        dispatch: dispatch
-      })),
-          state = _React$useState[0];
+      var [state] = _react.default.useState(_objectSpread({}, componentData["".concat(reducerName, "_hoc")], {
+        actions: (0, _redux.bindActionCreators)(componentActions, dispatch),
+        dispatch
+      }));
 
       return state;
     };
 
     if (useHocHook && !nextJS) return _useHocHook; // eslint-disable-next-line no-unused-vars
 
-    var hoc = function hoc(WrapperComponent, autoLoginCheck) {
-      var _createStructuredSele;
-
-      if (autoLoginCheck === void 0) {
-        autoLoginCheck = true;
-      }
+    var hoc = function hoc(WrapperComponent) {
+      var autoLoginCheck = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
       function WithHoc(props) {
         // const [language, setLanguage] = useState(getLanguage('EN'));
@@ -215,47 +231,51 @@ export default (function (_ref) {
         //     setLanguage(getLanguage(props.authentication.language));
         // }, [props.authentication.language]);
         // console.log(props, '================');
-        return React.createElement(WrapperComponent // language={language}
+        return _react.default.createElement(WrapperComponent // language={language}
         , _extends({}, commonProps, props));
       }
 
       WithHoc.propTypes = {// [reducerName]: PropTypes.object.isRequired,
       };
-      WithHoc.displayName = "withReactBoilerplateReduxSagaHoc(" + (WrapperComponent.displayName || WrapperComponent.name || 'BaseComponent') + ")";
-      var MakeSelectAuthenticationState = makeSelectAuthenticationState({
+      WithHoc.displayName = "withReactBoilerplateReduxSagaHoc(".concat(WrapperComponent.displayName || WrapperComponent.name || 'BaseComponent', ")");
+      var MakeSelectAuthenticationState = (0, _selectors.makeSelectAuthenticationState)({
         apiEndPoints: ApiEndPoints,
-        initialState: newObject(initialState, InitialState),
+        initialState: (0, _helpers.newObject)(initialState, InitialState),
         InitialState: initialState,
         generatorKey: reducerName,
-        constants: constants
+        constants
       });
-      var mapStateToProps = createStructuredSelector((_createStructuredSele = {}, _createStructuredSele[reducerName + "_data"] = MakeSelectAuthenticationState(), _createStructuredSele));
-      var authenticationReducer = injectReducer({
+      var mapStateToProps = (0, _reselect.createStructuredSelector)({
+        ["".concat(reducerName, "_data")]: MakeSelectAuthenticationState()
+      });
+      var authenticationReducer = (0, _injectReducer.default)({
         key: reducerName,
-        reducer: reducer
+        reducer
       }, createReducer);
-      var authenticationSaga = injectSaga({
+      var authenticationSaga = (0, _injectSaga.default)({
         key: reducerName,
-        saga: saga
+        saga
       });
-      var withConnect = connect(mapStateToProps, mapDispatchToProps(componentActions, componentData, reducerName));
+      var withConnect = (0, _reactRedux.connect)(mapStateToProps, (0, _utils.mapDispatchToProps)(componentActions, componentData, reducerName));
 
       if (nextJS) {
         WithHoc.getInitialProps = _async(function (props) {
-          var _ref4 = props.ctx || props,
-              res = _ref4.res,
-              req = _ref4.req,
-              store = _ref4.store,
-              rest = _objectWithoutPropertiesLoose(_ref4, ["res", "req", "store"]);
+          var _ref3 = props.ctx || props,
+              {
+            res,
+            req,
+            store
+          } = _ref3,
+              rest = _objectWithoutProperties(_ref3, ["res", "req", "store"]);
 
-          var data = _extends({
-            res: res,
-            req: req,
-            store: store
+          var data = _objectSpread({
+            res,
+            req,
+            store
           }, rest);
 
           return _invoke(function () {
-            if (WrapperComponent.getInitialProps) return _await(WrapperComponent.getInitialProps(_extends({}, props, {}, mapDispatchToProps(componentActions, componentData, reducerName)(store.dispatch))), function (_WrapperComponent$get) {
+            if (WrapperComponent.getInitialProps) return _await(WrapperComponent.getInitialProps(_objectSpread({}, props, {}, (0, _utils.mapDispatchToProps)(componentActions, componentData, reducerName)(store.dispatch))), function (_WrapperComponent$get) {
               data = _WrapperComponent$get;
             });
           }, function () {
@@ -265,36 +285,38 @@ export default (function (_ref) {
         return withConnect(WithHoc);
       }
 
-      return (useHook || _useHook ? compose(connect(null, mapDispatchToProps(componentActions, componentData, reducerName)), authenticationReducer, authenticationSaga) : compose(withConnect, authenticationReducer, authenticationSaga))(WithHoc);
+      return (useHook || _useHook ? (0, _redux.compose)((0, _reactRedux.connect)(null, (0, _utils.mapDispatchToProps)(componentActions, componentData, reducerName)), authenticationReducer, authenticationSaga) : (0, _redux.compose)(withConnect, authenticationReducer, authenticationSaga))(WithHoc);
     };
 
-    if (nextJS && getDefaultConfig) return _extends({
-      hoc: hoc,
-      saga: saga,
+    if (nextJS && getDefaultConfig) return _objectSpread({
+      hoc,
+      saga,
       hook: useHocHook,
       reducer: {
         name: reducerName,
-        reducer: reducer
+        reducer
       },
-      actions: _extends({}, componentActions)
-    }, componentData[reducerName + "_hoc"]);
+      actions: _objectSpread({}, componentActions)
+    }, componentData["".concat(reducerName, "_hoc")]);
     if (nextJS) return {
-      hoc: hoc,
-      saga: saga,
+      hoc,
+      saga,
       hook: useHocHook,
       reducer: {
         name: reducerName,
-        reducer: reducer
+        reducer
       }
     };
 
     if (getDefaultConfig) {
-      return _extends({
-        hoc: hoc,
-        actions: _extends({}, componentActions)
-      }, componentData[reducerName + "_hoc"]);
+      return _objectSpread({
+        hoc,
+        actions: _objectSpread({}, componentActions)
+      }, componentData["".concat(reducerName, "_hoc")]);
     }
 
     return hoc;
   };
-});
+};
+
+exports.default = _default;
