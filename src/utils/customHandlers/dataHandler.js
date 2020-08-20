@@ -10,9 +10,9 @@ export const dataHandler = ({
   callback: { updateCallback } = {},
   successData = {},
   successDataStatusCode,
-}) => ({ data: oldData = {}, statusCode } = {}) =>
+}) => ({ data: oldData = {}, statusCode, ...rest } = {}) =>
   isMutation
-    ? { ...oldData, ...updatedData }
+    ? { data: oldData, statusCode, ...rest, ...updatedData }
     : {
         data: (() => {
           if (subKey.length > 0) {
