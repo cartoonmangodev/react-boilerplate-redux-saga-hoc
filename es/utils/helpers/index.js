@@ -76,7 +76,8 @@ var type = {
   '[object String]': 'string',
   '[object Array]': 'array',
   '[object Boolean]': 'boolean',
-  '[object Object]': 'object'
+  '[object Object]': 'object',
+  '[object Function]': 'function'
 };
 
 var typeOf = function typeOf(_obj) {

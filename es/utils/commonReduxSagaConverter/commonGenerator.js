@@ -9,8 +9,6 @@ var _queryString = _interopRequireDefault(require("query-string"));
 
 var _effects = require("redux-saga/effects");
 
-var _isObject = _interopRequireDefault(require("lodash/isObject"));
-
 var _invariant = _interopRequireDefault(require("invariant"));
 
 var constants = _interopRequireWildcard(require("./commonConstants"));
@@ -87,8 +85,8 @@ var delay = function delay(ms) {
   });
 };
 
-var checkKey = function checkKey(key, name, dataType, type) {
-  (0, _invariant.default)(type(key), "(react-boilerplate-redux-saga-hoc)  Expected `".concat(name, "` to be a ").concat(dataType));
+var checkKey = function checkKey(key, name, dataType) {
+  (0, _invariant.default)((0, _helpers.typeOf)(key) === dataType, "(react-boilerplate-redux-saga-hoc)  Expected `".concat(name, "` to be a ").concat(dataType));
 };
 
 function _default(_ref2) {
@@ -230,7 +228,7 @@ function _default(_ref2) {
                         break;
                       }
 
-                      checkKey(params, '{request: { params }}', 'object', _isObject.default); // throw new Error(
+                      checkKey(params, '{request: { params }}', 'object'); // throw new Error(
                       //   `key 'params' should be object not a ${typeOf(params)}`,
                       // );
 

@@ -71,7 +71,7 @@ export default ({
   checkKey(apiEndPoints, 'apiEndPoints', 'object');
   checkKey(initialState, 'initialState', 'object');
   checkKey(dontResetOnLogout, 'dontReset', 'object');
-  if (saga) checkKey(sagaFunction, 'saga', 'function');
+  if (sagaFunction) checkKey(sagaFunction, 'saga', 'function');
   checkKey(constantSaga, 'constantSaga', 'array');
   checkKey(handlers, 'handlers', 'array');
   if (constantReducer) checkKey(constantReducer, 'constantReducer', 'function');
