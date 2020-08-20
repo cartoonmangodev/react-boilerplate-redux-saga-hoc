@@ -96,7 +96,8 @@ const COMMON_HANDLER = (payload, data) => {
       let customTaskBindAction = null;
       // const isMultiTask = Array.isArray(payload.tasks);
       // if (isMultiTask)
-      if (task.response) checkKey(task.response, 'task { response }', 'object');
+      if (task.response)
+        checkKey(task.response, 'task { response  : { data }}', 'object');
       customTaskBindAction = Action =>
         Action({
           ...payload,

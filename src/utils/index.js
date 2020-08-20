@@ -373,6 +373,7 @@ export const useMutation = () => {
         mutation: true,
         customTask: true,
         update: value,
+        data: {},
         payload: {
           filter,
         },
