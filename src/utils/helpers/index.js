@@ -19,6 +19,7 @@ const type = {
   '[object Array]': 'array',
   '[object Boolean]': 'boolean',
   '[object Object]': 'object',
+  '[object Function]': 'function',
 };
 
 export const typeOf = _obj => type[Object.prototype.toString.call(_obj)];

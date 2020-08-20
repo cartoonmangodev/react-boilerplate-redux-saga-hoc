@@ -89,8 +89,8 @@ var safe = _nullCheck.default; // const shape = {
 //   reducerName: isString,
 // };
 
-var checkKey = function checkKey(key, name, type) {
-  (0, _invariant.default)(type(key), "(react-boilerplate-redux-saga-hoc)  Expected `".concat(name, "` to be a ").concat((0, _helpers.typeOf)(type)));
+var checkKey = function checkKey(key, name, dataType, type) {
+  (0, _invariant.default)(type(key), "(react-boilerplate-redux-saga-hoc)  Expected `".concat(name, "` to be a ").concat(dataType));
 };
 
 var _default = function _default(_ref) {
@@ -127,12 +127,13 @@ var _default = function _default(_ref) {
         _useHook = _ref2$useHook === void 0 ? false : _ref2$useHook;
 
     (0, _invariant.default)((0, _isString.default)(reducerName) && !(0, _isEmpty.default)(reducerName), '(react-boilerplate-redux-saga-hoc)  Expected `name` to be a non empty string');
-    checkKey(apiEndPoints, 'apiEndPoints', _isObject.default);
-    checkKey(initialState, 'initialState', _isObject.default);
-    checkKey(dontResetOnLogout, 'dontReset', _isObject.default);
-    checkKey(sagaFunction, 'saga', _isFunction.default);
-    checkKey(constantSaga, 'constantSaga', _isArray.default);
-    if (constantReducer) checkKey(constantReducer, 'constantReducer', _isFunction.default);
+    checkKey(apiEndPoints, 'apiEndPoints', 'object', _isObject.default);
+    checkKey(initialState, 'initialState', 'object', _isObject.default);
+    checkKey(dontResetOnLogout, 'dontReset', 'object', _isObject.default);
+    if (saga) checkKey(sagaFunction, 'saga', 'function', _isFunction.default);
+    checkKey(constantSaga, 'constantSaga', 'array', _isArray.default);
+    if (constantReducer) checkKey(constantReducer, 'constantReducer', 'function', _isFunction.default);
+    if (reducerFunction) checkKey(reducerFunction, 'reducer', 'function', _isFunction.default);
 
     var ApiEndPoints = _defineProperty({}, reducerName, apiEndPoints);
 

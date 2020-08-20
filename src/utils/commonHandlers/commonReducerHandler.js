@@ -1,11 +1,11 @@
+/* eslint-disable indent */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
-/* eslint-disable indent */
-import isFunction from 'lodash/isFunction';
-import isObject from 'lodash/isObject';
+// /* eslint-disable indent */
+// import isFunction from 'lodash/isFunction';
 import invariant from 'invariant';
 
-import { newObject } from '../helpers';
+import { newObject, typeOf } from '../helpers';
 import {
   ON_ERROR,
   ON_SUCCESS,
@@ -64,9 +64,9 @@ const HANDLERS = [
     handler: dontUpdateDataHandler,
   },
 ];
-const checkKey = (key, name, dataType, type) => {
+const checkKey = (key, name, dataType) => {
   invariant(
-    type(key),
+    typeOf(key) === dataType,
     `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a ${dataType}`,
   );
 };
@@ -96,8 +96,7 @@ const COMMON_HANDLER = (payload, data) => {
       let customTaskBindAction = null;
       // const isMultiTask = Array.isArray(payload.tasks);
       // if (isMultiTask)
-      if (task.response)
-        checkKey(task.response, 'task { response }', 'object', isObject);
+      if (task.response) checkKey(task.response, 'task { response }', 'object');
       customTaskBindAction = Action =>
         Action({
           ...payload,
@@ -116,7 +115,11 @@ const COMMON_HANDLER = (payload, data) => {
       ).find(({ name }) => name === task.name);
 
       if (_handler) {
-        checkKey(_handler.handler, _handler.name, 'function', isFunction);
+        checkKey(
+          _handler.handler,
+          `${_handler.name} handler with key name handler`,
+          'function',
+        );
         DATA = isFilter
           ? BindHandler(commonFilterHandler(_handler.handler))
           : BindHandler(_handler.handler);

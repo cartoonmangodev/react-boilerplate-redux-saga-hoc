@@ -13,7 +13,7 @@ import {
   takeLatest,
 } from 'redux-saga/effects';
 // import isFunction from 'lodash/isFunction';
-import isObject from 'lodash/isObject';
+// import isObject from 'lodash/isObject';
 import invariant from 'invariant';
 import * as constants from './commonConstants';
 import { responseErrorParser } from '../index';
@@ -35,9 +35,9 @@ function* loaderGenerator({ type, commonData }) {
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const checkKey = (key, name, dataType, type) => {
+const checkKey = (key, name, dataType) => {
   invariant(
-    type(key),
+    typeOf(key) === dataType,
     `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a ${dataType}`,
   );
 };
@@ -142,7 +142,7 @@ export default function({
         ((pollingRequestConfig && pollingRequestConfig.params) || params) &&
         typeof request.url === 'function'
       ) {
-        checkKey(params, '{request: { params }}', 'object', isObject);
+        checkKey(params, '{request: { params }}', 'object');
         // throw new Error(
         //   `key 'params' should be object not a ${typeOf(params)}`,
         // );
