@@ -258,6 +258,7 @@ import { HOC as HocConfigure } from 'react-boilerplate-redux-saga-hoc';
 
 const HOC = HocConfigure({
   handlers: [],
+  useHocHook: true /* This will help us to use hoc as a hook */,
 });
 
 const TEST_API =
@@ -283,7 +284,6 @@ const useAuthHoc = HOC({
   initialState: {
     profile: {},
   },
-  useHocHook: true /* This will help us to use hoc as a hook */,
   dontReset: {
     TEST_API /* If you pass anything on don't reset it wont reset the paricular state on setting to reset */,
   },
