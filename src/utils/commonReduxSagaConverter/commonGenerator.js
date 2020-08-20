@@ -256,7 +256,7 @@ export default function({
           ));
           let successCallbackResponse = null;
           if (typeof successCallback === 'function')
-            successCallbackResponse = yield successCallback({
+            successCallbackResponse = yield call(successCallback, {
               response: postData,
               posts: data,
               data: data.data,
