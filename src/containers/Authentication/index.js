@@ -6,8 +6,11 @@
  */
 import React from 'react';
 import { connect, useDispatch } from 'react-redux';
+import invariant from 'invariant';
 import { createStructuredSelector } from 'reselect';
 import { compose, bindActionCreators } from 'redux';
+import isString from 'lodash/isString';
+import conformsTo from 'lodash/conformsTo';
 import axios from '../../config/axios';
 // import { getLanguage } from '../../config/Language/index';
 import generateConstants from './constants';
@@ -19,7 +22,7 @@ import injectSaga, { useInjectSaga } from '../../utils/utils/injectSaga';
 import injectReducer, {
   useInjectReducer,
 } from '../../utils/utils/injectReducer';
-import { newObject } from '../../utils/helpers';
+import { newObject, typeOf } from '../../utils/helpers';
 import { makeSelectAuthenticationState } from './selectors';
 import generateAction from './actions';
 import Reducer from './reducer';
@@ -28,6 +31,10 @@ import nullcheck from '../../utils/nullCheck';
 import { getData, mapDispatchToProps } from '../../utils';
 import { commonConstants } from '../../index';
 const safe = nullcheck;
+
+const shape = {
+  reducerName: isString,
+};
 
 export default ({
   handlers = [],
@@ -51,6 +58,13 @@ export default ({
   // injectSaga,
   // injectReducer,
 } = {}) => {
+  invariant(
+    conformsTo({ reducerName }, shape),
+    `(react-boilerplate-redux-saga-hoc) name: Expected a string but got ${typeOf(
+      reducerName,
+    )} `,
+  );
+
   const ApiEndPoints = {
     [reducerName]: apiEndPoints,
   };
