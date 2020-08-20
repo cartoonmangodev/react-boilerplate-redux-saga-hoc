@@ -237,7 +237,7 @@ export default ({
     return {
       hoc,
       saga,
-      useHocHook,
+      hook: useHocHook,
       reducer: { name: reducerName, reducer },
       actions: { ...componentActions },
       ...componentData[`${reducerName}_hoc`],
@@ -246,7 +246,7 @@ export default ({
     return {
       hoc,
       saga,
-      useHocHook,
+      hook: useHocHook,
       reducer: { name: reducerName, reducer },
     };
   if (getDefaultConfig) {
