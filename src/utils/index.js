@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable indent */
@@ -259,6 +260,9 @@ const checkKey = (key, name, dataType, message) => {
       dataType}`,
   );
 };
+const checkKeyWithMessage = (key, dataType, message) => {
+  invariant(typeOf(key) === dataType, message);
+};
 
 const previousDataKey = [];
 const previousData = {};
@@ -356,31 +360,63 @@ export const useActionsHook = (name, actions) => {
   return dispatchAction;
 };
 
-export const useMutation = () => {
+export const useMutation = reducerName => {
+  if (!reducerName)
+    checkKeyWithMessage(
+      reducerName,
+      'string',
+      'useMutation(`reducerkey`) : Expected a valid reducer key',
+    );
+  const store = useStore();
+
+  useEffect(() => {
+    if (reducerName)
+      checkKeyWithMessage(
+        reducerName,
+        'string',
+        'useMutation(`reducerkey`) : Expected a reducer key to be string',
+      );
+    if (!store.getState()[reducerName])
+      checkKeyWithMessage(
+        null,
+        'string',
+        ` reducerName '${reducerName}' not a valid reducer key.`,
+      );
+  }, []);
+
   const dispatch = useDispatch();
   return ({ key: type, value, filter = [] }) => {
     if (!type) checkKey(null, 'key', 'string', 'valid string');
+    const _reducer_keys = Object.keys(store.getState()[reducerName]);
     if (type)
       invariant(
-        type.includes('_CALL') && type.slice(-5) === '_CALL',
-        '`key` is invalid.Expected a valid reducer key.',
+        _reducer_keys.includes(type),
+        // type.includes('_CALL') && type.slice(-5) === '_CALL',
+        `'key' is invalid.${type} not found in ${reducerName} reducer`,
       );
     checkKey(filter, 'filter', 'array');
     checkKey(value, 'value', 'object');
     checkKey(type, 'key', 'string');
-    dispatch({
-      type: type.slice(0, -4).concat('CUSTOM_TASK'),
-      response: {
-        type,
-        method: ON_SUCCESS,
-        statusCode: 200,
-        mutation: true,
-        customTask: true,
-        data: { data: value },
-        payload: {
-          filter,
+    if (type.includes('_CALL') && type.slice(-5) === '_CALL')
+      dispatch({
+        type: type.slice(0, -4).concat('CUSTOM_TASK'),
+        response: {
+          type,
+          method: ON_SUCCESS,
+          statusCode: 200,
+          mutation: true,
+          customTask: true,
+          data: { data: value },
+          payload: {
+            filter,
+          },
         },
-      },
-    });
+      });
+    else
+      dispatch({
+        type,
+        value,
+        filter,
+      });
   };
 };
