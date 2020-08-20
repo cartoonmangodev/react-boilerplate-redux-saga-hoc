@@ -323,8 +323,9 @@ var useMutation = function useMutation() {
         statusCode: 200,
         mutation: true,
         customTask: true,
-        update: value,
-        data: {},
+        data: {
+          data: value
+        },
         payload: {
           filter: filter
         }
