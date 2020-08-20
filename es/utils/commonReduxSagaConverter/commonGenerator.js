@@ -104,7 +104,9 @@ function _default(_ref2) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            _ref3$payload = _ref3.payload, _ref3$payload$request = _ref3$payload.request;
+            _ref3$payload = _ref3.payload;
+            _ref3$payload = _ref3$payload === void 0 ? {} : _ref3$payload;
+            _ref3$payload$request = _ref3$payload.request;
             _ref3$payload$request = _ref3$payload$request === void 0 ? {} : _ref3$payload$request;
             _ref3$payload$request2 = _ref3$payload$request.asyncFunction, asyncFunction = _ref3$payload$request2 === void 0 ? null : _ref3$payload$request2, _ref3$payload$request3 = _ref3$payload$request.asyncFunctionParams, asyncFunctionParams = _ref3$payload$request3 === void 0 ? null : _ref3$payload$request3, _ref3$payload$request4 = _ref3$payload$request.payload, payload = _ref3$payload$request4 === void 0 ? {} : _ref3$payload$request4, _ref3$payload$request5 = _ref3$payload$request.params, params = _ref3$payload$request5 === void 0 ? {} : _ref3$payload$request5, query = _ref3$payload$request.query, _ref3$payload$request6 = _ref3$payload$request.paramsSerializer, paramsSerializer = _ref3$payload$request6 === void 0 ? {
               arrayFormat: 'brackets'
@@ -698,16 +700,16 @@ function _default(_ref2) {
               }, _loop, null, [[51, 113, 146, 161]]);
             });
 
-          case 9:
-            return _context3.delegateYield(_loop(), "t0", 10);
+          case 11:
+            return _context3.delegateYield(_loop(), "t0", 12);
 
-          case 10:
+          case 12:
             if (loop) {
-              _context3.next = 9;
+              _context3.next = 11;
               break;
             }
 
-          case 11:
+          case 13:
           case "end":
             return _context3.stop();
         }

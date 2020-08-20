@@ -311,13 +311,14 @@ var useMutation = function useMutation() {
         _ref17$filter = _ref17.filter,
         filter = _ref17$filter === void 0 ? [] : _ref17$filter;
     if (!type) checkKey(null, 'key', 'string', 'valid string');
+    if (type) (0, _invariant.default)(type.includes('_CALL'), 'Expected a valid reducer key');
     checkKey(filter, 'filter', 'array');
     checkKey(value, 'value', 'object');
     checkKey(type, 'key', 'string');
     dispatch({
       type: type,
       response: {
-        type: type,
+        type: type.slice(0, -4).concat('CUSTOM_TASK'),
         method: _commonConstants.ON_SUCCESS,
         statusCode: 200,
         mutation: true,

@@ -365,9 +365,9 @@ export const useMutation = () => {
     checkKey(value, 'value', 'object');
     checkKey(type, 'key', 'string');
     dispatch({
-      type,
+      type: type.slice(0, -4).concat('CUSTOM_TASK'),
       response: {
-        type: type.slice(0, -4).concat('CUSTOM_TASK'),
+        type,
         method: ON_SUCCESS,
         statusCode: 200,
         mutation: true,
