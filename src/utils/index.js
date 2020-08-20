@@ -360,7 +360,11 @@ export const useMutation = () => {
   const dispatch = useDispatch();
   return ({ key: type, value, filter = [] }) => {
     if (!type) checkKey(null, 'key', 'string', 'valid string');
-    if (type) invariant(type.includes('_CALL'), 'Expected a valid reducer key');
+    if (type)
+      invariant(
+        type.includes('_CALL') && type.slice(-5) === '_CALL',
+        '`key` is invalid.Expected a valid reducer key.',
+      );
     checkKey(filter, 'filter', 'array');
     checkKey(value, 'value', 'object');
     checkKey(type, 'key', 'string');
