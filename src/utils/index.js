@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { useStore, useDispatch } from 'react-redux';
 import isEqual from 'lodash/isEqual';
+import invariant from 'invariant';
 // import { connect } from 'react-redux';
 import {
   ON_ERROR,
@@ -339,4 +340,34 @@ export const useActionsHook = (name, actions) => {
     } else setDispatchAction(cache[name]);
   }, [isEqual(cacheActions[name], actions)]);
   return dispatchAction;
+};
+const checkKey = (key, name, dataType, message) => {
+  invariant(
+    typeOf(key) === dataType,
+    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be  ${message ||
+      dataType}`,
+  );
+};
+
+export const useMutation = () => {
+  const dispatch = useDispatch();
+  return ({ key: type, value, filter = [] }) => {
+    if (!type) checkKey(null, 'key', 'string', 'valid string');
+    checkKey(filter, 'filter', 'array');
+    checkKey(value, 'value', 'object');
+    checkKey(type, 'key', 'string');
+    dispatch({
+      type,
+      response: {
+        type,
+        method: ON_SUCCESS,
+        statusCode: 200,
+        mutation: true,
+        update: value,
+        payload: {
+          filter,
+        },
+      },
+    });
+  };
 };

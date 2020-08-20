@@ -143,6 +143,8 @@ export const COMMON_REDUCER_HANDLER = (action, handlers) => {
   const {
     response: {
       customTask,
+      mutation,
+      update: updatedData,
       data: { data: successData = {}, ...rest } = {},
       payload: {
         request: { query = {}, clearDataOnError = false } = {},
@@ -159,6 +161,9 @@ export const COMMON_REDUCER_HANDLER = (action, handlers) => {
     successData,
     errorData,
     successDataStatusCode: rest.statusCode,
+    customTask,
+    mutation,
+    updatedData,
     ...action.response.payload,
   });
   const ErrorHandler = (filter && filterArrayErrorHandler) || errorHandler;

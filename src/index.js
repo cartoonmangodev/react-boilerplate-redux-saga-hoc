@@ -7,6 +7,7 @@ export {
   getData,
   useHook as useQuery,
   useActionsHook as useActions,
+  useMutation,
 } from './utils';
 export { useDispatch, useStore, useSelector } from 'react-redux';
 // export { useTestHook } from './hooks';
