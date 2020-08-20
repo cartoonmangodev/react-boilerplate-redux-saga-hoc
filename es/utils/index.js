@@ -230,38 +230,39 @@ var useHook = function useHook() {
       _useState4 = _slicedToArray(_useState3, 1),
       _key = _useState4[0];
 
-  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
-  (0, _react.useEffect)(function () {
-    var execute = function execute() {
-      // const state = safe(store, `.getState()[${name}]`);
-      // eslint-disable-next-line no-underscore-dangle
-      var _data = {};
+  if (name) checkKey(null, 'reducer name', 'string', 'valid string');
 
-      var _checkFilter = function _checkFilter(e) {
-        return e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : undefined : undefined;
-      };
+  var execute = function execute() {
+    // const state = safe(store, `.getState()[${name}]`);
+    // eslint-disable-next-line no-underscore-dangle
+    var _data = {};
 
-      var _getData = function _getData(e, isString) {
-        return safe(getData(safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e)), "".concat(e.query && (0, _helpers.typeOf)(e.query) === 'string' ? e.query : ''), e.query ? e.default || undefined : undefined);
-      };
-
-      if (name && (Array.isArray(array) && array.length > 0 || (0, _helpers.typeOf)(array) === 'object' && Object.keys(array).length > 0)) {
-        // eslint-disable-next-line consistent-return
-        // eslint-disable-next-line no-underscore-dangle
-        _data = ((0, _helpers.typeOf)(array) === 'object' ? [array] : array).reduce(function (acc, e) {
-          return (0, _helpers.typeOf)(e) === 'object' ? (0, _helpers.typeOf)(array) === 'object' ? _getData(e) : _objectSpread({}, acc, _defineProperty({}, e.name || e.key, _getData(e))) : (0, _helpers.typeOf)(array) === 'object' ? safe(store, ".getState()[".concat(name, "][").concat(e, "]")) : _objectSpread({}, acc, _defineProperty({}, e, safe(store, ".getState()[".concat(name, "][").concat(e, "]"))));
-        }, {});
-      } else if (typeof array === 'string') _data = _getData(config, true);else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
-
-      var index = previousDataKey.indexOf(_key);
-
-      if (!(0, _isEqual.default)(_data, previousData[index])) {
-        // previousData[`${key || name}_${_key}`] = _data;
-        previousData[index] = _data;
-        setData(_data);
-      }
+    var _checkFilter = function _checkFilter(e) {
+      return e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : undefined : undefined;
     };
 
+    var _getData = function _getData(e, isString) {
+      return safe(getData(safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e)), "".concat(e.query && (0, _helpers.typeOf)(e.query) === 'string' ? e.query : ''), e.query ? e.default || undefined : undefined);
+    };
+
+    if (name && (Array.isArray(array) && array.length > 0 || (0, _helpers.typeOf)(array) === 'object' && Object.keys(array).length > 0)) {
+      // eslint-disable-next-line consistent-return
+      // eslint-disable-next-line no-underscore-dangle
+      _data = ((0, _helpers.typeOf)(array) === 'object' ? [array] : array).reduce(function (acc, e) {
+        return (0, _helpers.typeOf)(e) === 'object' ? (0, _helpers.typeOf)(array) === 'object' ? _getData(e) : _objectSpread({}, acc, _defineProperty({}, e.name || e.key, _getData(e))) : (0, _helpers.typeOf)(array) === 'object' ? safe(store, ".getState()[".concat(name, "][").concat(e, "]")) : _objectSpread({}, acc, _defineProperty({}, e, safe(store, ".getState()[".concat(name, "][").concat(e, "]"))));
+      }, {});
+    } else if (typeof array === 'string') _data = _getData(config, true);else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
+
+    var index = previousDataKey.indexOf(_key);
+
+    if (!(0, _isEqual.default)(_data, previousData[index])) {
+      // previousData[`${key || name}_${_key}`] = _data;
+      previousData[index] = _data;
+      setData(_data);
+    }
+  };
+
+  (0, _react.useEffect)(function () {
     var length = previousDataKey.length;
     previousDataKey.push(_key);
     previousData[length] = {};

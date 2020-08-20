@@ -264,12 +264,7 @@ const previousDataKey = [];
 const previousData = {};
 export const useHook = (name = null, array = [], config = {}) => {
   const store = useStore();
-  const [data, setData] = useState({});
-  const [_key] = useState({});
-  if (name) checkKey(null, 'reducer name', 'string', 'valid string');
-  const execute = () => {
-    // const state = safe(store, `.getState()[${name}]`);
-    // eslint-disable-next-line no-underscore-dangle
+  const _GetData = () => {
     let _data = {};
     const _checkFilter = e =>
       e.filter
@@ -317,6 +312,16 @@ export const useHook = (name = null, array = [], config = {}) => {
     } else if (typeof array === 'string') _data = _getData(config, true);
     else if (name) _data = safe(store, `.getState()[${name}]`);
     else _data = safe(store, `.getState()`) || {};
+    return _data;
+  };
+  const [data, setData] = useState(_GetData());
+  const [_key] = useState({});
+  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
+
+  const execute = () => {
+    // const state = safe(store, `.getState()[${name}]`);
+    // eslint-disable-next-line no-underscore-dangle
+    const _data = _GetData();
     const index = previousDataKey.indexOf(_key);
     if (!isEqual(_data, previousData[index])) {
       // previousData[`${key || name}_${_key}`] = _data;
