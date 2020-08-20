@@ -25,7 +25,7 @@ import injectSaga, { useInjectSaga } from '../../utils/utils/injectSaga';
 import injectReducer, {
   useInjectReducer,
 } from '../../utils/utils/injectReducer';
-import { newObject, typeOf } from '../../utils/helpers';
+import { newObject } from '../../utils/helpers';
 import { makeSelectAuthenticationState } from './selectors';
 import generateAction from './actions';
 import Reducer from './reducer';
@@ -38,12 +38,10 @@ const safe = nullcheck;
 // const shape = {
 //   reducerName: isString,
 // };
-const checkKey = (key, name, type) => {
+const checkKey = (key, name, dataType, type) => {
   invariant(
     type(key),
-    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a ${typeOf(
-      type,
-    )}`,
+    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a ${dataType}`,
   );
 };
 
@@ -73,12 +71,15 @@ export default ({
     isString(reducerName) && !isEmpty(reducerName),
     '(react-boilerplate-redux-saga-hoc)  Expected `name` to be a non empty string',
   );
-  checkKey(apiEndPoints, 'apiEndPoints', isObject);
-  checkKey(initialState, 'initialState', isObject);
-  checkKey(dontResetOnLogout, 'dontReset', isObject);
-  checkKey(sagaFunction, 'saga', isFunction);
-  checkKey(constantSaga, 'constantSaga', isArray);
-  if (constantReducer) checkKey(constantReducer, 'constantReducer', isFunction);
+  checkKey(apiEndPoints, 'apiEndPoints', 'object', isObject);
+  checkKey(initialState, 'initialState', 'object', isObject);
+  checkKey(dontResetOnLogout, 'dontReset', 'object', isObject);
+  if (saga) checkKey(sagaFunction, 'saga', 'function', isFunction);
+  checkKey(constantSaga, 'constantSaga', 'array', isArray);
+  if (constantReducer)
+    checkKey(constantReducer, 'constantReducer', 'function', isFunction);
+  if (reducerFunction)
+    checkKey(reducerFunction, 'reducer', 'function', isFunction);
 
   const ApiEndPoints = {
     [reducerName]: apiEndPoints,

@@ -5,7 +5,7 @@ import isFunction from 'lodash/isFunction';
 import isObject from 'lodash/isObject';
 import invariant from 'invariant';
 
-import { newObject, typeOf } from '../helpers';
+import { newObject } from '../helpers';
 import {
   ON_ERROR,
   ON_SUCCESS,
@@ -64,12 +64,10 @@ const HANDLERS = [
     handler: dontUpdateDataHandler,
   },
 ];
-const checkKey = (key, name, type) => {
+const checkKey = (key, name, dataType, type) => {
   invariant(
     type(key),
-    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a ${typeOf(
-      type,
-    )}`,
+    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a ${dataType}`,
   );
 };
 
@@ -98,7 +96,8 @@ const COMMON_HANDLER = (payload, data) => {
       let customTaskBindAction = null;
       // const isMultiTask = Array.isArray(payload.tasks);
       // if (isMultiTask)
-      if (task.response) checkKey(task.response, 'task { response }', isObject);
+      if (task.response)
+        checkKey(task.response, 'task { response }', 'object', isObject);
       customTaskBindAction = Action =>
         Action({
           ...payload,
@@ -117,7 +116,7 @@ const COMMON_HANDLER = (payload, data) => {
       ).find(({ name }) => name === task.name);
 
       if (_handler) {
-        checkKey(_handler.handler, _handler.name, isFunction);
+        checkKey(_handler.handler, _handler.name, 'function', isFunction);
         DATA = isFilter
           ? BindHandler(commonFilterHandler(_handler.handler))
           : BindHandler(_handler.handler);

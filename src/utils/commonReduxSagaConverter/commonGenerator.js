@@ -35,12 +35,10 @@ function* loaderGenerator({ type, commonData }) {
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const checkKey = (key, name, type) => {
+const checkKey = (key, name, dataType, type) => {
   invariant(
     type(key),
-    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a ${typeOf(
-      type,
-    )}`,
+    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a ${dataType}`,
   );
 };
 
@@ -144,7 +142,7 @@ export default function({
         ((pollingRequestConfig && pollingRequestConfig.params) || params) &&
         typeof request.url === 'function'
       ) {
-        checkKey(params, '{request: { params }}', isObject);
+        checkKey(params, '{request: { params }}', 'object', isObject);
         // throw new Error(
         //   `key 'params' should be object not a ${typeOf(params)}`,
         // );
