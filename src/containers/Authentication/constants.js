@@ -30,7 +30,7 @@ export default ({ apiEndPoints, generatorKey, dontResetOnLogout }) => {
           loading: {},
           toast: {},
           ...(apiEndPoints[generatorKey][key].initialData
-            ? { data: apiEndPoints[generatorKey][key] }
+            ? { data: apiEndPoints[generatorKey][key].initialData }
             : {}),
         },
       }),
