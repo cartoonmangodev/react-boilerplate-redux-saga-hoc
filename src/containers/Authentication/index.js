@@ -10,7 +10,7 @@ import invariant from 'invariant';
 import { createStructuredSelector } from 'reselect';
 import { compose, bindActionCreators } from 'redux';
 import isString from 'lodash/isString';
-import conformsTo from 'lodash/conformsTo';
+import isEmpty from 'lodash/isEmpty';
 import axios from '../../config/axios';
 // import { getLanguage } from '../../config/Language/index';
 import generateConstants from './constants';
@@ -32,9 +32,9 @@ import { getData, mapDispatchToProps } from '../../utils';
 import { commonConstants } from '../../index';
 const safe = nullcheck;
 
-const shape = {
-  reducerName: isString,
-};
+// const shape = {
+//   reducerName: isString,
+// };
 
 export default ({
   handlers = [],
@@ -59,10 +59,8 @@ export default ({
   // injectReducer,
 } = {}) => {
   invariant(
-    conformsTo({ reducerName }, shape),
-    `(react-boilerplate-redux-saga-hoc) name: Expected a string but got ${typeOf(
-      reducerName,
-    )} `,
+    isString(reducerName) && !isEmpty(reducerName),
+    `(react-boilerplate-redux-saga-hoc) name: Expected a valid string `,
   );
 
   const ApiEndPoints = {
