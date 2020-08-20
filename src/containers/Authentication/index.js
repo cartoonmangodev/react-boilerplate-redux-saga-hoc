@@ -132,27 +132,25 @@ export default ({
     },
   };
   const commonProps = useHook || _useHook ? { safe } : { safe, getData };
-  if (useHocHook) {
-    // eslint-disable-next-line no-underscore-dangle
-    const _useHocHook = () => {
-      useInjectSaga({ key: reducerName, saga });
-      useInjectReducer(
-        {
-          key: reducerName,
-          reducer,
-        },
-        createReducer,
-      );
-      const dispatch = useDispatch();
-      const [state] = React.useState({
-        ...componentData[`${reducerName}_hoc`],
-        actions: bindActionCreators(componentActions, dispatch),
-        dispatch,
-      });
-      return state;
-    };
-    return _useHocHook;
-  }
+  // eslint-disable-next-line no-underscore-dangle
+  const _useHocHook = () => {
+    useInjectSaga({ key: reducerName, saga });
+    useInjectReducer(
+      {
+        key: reducerName,
+        reducer,
+      },
+      createReducer,
+    );
+    const dispatch = useDispatch();
+    const [state] = React.useState({
+      ...componentData[`${reducerName}_hoc`],
+      actions: bindActionCreators(componentActions, dispatch),
+      dispatch,
+    });
+    return state;
+  };
+  if (useHocHook && !nextJS) return _useHocHook;
   // eslint-disable-next-line no-unused-vars
   const hoc = (WrapperComponent, autoLoginCheck = true) => {
     function WithHoc(props) {
@@ -239,6 +237,7 @@ export default ({
     return {
       hoc,
       saga,
+      useHocHook,
       reducer: { name: reducerName, reducer },
       actions: { ...componentActions },
       ...componentData[`${reducerName}_hoc`],
@@ -247,6 +246,7 @@ export default ({
     return {
       hoc,
       saga,
+      useHocHook,
       reducer: { name: reducerName, reducer },
     };
   if (getDefaultConfig) {
