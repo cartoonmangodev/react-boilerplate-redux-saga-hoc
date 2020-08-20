@@ -212,6 +212,10 @@ var checkKey = function checkKey(key, name, dataType, message) {
   (0, _invariant.default)((0, _helpers.typeOf)(key) === dataType, "(react-boilerplate-redux-saga-hoc)  Expected `".concat(name, "` to be  ").concat(message || dataType));
 };
 
+var checkKeyWithMessage = function checkKeyWithMessage(key, dataType, message) {
+  (0, _invariant.default)((0, _helpers.typeOf)(key) === dataType, message);
+};
+
 var previousDataKey = [];
 var previousData = {};
 
@@ -303,7 +307,13 @@ var useActionsHook = function useActionsHook(name, actions) {
 
 exports.useActionsHook = useActionsHook;
 
-var useMutation = function useMutation() {
+var useMutation = function useMutation(reducerName) {
+  if (!reducerName) checkKeyWithMessage(reducerName, 'string', 'useMutation(`reducerkey`) : Expected a valid reducer key');
+  var store = (0, _reactRedux.useStore)();
+  (0, _react.useEffect)(function () {
+    if (reducerName) checkKeyWithMessage(reducerName, 'string', 'useMutation(`reducerkey`) : Expected a reducer key to be string');
+    if (!store.getState()[reducerName]) checkKeyWithMessage(null, 'string', " reducerName '".concat(reducerName, "' not a valid reducer key."));
+  }, []);
   var dispatch = (0, _reactRedux.useDispatch)();
   return function (_ref17) {
     var type = _ref17.key,
@@ -311,11 +321,15 @@ var useMutation = function useMutation() {
         _ref17$filter = _ref17.filter,
         filter = _ref17$filter === void 0 ? [] : _ref17$filter;
     if (!type) checkKey(null, 'key', 'string', 'valid string');
-    if (type) (0, _invariant.default)(type.includes('_CALL') && type.slice(-5) === '_CALL', '`key` is invalid.Expected a valid reducer key.');
+
+    var _reducer_keys = Object.keys(store.getState()[reducerName]);
+
+    if (type) (0, _invariant.default)(_reducer_keys.includes(type), // type.includes('_CALL') && type.slice(-5) === '_CALL',
+    "'key' is invalid.".concat(type, " not found in ").concat(reducerName, " reducer"));
     checkKey(filter, 'filter', 'array');
     checkKey(value, 'value', 'object');
     checkKey(type, 'key', 'string');
-    dispatch({
+    if (type.includes('_CALL') && type.slice(-5) === '_CALL') dispatch({
       type: type.slice(0, -4).concat('CUSTOM_TASK'),
       response: {
         type: type,
@@ -330,6 +344,10 @@ var useMutation = function useMutation() {
           filter: filter
         }
       }
+    });else dispatch({
+      type: type,
+      value: value,
+      filter: filter
     });
   };
 };

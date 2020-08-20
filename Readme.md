@@ -279,11 +279,11 @@ const REGISTER_API = { url: '/user/register', method: 'POST' };
 //   responseMessageKey: "message" /* optional */,
 // };
 
-const AuthHoc = HOC({
+const useAuthHoc = HOC({
   initialState: {
     profile: {},
   },
-  useHook: true /* This will avoid unwanted rendering on every state changes */,
+  useHocHook: true /* This will help us to use hoc as a hook */,
   dontReset: {
     TEST_API /* If you pass anything on don't reset it wont reset the paricular state on setting to reset */,
   },
@@ -296,7 +296,7 @@ const AuthHoc = HOC({
   name: 'Auth' /* Reducer name */,
 });
 
-export { AuthHoc };
+export { useAuthHoc };
 ```
 
 ### # connecting hoc to the component and make the api calls
@@ -308,17 +308,25 @@ import {
   HOC as HocConfigure,
   useQuery,
 } from 'react-boilerplate-redux-saga-hoc';
-import { compose } from 'redux';
-import { AuthHoc } from './config';
+import { useAuthHoc } from './config';
 
 function basicExample(props) {
+  /* 
+  if you have wrapped with hoc instead of using hook you will get all the constants,actions...etc from props like given below
   const {
     Auth_hoc: {
       reducerConstants: { TEST_API },
       reducerName,
       actions: { TEST_API_CALL, TEST_API_CANCEL },
     },
-  } = props;
+  } = props;  
+  */
+
+  const {
+    reducerConstants: { TEST_API },
+    reducerName,
+    actions: { TEST_API_CALL, TEST_API_CANCEL },
+  } = useAuthHoc();
 
   /* useQuery hook for getting data from the reducer */
 
@@ -342,7 +350,8 @@ function basicExample(props) {
   );
 }
 
-export default compose(AuthHoc)(basicExample);
+export default basicExample;
+// export default compose(AuthHoc)(basicExample); you can connect this component with hoc by toggling useHocHook to false in HocConfigure
 ```
 
 1. **This is the image from Redux Store for initial state after connecting hoc to the component**
