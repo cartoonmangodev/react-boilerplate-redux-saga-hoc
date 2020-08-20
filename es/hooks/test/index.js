@@ -11,15 +11,13 @@ var _commonConstants = require("../../utils/commonReduxSagaConverter/commonConst
 
 /* eslint-disable camelcase */
 // useReviewHooks
-var _default = ({
-  TEST_API_CUSTOM_TASK,
-  TEST_SUB_API_CUSTOM_TASK,
-  Chrissie: {
-    TEST_API,
-    TEST_SUB_API
-  }
-}) => {
-  (0, _react.useEffect)(() => {
+var _default = function _default(_ref) {
+  var TEST_API_CUSTOM_TASK = _ref.TEST_API_CUSTOM_TASK,
+      TEST_SUB_API_CUSTOM_TASK = _ref.TEST_SUB_API_CUSTOM_TASK,
+      _ref$Chrissie = _ref.Chrissie,
+      TEST_API = _ref$Chrissie.TEST_API,
+      TEST_SUB_API = _ref$Chrissie.TEST_SUB_API;
+  (0, _react.useEffect)(function () {
     TEST_SUB_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {}, {
       data: {
         count: 20,
@@ -47,7 +45,7 @@ var _default = ({
         }]
       }
     });
-    setTimeout(() => {
+    setTimeout(function () {
       TEST_SUB_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {
         subKey: ['items'],
         isInfinite: true
@@ -60,7 +58,7 @@ var _default = ({
         }
       });
     }, 1);
-    setTimeout(() => {
+    setTimeout(function () {
       TEST_SUB_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {
         subKey: ['items'],
         isDelete: true,
@@ -68,7 +66,7 @@ var _default = ({
         key: 'name'
       }, {});
     }, 2);
-    setTimeout(() => {
+    setTimeout(function () {
       TEST_SUB_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {
         subKey: ['items'],
         isDeleteKey: true,
@@ -77,7 +75,7 @@ var _default = ({
         deleteKey: ['name']
       }, {});
     }, 3);
-    setTimeout(() => {
+    setTimeout(function () {
       TEST_SUB_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {//   subKey: ['items'],
         //   isInfinite: true,
       }, {
@@ -95,7 +93,7 @@ var _default = ({
         }
       });
     }, 4);
-    setTimeout(() => {
+    setTimeout(function () {
       TEST_SUB_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {
         tasks: [{
           task: 'add',
@@ -301,11 +299,15 @@ var _default = ({
       });
     }, 5);
   }, []);
-  const test = (0, _react.useMemo)(() => getData(TEST_API, [], false), [TEST_API]);
-  const test_sub = (0, _react.useMemo)(() => getData(TEST_SUB_API, {}, false), [TEST_SUB_API]);
+  var test = (0, _react.useMemo)(function () {
+    return getData(TEST_API, [], false);
+  }, [TEST_API]);
+  var test_sub = (0, _react.useMemo)(function () {
+    return getData(TEST_SUB_API, {}, false);
+  }, [TEST_SUB_API]);
   return {
-    test,
-    test_sub
+    test: test,
+    test_sub: test_sub
   };
 };
 

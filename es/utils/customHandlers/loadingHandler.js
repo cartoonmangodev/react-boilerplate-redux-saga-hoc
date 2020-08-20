@@ -24,31 +24,46 @@ var _helpers = require("../helpers");
 //     }),
 //   ),
 // });
-const _CheckFilter = Filter => Array.isArray(Filter) && Filter.length > 0 ? Filter : Filter && typeof Filter === 'string' ? Filter.split('.') : [];
+var _CheckFilter = function _CheckFilter(Filter) {
+  return Array.isArray(Filter) && Filter.length > 0 ? Filter : Filter && typeof Filter === 'string' ? Filter.split('.') : [];
+};
 
-const filterArrayloadingHandler = ({
-  loader,
-  filter
-} = {}) => ({
-  data: Data = {}
-}) => ({
-  data: (() => {
-    if (filter && filter.some(fil => Array.isArray(fil))) {
-      return filter.reduce((accumulator, filterArray) => (0, _helpers.updateIn)(accumulator, _CheckFilter(filterArray), data => _CheckFilter(filterArray).length > 0 ? (0, _helpers.newObject)(data, {
-        loading: {
-          status: loader,
-          lastUpdated: (0, _helpers.generateTimeStamp)()
+var filterArrayloadingHandler = function filterArrayloadingHandler() {
+  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      loader = _ref.loader,
+      filter = _ref.filter;
+
+  return function (_ref2) {
+    var _ref2$data = _ref2.data,
+        Data = _ref2$data === void 0 ? {} : _ref2$data;
+    return {
+      data: function () {
+        if (filter && filter.some(function (fil) {
+          return Array.isArray(fil);
+        })) {
+          return filter.reduce(function (accumulator, filterArray) {
+            return (0, _helpers.updateIn)(accumulator, _CheckFilter(filterArray), function (data) {
+              return _CheckFilter(filterArray).length > 0 ? (0, _helpers.newObject)(data, {
+                loading: {
+                  status: loader,
+                  lastUpdated: (0, _helpers.generateTimeStamp)()
+                }
+              }) : data;
+            });
+          }, Data);
         }
-      }) : data), Data);
-    }
 
-    return (0, _helpers.updateIn)(Data, filter, data => (0, _helpers.newObject)(data, {
-      loading: {
-        status: loader,
-        lastUpdated: (0, _helpers.generateTimeStamp)()
-      }
-    }));
-  })()
-});
+        return (0, _helpers.updateIn)(Data, filter, function (data) {
+          return (0, _helpers.newObject)(data, {
+            loading: {
+              status: loader,
+              lastUpdated: (0, _helpers.generateTimeStamp)()
+            }
+          });
+        });
+      }()
+    };
+  };
+};
 
 exports.filterArrayloadingHandler = filterArrayloadingHandler;

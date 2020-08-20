@@ -5,6 +5,20 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 /* eslint-disable no-console */
 
 /* eslint-disable indent */
@@ -24,22 +38,26 @@ exports.default = void 0;
 /* eslint-disable no-unused-expressions */
 
 /* eslint-disable no-underscore-dangle */
-const CONSTRUCTOR_CHECK = {
+var CONSTRUCTOR_CHECK = {
   string: String,
   number: Number,
   boolean: Boolean
 };
 
-let errorConsole = (parentObj, error, path, func = [], notFound) => {
-  if (!func) console.log(`%c${notFound ? '%c key' : `${parentObj} %c is undefined`}%c "${error}" %cnot found ${notFound ? `in %c"${parentObj}"%c object` : '%c%c'} %c ${path} %c is invalid`, 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: green; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px');else console.log(`%c${parentObj} %c is found %c "${error}" %c not a function %c ${path} %c is invalid`, 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px');
+var errorConsole = function errorConsole(parentObj, error, path) {
+  var func = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+  var notFound = arguments.length > 4 ? arguments[4] : undefined;
+  if (!func) console.log("%c".concat(notFound ? '%c key' : "".concat(parentObj, " %c is undefined"), "%c \"").concat(error, "\" %cnot found ").concat(notFound ? "in %c\"".concat(parentObj, "\"%c object") : '%c%c', " %c ").concat(path, " %c is invalid"), 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: green; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px');else console.log("%c".concat(parentObj, " %c is found %c \"").concat(error, "\" %c not a function %c ").concat(path, " %c is invalid"), 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px', 'background: #000; color: red; font-size: 12px', 'background: #000; color: orange; font-size: 12px');
 };
 
-const errorLog = () => {
-  let e = new Error();
-  let stack = e.stack.toString().split(/\r\n|\n/);
+var errorLog = function errorLog() {
+  var e = new Error();
+  var stack = e.stack.toString().split(/\r\n|\n/);
   console.log('Error :');
   stack.splice(0, 1);
-  stack.map((err, index) => console.log(`[${stack[stack.length - 1 - index]} ]`)); // console.log(`[ Error ${stack[stack.length - 1]} ]`);
+  stack.map(function (err, index) {
+    return console.log("[".concat(stack[stack.length - 1 - index], " ]"));
+  }); // console.log(`[ Error ${stack[stack.length - 1]} ]`);
 };
 /**
  * Required parameter for nullcheck
@@ -51,37 +69,45 @@ const errorLog = () => {
  */
 
 
-const nullCheck = (Error, obj = {}, path, def, callBack, func = [], errorDisplay = false) => {
-  const returnDefaultData = def || null;
+var nullCheck = function nullCheck(Error) {
+  var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var path = arguments.length > 2 ? arguments[2] : undefined;
+  var def = arguments.length > 3 ? arguments[3] : undefined;
+  var callBack = arguments.length > 4 ? arguments[4] : undefined;
+  var func = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : [];
+  var errorDisplay = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
+  var returnDefaultData = def || null;
 
   if (typeof path !== 'string') {
     if (errorDisplay) {
-      console.log(`%c[Object] path is invalid it should be string`, 'background: #000; color: orange; font-size: 12px');
+      console.log("%c[Object] path is invalid it should be string", 'background: #000; color: orange; font-size: 12px');
       errorLog(new Error());
     }
 
     return typeof callBack === 'function' ? callBack(returnDefaultData) : returnDefaultData;
   }
 
-  let propNames = path.split(/\.|\[|\(/);
-  propNames = propNames.map(prop => prop.replace(/\]|\(/g, '').replace(/\)/, '()'));
-  const parent = propNames.splice(0, 1);
+  var propNames = path.split(/\.|\[|\(/);
+  propNames = propNames.map(function (prop) {
+    return prop.replace(/\]|\(/g, '').replace(/\)/, '()');
+  });
+  var parent = propNames.splice(0, 1);
 
-  if (!obj || typeof obj !== 'object' || Object.keys(obj).length === 0) {
+  if (!obj || _typeof(obj) !== 'object' || Object.keys(obj).length === 0) {
     if (errorDisplay) errorLog(new Error());
     return typeof callBack === 'function' ? callBack(returnDefaultData) : returnDefaultData;
   }
 
-  let data = obj;
-  let error = parent;
-  let index = 0;
-  let parentObj = error; // eslint-disable-next-line no-undef-init
+  var data = obj;
+  var error = parent;
+  var index = 0;
+  var parentObj = error; // eslint-disable-next-line no-undef-init
 
-  let type = undefined;
+  var type = undefined;
 
-  for (let key = 0; key < propNames.length; key++) {
+  for (var key = 0; key < propNames.length; key++) {
     if (data[propNames[key]] || typeof data === 'boolean' || Object.prototype.hasOwnProperty.call(data, propNames[key])) {
-      if (Number(propNames[key]) || Number(propNames[key]) === 0) error = `${error}[${propNames[key]}]`;else error = `${error}.${propNames[key]}`;
+      if (Number(propNames[key]) || Number(propNames[key]) === 0) error = "".concat(error, "[").concat(propNames[key], "]");else error = "".concat(error, ".").concat(propNames[key]);
       data = data[propNames[key]];
       if (!data && typeof data !== 'boolean' && key === propNames.length - 1) return typeof callBack === 'function' ? callBack(def || data) : def || data;
 
@@ -108,7 +134,7 @@ const nullCheck = (Error, obj = {}, path, def, callBack, func = [], errorDisplay
           return typeof callBack === 'function' ? callBack(returnDefaultData) : returnDefaultData;
         }
 
-        if (typeof data !== 'object' && propNames[key + 1] !== '()' && !data[propNames[key + 1]] && typeof data !== 'boolean') {
+        if (_typeof(data) !== 'object' && propNames[key + 1] !== '()' && !data[propNames[key + 1]] && typeof data !== 'boolean') {
           if (errorDisplay) {
             errorLog(new Error());
             errorConsole(parentObj, error, path, false);
@@ -118,13 +144,13 @@ const nullCheck = (Error, obj = {}, path, def, callBack, func = [], errorDisplay
         }
       }
     } else if (propNames[key] === '()') {
-      error = `${error}${propNames[key]}`;
+      error = "".concat(error).concat(propNames[key]);
 
       if (typeof data === 'function') {
-        if (CONSTRUCTOR_CHECK[typeof type]) {
-          if (func && func[index]) data = CONSTRUCTOR_CHECK[typeof type].prototype[propNames[key - 1]].apply(type, func[index]);else data = CONSTRUCTOR_CHECK[typeof type].prototype[propNames[key - 1]].call(type);
+        if (CONSTRUCTOR_CHECK[_typeof(type)]) {
+          if (func && func[index]) data = CONSTRUCTOR_CHECK[_typeof(type)].prototype[propNames[key - 1]].apply(type, func[index]);else data = CONSTRUCTOR_CHECK[_typeof(type)].prototype[propNames[key - 1]].call(type);
         } else {
-          if (func && func[index]) data = data.apply({}, [...func[index]]);else data = data();
+          if (func && func[index]) data = data.apply({}, _toConsumableArray(func[index]));else data = data();
         }
 
         if (!data && typeof data !== 'boolean' && key === propNames.length - 1) return typeof callBack === 'function' ? callBack(def || data) : def || data;
@@ -171,7 +197,7 @@ const nullCheck = (Error, obj = {}, path, def, callBack, func = [], errorDisplay
           return typeof callBack === 'function' ? callBack(returnDefaultData) : returnDefaultData;
         }
 
-        if (typeof data !== 'object' && propNames[key + 1] !== '()' && !data[propNames[key + 1]] && typeof data !== 'boolean') {
+        if (_typeof(data) !== 'object' && propNames[key + 1] !== '()' && !data[propNames[key + 1]] && typeof data !== 'boolean') {
           if (errorDisplay) {
             errorLog(new Error());
             errorConsole(parentObj, error, path, true);
@@ -183,7 +209,7 @@ const nullCheck = (Error, obj = {}, path, def, callBack, func = [], errorDisplay
 
       index += 1;
     } else {
-      if (Number(propNames[key]) || Number(propNames[key]) === 0) error = `${error}[${propNames[key]}]`;else error = `${error}.${propNames[key]}`;
+      if (Number(propNames[key]) || Number(propNames[key]) === 0) error = "".concat(error, "[").concat(propNames[key], "]");else error = "".concat(error, ".").concat(propNames[key]);
 
       if (errorDisplay) {
         errorLog(new Error());
@@ -196,7 +222,7 @@ const nullCheck = (Error, obj = {}, path, def, callBack, func = [], errorDisplay
     parentObj = error;
   }
 
-  const verifyData = (data || typeof data === 'boolean') && Object.prototype.toString.call(def) !== '[object Null]' && typeof def !== 'undefined' && Object.prototype.toString.call(data) === Object.prototype.toString.call(def) ? data : typeof def !== 'undefined' ? def : data;
+  var verifyData = (data || typeof data === 'boolean') && Object.prototype.toString.call(def) !== '[object Null]' && typeof def !== 'undefined' && Object.prototype.toString.call(data) === Object.prototype.toString.call(def) ? data : typeof def !== 'undefined' ? def : data;
   return typeof callBack === 'function' ? callBack(verifyData) : verifyData;
 };
 

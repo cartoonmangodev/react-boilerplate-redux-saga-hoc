@@ -24,13 +24,16 @@ var _redux = require("redux");
 /**
  * Merges the main reducer with the router state and dynamically injected reducers
  */
-function createReducer(injectedReducers = {}) {
+function createReducer() {
+  var injectedReducers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // const connectRouter = history
   //   ? require('connected-react-router').connectRouter
   //   : null;
   // const History = history ? require('./utils/history').default : '';
-  const reducer = Object.keys(injectedReducers).length > 0 ? injectedReducers : {
-    global: () => ({})
+  var reducer = Object.keys(injectedReducers).length > 0 ? injectedReducers : {
+    global: function global() {
+      return {};
+    }
   }; // const reducer = history
   //   ? {
   //       ..._reducer,
@@ -40,6 +43,6 @@ function createReducer(injectedReducers = {}) {
   //       ..._reducer,
   //     };
 
-  const rootReducer = (0, _redux.combineReducers)(reducer);
+  var rootReducer = (0, _redux.combineReducers)(reducer);
   return rootReducer;
 }

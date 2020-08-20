@@ -16,10 +16,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 // import { BASE_URL, authentication } from '../shared/config/apiEndPoints';
 // import { SPECIFIC_ERROR_HANDLER } from './errorHandler';
-const request = _axios.default;
+var request = _axios.default;
 request.defaults.withCredentials = true; // request.defaults.headers.common.origin = 'www.example.com'; // for cookie based auth
 
-request.interceptors.request.use(config => {
+request.interceptors.request.use(function (config) {
   // if (!config.baseURL) {
   //   request.defaults.baseURL = BASE_URL;
   //   config.baseURL = BASE_URL; // eslint-disable-line no-param-reassign
@@ -32,10 +32,12 @@ request.interceptors.request.use(config => {
 
   return config;
 }, // SPECIFIC_ERROR_HANDLER([], error);
-error => _promise.default.reject(error)); // eslint-disable-next-line arrow-body-style
+function (error) {
+  return _promise.default.reject(error);
+}); // eslint-disable-next-line arrow-body-style
 
 request.interceptors.response.use( // eslint-disable-next-line arrow-body-style
-response => {
+function (response) {
   // if (response.config.url === BASE_URL + authentication.VERIFY_OTP_API.url) {
   //   // CookieManager.get(response.config.url).then(async res => {
   //   // `res` will be true or false depending on success.
@@ -50,6 +52,8 @@ response => {
   //   // });
   // }
   return response;
-}, error => Promise.reject(error));
+}, function (error) {
+  return Promise.reject(error);
+});
 var _default = request;
 exports.default = _default;

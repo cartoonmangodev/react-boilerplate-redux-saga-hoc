@@ -9,16 +9,16 @@ exports.getIn = getIn;
 
 /* eslint-disable indent */
 function getIn(obj, arr) {
-  let i = 0;
-  let o = obj;
+  var i = 0;
+  var o = obj;
 
   function get() {
-    return arr.length > 0 && arr.length - 1 === i ? typeof o === 'undefined' || o === null ? o : o[arr[i]] : (() => {
+    return arr.length > 0 && arr.length - 1 === i ? typeof o === 'undefined' || o === null ? o : o[arr[i]] : function () {
       if (typeof o === 'undefined' || o === null) return o;
       o = o[arr[i]];
       i += 1;
       return get();
-    })();
+    }();
   }
 
   return arr.length > 0 ? get() : obj;
