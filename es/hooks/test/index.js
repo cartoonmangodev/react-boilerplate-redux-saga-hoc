@@ -1,24 +1,15 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = require("react");
-
-var _commonConstants = require("../../utils/commonReduxSagaConverter/commonConstants");
-
 /* eslint-disable camelcase */
 // useReviewHooks
-var _default = function _default(_ref) {
+import { useEffect, useMemo } from 'react';
+import { ON_SUCCESS } from '../../utils/commonReduxSagaConverter/commonConstants';
+export default (function (_ref) {
   var TEST_API_CUSTOM_TASK = _ref.TEST_API_CUSTOM_TASK,
       TEST_SUB_API_CUSTOM_TASK = _ref.TEST_SUB_API_CUSTOM_TASK,
       _ref$Chrissie = _ref.Chrissie,
       TEST_API = _ref$Chrissie.TEST_API,
       TEST_SUB_API = _ref$Chrissie.TEST_SUB_API;
-  (0, _react.useEffect)(function () {
-    TEST_SUB_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {}, {
+  useEffect(function () {
+    TEST_SUB_API_CUSTOM_TASK(ON_SUCCESS, {}, {
       data: {
         count: 20,
         items: [{
@@ -37,7 +28,7 @@ var _default = function _default(_ref) {
     //   },
     // );
 
-    TEST_SUB_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {}, {
+    TEST_SUB_API_CUSTOM_TASK(ON_SUCCESS, {}, {
       data: {
         count: 20,
         items: [{
@@ -46,7 +37,7 @@ var _default = function _default(_ref) {
       }
     });
     setTimeout(function () {
-      TEST_SUB_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {
+      TEST_SUB_API_CUSTOM_TASK(ON_SUCCESS, {
         subKey: ['items'],
         isInfinite: true
       }, {
@@ -59,7 +50,7 @@ var _default = function _default(_ref) {
       });
     }, 1);
     setTimeout(function () {
-      TEST_SUB_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {
+      TEST_SUB_API_CUSTOM_TASK(ON_SUCCESS, {
         subKey: ['items'],
         isDelete: true,
         id: 'chrisssie',
@@ -67,7 +58,7 @@ var _default = function _default(_ref) {
       }, {});
     }, 2);
     setTimeout(function () {
-      TEST_SUB_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {
+      TEST_SUB_API_CUSTOM_TASK(ON_SUCCESS, {
         subKey: ['items'],
         isDeleteKey: true,
         id: 'pressy',
@@ -76,7 +67,7 @@ var _default = function _default(_ref) {
       }, {});
     }, 3);
     setTimeout(function () {
-      TEST_SUB_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {//   subKey: ['items'],
+      TEST_SUB_API_CUSTOM_TASK(ON_SUCCESS, {//   subKey: ['items'],
         //   isInfinite: true,
       }, {
         data: {
@@ -94,7 +85,7 @@ var _default = function _default(_ref) {
       });
     }, 4);
     setTimeout(function () {
-      TEST_SUB_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {
+      TEST_SUB_API_CUSTOM_TASK(ON_SUCCESS, {
         tasks: [{
           task: 'add',
           params: {
@@ -197,7 +188,7 @@ var _default = function _default(_ref) {
           value: {}
         }]
       });
-      TEST_API_CUSTOM_TASK(_commonConstants.ON_SUCCESS, {
+      TEST_API_CUSTOM_TASK(ON_SUCCESS, {
         tasks: [{
           task: 'add',
           params: {
@@ -299,16 +290,14 @@ var _default = function _default(_ref) {
       });
     }, 5);
   }, []);
-  var test = (0, _react.useMemo)(function () {
+  var test = useMemo(function () {
     return getData(TEST_API, [], false);
   }, [TEST_API]);
-  var test_sub = (0, _react.useMemo)(function () {
+  var test_sub = useMemo(function () {
     return getData(TEST_SUB_API, {}, false);
   }, [TEST_SUB_API]);
   return {
     test: test,
     test_sub: test_sub
   };
-};
-
-exports.default = _default;
+});

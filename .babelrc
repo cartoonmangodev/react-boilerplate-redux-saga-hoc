@@ -1,12 +1,30 @@
 {
   "presets": [
     [
-      "@babel/preset-env",
+      "@babel/env",
       {
-        "targets": "> 0.25%, not dead"
+        "modules": false,
+        "loose": true,
+        "exclude": ["@babel/plugin-transform-regenerator"]
       }
     ],
-    "@babel/preset-react"
+    "@babel/preset-typescript",
+    "@babel/react"
   ],
-  "plugins": ["@babel/plugin-proposal-class-properties"]
+  "plugins": ["babel-plugin-transform-async-to-promises", "@babel/plugin-proposal-class-properties"],
+  "env": {
+    "test": {
+      "presets": [
+        [
+          "@babel/env",
+          {
+            "modules": "commonjs",
+            "loose": true,
+            "exclude": ["@babel/plugin-transform-regenerator"]
+          }
+        ]
+      ],
+      "plugins": ["babel-plugin-transform-async-to-promises"]
+    }
+  }
 }

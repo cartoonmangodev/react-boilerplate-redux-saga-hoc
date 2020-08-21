@@ -1,17 +1,7 @@
-"use strict";
+import actionConverter from '../../utils/commonReduxSagaConverter/actionConverter'; // import { convertData } from '../../utils/commonReduxSagaConverter/sagaConverter';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _actionConverter2 = _interopRequireDefault(require("../../utils/commonReduxSagaConverter/actionConverter"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// import { convertData } from '../../utils/commonReduxSagaConverter/sagaConverter';
-var _default = function _default(Actions) {
-  var _actionConverter = (0, _actionConverter2.default)(Actions),
+export default (function (Actions) {
+  var _actionConverter = actionConverter(Actions),
       componentActions = _actionConverter.componentActions,
       actions = _actionConverter.actions,
       sagaActions = _actionConverter.sagaActions,
@@ -23,6 +13,4 @@ var _default = function _default(Actions) {
     sagaActions: sagaActions,
     cancelActions: cancelActions
   };
-};
-
-exports.default = _default;
+});

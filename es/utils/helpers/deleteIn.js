@@ -1,13 +1,5 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.deleteIn = deleteIn;
-
-var _cloneObject2 = require("./cloneObject");
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+/* eslint-disable indent */
+import { cloneObject } from './cloneObject';
 
 function deleteIn(obj, arr) {
   var i = 0;
@@ -46,18 +38,22 @@ function deleteIn(obj, arr) {
     }
 
     return function () {
+      var _cloneObject;
+
       if (arr.length - 1 === i) {
         delete o[arr[i]];
         return o;
       }
 
-      return (0, _cloneObject2.cloneObject)(o, _defineProperty({}, arr[i], function () {
+      return cloneObject(o, (_cloneObject = {}, _cloneObject[arr[i]] = function () {
         o = o[arr[i]];
         i += 1;
         return update();
-      }()));
+      }(), _cloneObject));
     }();
   }
 
   return update();
 }
+
+export { deleteIn };

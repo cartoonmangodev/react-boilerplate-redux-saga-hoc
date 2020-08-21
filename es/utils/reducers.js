@@ -1,12 +1,3 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = createReducer;
-
-var _redux = require("redux");
-
 /* eslint-disable no-underscore-dangle */
 
 /* eslint-disable indent */
@@ -16,7 +7,7 @@ var _redux = require("redux");
 /**
  * Combine all reducers in this file and export the combined reducers.
  */
-// import { connectRouter } from 'connected-react-router';
+import { combineReducers } from 'redux'; // import { connectRouter } from 'connected-react-router';
 // import history from './utils/history';
 // import globalReducer from 'containers/App/reducer';
 // import languageProviderReducer from 'containers/LanguageProvider/reducer';
@@ -24,8 +15,12 @@ var _redux = require("redux");
 /**
  * Merges the main reducer with the router state and dynamically injected reducers
  */
-function createReducer() {
-  var injectedReducers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+export default function createReducer(injectedReducers) {
+  if (injectedReducers === void 0) {
+    injectedReducers = {};
+  }
+
   // const connectRouter = history
   //   ? require('connected-react-router').connectRouter
   //   : null;
@@ -43,6 +38,6 @@ function createReducer() {
   //       ..._reducer,
   //     };
 
-  var rootReducer = (0, _redux.combineReducers)(reducer);
+  var rootReducer = combineReducers(reducer);
   return rootReducer;
 }
