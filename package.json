@@ -2,12 +2,13 @@
   "name": "react-boilerplate-redux-saga-hoc",
   "version": "1.2.81",
   "description": "No worry about api calls.No need to create constants,reducer,saga,actions.Easy to make api call.Handles automatically all api request,cancel,errors etc",
-  "main": "./lib/index.js",
-  "unpkg": "./lib/index.js",
-  "module": "es/index.js",
+  "main": "index.js",
+  "unpkg": "dist/dist/react-boilerplate-redux-saga-hoc.production.min.js",
+  "module": "dist/react-boilerplate-redux-saga-hoc.mjs",
   "files": [
     "lib",
-    "es"
+    "es",
+    "dist"
   ],
   "keywords": [
     "react",
@@ -30,17 +31,28 @@
     "type": "git",
     "url": "https://github.com/cartoonmangodev/react-boilerplate-redux-saga-hoc.git"
   },
+  "release": {
+    "branches": [
+      "1.x",
+      "master",
+      {
+        "name": "next",
+        "prerelease": true
+      }
+    ]
+  },
   "scripts": {
     "build:prod": "webpack --mode production",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
     "build:es": "babel src --out-dir es",
     "build:umd": "cross-env NODE_ENV=development rollup -c -o dist/react-boilerplate-redux-saga-hoc.js",
     "build:umd:min": "cross-env NODE_ENV=production rollup -c -o dist/react-boilerplate-redux-saga-hoc.min.js",
-    "build": "npm run build:commonjs && npm run build:es",
+    "build:production": "NODE_ENV=production rollup -c",
+    "build": "npm run build:commonjs && npm run build:es && npm run build:production",
     "clean": "rimraf lib dist es coverage",
     "format": "prettier --write \"{src,test}/**/*.{js,ts}\" index.d.ts \"docs/**/*.md\"",
     "lint": "eslint src test/utils test/components",
-    "prepare": "npm run clean && npm run build",
+    "prepare": "npm run clean && npm run build:production",
     "pretest": "npm run lint",
     "test": "jest",
     "coverage": "codecov"
@@ -56,7 +68,6 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "reselect": "^4.0.0",
     "hoist-non-react-statics": "^3.3.0",
     "invariant": "^2.2.4",
     "lodash": "^4.17.11",
@@ -65,6 +76,7 @@
     "prop-types": "^15.7.2",
     "query-string": "^5.0.1",
     "react-is": "^16.8.6",
+    "reselect": "^4.0.0",
     "serialize-javascript": "^3.1.0"
   },
   "devDependencies": {
@@ -76,6 +88,8 @@
     "@babel/plugin-transform-react-jsx": "^7.3.0",
     "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-replace": "^2.3.3",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.7.1",
@@ -110,8 +124,11 @@
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.3.3",
     "rollup-plugin-node-resolve": "^4.0.1",
+    "rollup-plugin-peer-deps-external": "^2.2.3",
     "rollup-plugin-replace": "^2.1.1",
+    "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^4.0.4",
+    "rollup-plugin-visualizer": "^4.1.0",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11"
   },
