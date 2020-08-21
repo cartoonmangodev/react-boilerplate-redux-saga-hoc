@@ -50,6 +50,7 @@ export default function({
   function* commonGenerator({
     payload: {
       resolve,
+      reject,
       request: {
         asyncFunction = null,
         asyncFunctionParams = null,
@@ -344,7 +345,6 @@ export default function({
           resolve({
             status: 'SUCCESS',
             response: postData,
-            posts: data,
             data: data.data,
           });
       } catch (error) {
