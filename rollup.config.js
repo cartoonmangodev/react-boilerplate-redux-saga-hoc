@@ -57,7 +57,7 @@ export default [
   // {
   //   input: inputSrc,
   //   output: {
-  //     name: 'ReactQuery',
+  //     name: 'react-boilerplate-redux-saga-hoc',
   //     file: 'dist/react-boilerplate-redux-saga-hoc.development.js',
   //     format: 'umd',
   //     sourcemap: true,
@@ -75,7 +75,7 @@ export default [
   {
     input: inputSrc,
     output: {
-      name: 'ReactQuery',
+      name: 'react-boilerplate-redux-saga-hoc',
       file: 'dist/react-boilerplate-redux-saga-hoc.production.min.js',
       format: 'umd',
       sourcemap: false,
