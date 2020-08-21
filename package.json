@@ -1,14 +1,13 @@
 {
   "name": "react-boilerplate-redux-saga-hoc",
-  "version": "1.2.81-test",
+  "version": "1.2.81",
   "description": "No worry about api calls.No need to create constants,reducer,saga,actions.Easy to make api call.Handles automatically all api request,cancel,errors etc",
-  "main": "index.js",
-  "unpkg": "dist/dist/react-boilerplate-redux-saga-hoc.production.min.js",
-  "module": "dist/react-boilerplate-redux-saga-hoc.mjs",
+  "main": "./lib/index.js",
+  "unpkg": "./lib/index.js",
+  "module": "es/index.js",
   "files": [
     "lib",
-    "es",
-    "dist"
+    "es"
   ],
   "keywords": [
     "react",
@@ -48,11 +47,11 @@
     "build:umd": "cross-env NODE_ENV=development rollup -c -o dist/react-boilerplate-redux-saga-hoc.js",
     "build:umd:min": "cross-env NODE_ENV=production rollup -c -o dist/react-boilerplate-redux-saga-hoc.min.js",
     "build:production": "NODE_ENV=production rollup -c",
-    "build": "npm run build:commonjs && npm run build:es && npm run build:production",
+    "build": "npm run build:commonjs && npm run build:es",
     "clean": "rimraf lib dist es coverage",
     "format": "prettier --write \"{src,test}/**/*.{js,ts}\" index.d.ts \"docs/**/*.md\"",
     "lint": "eslint src test/utils test/components",
-    "prepare": "npm run clean && npm run build:production",
+    "prepare": "npm run clean && npm run build",
     "pretest": "npm run lint",
     "test": "jest",
     "coverage": "codecov"
@@ -88,7 +87,6 @@
     "@babel/plugin-transform-react-jsx": "^7.3.0",
     "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
-    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-replace": "^2.3.3",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.1",
