@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.useMutation = exports.useActionsHook = exports.useHook = exports.mapDispatchToProps = exports.getData = exports.commmonStateHandler = exports.responseErrorParser = void 0;
+exports.toPromise = exports.useMutation = exports.useActionsHook = exports.useHook = exports.mapDispatchToProps = exports.getData = exports.commmonStateHandler = exports.responseErrorParser = void 0;
 
 var _react = require("react");
 
@@ -353,3 +353,16 @@ var useMutation = function useMutation(reducerName) {
 };
 
 exports.useMutation = useMutation;
+
+var toPromise = function toPromise(action) {
+  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  checkKeyWithMessage(config, 'object', "toPromise() : Expected a config  to be object");
+  return new Promise(function (resolve, reject) {
+    return action(_objectSpread({}, config, {
+      resolve: resolve,
+      reject: reject
+    }));
+  });
+};
+
+exports.toPromise = toPromise;
