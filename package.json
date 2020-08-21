@@ -3,7 +3,7 @@
   "version": "1.2.83",
   "description": "No worry about api calls.No need to create constants,reducer,saga,actions.Easy to make api call.Handles automatically all api request,cancel,errors etc",
   "main": "./index.js",
-  "module": "dist/react-boilerplate-redux-saga-hoc.production.min.mjs",
+  "module": "./dist/react-boilerplate-redux-saga-hoc.production.min.mjs",
   "files": [
     "dist"
   ],
