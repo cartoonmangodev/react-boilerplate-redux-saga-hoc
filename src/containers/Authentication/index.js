@@ -195,7 +195,7 @@ export default ({
     );
     const authenticationSaga = injectSaga({ key: reducerName, saga });
     const withConnect = connect(
-      mapStateToProps,
+      useHook ? null : mapStateToProps,
       mapDispatchToProps(componentActions, componentData, reducerName),
     );
     if (nextJS) {
@@ -220,18 +220,11 @@ export default ({
       };
       return withConnect(WithHoc);
     }
-    return (useHook || _useHook
-      ? compose(
-          connect(
-            null,
-            mapDispatchToProps(componentActions, componentData, reducerName),
-          ),
-          authenticationReducer,
-          authenticationSaga,
-        )
-      : compose(withConnect, authenticationReducer, authenticationSaga))(
-      WithHoc,
-    );
+    return compose(
+      withConnect,
+      authenticationReducer,
+      authenticationSaga,
+    )(WithHoc);
   };
   if (nextJS && getDefaultConfig)
     return {
