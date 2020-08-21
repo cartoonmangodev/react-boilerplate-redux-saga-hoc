@@ -23,6 +23,7 @@
     "react-boilerplate",
     "react-boilerplate-redux-saga-hoc"
   ],
+  "sideEffects": false,
   "homepage": "https://cartoonmangodev.github.io/react-boilerplate-redux-saga-hoc-docs",
   "bugs": "https://github.com/cartoonmangodev/react-boilerplate-redux-saga-hoc/issues",
   "repository": {
