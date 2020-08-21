@@ -1,4 +1,8 @@
-/* eslint-disable */
+/* eslint-disable operator-assignment */
+/* eslint-disable no-else-return */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-unused-vars */
+/* eslint-disable indent */
 import { updateIn, newObject, generateTimeStamp } from '../helpers';
 import Safe from '../nullCheck';
 const updateData = (data, successData, updateCallback, updateKey) => {
@@ -58,7 +62,7 @@ export const updateKeyHandler = ({
                   (acc, curr = {}) =>
                     id.includes(curr[key])
                       ? (() => {
-                          index = index + 1;
+                          index += 1;
                           return acc.concat([
                             updateData(
                               curr,
@@ -75,10 +79,10 @@ export const updateKeyHandler = ({
                 return _Data.map(_data =>
                   _data[key] === id
                     ? (() => {
-                        index = index + 1;
+                        index += 1;
                         return updateData(
                           _data,
-                          values[_values ? index : curr[key]] || _data,
+                          values[_values ? index : _data[key]] || _data,
                           updateCallback,
                           updateKey,
                         );
@@ -123,7 +127,7 @@ export const updateKeyHandler = ({
                     index = index + 1;
                     return updateData(
                       _data,
-                      values[_values ? index : curr[key]] || _data,
+                      values[_values ? index : _data[key]],
                       updateCallback,
                       updateKey,
                     );

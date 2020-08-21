@@ -29,7 +29,7 @@ import Reducer from './reducer';
 import Saga from './generator';
 import nullcheck from '../../utils/nullCheck';
 import { getData, mapDispatchToProps } from '../../utils';
-import { commonConstants } from '../../index';
+import { commonConstants } from '../../utils/commonReduxSagaConverter/commonConstants';
 const safe = nullcheck;
 
 // const shape = {

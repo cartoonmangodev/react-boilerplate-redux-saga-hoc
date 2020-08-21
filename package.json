@@ -50,7 +50,7 @@
     "clean": "rimraf lib dist es coverage",
     "format": "prettier --write \"{src,test}/**/*.{js,ts}\" index.d.ts \"docs/**/*.md\"",
     "lint": "eslint src test/utils test/components",
-    "prepare": "npm run clean && npm run build",
+    "prepare": "npm run clean && npm run build:production",
     "pretest": "npm run lint",
     "test": "jest",
     "coverage": "codecov"
@@ -65,6 +65,7 @@
     "redux-saga": "0.16.2"
   },
   "dependencies": {
+    "@babel/runtime": "^7.11.2",
     "axios": "^0.19.2",
     "hoist-non-react-statics": "^3.3.0",
     "invariant": "^2.2.4",
@@ -86,6 +87,7 @@
     "@babel/plugin-transform-react-jsx": "^7.3.0",
     "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
+    "@rollup/plugin-node-resolve": "^9.0.0",
     "@rollup/plugin-replace": "^2.3.3",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.1",
@@ -125,6 +127,7 @@
     "rollup-plugin-replace": "^2.1.1",
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^4.0.4",
+    "rollup-plugin-typescript2": "^0.27.2",
     "rollup-plugin-visualizer": "^4.1.0",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11"

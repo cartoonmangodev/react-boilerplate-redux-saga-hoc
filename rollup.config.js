@@ -1,97 +1,157 @@
-import json from '@rollup/plugin-json';
+import nodeResolve from '@rollup/plugin-node-resolve';
 import babel from 'rollup-plugin-babel';
-import { terser } from 'rollup-plugin-terser';
-import size from 'rollup-plugin-size';
-import externalDeps from 'rollup-plugin-peer-deps-external';
-import resolve from 'rollup-plugin-node-resolve';
-import commonJS from 'rollup-plugin-commonjs';
-import visualizer from 'rollup-plugin-visualizer';
-import replace from '@rollup/plugin-replace';
+// import replace from '@rollup/plugin-replace';
+// import typescript from 'rollup-plugin-typescript2';
+// import { terser } from 'rollup-plugin-terser';
 
-const external = ['react'];
+import pkg from './package.json';
 
-const globals = {
-  react: 'React',
+const extensions = ['.js'];
+// const noDeclarationFiles = { compilerOptions: { declaration: false } };
+
+const babelRuntimeVersion = pkg.dependencies['@babel/runtime'].replace(
+  /^[^0-9]*/,
+  '',
+);
+
+const makeExternalPredicate = externalArr => {
+  if (externalArr.length === 0) {
+    return () => false;
+  }
+  const pattern = new RegExp(`^(${externalArr.join('|')})($|/)`);
+  return id => pattern.test(id);
 };
 
-const inputSrc = 'src/index.js';
-
-const extensions = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx'];
-const babelConfig = { extensions };
-const resolveConfig = { extensions };
-
 export default [
-  // {
-  //   input: inputSrc,
-  //   output: {
-  //     file: 'dist/react-boilerplate-redux-saga-hoc.mjs',
-  //     format: 'es',
-  //     sourcemap: true,
-  //   },
-  //   external,
-  //   plugins: [
-  //     resolve(resolveConfig),
-  //     babel(babelConfig),
-  //     commonJS(),
-  //     externalDeps(),
-  //     json(),
-  //   ],
-  // },
-  // {
-  //   input: inputSrc,
-  //   output: {
-  //     file: 'dist/react-boilerplate-redux-saga-hoc.min.mjs',
-  //     format: 'es',
-  //     sourcemap: true,
-  //   },
-  //   external,
-  //   plugins: [
-  //     resolve(resolveConfig),
-  //     babel(babelConfig),
-  //     commonJS(),
-  //     externalDeps(),
-  //     terser(),
-  //     json(),
-  //   ],
-  // },
-  // {
-  //   input: inputSrc,
-  //   output: {
-  //     name: 'react-boilerplate-redux-saga-hoc',
-  //     file: 'dist/react-boilerplate-redux-saga-hoc.development.js',
-  //     format: 'umd',
-  //     sourcemap: true,
-  //     globals,
-  //   },
-  //   external,
-  //   plugins: [
-  //     resolve(resolveConfig),
-  //     babel(babelConfig),
-  //     commonJS(),
-  //     externalDeps(),
-  //     json(),
-  //   ],
-  // },
+  // CommonJS
   {
-    input: inputSrc,
-    output: {
-      name: 'react-boilerplate-redux-saga-hoc',
-      file: 'dist/react-boilerplate-redux-saga-hoc.production.min.js',
-      format: 'umd',
-      sourcemap: false,
-      globals,
-    },
-    external,
+    input: 'src/index.js',
+    output: { file: 'lib/index.js', format: 'cjs', indent: false },
+    external: makeExternalPredicate([
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {}),
+    ]),
     plugins: [
-      replace({ 'process.env.NODE_ENV': `"production"`, delimiters: ['', ''] }),
-      resolve(resolveConfig),
-      babel(babelConfig),
-      commonJS(),
-      externalDeps(),
-      terser(),
-      size(),
-      visualizer(),
-      json(),
+      nodeResolve({
+        extensions,
+      }),
+      // typescript({ useTsconfigDeclarationDir: true }),
+      babel({
+        extensions,
+        plugins: [
+          ['@babel/plugin-transform-runtime', { version: babelRuntimeVersion }],
+        ],
+        runtimeHelpers: true,
+      }),
     ],
   },
+
+  // ES
+  // {
+  //   input: 'src/index.js',
+  //   output: { file: 'es/index.js', format: 'es', indent: false },
+  //   external: makeExternalPredicate([
+  //     ...Object.keys(pkg.dependencies || {}),
+  //     ...Object.keys(pkg.peerDependencies || {}),
+  //   ]),
+  //   plugins: [
+  //     nodeResolve({
+  //       extensions,
+  //     }),
+  //     // typescript({ tsconfigOverride: noDeclarationFiles }),
+  //     babel({
+  //       extensions,
+  //       plugins: [
+  //         [
+  //           '@babel/plugin-transform-runtime',
+  //           { version: babelRuntimeVersion, useESModules: true },
+  //         ],
+  //       ],
+  //       runtimeHelpers: true,
+  //     }),
+  //   ],
+  // },
+
+  // ES for Browsers
+  // {
+  //   input: 'src/index.js',
+  //   output: { file: 'es/index.mjs', format: 'es', indent: false },
+  //   plugins: [
+  //     nodeResolve({
+  //       extensions,
+  //     }),
+  //     replace({
+  //       'process.env.NODE_ENV': JSON.stringify('production'),
+  //     }),
+  //     // typescript({ tsconfigOverride: noDeclarationFiles }),
+  //     babel({
+  //       extensions,
+  //       exclude: 'node_modules/**',
+  //     }),
+  //     terser({
+  //       compress: {
+  //         pure_getters: true,
+  //         unsafe: true,
+  //         unsafe_comps: true,
+  //         warnings: false,
+  //       },
+  //     }),
+  //   ],
+  // },
+
+  // UMD Development
+  // {
+  //   input: 'src/index.js',
+  //   output: {
+  //     file: 'dist/index.js',
+  //     format: 'umd',
+  //     name: 'Redux',
+  //     indent: false,
+  //   },
+  //   plugins: [
+  //     nodeResolve({
+  //       extensions,
+  //     }),
+  //     // typescript({ tsconfigOverride: noDeclarationFiles }),
+  //     babel({
+  //       extensions,
+  //       exclude: 'node_modules/**',
+  //     }),
+  //     replace({
+  //       'process.env.NODE_ENV': JSON.stringify('development'),
+  //     }),
+  //   ],
+  // },
+
+  // UMD Production
+  // {
+  //   input: 'src/index.js',
+  //   output: {
+  //     file: 'dist/index.min.js',
+  //     format: 'umd',
+  //     name: 'React-Boilerplate-Redux-Saga-Hoc',
+  //     indent: false,
+  //   },
+  //   plugins: [
+  //     nodeResolve({
+  //       extensions,
+  //     }),
+  //     // typescript({ tsconfigOverride: noDeclarationFiles }),
+  //     babel({
+  //       extensions,
+  //       exclude: 'node_modules/**',
+  //     }),
+  //     replace({
+  //       'process.env.NODE_ENV': JSON.stringify('production'),
+  //     }),
+  //     terser({
+  //       compress: {
+  //         pure_getters: true,
+  //         unsafe: true,
+  //         unsafe_comps: true,
+  //         warnings: false,
+  //       },
+  //     }),
+  //   ],
+  // },
 ];
