@@ -31,3 +31,4 @@
 //     // expect(true).toEqual(false);
 //   });
 // });
+"use strict";

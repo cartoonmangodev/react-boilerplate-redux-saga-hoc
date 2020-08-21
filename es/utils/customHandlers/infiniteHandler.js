@@ -1,9 +1,23 @@
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+"use strict";
 
-/* eslint-disable */
-import { generateTimeStamp, updateIn, getIn, typeOf } from '../helpers';
-import Safe from '../nullCheck';
-export var infiniteHandler = function infiniteHandler(_ref) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.infiniteHandler = void 0;
+
+var _helpers = require("../helpers");
+
+var _nullCheck = _interopRequireDefault(require("../nullCheck"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var infiniteHandler = function infiniteHandler(_ref) {
   var _ref$task = _ref.task;
   _ref$task = _ref$task === void 0 ? {} : _ref$task;
   var clearData = _ref$task.clearData,
@@ -18,23 +32,21 @@ export var infiniteHandler = function infiniteHandler(_ref) {
       _ref$successData = _ref.successData,
       successData = _ref$successData === void 0 ? {} : _ref$successData,
       successDataStatusCode = _ref.successDataStatusCode;
-  return function (_temp) {
-    var _ref2 = _temp === void 0 ? {} : _temp,
+  return function () {
+    var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref2$data = _ref2.data,
         oldData = _ref2$data === void 0 ? {} : _ref2$data,
         statusCode = _ref2.statusCode;
 
     return {
       data: function () {
-        if (subKey.length > 0 && Array.isArray(getIn(oldData, subKey))) {
-          var _extends2;
-
-          var _oldCopyData = _extends({}, oldData, {}, typeOf(successData) === 'object' ? successData : {}, (_extends2 = {}, _extends2[subKey[0]] = oldData[subKey[0]], _extends2)); // return _oldCopyData
+        if (subKey.length > 0 && Array.isArray((0, _helpers.getIn)(oldData, subKey))) {
+          var _oldCopyData = _objectSpread({}, oldData, {}, (0, _helpers.typeOf)(successData) === 'object' ? successData : {}, _defineProperty({}, subKey[0], oldData[subKey[0]])); // return _oldCopyData
 
 
-          return updateIn(_oldCopyData, subKey, function (_oldData) {
-            if (clearData) return Safe(successData, "." + subKey.join('.'), []);
-            return updateCallback ? updateCallback(_oldData, Safe(successData, "." + subKey.join('.'), [])) : isAppendTop ? Safe(successData, "." + subKey.join('.'), []).concat(_oldData) : _oldData.concat(Safe(successData, "." + subKey.join('.'), []));
+          return (0, _helpers.updateIn)(_oldCopyData, subKey, function (_oldData) {
+            if (clearData) return (0, _nullCheck.default)(successData, ".".concat(subKey.join('.')), []);
+            return updateCallback ? updateCallback(_oldData, (0, _nullCheck.default)(successData, ".".concat(subKey.join('.')), [])) : isAppendTop ? (0, _nullCheck.default)(successData, ".".concat(subKey.join('.')), []).concat(_oldData) : _oldData.concat((0, _nullCheck.default)(successData, ".".concat(subKey.join('.')), []));
           });
         }
 
@@ -44,11 +56,13 @@ export var infiniteHandler = function infiniteHandler(_ref) {
         return updateCallback ? updateCallback(oldData, successData) : newData;
       }(),
       error: false,
-      lastUpdated: generateTimeStamp(),
+      lastUpdated: (0, _helpers.generateTimeStamp)(),
       statusCode: successDataStatusCode || statusCode,
       isInfinite: true,
       isError: false,
-      infiniteEnd: (subKey.length > 0 ? Safe(successData, "." + subKey.join('.'), []) : successData).length < limit
+      infiniteEnd: (subKey.length > 0 ? (0, _nullCheck.default)(successData, ".".concat(subKey.join('.')), []) : successData).length < limit
     };
   };
 };
+
+exports.infiniteHandler = infiniteHandler;

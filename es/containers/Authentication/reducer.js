@@ -1,16 +1,34 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _commonConstants = require("../../utils/commonReduxSagaConverter/commonConstants");
+
+var _utils = require("../../utils");
+
+var _helpers = require("../../utils/helpers");
+
+var _commonReducerHandler = require("../../utils/commonHandlers/commonReducerHandler");
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 
-/* eslint-disable indent */
-
-/* eslint-disable no-unused-vars */
-import { ON_ERROR, ON_SUCCESS, CALL } from '../../utils/commonReduxSagaConverter/commonConstants';
-import { commmonStateHandler } from '../../utils';
-import { newObject, generateTimeStamp } from '../../utils/helpers'; // import {
-//   constants as authenticationConstants,
-//   initialState as InitialState,
-// } from './constants';
-
-import { COMMON_REDUCER_HANDLER, DEFAULT_REDUCER_HANDLER } from '../../utils/commonHandlers/commonReducerHandler';
 var componentState = {// profile: {},
   // isLoggedIn: false,
   // authorization: true,
@@ -41,7 +59,7 @@ var updateState = function updateState(_ref) {
 
     var _action$response$data2 = _action$response$data.data,
         successData = _action$response$data2 === void 0 ? {} : _action$response$data2,
-        restSuccessData = _objectWithoutPropertiesLoose(_action$response$data, ["data"]),
+        restSuccessData = _objectWithoutProperties(_action$response$data, ["data"]),
         _action$response$payl = _action$response.payload;
 
     _action$response$payl = _action$response$payl === void 0 ? {} : _action$response$payl;
@@ -52,7 +70,7 @@ var updateState = function updateState(_ref) {
         query = _action$response$payl3 === void 0 ? {} : _action$response$payl3,
         _action$response$payl4 = _action$response$payl.params,
         params = _action$response$payl4 === void 0 ? {} : _action$response$payl4,
-        restPayload = _objectWithoutPropertiesLoose(_action$response$payl, ["payload", "query", "params"]),
+        restPayload = _objectWithoutProperties(_action$response$payl, ["payload", "query", "params"]),
         loadingStatus = _action$response.status,
         statusCode = _action$response.statusCode,
         type = _action$response.type,
@@ -64,14 +82,15 @@ var updateState = function updateState(_ref) {
 
     var _action$response$erro2 = _action$response$erro.data,
         errorData = _action$response$erro2 === void 0 ? {} : _action$response$erro2,
-        restErrorData = _objectWithoutPropertiesLoose(_action$response$erro, ["data"]);
+        restErrorData = _objectWithoutProperties(_action$response$erro, ["data"]);
 
-    var _COMMON_REDUCER_HANDL = COMMON_REDUCER_HANDLER(action, handlers),
-        commonHandler = _COMMON_REDUCER_HANDL[0],
-        commmonErrorHandler = _COMMON_REDUCER_HANDL[1];
+    var _COMMON_REDUCER_HANDL = (0, _commonReducerHandler.COMMON_REDUCER_HANDLER)(action, handlers),
+        _COMMON_REDUCER_HANDL2 = _slicedToArray(_COMMON_REDUCER_HANDL, 2),
+        commonHandler = _COMMON_REDUCER_HANDL2[0],
+        commmonErrorHandler = _COMMON_REDUCER_HANDL2[1];
 
     var defaultReducerHandler = function defaultReducerHandler() {
-      return DEFAULT_REDUCER_HANDLER({
+      return (0, _commonReducerHandler.DEFAULT_REDUCER_HANDLER)({
         method: method,
         reset: reset,
         state: state,
@@ -84,8 +103,8 @@ var updateState = function updateState(_ref) {
     switch (type) {
       case 'RESET':
         switch (method) {
-          case ON_SUCCESS:
-            return newObject(state, ResetState);
+          case _commonConstants.ON_SUCCESS:
+            return (0, _helpers.newObject)(state, ResetState);
 
           default:
             return state;
@@ -233,7 +252,7 @@ var updateState = function updateState(_ref) {
   };
 };
 
-export default (function (_ref3) {
+var _default = function _default(_ref3) {
   var reducerFunction = _ref3.reducerFunction,
       authenticationConstants = _ref3.constants,
       InitialState = _ref3.InitialState,
@@ -244,11 +263,10 @@ export default (function (_ref3) {
       _ref3$isMobile = _ref3.isMobile,
       isMobileApp = _ref3$isMobile === void 0 ? false : _ref3$isMobile,
       constantReducer = _ref3.constantReducer;
-  var initialState = newObject(InitialState, componentState);
-  return function (state, action) {
-    if (state === void 0) {
-      state = initialState;
-    }
+  var initialState = (0, _helpers.newObject)(InitialState, componentState);
+  return function () {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+    var action = arguments.length > 1 ? arguments[1] : undefined;
 
     switch (action.type) {
       // case LANGUAGE_CONSTANTS:
@@ -261,7 +279,7 @@ export default (function (_ref3) {
       //   }));
       default:
         {
-          var reducerState = newObject(state);
+          var reducerState = (0, _helpers.newObject)(state);
 
           if (constantReducer) {
             var returnData = constantReducer({
@@ -276,14 +294,15 @@ export default (function (_ref3) {
             if (typeof returnData !== 'undefined') reducerState = returnData;
           }
 
-          var newState = newObject.bind({}, reducerState);
+          var newState = _helpers.newObject.bind({}, reducerState);
+
           var _action$response2 = action.response;
           _action$response2 = _action$response2 === void 0 ? {} : _action$response2;
           var method = _action$response2.method,
               type = _action$response2.type;
           var execute = Object.keys(InitialState).concat(otherReducerConstants).includes(type || action.type);
           var constants = InitialState;
-          if (execute) return commmonStateHandler({
+          if (execute) return (0, _utils.commmonStateHandler)({
             constants: constants,
             state: reducerState,
             action: action,
@@ -302,4 +321,6 @@ export default (function (_ref3) {
         }
     }
   };
-});
+};
+
+exports.default = _default;

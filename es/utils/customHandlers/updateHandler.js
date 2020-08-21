@@ -1,18 +1,31 @@
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+"use strict";
 
-/* eslint-disable no-underscore-dangle */
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateHandler = void 0;
 
-/* eslint-disable indent */
-import { updateIn, newObject, generateTimeStamp, typeOf } from '../helpers';
-import Safe from '../nullCheck';
+var _helpers = require("../helpers");
+
+var _nullCheck = _interopRequireDefault(require("../nullCheck"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 var updateData = function updateData(data, successData, updateCallback) {
   if (updateCallback) return updateCallback(data, successData) || data;
-  if (typeof successData === 'object' && !Array.isArray(successData) && typeof data === 'object' && !Array.isArray(data)) return newObject(data, successData);
+  if (_typeof(successData) === 'object' && !Array.isArray(successData) && _typeof(data) === 'object' && !Array.isArray(data)) return (0, _helpers.newObject)(data, successData);
   return successData;
 };
 
-export var updateHandler = function updateHandler(_ref) {
+var updateHandler = function updateHandler(_ref) {
   var _ref$task = _ref.task;
   _ref$task = _ref$task === void 0 ? {} : _ref$task;
   var key = _ref$task.key,
@@ -27,16 +40,14 @@ export var updateHandler = function updateHandler(_ref) {
       _ref$successData = _ref.successData,
       successData = _ref$successData === void 0 ? {} : _ref$successData,
       successDataStatusCode = _ref.successDataStatusCode;
-  return function (_temp) {
-    var _extends2;
-
-    var _ref2 = _temp === void 0 ? {} : _temp,
+  return function () {
+    var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref2$data = _ref2.data,
         data = _ref2$data === void 0 ? [] : _ref2$data,
         statusCode = _ref2.statusCode;
 
     return {
-      data: subKey.length > 0 ? updateIn(_extends({}, data, {}, typeOf(successData) === 'object' ? successData : {}, (_extends2 = {}, _extends2[subKey[0]] = data[subKey[0]], _extends2)), subKey, function (_Data) {
+      data: subKey.length > 0 ? (0, _helpers.updateIn)(_objectSpread({}, data, {}, (0, _helpers.typeOf)(successData) === 'object' ? successData : {}, _defineProperty({}, subKey[0], data[subKey[0]])), subKey, function (_Data) {
         return function () {
           var index = -1;
 
@@ -44,12 +55,9 @@ export var updateHandler = function updateHandler(_ref) {
           /**  update data if old data is object */
 
 
-          if (!Array.isArray(_Data)) return updateData(_Data, Safe(successData, "." + subKey.join('.')), updateCallback);
-          if (Array.isArray(id) && key && Array.isArray(_Data)) return _Data.reduce(function (acc, curr) {
-            if (curr === void 0) {
-              curr = {};
-            }
-
+          if (!Array.isArray(_Data)) return updateData(_Data, (0, _nullCheck.default)(successData, ".".concat(subKey.join('.'))), updateCallback);
+          if (Array.isArray(id) && key && Array.isArray(_Data)) return _Data.reduce(function (acc) {
+            var curr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
             return id.includes(curr[key]) ? function () {
               index += 1;
               return acc.concat([updateData(curr, values[_values ? index : curr[key]] || curr, updateCallback)]);
@@ -61,7 +69,7 @@ export var updateHandler = function updateHandler(_ref) {
               return updateData(_data, values[_values ? index : _data[key]] || _data, updateCallback);
             }() : _data;
           });
-          return updateData(_Data, Safe(successData, "." + subKey.join('.')), updateCallback);
+          return updateData(_Data, (0, _nullCheck.default)(successData, ".".concat(subKey.join('.'))), updateCallback);
         }();
       }) : function () {
         var index = -1;
@@ -69,11 +77,8 @@ export var updateHandler = function updateHandler(_ref) {
         var _values = Array.isArray(values);
 
         if (!Array.isArray(data)) return updateData(data, successData, updateCallback);
-        if (Array.isArray(id) && key) return data.reduce(function (acc, curr) {
-          if (curr === void 0) {
-            curr = {};
-          }
-
+        if (Array.isArray(id) && key) return data.reduce(function (acc) {
+          var curr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
           return id.includes(curr[key]) ? function () {
             index += 1;
             return acc.concat([updateData(curr, values[_values ? index : curr[key]] || curr, updateCallback)]);
@@ -88,8 +93,10 @@ export var updateHandler = function updateHandler(_ref) {
         return updateData(data, successData, updateCallback);
       }(),
       statusCode: successDataStatusCode || statusCode,
-      lastUpdated: generateTimeStamp(),
+      lastUpdated: (0, _helpers.generateTimeStamp)(),
       isError: false
     };
   };
 };
+
+exports.updateHandler = updateHandler;

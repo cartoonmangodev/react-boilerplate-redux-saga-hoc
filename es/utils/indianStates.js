@@ -1,4 +1,10 @@
-export default [{
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = [{
   label: 'Andaman and Nicobar Islands',
   value: 'Andaman and Nicobar Islands'
 }, {
@@ -107,3 +113,4 @@ export default [{
   label: 'West Bengal',
   value: 'West Bengal'
 }];
+exports.default = _default;

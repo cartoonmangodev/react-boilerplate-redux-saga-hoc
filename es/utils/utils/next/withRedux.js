@@ -1,7 +1,7 @@
 /* eslint-disable */
 'use strict';
 
-var __extends = this && this.__extends || function () {
+var __extends = void 0 && (void 0).__extends || function () {
   var _extendStatics = function extendStatics(d, b) {
     _extendStatics = Object.setPrototypeOf || {
       __proto__: []
@@ -27,7 +27,7 @@ var __extends = this && this.__extends || function () {
   };
 }();
 
-var __assign = this && this.__assign || function () {
+var __assign = void 0 && (void 0).__assign || function () {
   __assign = Object.assign || function (t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
       s = arguments[i];
@@ -43,7 +43,7 @@ var __assign = this && this.__assign || function () {
   return __assign.apply(this, arguments);
 };
 
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
       resolve(value);
@@ -75,7 +75,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
   });
 };
 
-var __generator = this && this.__generator || function (thisArg, body) {
+var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
   var _ = {
     label: 0,
     sent: function sent() {
@@ -186,7 +186,7 @@ var __generator = this && this.__generator || function (thisArg, body) {
   }
 };
 
-var __rest = this && this.__rest || function (s, e) {
+var __rest = void 0 && (void 0).__rest || function (s, e) {
   var t = {};
 
   for (var p in s) {
@@ -199,7 +199,7 @@ var __rest = this && this.__rest || function (s, e) {
   return t;
 };
 
-var __importStar = this && this.__importStar || function (mod) {
+var __importStar = void 0 && (void 0).__importStar || function (mod) {
   if (mod && mod.__esModule) return mod;
   var result = {};
   if (mod != null) for (var k in mod) {

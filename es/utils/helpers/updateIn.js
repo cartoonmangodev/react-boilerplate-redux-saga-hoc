@@ -1,17 +1,21 @@
-/* eslint-disable indent */
-import { cloneObject } from './cloneObject';
+"use strict";
 
-function updateIn(obj, arr, callback) {
-  if (arr === void 0) {
-    arr = [];
-  }
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateIn = updateIn;
 
+var _cloneObject2 = require("./cloneObject");
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function updateIn(obj) {
+  var arr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+  var callback = arguments.length > 2 ? arguments[2] : undefined;
   var i = 0;
   var o = obj;
 
   function update() {
-    var _cloneObject;
-
     if (Array.isArray(o)) {
       return o.slice().map(function (data, ind) {
         if (+arr[i] === ind) {
@@ -26,14 +30,12 @@ function updateIn(obj, arr, callback) {
       });
     }
 
-    return cloneObject(o, (_cloneObject = {}, _cloneObject[arr && arr[i]] = arr.length - 1 === i ? callback(o[arr[i]]) : function () {
+    return (0, _cloneObject2.cloneObject)(o, _defineProperty({}, arr && arr[i], arr.length - 1 === i ? callback(o[arr[i]]) : function () {
       o = o[arr[i]] || {};
       i += 1;
       return update();
-    }(), _cloneObject));
+    }()));
   }
 
   return arr.length > 0 ? update() : obj;
 }
-
-export { updateIn };

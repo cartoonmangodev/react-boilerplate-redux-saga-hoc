@@ -1,16 +1,31 @@
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.dataHandler = void 0;
+
+var _helpers = require("../helpers");
+
+var _nullCheck = _interopRequireDefault(require("../nullCheck"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
-
-/* eslint-disable */
-import { generateTimeStamp, updateIn, getIn, newObject } from '../helpers';
-import Safe from '../nullCheck';
 
 var _checkIsNotObject = function _checkIsNotObject(data) {
   return Object.prototype.toString.call(data) !== '[object Object]';
 };
 
-export var dataHandler = function dataHandler(_ref) {
+var dataHandler = function dataHandler(_ref) {
   var isMutation = _ref.mutation,
       _ref$task = _ref.task;
   _ref$task = _ref$task === void 0 ? {} : _ref$task;
@@ -23,37 +38,37 @@ export var dataHandler = function dataHandler(_ref) {
       _ref$successData = _ref.successData,
       successData = _ref$successData === void 0 ? {} : _ref$successData,
       successDataStatusCode = _ref.successDataStatusCode;
-  return function (_temp) {
-    var _ref2 = _temp === void 0 ? {} : _temp,
+  return function () {
+    var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref2$data = _ref2.data,
         oldData = _ref2$data === void 0 ? {} : _ref2$data,
         statusCode = _ref2.statusCode,
-        rest = _objectWithoutPropertiesLoose(_ref2, ["data", "statusCode"]);
+        rest = _objectWithoutProperties(_ref2, ["data", "statusCode"]);
 
-    return isMutation ? _extends({
+    return isMutation ? _objectSpread({
       data: oldData,
       statusCode: statusCode
     }, rest, {}, successData) : {
       data: function () {
         if (subKey.length > 0) {
-          var _extends2;
+          var _oldCopyData = _objectSpread({}, oldData, {}, _checkIsNotObject(successData) ? {} : successData, _defineProperty({}, subKey[0], oldData[subKey[0]]));
 
-          var _oldCopyData = _extends({}, oldData, {}, _checkIsNotObject(successData) ? {} : successData, (_extends2 = {}, _extends2[subKey[0]] = oldData[subKey[0]], _extends2));
-
-          return updateIn(_oldCopyData, subKey, function (_oldData) {
-            if (clearData) return Safe(successData, "." + subKey.join('.'));
-            return updateCallback ? updateCallback(_oldData, Safe(successData, "." + subKey.join('.'))) : _checkIsNotObject(Safe(successData, "." + subKey.join('.'))) || _checkIsNotObject(Safe(_oldData, "." + subKey.join('.'))) ? Safe(successData, "." + subKey.join('.')) : newObject(_oldData, Safe(successData, "." + subKey.join('.')));
+          return (0, _helpers.updateIn)(_oldCopyData, subKey, function (_oldData) {
+            if (clearData) return (0, _nullCheck.default)(successData, ".".concat(subKey.join('.')));
+            return updateCallback ? updateCallback(_oldData, (0, _nullCheck.default)(successData, ".".concat(subKey.join('.')))) : _checkIsNotObject((0, _nullCheck.default)(successData, ".".concat(subKey.join('.')))) || _checkIsNotObject((0, _nullCheck.default)(_oldData, ".".concat(subKey.join('.')))) ? (0, _nullCheck.default)(successData, ".".concat(subKey.join('.'))) : (0, _helpers.newObject)(_oldData, (0, _nullCheck.default)(successData, ".".concat(subKey.join('.'))));
           });
         }
 
-        return updateCallback ? updateCallback(oldData, successData) : _checkIsNotObject(successData) || _checkIsNotObject(oldData) || clearData ? successData : newObject(oldData, successData);
+        return updateCallback ? updateCallback(oldData, successData) : _checkIsNotObject(successData) || _checkIsNotObject(oldData) || clearData ? successData : (0, _helpers.newObject)(oldData, successData);
       }(),
       statusCode: successDataStatusCode || statusCode,
       error: false,
-      lastUpdated: generateTimeStamp(),
+      lastUpdated: (0, _helpers.generateTimeStamp)(),
       isInfinite: null,
       infiniteEnd: null,
       isError: false
     };
   };
 };
+
+exports.dataHandler = dataHandler;
