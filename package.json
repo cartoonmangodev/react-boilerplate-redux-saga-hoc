@@ -2,8 +2,8 @@
   "name": "react-boilerplate-redux-saga-hoc",
   "version": "1.2.81-test",
   "description": "No worry about api calls.No need to create constants,reducer,saga,actions.Easy to make api call.Handles automatically all api request,cancel,errors etc",
-  "main": "index.js",
-  "module": "dist/react-boilerplate-redux-saga-hoc.mjs",
+  "main": "dist/react-boilerplate-redux-saga-hoc.production.min.mjs",
+  "module": "dist/react-boilerplate-redux-saga-hoc.production.min.mjs",
   "files": [
     "lib",
     "es",
