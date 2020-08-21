@@ -21,64 +21,64 @@ const babelConfig = { extensions };
 const resolveConfig = { extensions };
 
 export default [
-  {
-    input: inputSrc,
-    output: {
-      file: 'dist/react-boilerplate-redux-saga-hoc.mjs',
-      format: 'es',
-      sourcemap: true,
-    },
-    external,
-    plugins: [
-      resolve(resolveConfig),
-      babel(babelConfig),
-      commonJS(),
-      externalDeps(),
-      json(),
-    ],
-  },
-  {
-    input: inputSrc,
-    output: {
-      file: 'dist/react-boilerplate-redux-saga-hoc.min.mjs',
-      format: 'es',
-      sourcemap: true,
-    },
-    external,
-    plugins: [
-      resolve(resolveConfig),
-      babel(babelConfig),
-      commonJS(),
-      externalDeps(),
-      terser(),
-      json(),
-    ],
-  },
-  {
-    input: inputSrc,
-    output: {
-      name: 'ReactQuery',
-      file: 'dist/react-boilerplate-redux-saga-hoc.development.js',
-      format: 'umd',
-      sourcemap: true,
-      globals,
-    },
-    external,
-    plugins: [
-      resolve(resolveConfig),
-      babel(babelConfig),
-      commonJS(),
-      externalDeps(),
-      json(),
-    ],
-  },
+  // {
+  //   input: inputSrc,
+  //   output: {
+  //     file: 'dist/react-boilerplate-redux-saga-hoc.mjs',
+  //     format: 'es',
+  //     sourcemap: true,
+  //   },
+  //   external,
+  //   plugins: [
+  //     resolve(resolveConfig),
+  //     babel(babelConfig),
+  //     commonJS(),
+  //     externalDeps(),
+  //     json(),
+  //   ],
+  // },
+  // {
+  //   input: inputSrc,
+  //   output: {
+  //     file: 'dist/react-boilerplate-redux-saga-hoc.min.mjs',
+  //     format: 'es',
+  //     sourcemap: true,
+  //   },
+  //   external,
+  //   plugins: [
+  //     resolve(resolveConfig),
+  //     babel(babelConfig),
+  //     commonJS(),
+  //     externalDeps(),
+  //     terser(),
+  //     json(),
+  //   ],
+  // },
+  // {
+  //   input: inputSrc,
+  //   output: {
+  //     name: 'ReactQuery',
+  //     file: 'dist/react-boilerplate-redux-saga-hoc.development.js',
+  //     format: 'umd',
+  //     sourcemap: true,
+  //     globals,
+  //   },
+  //   external,
+  //   plugins: [
+  //     resolve(resolveConfig),
+  //     babel(babelConfig),
+  //     commonJS(),
+  //     externalDeps(),
+  //     json(),
+  //   ],
+  // },
   {
     input: inputSrc,
     output: {
       name: 'ReactQuery',
       file: 'dist/react-boilerplate-redux-saga-hoc.production.min.js',
       format: 'umd',
-      sourcemap: true,
+      sourcemap: false,
       globals,
     },
     external,

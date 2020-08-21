@@ -5,8 +5,6 @@
   "main": "dist/react-boilerplate-redux-saga-hoc.production.min.mjs",
   "module": "dist/react-boilerplate-redux-saga-hoc.production.min.mjs",
   "files": [
-    "lib",
-    "es",
     "dist"
   ],
   "keywords": [
