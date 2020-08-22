@@ -51,6 +51,9 @@ export const commmonStateHandler = ({
 }) => {
   /** This action for initial call  */
   const { payload: { filter, task = {} } = {} } = action;
+  const {
+    payload: { task: { clearDataOnStart: clearData } = {} } = {},
+  } = action;
   /** This action for after api gets success or failure  */
   const {
     response: {
@@ -77,7 +80,7 @@ export const commmonStateHandler = ({
       customTask &&
       (Array.isArray(method) ? method : [method]).includes(ON_LOADING))
   ) {
-    if ((status || loader) && filter)
+    if ((status || loader) && filter && filter.length > 0)
       State = newState(({ [type || action.type]: obj }) => ({
         [type || action.type]: newObject(
           obj,
@@ -98,7 +101,13 @@ export const commmonStateHandler = ({
           }),
         })),
       }));
-    if (filter || responseFilter || (customTask && customLoader))
+    if (
+      (filter || responseFilter
+        ? (filter || responseFilter).length > 0
+        : false) &&
+      customTask &&
+      customLoader
+    )
       State = newObject(State, ({ [type || action.type]: obj }) => ({
         [type || action.type]: newObject(
           obj,
@@ -111,12 +120,13 @@ export const commmonStateHandler = ({
                 : [ON_SUCCESS, ON_ERROR].includes(method)
                 ? false
                 : status || loader,
+            clearData,
           })(obj),
         ),
       }));
     else
       State = newObject(State, ({ [type || action.type]: obj }) => ({
-        [type || action.type]: newObject(obj, {
+        [type || action.type]: newObject(obj, ({ data: _data }) => ({
           loading:
             customTask && customLoader
               ? customLoader
@@ -126,7 +136,10 @@ export const commmonStateHandler = ({
                     : status || loader,
                   lastUpdated: generateTimeStamp(),
                 },
-        }),
+          ...(clearData && ![ON_SUCCESS, ON_ERROR].includes(method)
+            ? { data: Array.isArray(_data) ? [] : {} }
+            : {}),
+        })),
       }));
     if (method === ON_LOADING || loader) return State;
   }
@@ -139,7 +152,7 @@ export const commmonStateHandler = ({
       customTask &&
       (Array.isArray(method) ? method : [method]).includes(ON_TOAST))
   ) {
-    if (responseFilter)
+    if (responseFilter && responseFilter.length > 0)
       State = newObject(State, ({ [type]: obj }) => ({
         [type]: newObject(
           obj,
@@ -177,9 +190,16 @@ export const commmonStateHandler = ({
       }));
   }
   const changeState = newObject.bind({}, State);
-  const reset = responseFilter
-    ? filterArrayResetHandler.bind({}, state, newState, action, responseFilter)
-    : resetHandler.bind({}, state, newState, action);
+  const reset =
+    responseFilter && responseFilter.length > 0
+      ? filterArrayResetHandler.bind(
+          {},
+          state,
+          newState,
+          action,
+          responseFilter,
+        )
+      : resetHandler.bind({}, state, newState, action);
   return updateState({
     state: State,
     newState: changeState,

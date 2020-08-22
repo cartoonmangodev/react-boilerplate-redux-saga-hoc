@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable indent */
 /* eslint-disable no-console */
@@ -41,7 +42,7 @@ const checkKey = (key, name, dataType) => {
     `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a ${dataType}`,
   );
 };
-
+const _cache = {};
 export default function({
   actionType = {},
   requestResponseHandler,
@@ -59,6 +60,7 @@ export default function({
         query,
         paramsSerializer = { arrayFormat: 'brackets' },
         axiosConfig = {},
+        useCache: cacheControl = false,
         errorDataHandling = true,
         clearDataOnError = false,
         polling = false,
@@ -164,6 +166,14 @@ export default function({
           );
         };
       }
+      const _query =
+        (pollingRequestConfig && pollingRequestConfig.query) || query;
+      const _url = `${request.url}${
+        Object.keys(_query || {}).length > 0
+          ? `?${request.paramsSerializer(_query)}`
+          : ''
+      }`;
+
       if (process.env.NODE_ENV !== 'test' || !action.test)
         yield delete request.headers;
       const requestData = yield call(requestResponseHandler, {
@@ -178,30 +188,43 @@ export default function({
       if (!['POST', 'PATCH', 'PUT', 'DELETE'].includes(request.method))
         yield delete request.data;
       if (request.effect) delete request.effect;
+      let postData = '';
+      let cancelTask = '';
       try {
-        const { posts: postData, cancel: cancelTask } = yield race({
-          posts:
-            typeof asyncFunction === 'function'
-              ? call(
-                  asyncFunction,
-                  ...(Array.isArray(
-                    (pollingRequestConfig &&
-                      pollingRequestConfig.asyncFunctionParams) ||
-                      asyncFunctionParams,
-                  )
-                    ? (pollingRequestConfig &&
+        if (
+          cacheControl &&
+          request.method === 'GET' &&
+          _cache[_url] &&
+          !polling
+        ) {
+          postData = { ..._cache[_url] };
+        } else {
+          const { posts: _postData, cancel: _cancelTask } = yield race({
+            posts:
+              typeof asyncFunction === 'function'
+                ? call(
+                    asyncFunction,
+                    ...(Array.isArray(
+                      (pollingRequestConfig &&
                         pollingRequestConfig.asyncFunctionParams) ||
-                      asyncFunctionParams
-                    : []),
-                )
-              : call(axios, {
-                  ...request,
-                  ...((pollingRequestConfig &&
-                    pollingRequestConfig.axiosConfig) ||
-                    axiosConfig),
-                }),
-          cancel: take(action.cancel),
-        });
+                        asyncFunctionParams,
+                    )
+                      ? (pollingRequestConfig &&
+                          pollingRequestConfig.asyncFunctionParams) ||
+                        asyncFunctionParams
+                      : []),
+                  )
+                : call(axios, {
+                    ...request,
+                    ...((pollingRequestConfig &&
+                      pollingRequestConfig.axiosConfig) ||
+                      axiosConfig),
+                  }),
+            cancel: take(action.cancel),
+          });
+          cancelTask = _cancelTask;
+          postData = _postData;
+        }
         let data = postData ? { ...postData } : postData;
         if (postData && postData.data) {
           const statusKey = action.api.responseStatusCodeKey || '';
@@ -347,6 +370,7 @@ export default function({
             response: postData,
             data: data.data,
           });
+        _cache[_url] = postData;
       } catch (error) {
         if (resolve && typeOf(resolve) === 'function')
           resolve({ status: 'ERROR', error, respone: error && error.response });

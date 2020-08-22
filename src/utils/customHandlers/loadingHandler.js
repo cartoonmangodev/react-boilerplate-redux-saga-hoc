@@ -22,33 +22,39 @@ const _CheckFilter = Filter =>
     ? Filter.split('.')
     : [];
 
-export const filterArrayloadingHandler = ({ loader, filter } = {}) => ({
-  data: Data = {},
-}) => ({
+export const filterArrayloadingHandler = ({
+  loader,
+  filter,
+  clearData,
+} = {}) => ({ data: Data = {} }) => ({
   data: (() => {
     if (filter && filter.some(fil => Array.isArray(fil))) {
       return filter.reduce(
         (accumulator, filterArray) =>
           updateIn(accumulator, _CheckFilter(filterArray), data =>
             _CheckFilter(filterArray).length > 0
-              ? newObject(data, {
+              ? newObject(data, ({ data: _data }) => ({
                   loading: {
                     status: loader,
                     lastUpdated: generateTimeStamp(),
                   },
-                })
+                  ...(clearData
+                    ? { data: Array.isArray(_data) ? [] : {} }
+                    : {}),
+                }))
               : data,
           ),
         Data,
       );
     }
     return updateIn(Data, filter, data =>
-      newObject(data, {
+      newObject(data, ({ data: _data }) => ({
         loading: {
           status: loader,
           lastUpdated: generateTimeStamp(),
         },
-      }),
+        ...(clearData ? { data: Array.isArray(_data) ? [] : {} } : {}),
+      })),
     );
   })(),
 });

@@ -84,7 +84,7 @@ const CheckCustomHanderFormat = _handler =>
 const _CheckFilter = Filter =>
   Array.isArray(Filter) && Filter.length > 0
     ? Filter
-    : Filter && typeof Filter === 'string'
+    : Filter && typeof Filter === 'string' && Filter.length > 0
     ? Filter.split('.')
     : null;
 const COMMON_HANDLER = (payload, data) => {
