@@ -365,12 +365,20 @@ export default function({
         }
         if (!polling && retry) loop = false;
         if (resolve && typeOf(resolve) === 'function')
-          resolve({
-            status: 'SUCCESS',
-            response: postData,
-            data: data.data,
-          });
-        _cache[_url] = postData;
+          if (cancelTask && typeof source.cancel === 'function') {
+            resolve({
+              status: 'CANCELLED',
+              response: null,
+              data: null,
+            });
+          } else {
+            resolve({
+              status: 'SUCCESS',
+              response: postData,
+              data: data && data.data,
+            });
+            _cache[_url] = postData;
+          }
       } catch (error) {
         if (resolve && typeOf(resolve) === 'function')
           resolve({ status: 'ERROR', error, respone: error && error.response });
@@ -391,7 +399,7 @@ export default function({
                 status: errorStatus = error.response &&
                   error.response.data &&
                   (error.response.data[action.api.errorStatusKey] ||
-                    error.response.status),
+                    (error && error.response && error.response.status)),
                 message: errorMessage = (error.response &&
                   error.response.data &&
                   error.response.data[action.api.errorMessageKey]) ||

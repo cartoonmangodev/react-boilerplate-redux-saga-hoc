@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable indent */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { bindActionCreators } from 'redux';
 import { useStore, useDispatch } from 'react-redux';
 import isEqual from 'lodash/isEqual';
@@ -452,3 +452,49 @@ export const toPromise = (action, config = {}) => {
     action({ ...config, resolve, reject }),
   );
 };
+
+const CACHE = {};
+
+function stringify(val) {
+  return typeof val === 'object' ? JSON.stringify(val) : String(val);
+}
+
+function hashArgs(...args) {
+  return args.reduce((acc, arg) => `${stringify(arg)}:${acc}`, '');
+}
+
+export function useStaleRefresh(fn, name, args = {}) {
+  const prevArgs = useRef(null);
+  const [data, setData] = useState(null);
+  const [isLoading, setLoading] = useState(true);
+  useEffect(() => {
+    // args is an object so deep compare to rule out false changes
+    if (isEqual(args, prevArgs.current)) {
+      return;
+    }
+    // cacheID is how a cache is identified against a unique request
+    const cacheID = hashArgs(name, args);
+    // look in cache and set response if present
+    if (CACHE[cacheID] !== undefined) {
+      setData(CACHE[cacheID]);
+      setLoading(false);
+    } else {
+      // else make sure loading set to true
+      setLoading(true);
+    }
+    // fetch new data
+    toPromise(fn, args).then(newData => {
+      if (newData && newData.status === 'SUCCESS') {
+        CACHE[cacheID] = newData;
+        setData(newData);
+      }
+      setLoading(false);
+    });
+  }, [args, fn]);
+
+  useEffect(() => {
+    prevArgs.current = args;
+  });
+
+  return [data, isLoading];
+}

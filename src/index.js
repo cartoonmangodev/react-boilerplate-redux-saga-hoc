@@ -9,6 +9,7 @@ export {
   useActionsHook as useActions,
   useMutation,
   toPromise,
+  useStaleRefresh,
 } from './utils';
 export { useDispatch, useStore, useSelector } from 'react-redux';
 // export { useTestHook } from './hooks';
