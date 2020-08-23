@@ -1,17 +1,18 @@
 import invariant from 'invariant';
-import isEmpty from 'lodash/isEmpty';
-import isFunction from 'lodash/isFunction';
-import isString from 'lodash/isString';
+// import isEmpty from 'lodash/isEmpty';
+// import isFunction from 'lodash/isFunction';
+// import isString from 'lodash/isString';
 
 import checkStore from './checkStore';
 import createReducer from '../reducers';
+import { typeOf } from '../helpers';
 
 export function injectReducerFactory(store, isValid) {
   return function injectReducer(key, reducer, customCreateReducer) {
     if (!isValid) checkStore(store);
 
     invariant(
-      isString(key) && !isEmpty(key) && isFunction(reducer),
+      typeOf(key) === 'string' && key && typeOf(reducer) === 'function',
       '(app/utils...) injectReducer: Expected `reducer` to be a reducer function',
     );
 

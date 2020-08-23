@@ -2,7 +2,7 @@
  * This is axios intercepter which intercepts all the incoming and outgoing requests
  */
 import axios from 'axios';
-import promise from 'promise';
+// import promise from 'promise';
 // import { BASE_URL, authentication } from '../shared/config/apiEndPoints';
 // import { SPECIFIC_ERROR_HANDLER } from './errorHandler';
 const request = axios;
@@ -23,7 +23,7 @@ request.interceptors.request.use(
     return config;
   },
   // SPECIFIC_ERROR_HANDLER([], error);
-  error => promise.reject(error),
+  error => Promise.reject(error),
 );
 
 // eslint-disable-next-line arrow-body-style

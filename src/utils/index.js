@@ -5,7 +5,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { bindActionCreators } from 'redux';
 import { useStore, useDispatch } from 'react-redux';
-import isEqual from 'lodash/isEqual';
+import isEqual from 'lodash.isequal';
 import invariant from 'invariant';
 // import { connect } from 'react-redux';
 import {
@@ -463,10 +463,14 @@ function hashArgs(...args) {
   return args.reduce((acc, arg) => `${stringify(arg)}:${acc}`, '');
 }
 
-export function useStaleRefresh(fn, name, args = {}) {
+export function useStaleRefresh(
+  fn,
+  name,
+  args = {},
+  initialLoadingstate = true,
+) {
   const prevArgs = useRef(null);
-  const [data, setData] = useState(null);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(initialLoadingstate);
   useEffect(() => {
     // args is an object so deep compare to rule out false changes
     if (isEqual(args, prevArgs.current)) {
@@ -476,7 +480,6 @@ export function useStaleRefresh(fn, name, args = {}) {
     const cacheID = hashArgs(name, args);
     // look in cache and set response if present
     if (CACHE[cacheID] !== undefined) {
-      setData(CACHE[cacheID]);
       setLoading(false);
     } else {
       // else make sure loading set to true
@@ -485,8 +488,7 @@ export function useStaleRefresh(fn, name, args = {}) {
     // fetch new data
     toPromise(fn, args).then(newData => {
       if (newData && newData.status === 'SUCCESS') {
-        CACHE[cacheID] = newData;
-        setData(newData);
+        CACHE[cacheID] = true;
       }
       setLoading(false);
     });
@@ -496,5 +498,5 @@ export function useStaleRefresh(fn, name, args = {}) {
     prevArgs.current = args;
   });
 
-  return [data, isLoading];
+  return [isLoading, setLoading];
 }

@@ -1,27 +1,31 @@
 import invariant from 'invariant';
-import isEmpty from 'lodash/isEmpty';
-import isFunction from 'lodash/isFunction';
-import isString from 'lodash/isString';
-import conformsTo from 'lodash/conformsTo';
+// import isEmpty from 'lodash/isEmpty';
+// import isFunction from 'lodash/isFunction';
+// import isString from 'lodash/isString';
+// import conformsTo from 'lodash/conformsTo';
 
 import checkStore from './checkStore';
+// eslint-disable-next-line no-unused-vars
 import { DAEMON, ONCE_TILL_UNMOUNT, RESTART_ON_REMOUNT } from './constants';
+import { typeOf } from '../helpers';
 
 const allowedModes = [RESTART_ON_REMOUNT, DAEMON, ONCE_TILL_UNMOUNT];
 
 const checkKey = key =>
   invariant(
-    isString(key) && !isEmpty(key),
+    key && typeOf(key) === 'string',
     '(app/utils...) injectSaga: Expected `key` to be a non empty string',
   );
 
 const checkDescriptor = descriptor => {
-  const shape = {
-    saga: isFunction,
-    mode: mode => isString(mode) && allowedModes.includes(mode),
-  };
+  // const shape = {
+  //   saga: isFunction,
+  //   mode: mode => isString(mode) && allowedModes.includes(mode),
+  // };
   invariant(
-    conformsTo(descriptor, shape),
+    typeOf(descriptor) === 'object' &&
+      typeof descriptor.saga === 'function' &&
+      allowedModes.includes(descriptor.mode),
     '(app/utils...) injectSaga: Expected a valid saga descriptor',
   );
 };

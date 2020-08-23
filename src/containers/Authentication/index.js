@@ -9,8 +9,6 @@ import { connect, useDispatch } from 'react-redux';
 import invariant from 'invariant';
 import { createStructuredSelector } from 'reselect';
 import { compose, bindActionCreators } from 'redux';
-import isString from 'lodash/isString';
-import isEmpty from 'lodash/isEmpty';
 import axios from '../../config/axios';
 // import { getLanguage } from '../../config/Language/index';
 import generateConstants from './constants';
@@ -65,7 +63,7 @@ export default ({
   // injectReducer,
 } = {}) => {
   invariant(
-    isString(reducerName) && !isEmpty(reducerName),
+    !!reducerName && typeOf(reducerName) === 'string',
     '(react-boilerplate-redux-saga-hoc)  Expected `name` to be a non empty string',
   );
   checkKey(apiEndPoints, 'apiEndPoints', 'object');
