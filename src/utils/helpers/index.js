@@ -20,8 +20,9 @@ const type = {
   '[object Boolean]': 'boolean',
   '[object Object]': 'object',
   '[object Function]': 'function',
-  '[object Symbol]': 'symbol',
-  '[object GeneratorFunction]': 'function',
+  // '[object Symbol]': 'symbol',
+  // '[object GeneratorFunction]': 'generatorFunction',
 };
 
-export const typeOf = _obj => type[Object.prototype.toString.call(_obj)];
+export const typeOf = _obj =>
+  type[Object.prototype.toString.call(_obj)] || typeof _obj;
