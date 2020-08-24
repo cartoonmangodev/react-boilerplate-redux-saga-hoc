@@ -325,22 +325,35 @@ export const useHook = (name = null, array = [], config = {}) => {
       // eslint-disable-next-line consistent-return
       // eslint-disable-next-line no-underscore-dangle
       _data = (typeOf(array) === 'object' ? [array] : array).reduce(
-        (acc, e) =>
-          typeOf(e) === 'object'
-            ? typeOf(array) === 'object'
-              ? _getData(e)
-              : {
-                  ...acc,
-                  [e.name || e.key]: _getData(e),
-                }
-            : typeOf(array) === 'object'
-            ? safe(store, `.getState()[${name}][${e}]`)
-            : {
-                ...acc,
-                [e]: safe(store, `.getState()[${name}][${e}]`),
-              },
-        {},
+        (acc, e) => {
+          if (typeOf(e) === 'object') {
+            if (typeOf(array) === 'object') return _getData(e);
+            const _arr = [...acc];
+            _arr.push(_getData(e));
+            return _arr;
+          }
+          if (typeOf(array) === 'object')
+            return safe(store, `.getState()[${name}][${e}]`);
+          const _arr = [...acc];
+          _arr.push(safe(store, `.getState()[${name}][${e}]`));
+          return _arr;
+          // typeOf(e) === 'object'
+          //   ? typeOf(array) === 'object'
+          //     ? _getData(e)
+          //     : {
+          //         ...acc,
+          //         [e.name || e.key]: _getData(e),
+          //       }
+          //   : typeOf(array) === 'object'
+          //   ? safe(store, `.getState()[${name}][${e}]`)
+          //   : {
+          //       ...acc,
+          //       [e]: safe(store, `.getState()[${name}][${e}]`),
+          //     };
+        },
+        typeOf(array) === 'object' ? {} : [],
       );
+      // if()
     } else if (typeof array === 'string') _data = _getData(config, true);
     else if (name) _data = safe(store, `.getState()[${name}]`);
     else _data = safe(store, `.getState()`) || {};
