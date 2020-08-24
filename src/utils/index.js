@@ -479,7 +479,7 @@ export function useStaleRefresh(
 ) {
   const prevArgs = useRef(null);
   // const [data, setData] = useState(null);
-  const refresh = useCallback(() => {
+  const refresh = useCallback(({ loader, clearData } = {}) => {
     const cacheID = hashArgs(name, args);
     // look in cache and set response if present
     // fetch new data
@@ -488,7 +488,14 @@ export function useStaleRefresh(
       Object.assign(
         {},
         args,
-        CACHE[cacheID] ? { initialCallData: CACHE[cacheID] } : {},
+        CACHE[cacheID] && !loader ? { initialCallData: CACHE[cacheID] } : {},
+        clearData
+          ? {
+              task: args.task
+                ? { ...args.task, clearDataOnStart: true }
+                : { clearDataOnStart: true },
+            }
+          : {},
       ),
     ).then(newData => {
       if (newData && newData.status === 'SUCCESS') {
