@@ -2,7 +2,13 @@
 import { generateTimeStamp, updateIn, getIn, typeOf } from '../helpers';
 import Safe from '../nullCheck';
 export const infiniteHandler = ({
-  task: { clearData, subKey = [], limit, isAppendTop = false } = {},
+  task: {
+    clearData,
+    subKey = [],
+    limit,
+    isAppendTop = false,
+    setInfiniteEnd,
+  } = {},
   callback: { updateCallback } = {},
   successData = {},
   successDataStatusCode,
@@ -46,8 +52,12 @@ export const infiniteHandler = ({
   isInfinite: true,
   isError: false,
   infiniteEnd:
-    (subKey.length > 0
-      ? Safe(successData, `.${subKey.join('.')}`, [])
-      : successData
-    ).length < limit,
+    setInfiniteEnd !== undefined && typeof setInfiniteEnd === 'function'
+      ? setInfiniteEnd(successData)
+      : limit !== undefined && typeof limit === 'number'
+      ? (subKey.length > 0
+          ? Safe(successData, `.${subKey.join('.')}`, [])
+          : successData
+        ).length < limit
+      : null,
 });
