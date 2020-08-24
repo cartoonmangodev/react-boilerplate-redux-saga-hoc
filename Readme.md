@@ -396,70 +396,70 @@ export default basicExample;
     - Toast will be stored into to toast key
     - Data will be stored into the data key
 
-### # using useQuery hook in different ways
+## # using useQuery hook in different ways
 
 ```js
 /* accessing multiple data  at single query */
-const {
-  test_data: testData,
+/*
+  use this method if you are accessing multiple data from the same reducer key
+*/
+const [
+  test_data
   test,
-  test_deep: testDeep,
-  [TEST_API]: testGetApi,
-} = useQuery(
+  test_deep
+ testGetApi,
+] = useQuery(
   reducerName /* can pass any reducer key such as 'Auth' , 'router' , ..etc*/,
   [
     {
       key: TEST_API,
-      name: 'test',
       initialLoaderState: true,
     },
     {
       key: TEST_API,
-      name: 'test_deep',
-      query: '.data[0]',
+      query: ".data[0]",
       initialLoaderState: false,
     },
     {
       key: TEST_API,
-      name: 'test_data',
-      query: '.data',
+      query: ".data",
       initialLoaderState: false,
       default: [], // Default for data key it also check's type of data..if type is object return [].Don't pass if you dont want to type check
     },
     TEST_API,
-  ],
+  ]
 );
 
 /* query can be used in different ways based on your requirement */
 
 /* pass array of string instead of object */
 
-const {
-  [TEST_API]: { loader, data, lastUpdated, isError, error, toast },
-} = useQuery(reducerName, [TEST_API]);
+const [
+ { loader, data, lastUpdated, isError, error, toast },
+] = useQuery(reducerName, [TEST_API]);
 
 /* Pass an object instead of array */
 const data = useQuery(reducerName, {
   key: TEST_API,
-  query: '.data',
+  query: ".data",
   default: [],
 });
 
 /* pass a string insted of array */
 const { loader, data, lastUpdated, isError, error, toast } = useQuery(
   reducerName,
-  TEST_API,
+  TEST_API
 );
 
 /* Pass a config as a third parameter its optional */
 const data = useQuery(reducerName, TEST_API, {
-  query: '.data',
+  query: ".data",
   default: [],
 });
 
 /* for getting whole reducer data */
-const data = useQuery(); // Don't use this use this until its required it will render the component every time reducer change
-const data = useQuery(reducerName); // Don't use this until its required it will render the component every time reducer data change
+const data = useQuery(); // Don't use this until its required it will render the component every time state change
+const data = useQuery(reducerName); // Don't use this until its required it will render the component every time state change
 ```
 
 #Params
