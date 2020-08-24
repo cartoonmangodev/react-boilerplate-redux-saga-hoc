@@ -375,18 +375,22 @@ export default function({
             resolve({
               status: 'SUCCESS',
               response: postData,
-              data: data && data.data,
+              data: data && data.data && data.data.data,
             });
             _cache[_url] = postData;
           }
       } catch (error) {
-        if (resolve && typeOf(resolve) === 'function')
-          resolve({ status: 'ERROR', error, respone: error && error.response });
         if (error && typeof error === 'object' && !error.isAxiosError)
           throw new Error(error);
         else if (!polling && retry && retry - 1 >= count) {
           // console.log(count);
         } else {
+          if (resolve && typeOf(resolve) === 'function')
+            resolve({
+              status: 'ERROR',
+              error,
+              respone: error && error.response,
+            });
           if (process.env.NODE_ENV === 'test') console.log(error);
           const {
             response: {

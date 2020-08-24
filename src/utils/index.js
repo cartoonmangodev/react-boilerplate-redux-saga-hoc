@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable indent */
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { bindActionCreators } from 'redux';
 import { useStore, useDispatch } from 'react-redux';
 import isEqual from 'lodash.isequal';
@@ -52,7 +52,10 @@ export const commmonStateHandler = ({
   /** This action for initial call  */
   const { payload: { filter, task = {} } = {} } = action;
   const {
-    payload: { task: { clearDataOnStart: clearData } = {} } = {},
+    payload: {
+      task: { clearDataOnStart: clearData } = {},
+      initialCallData: initialData,
+    } = {},
   } = action;
   /** This action for after api gets success or failure  */
   const {
@@ -76,7 +79,7 @@ export const commmonStateHandler = ({
       loader ||
       [ON_SUCCESS, ON_ERROR].includes(method)) &&
       !customTask) ||
-    (customLoader &&
+    (customLoader !== undefined &&
       customTask &&
       (Array.isArray(method) ? method : [method]).includes(ON_LOADING))
   ) {
@@ -102,11 +105,10 @@ export const commmonStateHandler = ({
         })),
       }));
     if (
-      (filter || responseFilter
+      ((filter || responseFilter) && !customTask
         ? (filter || responseFilter).length > 0
-        : false) &&
-      customTask &&
-      customLoader
+        : false) ||
+      (customTask && customLoader !== undefined)
     )
       State = newObject(State, ({ [type || action.type]: obj }) => ({
         [type || action.type]: newObject(
@@ -115,29 +117,35 @@ export const commmonStateHandler = ({
             filter: (Array.isArray(filter || responseFilter) &&
               (filter || responseFilter)) || [filter || responseFilter],
             loader:
-              customTask && customLoader
+              customTask && customLoader !== undefined
                 ? customLoader
+                : initialData
+                ? false
                 : [ON_SUCCESS, ON_ERROR].includes(method)
                 ? false
                 : status || loader,
             clearData,
+            initialData,
           })(obj),
         ),
       }));
     else
       State = newObject(State, ({ [type || action.type]: obj }) => ({
         [type || action.type]: newObject(obj, ({ data: _data }) => ({
-          loading:
-            customTask && customLoader
-              ? customLoader
-              : {
-                  status: [ON_SUCCESS, ON_ERROR].includes(method)
-                    ? false
-                    : status || loader,
-                  lastUpdated: generateTimeStamp(),
-                },
-          ...(clearData && ![ON_SUCCESS, ON_ERROR].includes(method)
-            ? { data: Array.isArray(_data) ? [] : {} }
+          loading: {
+            status:
+              customTask && customLoader !== undefined
+                ? customLoader
+                : initialData
+                ? false
+                : [ON_SUCCESS, ON_ERROR].includes(method)
+                ? false
+                : status || loader,
+            lastUpdated: generateTimeStamp(),
+          },
+          ...((clearData || initialData) &&
+          ![ON_SUCCESS, ON_ERROR].includes(method)
+            ? { data: initialData || (Array.isArray(_data) ? [] : {}) }
             : {}),
         })),
       }));
@@ -467,36 +475,42 @@ export function useStaleRefresh(
   fn,
   name,
   args = {},
-  initialLoadingstate = true,
+  // initialLoadingstate = true,
 ) {
   const prevArgs = useRef(null);
-  const [isLoading, setLoading] = useState(initialLoadingstate);
+  // const [data, setData] = useState(null);
+  const refresh = useCallback(() => {
+    const cacheID = hashArgs(name, args);
+    // look in cache and set response if present
+    // fetch new data
+    toPromise(
+      fn,
+      Object.assign(
+        {},
+        args,
+        CACHE[cacheID] ? { initialCallData: CACHE[cacheID] } : {},
+      ),
+    ).then(newData => {
+      if (newData && newData.status === 'SUCCESS') {
+        CACHE[cacheID] = newData.data;
+        // setData(newData);
+      }
+      // setLoading(false);
+    });
+  }, []);
+
   useEffect(() => {
     // args is an object so deep compare to rule out false changes
     if (isEqual(args, prevArgs.current)) {
       return;
     }
+    refresh();
     // cacheID is how a cache is identified against a unique request
-    const cacheID = hashArgs(name, args);
-    // look in cache and set response if present
-    if (CACHE[cacheID] !== undefined) {
-      setLoading(false);
-    } else {
-      // else make sure loading set to true
-      setLoading(true);
-    }
-    // fetch new data
-    toPromise(fn, args).then(newData => {
-      if (newData && newData.status === 'SUCCESS') {
-        CACHE[cacheID] = true;
-      }
-      setLoading(false);
-    });
   }, [args, fn]);
 
   useEffect(() => {
     prevArgs.current = args;
   });
 
-  return [isLoading, setLoading];
+  return [refresh];
 }
