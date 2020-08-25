@@ -45,6 +45,27 @@ export default [
       }),
     ],
   },
+  {
+    input: 'src/util.js',
+    output: { file: 'lib/util.js', format: 'cjs', indent: false },
+    external: makeExternalPredicate([
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {}),
+    ]),
+    plugins: [
+      nodeResolve({
+        extensions,
+      }),
+      // typescript({ useTsconfigDeclarationDir: true }),
+      babel({
+        extensions,
+        plugins: [
+          ['@babel/plugin-transform-runtime', { version: babelRuntimeVersion }],
+        ],
+        runtimeHelpers: true,
+      }),
+    ],
+  },
 
   // ES
   // {
