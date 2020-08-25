@@ -70,7 +70,8 @@
     "query-string": "^5.0.1",
     "reselect": "^4.0.0",
     "axios": "^0.19.2",
-    "redux": "^4.0.1"
+    "redux": "^4.0.1",
+    "redux-saga": "0.16.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.3",
