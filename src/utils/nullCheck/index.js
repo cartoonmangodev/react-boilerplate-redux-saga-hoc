@@ -72,7 +72,7 @@ const nullCheck = (
   func = [],
   errorDisplay = false,
 ) => {
-  const returnDefaultData = def || null;
+  const returnDefaultData = def !== undefined ? def : null;
   if (typeof path !== 'string') {
     if (errorDisplay) {
       console.log(
@@ -114,16 +114,20 @@ const nullCheck = (
       data = data[propNames[key]];
       if (!data && typeof data !== 'boolean' && key === propNames.length - 1)
         return typeof callBack === 'function'
-          ? callBack(def || data)
-          : def || data;
+          ? callBack(def !== undefined ? def : data)
+          : def !== undefined
+          ? def
+          : data;
       if (!data && typeof data !== 'boolean') {
         if (errorDisplay) {
           errorLog(new Error());
           errorConsole(parentObj, error, path);
         }
         return typeof callBack === 'function'
-          ? callBack(def || data)
-          : def || data;
+          ? callBack(def !== undefined ? def : data)
+          : def !== undefined
+          ? def
+          : data;
       }
       if (
         (data || typeof data === 'boolean') &&
@@ -175,16 +179,20 @@ const nullCheck = (
         }
         if (!data && typeof data !== 'boolean' && key === propNames.length - 1)
           return typeof callBack === 'function'
-            ? callBack(def || data)
-            : def || data;
+            ? callBack(def !== undefined ? def : data)
+            : def !== undefined
+            ? def
+            : data;
         if (!data && typeof data !== 'boolean') {
           if (errorDisplay) {
             errorLog(new Error());
             errorConsole(parentObj, error, path);
           }
           return typeof callBack === 'function'
-            ? callBack(def || data)
-            : def || data;
+            ? callBack(def !== undefined ? def : data)
+            : def !== undefined
+            ? def
+            : data;
         }
       } else {
         if (errorDisplay) {
@@ -197,16 +205,20 @@ const nullCheck = (
       }
       if (!data && typeof data !== 'boolean' && key === propNames.length - 1)
         return typeof callBack === 'function'
-          ? callBack(def || data)
-          : def || data;
+          ? callBack(def !== undefined ? def : data)
+          : def !== undefined
+          ? def
+          : data;
       if (!data && typeof data !== 'boolean') {
         if (errorDisplay) {
           errorLog(new Error());
           errorConsole(parentObj, error, path);
         }
         return typeof callBack === 'function'
-          ? callBack(def || data)
-          : def || data;
+          ? callBack(def !== undefined ? def : data)
+          : def !== undefined
+          ? def
+          : data;
       }
       if (
         (data || typeof data === 'boolean') &&

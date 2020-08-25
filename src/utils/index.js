@@ -227,7 +227,7 @@ export const getData = (data, def, loader = true, filter = []) => ({
   loader: safe(
     data,
     `${filter.length ? '.data.' : ''}${filter.join('.')}.loading.status`,
-    loader,
+    typeof loader !== 'boolean' ? true : loader,
   ),
   lastUpdated: safe(
     data,
@@ -315,7 +315,7 @@ export const useHook = (name = null, array = [], config = {}) => {
           _checkFilter(e),
         ),
         `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
-        e.query ? e.default || undefined : undefined,
+        e.query ? (e.default !== undefined ? e.default : undefined) : undefined,
       );
     if (
       name &&
