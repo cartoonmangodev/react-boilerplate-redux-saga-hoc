@@ -406,8 +406,8 @@ export default basicExample;
 const [
   test_data
   test,
-  test_deep
- testGetApi,
+  test_deep,
+  testGetApi,
 ] = useQuery(
   reducerName /* can pass any reducer key such as 'Auth' , 'router' , ..etc*/,
   [
