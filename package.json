@@ -6,7 +6,8 @@
   "unpkg": "./lib/index.js",
   "module": "./lib/index.js",
   "files": [
-    "lib"
+    "lib",
+    "utils"
   ],
   "keywords": [
     "react",

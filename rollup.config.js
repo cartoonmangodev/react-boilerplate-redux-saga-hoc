@@ -47,7 +47,7 @@ export default [
   },
   {
     input: 'src/util.js',
-    output: { file: 'utils.js', format: 'cjs', indent: false },
+    output: { file: 'utils/index.js', format: 'cjs', indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),
