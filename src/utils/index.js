@@ -232,7 +232,7 @@ export const getData = (data, def, loader = true, filter = []) => ({
   lastUpdated: safe(
     data,
     `${filter.length ? '.data.' : ''}${filter.join('.')}.lastUpdated`,
-    0,
+    generateTimeStamp(),
   ),
   isInfinite: safe(
     data,
