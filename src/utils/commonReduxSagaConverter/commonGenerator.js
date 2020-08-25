@@ -294,9 +294,16 @@ export default function({
                 commonData.task = successCallbackResponse.task;
               if (successCallbackResponse.filter)
                 commonData.filter = successCallbackResponse.filter;
-              if (successCallbackResponse.tasks)
+              if (
+                typeOf(successCallbackResponse) === 'array' &&
+                successCallbackResponse.tasks.filter(e => e.task || e.filter)
+                  .length > 0
+              )
                 commonData.tasks = successCallbackResponse.tasks;
-            } else if (typeOf(successCallbackResponse) === 'array')
+            } else if (
+              typeOf(successCallbackResponse) === 'array' &&
+              successCallbackResponse.filter(e => e.task || e.filter).length > 0
+            )
               commonData.tasks = successCallbackResponse;
           const loader = yield call(requestResponseHandler, {
             data,

@@ -90,7 +90,11 @@ const _CheckFilter = Filter =>
 const COMMON_HANDLER = (payload, data) => {
   let DATA = data;
   // const bindAction = Action => Action(payload);
-  (payload.tasks || Array(1).fill(payload)).forEach(
+  const _tasks =
+    typeOf(payload.tasks) === 'array'
+      ? payload.tasks.filter(e => e.task || e.filter)
+      : [];
+  (_tasks.length > 0 ? _tasks : Array(1).fill(payload)).forEach(
     // eslint-disable-next-line consistent-return
     ({ task = {}, filter } = {}) => {
       let customTaskBindAction = null;
