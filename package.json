@@ -60,7 +60,6 @@
   "peerDependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-redux": "^7.0.2",
     "redux-saga": "0.16.2"
   },
   "dependencies": {
@@ -71,7 +70,8 @@
     "query-string": "^5.0.1",
     "reselect": "^4.0.0",
     "axios": "^0.19.2",
-    "redux": "^4.0.1"
+    "redux": "^4.0.1",
+    "react-redux": "^7.0.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.3",
