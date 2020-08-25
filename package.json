@@ -60,7 +60,6 @@
   "peerDependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "redux-saga": "0.16.2",
     "react-redux": "^7.0.2"
   },
   "dependencies": {
