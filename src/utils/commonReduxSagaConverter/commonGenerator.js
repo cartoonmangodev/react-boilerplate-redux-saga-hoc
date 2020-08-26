@@ -389,7 +389,7 @@ export default function({
       } catch (error) {
         if (error && typeof error === 'object' && !error.isAxiosError)
           throw new Error(error);
-        else if (!polling && retry && retry - 1 >= count) {
+        if (!polling && retry && retry - 1 >= count) {
           // console.log(count);
         } else {
           if (resolve && typeOf(resolve) === 'function')
