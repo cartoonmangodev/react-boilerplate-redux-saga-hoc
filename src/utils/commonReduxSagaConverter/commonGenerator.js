@@ -98,7 +98,7 @@ export default function({
         customTask: action.custom || action.actions[constants.CUSTOM],
       });
       let url = '';
-      if (typeof action.api === 'string') {
+      if (action.api && ['string', 'function'].includes(typeof action.api)) {
         url = action.api;
         action.api = {};
       }

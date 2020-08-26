@@ -22,7 +22,6 @@ var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallC
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
 var _createSuper = _interopDefault(require('@babel/runtime/helpers/createSuper'));
 var _inherits = _interopDefault(require('@babel/runtime/helpers/inherits'));
-var reduxSaga = require('redux-saga');
 
 /* eslint-disable no-console */
 
@@ -1056,6 +1055,13 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
   return [refresh];
 }
 
+var CHANNEL_END_TYPE = '@@redux-saga/CHANNEL_END';
+var END = {
+  type: CHANNEL_END_TYPE
+};
+
+if (process.env.NODE_ENV !== 'production') ;
+
 function withReduxSaga() {
   var BaseComponent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -1110,7 +1116,7 @@ function withReduxSaga() {
                     break;
                   }
 
-                  store.dispatch(reduxSaga.END);
+                  store.dispatch(END);
 
                   if (!store.sagaTask.toPromise) {
                     _context.next = 15;
