@@ -291,11 +291,22 @@ const checkKey = (key, name, dataType, message) => {
 const checkKeyWithMessage = (key, dataType, message) => {
   invariant(typeOf(key) === dataType, message);
 };
-
 const previousDataKey = [];
 const previousData = {};
 export const useHook = (name = null, array = [], config = {}) => {
   const store = useStore();
+  const exeuteRequiredData = (_data, e = {}) =>
+    e.requiredKey && Array.isArray(e.requiredKey) && typeOf(_data) === 'object'
+      ? Object.entries(_data).reduce(
+          (acc, [_DataKey, _DataValue]) => ({
+            ...acc,
+            ...(e.requiredKey.includes(_DataKey)
+              ? { [_DataKey]: _DataValue }
+              : {}),
+          }),
+          {},
+        )
+      : _data;
   const _GetData = () => {
     let _data = {};
     const _checkFilter = e =>
@@ -313,6 +324,7 @@ export const useHook = (name = null, array = [], config = {}) => {
           e.query ? undefined : e.default || undefined,
           e.initialLoaderState || false,
           _checkFilter(e),
+          e.dataQuery,
         ),
         `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
         e.query ? (e.default !== undefined ? e.default : undefined) : undefined,
@@ -327,9 +339,10 @@ export const useHook = (name = null, array = [], config = {}) => {
       _data = (typeOf(array) === 'object' ? [array] : array).reduce(
         (acc, e) => {
           if (typeOf(e) === 'object') {
-            if (typeOf(array) === 'object') return _getData(e);
+            if (typeOf(array) === 'object')
+              return exeuteRequiredData(_getData(e), e);
             const _arr = [...acc];
-            _arr.push(_getData(e));
+            _arr.push(exeuteRequiredData(_getData(e), e));
             return _arr;
           }
           if (typeOf(array) === 'object')
@@ -354,7 +367,20 @@ export const useHook = (name = null, array = [], config = {}) => {
         typeOf(array) === 'object' ? {} : [],
       );
       // if()
-    } else if (typeof array === 'string') _data = _getData(config, true);
+    } else if (
+      typeof array === 'string' &&
+      config &&
+      typeOf(config) === 'array'
+    )
+      _data = config.reduce(
+        (acc, _config) => [
+          ...acc,
+          exeuteRequiredData(_getData(_config, true), _config),
+        ],
+        [],
+      );
+    else if (typeof array === 'string')
+      _data = exeuteRequiredData(_getData(config, true), config);
     else if (name) _data = safe(store, `.getState()[${name}]`);
     else _data = safe(store, `.getState()`) || {};
     return _data;
