@@ -839,6 +839,17 @@ var useHook = function useHook() {
   var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var store = reactRedux.useStore();
 
+  var exeuteRequiredData = function exeuteRequiredData(_data) {
+    var e = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    return e.requiredKey && Array.isArray(e.requiredKey) && typeOf(_data) === 'object' ? Object.entries(_data).reduce(function (acc, _ref18) {
+      var _ref19 = _slicedToArray(_ref18, 2),
+          _DataKey = _ref19[0],
+          _DataValue = _ref19[1];
+
+      return _objectSpread({}, acc, {}, e.requiredKey.includes(_DataKey) ? _defineProperty({}, _DataKey, _DataValue) : {});
+    }, {}) : _data;
+  };
+
   var _GetData = function _GetData() {
     var _data = {};
 
@@ -847,7 +858,7 @@ var useHook = function useHook() {
     };
 
     var _getData = function _getData(e, isString) {
-      return safe(getData(safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e)), "".concat(e.query && typeOf(e.query) === 'string' ? e.query : ''), e.query ? e.default !== undefined ? e.default : undefined : undefined);
+      return safe(getData(safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e), e.dataQuery), "".concat(e.query && typeOf(e.query) === 'string' ? e.query : ''), e.query ? e.default !== undefined ? e.default : undefined : undefined);
     };
 
     if (name && (Array.isArray(array) && array.length > 0 || typeOf(array) === 'object' && Object.keys(array).length > 0)) {
@@ -855,11 +866,11 @@ var useHook = function useHook() {
       // eslint-disable-next-line no-underscore-dangle
       _data = (typeOf(array) === 'object' ? [array] : array).reduce(function (acc, e) {
         if (typeOf(e) === 'object') {
-          if (typeOf(array) === 'object') return _getData(e);
+          if (typeOf(array) === 'object') return exeuteRequiredData(_getData(e), e);
 
           var _arr2 = _toConsumableArray(acc);
 
-          _arr2.push(_getData(e));
+          _arr2.push(exeuteRequiredData(_getData(e), e));
 
           return _arr2;
         }
@@ -884,7 +895,9 @@ var useHook = function useHook() {
         //       [e]: safe(store, `.getState()[${name}][${e}]`),
         //     };
       }, typeOf(array) === 'object' ? {} : []); // if()
-    } else if (typeof array === 'string') _data = _getData(config, true);else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
+    } else if (typeof array === 'string' && config && typeOf(config) === 'array') _data = config.reduce(function (acc, _config) {
+      return [].concat(_toConsumableArray(acc), [exeuteRequiredData(_getData(_config, true), _config)]);
+    }, []);else if (typeof array === 'string') _data = exeuteRequiredData(_getData(config, true), config);else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
 
     return _data;
   };
@@ -951,11 +964,11 @@ var useMutation = function useMutation(reducerName) {
     if (!store.getState()[reducerName]) checkKeyWithMessage(null, 'string', " reducerName '".concat(reducerName, "' not a valid reducer key."));
   }, []);
   var dispatch = reactRedux.useDispatch();
-  return function (_ref18) {
-    var type = _ref18.key,
-        value = _ref18.value,
-        _ref18$filter = _ref18.filter,
-        filter = _ref18$filter === void 0 ? [] : _ref18$filter;
+  return function (_ref21) {
+    var type = _ref21.key,
+        value = _ref21.value,
+        _ref21$filter = _ref21.filter,
+        filter = _ref21$filter === void 0 ? [] : _ref21$filter;
     if (!type) checkKey(null, 'key', 'string', 'valid string');
 
     var _reducer_keys = Object.keys(store.getState()[reducerName]);
@@ -1019,9 +1032,9 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
   var prevArgs = React.useRef(null); // const [data, setData] = useState(null);
 
   var refresh = React.useCallback(function () {
-    var _ref19 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        loader = _ref19.loader,
-        clearData = _ref19.clearData;
+    var _ref22 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        loader = _ref22.loader,
+        clearData = _ref22.clearData;
 
     var cacheID = hashArgs(name, args); // look in cache and set response if present
     // fetch new data

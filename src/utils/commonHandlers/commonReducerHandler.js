@@ -117,7 +117,7 @@ const COMMON_HANDLER = (payload, data) => {
         newObject(DATA, customTaskBindAction(handler));
       const _handler = HANDLERS.concat(
         Array.isArray(payload.handlers) ? payload.handlers : [],
-      ).find(({ name }) => name === task.name);
+      ).find(({ name }) => name === task.name || task);
 
       if (_handler) {
         checkKey(
