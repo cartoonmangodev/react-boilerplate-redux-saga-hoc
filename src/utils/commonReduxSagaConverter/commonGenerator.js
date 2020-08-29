@@ -294,6 +294,9 @@ export default function({
                 commonData.task = successCallbackResponse.task;
               if (successCallbackResponse.filter)
                 commonData.filter = successCallbackResponse.filter;
+              if (successCallbackResponse.updateDataReducerKey)
+                commonData.updateDataReducerKey =
+                  successCallbackResponse.updateDataReducerKey;
               if (
                 typeOf(successCallbackResponse) === 'array' &&
                 successCallbackResponse.tasks.filter(e => e.task || e.filter)
