@@ -235,8 +235,11 @@ export default function({
                   (postData.data || {})[statusKey],
                 )
                   ? 200
-                  : (postData.data || {})[statusKey]) || postData.status,
-              statusCode: (postData.data || {})[statusKey] || postData.status,
+                  : (postData.data || {})[statusKey]) ||
+                (postData && postData.status),
+              statusCode:
+                (postData.data || {})[statusKey] ||
+                (postData && postData.status),
               message: (postData.data || {})[
                 action.api.responseMessageKey || 'message'
               ],
@@ -270,7 +273,7 @@ export default function({
         if (data) {
           const {
             data: {
-              status: successStatus = postData.status,
+              status: successStatus = postData && postData.status,
               message: successMessage = '',
             } = {},
           } = data || {};
@@ -356,7 +359,7 @@ export default function({
         ) {
           const {
             data: {
-              status: successStatus = postData.status,
+              status: successStatus = postData && postData.status,
               message: successMessage = '',
             } = {},
           } = data || {};
