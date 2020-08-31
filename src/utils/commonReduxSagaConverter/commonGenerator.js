@@ -348,6 +348,7 @@ export default function({
             type,
             commonData,
           });
+          loop = false;
         } else if (process.env.NODE_ENV === 'test' && action.success)
           yield put(action.success({ data }));
         else
