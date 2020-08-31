@@ -225,6 +225,7 @@ export default function({
           cancelTask = _cancelTask;
           postData = _postData;
         }
+        postData = postData || {};
         let data = postData ? { ...postData } : postData;
         if (postData && postData.data) {
           const statusKey = action.api.responseStatusCodeKey || '';
@@ -367,7 +368,7 @@ export default function({
           } = data || {};
           const pollingRes = yield call(pollingCallback, {
             response: data,
-            data: data.data,
+            data: data && data.data,
             message: successMessage,
             status: successStatus,
             count,
@@ -415,14 +416,16 @@ export default function({
                   error.response.data) ||
                   (error && error.response) ||
                   '',
-                status: errorStatus = error.response &&
+                status: errorStatus = error &&
+                  error.response &&
                   error.response.data &&
                   (error.response.data[action.api.errorStatusKey] ||
                     (error && error.response && error.response.status)),
-                message: errorMessage = (error.response &&
+                message: errorMessage = (error &&
+                  error.response &&
                   error.response.data &&
                   error.response.data[action.api.errorMessageKey]) ||
-                  (error.response && error.response.statusText) ||
+                  (error && error.response && error.response.statusText) ||
                   '',
               } = {},
             } = {},
