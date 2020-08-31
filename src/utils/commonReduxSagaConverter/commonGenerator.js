@@ -258,8 +258,10 @@ export default function({
               response: {
                 data: {
                   error:
-                    (postData.data || {})[action.api.errorDataKey || 'error'] ||
-                    postData.data ||
+                    ((postData && postData.data) || {})[
+                      action.api.errorDataKey || 'error'
+                    ] ||
+                    (postData && postData.data) ||
                     postData,
                   status: data.data.status,
                   statusCode: data.data.status,
