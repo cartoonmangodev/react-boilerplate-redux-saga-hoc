@@ -512,7 +512,7 @@ function hashArgs(...args) {
 
 export function useStaleRefresh(
   fn,
-  name,
+  name, // reducer constants
   args = {},
   // initialLoadingstate = true,
 ) {
@@ -552,7 +552,7 @@ export function useStaleRefresh(
     }
     refresh();
     // cacheID is how a cache is identified against a unique request
-  }, [args, fn]);
+  }, [args, fn, name]);
 
   useEffect(() => {
     prevArgs.current = args;
