@@ -225,8 +225,8 @@ export default function({
           cancelTask = _cancelTask;
           postData = _postData;
         }
-        postData = postData || {};
         let data = postData ? { ...postData } : postData;
+        postData = postData || {};
         if (postData && postData.data) {
           const statusKey = action.api.responseStatusCodeKey || '';
           data = {
