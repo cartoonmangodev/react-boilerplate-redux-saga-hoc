@@ -217,6 +217,7 @@ export const commmonStateHandler = ({
 };
 
 export const getData = (data, def, loader = true, filter = []) => ({
+  ...safe(data, `${filter.length ? '.data.' : ''}${filter.join('.')}`, {}),
   data: safe(
     data,
     `.data${filter.length ? '.' : ''}${filter.join('.')}${
