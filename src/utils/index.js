@@ -293,7 +293,7 @@ const checkKeyWithMessage = (key, dataType, message) => {
 };
 const previousDataKey = [];
 const previousData = {};
-export const useHook = (name = null, array = [], config = {}) => {
+export const useHook = (name = null, array = [], config = {}, callback) => {
   const store = useStore();
   const exeuteRequiredData = (_data, e = {}) =>
     e.requiredKey && Array.isArray(e.requiredKey) && typeOf(_data) === 'object'
@@ -396,6 +396,7 @@ export const useHook = (name = null, array = [], config = {}) => {
     const index = previousDataKey.indexOf(_key);
     if (!isEqual(_data, previousData[index])) {
       // previousData[`${key || name}_${_key}`] = _data;
+      if (callback && typeof callback === 'function') callback(_data);
       previousData[index] = _data;
       setData(_data);
     }
