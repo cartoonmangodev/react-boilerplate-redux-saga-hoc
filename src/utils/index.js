@@ -319,8 +319,8 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
           : undefined
         : undefined;
     const _getData = (e, isString) =>
-      (typeof e.defaultDataFormat === 'boolean'
-      ? !e.defaultDataFormat
+      (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key)
+      ? !e.defaultDataFormat || !(isString ? array : e.key)
       : false)
         ? (isString
           ? array
