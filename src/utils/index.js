@@ -395,11 +395,11 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
     const _data = _GetData();
     const index = previousDataKey.indexOf(_key);
     if (!isEqual(_data, previousData[index])) {
+      previousData[index] = _data;
       // previousData[`${key || name}_${_key}`] = _data;
       let callbackData;
       if (callback && typeof callback === 'function')
         callbackData = callback(_data);
-      previousData[index] = callbackData || _data;
       if (callbackData) setData(callbackData);
       else setData(_data);
     }
