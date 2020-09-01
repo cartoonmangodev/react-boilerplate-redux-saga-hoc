@@ -320,13 +320,21 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
         : undefined;
     const _getData = (e, isString) =>
       safe(
-        getData(
-          safe(store, `.getState()[${name}][${isString ? array : e.key}]`),
-          e.query ? undefined : e.default || undefined,
-          e.initialLoaderState || false,
-          _checkFilter(e),
-          e.dataQuery,
-        ),
+        e.accessOriginalData
+          ? safe(
+              store,
+              `.getState()[${name}][${isString ? array : e.key}]${
+                e.query ? e.query : ''
+              }`,
+              e.default || undefined,
+            )
+          : getData(
+              safe(store, `.getState()[${name}][${isString ? array : e.key}]`),
+              e.query ? undefined : e.default || undefined,
+              e.initialLoaderState || false,
+              _checkFilter(e),
+              e.dataQuery,
+            ),
         `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
         e.query ? (e.default !== undefined ? e.default : undefined) : undefined,
       );
@@ -351,19 +359,6 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
           const _arr = [...acc];
           _arr.push(safe(store, `.getState()[${name}][${e}]`));
           return _arr;
-          // typeOf(e) === 'object'
-          //   ? typeOf(array) === 'object'
-          //     ? _getData(e)
-          //     : {
-          //         ...acc,
-          //         [e.name || e.key]: _getData(e),
-          //       }
-          //   : typeOf(array) === 'object'
-          //   ? safe(store, `.getState()[${name}][${e}]`)
-          //   : {
-          //       ...acc,
-          //       [e]: safe(store, `.getState()[${name}][${e}]`),
-          //     };
         },
         typeOf(array) === 'object' ? {} : [],
       );

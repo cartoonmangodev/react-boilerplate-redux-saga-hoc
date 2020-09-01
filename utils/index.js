@@ -808,7 +808,7 @@ var safe = nullcheck;
 var getData = function getData(data, def) {
   var loader = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
   var filter = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
-  return {
+  return _objectSpread({}, safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.')), {}), {
     data: safe(data, ".data".concat(filter.length ? '.' : '').concat(filter.join('.')).concat(filter.length ? '.data' : ''), def),
     loader: safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.'), ".loading.status"), typeof loader !== 'boolean' ? true : loader),
     lastUpdated: safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.'), ".lastUpdated"), generateTimeStamp()),
@@ -817,7 +817,7 @@ var getData = function getData(data, def) {
     isError: safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.'), ".isError"), false),
     toast: safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.'), ".toast"), {}),
     error: safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.'), ".error"), {})
-  };
+  });
 };
 //   null,
 //   mapDispatchToProps({ ...AuthenticationActions, ...DashboardActions }),
