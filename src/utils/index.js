@@ -400,7 +400,8 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
       if (callback && typeof callback === 'function')
         callbackData = callback(_data);
       previousData[index] = callbackData || _data;
-      setData(callbackData || _data);
+      if (callbackData) setData(callbackData);
+      else setData(_data);
     }
   };
   useEffect(() => {

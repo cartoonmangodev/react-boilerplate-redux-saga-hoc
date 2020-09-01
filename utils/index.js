@@ -923,9 +923,10 @@ var useHook = function useHook() {
 
     if (!isEqual(_data, previousData[index])) {
       // previousData[`${key || name}_${_key}`] = _data;
-      if (callback && typeof callback === 'function') callback(_data);
-      previousData[index] = _data;
-      setData(_data);
+      var callbackData;
+      if (callback && typeof callback === 'function') callbackData = callback(_data);
+      previousData[index] = callbackData || _data;
+      setData(callbackData || _data);
     }
   };
 
