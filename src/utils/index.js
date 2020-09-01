@@ -385,7 +385,9 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
     else _data = safe(store, `.getState()`) || {};
     return _data;
   };
-  const [data, setData] = useState(_GetData());
+  const [data, setData] = useState(
+    typeof callback === 'function' ? callback(_GetData()) : _GetData(),
+  );
   const [_key] = useState({});
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
 
