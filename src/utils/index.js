@@ -319,25 +319,29 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
           : undefined
         : undefined;
     const _getData = (e, isString) =>
-      safe(
-        e.accessOriginalData
-          ? safe(
-              store,
-              `.getState()[${name}][${isString ? array : e.key}]${
-                e.query ? e.query : ''
-              }`,
-              e.default || undefined,
-            )
-          : getData(
+      e.accessOriginalData
+        ? safe(
+            store,
+            `.getState()[${name}][${isString ? array : e.key}]${
+              e.query ? e.query : ''
+            }`,
+            e.default || undefined,
+          )
+        : safe(
+            getData(
               safe(store, `.getState()[${name}][${isString ? array : e.key}]`),
               e.query ? undefined : e.default || undefined,
               e.initialLoaderState || false,
               _checkFilter(e),
               e.dataQuery,
             ),
-        `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
-        e.query ? (e.default !== undefined ? e.default : undefined) : undefined,
-      );
+            `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
+            e.query
+              ? e.default !== undefined
+                ? e.default
+                : undefined
+              : undefined,
+          );
     if (
       name &&
       ((Array.isArray(array) && array.length > 0) ||
