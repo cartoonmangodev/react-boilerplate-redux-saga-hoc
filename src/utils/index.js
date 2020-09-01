@@ -385,7 +385,7 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
     else _data = safe(store, `.getState()`) || {};
     return _data;
   };
-  const [data, setData] = useState(null);
+  const [data, setData] = useState(_GetData());
   const [_key] = useState({});
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
 
@@ -395,11 +395,11 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
     const _data = _GetData();
     const index = previousDataKey.indexOf(_key);
     if (!isEqual(_data, previousData[index])) {
-      previousData[index] = _data;
       // previousData[`${key || name}_${_key}`] = _data;
       let callbackData;
       if (callback && typeof callback === 'function')
         callbackData = callback(_data);
+      previousData[index] = _data;
       if (callbackData) setData(callbackData);
       else setData(_data);
     }
@@ -415,9 +415,7 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
       unSubscribe();
     };
   }, []);
-  return data || typeof callback === 'function'
-    ? callback(_GetData()) || _GetData()
-    : _GetData();
+  return data;
 };
 
 export const useActionsHook = (name, actions) => {
