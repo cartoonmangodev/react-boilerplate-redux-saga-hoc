@@ -327,7 +327,7 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
             `.getState()[${name}][${isString ? array : e.key}]${
               e.query ? e.query : ''
             }`,
-            e.default || undefined,
+            e.default,
           )
         : safe(
             getData(
