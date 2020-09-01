@@ -842,12 +842,12 @@ var useHook = function useHook() {
 
   var exeuteRequiredData = function exeuteRequiredData(_data) {
     var e = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    return e.requiredKey && Array.isArray(e.requiredKey) && typeOf(_data) === 'object' ? Object.entries(_data).reduce(function (acc, _ref18) {
+    return e.requiredKey && Array.isArray(e.requiredKey) && typeOf(_data) === 'object' ? Object.entries(_data).reduce(function (acc, _ref18, i) {
       var _ref19 = _slicedToArray(_ref18, 2),
           _DataKey = _ref19[0],
           _DataValue = _ref19[1];
 
-      return _objectSpread({}, acc, {}, e.requiredKey.includes(_DataKey) ? _defineProperty({}, _DataKey, _DataValue) : {});
+      return _objectSpread({}, acc, {}, e.requiredKey.includes(_DataKey) ? _defineProperty({}, _DataKey, safe(_DataValue, '', (e.requiredKeyDefault || [])[i])) : {});
     }, {}) : _data;
   };
 

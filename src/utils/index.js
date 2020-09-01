@@ -299,15 +299,11 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
   const exeuteRequiredData = (_data, e = {}) =>
     e.requiredKey && Array.isArray(e.requiredKey) && typeOf(_data) === 'object'
       ? Object.entries(_data).reduce(
-          (acc, [_DataKey, _DataValue], i) => ({
+          (acc, [_DataKey, _DataValue]) => ({
             ...acc,
             ...(e.requiredKey.includes(_DataKey)
               ? {
-                  [_DataKey]: safe(
-                    _DataValue,
-                    '',
-                    (e.requiredKeyDefault || [])[i],
-                  ),
+                  [_DataKey]: _DataValue,
                 }
               : {}),
           }),
