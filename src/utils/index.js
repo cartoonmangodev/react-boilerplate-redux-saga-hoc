@@ -322,13 +322,23 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
       (typeof e.defaultDataFormat === 'boolean'
       ? !e.defaultDataFormat
       : false)
-        ? safe(
-            store,
-            `.getState()[${name}][${isString ? array : e.key}]${
-              e.query ? e.query : ''
-            }`,
-            e.default,
-          )
+        ? (isString
+          ? array
+          : e.key)
+          ? safe(
+              store,
+              `.getState()[${name}][${isString ? array : e.key}]${
+                e.query ? e.query : ''
+              }`,
+              e.default,
+            )
+          : name
+          ? safe(
+              store,
+              `.getState()[${name}]${e.query ? e.query : ''}`,
+              e.default,
+            )
+          : safe(store, `.getState()${e.query ? e.query : ''}`, e.default)
         : safe(
             getData(
               safe(store, `.getState()[${name}][${isString ? array : e.key}]`),
