@@ -517,12 +517,13 @@ function hashArgs(...args) {
 export function useStaleRefresh(
   fn,
   name, // reducer constants
-  args = {},
+  arg = {},
   // initialLoadingstate = true,
 ) {
   const prevArgs = useRef(null);
   // const [data, setData] = useState(null);
-  const refresh = useCallback(({ loader, clearData } = {}) => {
+  const refresh = useCallback(({ loader, clearData, config } = {}) => {
+    const args = config || arg;
     const cacheID = hashArgs(name, args);
     // look in cache and set response if present
     // fetch new data
@@ -551,15 +552,15 @@ export function useStaleRefresh(
 
   useEffect(() => {
     // args is an object so deep compare to rule out false changes
-    if (isEqual(args, prevArgs.current)) {
+    if (isEqual(arg, prevArgs.current)) {
       return;
     }
     refresh();
     // cacheID is how a cache is identified against a unique request
-  }, [args, fn, name]);
+  }, [arg, fn, name]);
 
   useEffect(() => {
-    prevArgs.current = args;
+    prevArgs.current = arg;
   });
 
   return [refresh];

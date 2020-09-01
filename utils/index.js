@@ -903,7 +903,7 @@ var useHook = function useHook() {
     return _data;
   };
 
-  var _useState = React.useState(null),
+  var _useState = React.useState(_GetData()),
       _useState2 = _slicedToArray(_useState, 2),
       data = _useState2[0],
       setData = _useState2[1];
@@ -922,10 +922,10 @@ var useHook = function useHook() {
     var index = previousDataKey.indexOf(_key);
 
     if (!isEqual(_data, previousData[index])) {
-      previousData[index] = _data; // previousData[`${key || name}_${_key}`] = _data;
-
+      // previousData[`${key || name}_${_key}`] = _data;
       var callbackData;
       if (callback && typeof callback === 'function') callbackData = callback(_data);
+      previousData[index] = _data;
       if (callbackData) setData(callbackData);else setData(_data);
     }
   };
@@ -941,7 +941,7 @@ var useHook = function useHook() {
       unSubscribe();
     };
   }, []);
-  return data || typeof callback === 'function' ? callback(_GetData()) || _GetData() : _GetData();
+  return data;
 };
 var useActionsHook = function useActionsHook(name, actions) {
   var _useState5 = React.useState({}),
