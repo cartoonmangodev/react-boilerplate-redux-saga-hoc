@@ -903,7 +903,7 @@ var useHook = function useHook() {
     return _data;
   };
 
-  var _useState = React.useState(_GetData()),
+  var _useState = React.useState(typeof callback === 'function' ? callback(_GetData()) : _GetData()),
       _useState2 = _slicedToArray(_useState, 2),
       data = _useState2[0],
       setData = _useState2[1];
