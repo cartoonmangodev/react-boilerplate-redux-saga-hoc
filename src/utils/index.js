@@ -319,7 +319,7 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
           : undefined
         : undefined;
     const _getData = (e, isString) =>
-      e.defaultDataFormat
+      !e.defaultDataFormat
         ? safe(
             store,
             `.getState()[${name}][${isString ? array : e.key}]${
