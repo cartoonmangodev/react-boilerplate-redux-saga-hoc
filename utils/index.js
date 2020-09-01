@@ -837,6 +837,7 @@ var useHook = function useHook() {
   var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
   var array = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
   var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  var callback = arguments.length > 3 ? arguments[3] : undefined;
   var store = reactRedux.useStore();
 
   var exeuteRequiredData = function exeuteRequiredData(_data) {
@@ -922,6 +923,7 @@ var useHook = function useHook() {
 
     if (!isEqual(_data, previousData[index])) {
       // previousData[`${key || name}_${_key}`] = _data;
+      if (callback && typeof callback === 'function') callback(_data);
       previousData[index] = _data;
       setData(_data);
     }
