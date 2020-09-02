@@ -309,6 +309,8 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
           }),
           {},
         )
+      : e.requiredKey
+      ? _data || {}
       : _data;
   const _GetData = () => {
     let _data = {};
