@@ -72,7 +72,7 @@ const nullCheck = (
   func = [],
   errorDisplay = false,
 ) => {
-  const returnDefaultData = def !== undefined ? def : null;
+  const returnDefaultData = def !== undefined ? def : undefined;
   if (typeof path !== 'string') {
     if (errorDisplay) {
       console.log(

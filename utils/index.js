@@ -848,7 +848,7 @@ var useHook = function useHook() {
           _DataValue = _ref19[1];
 
       return _objectSpread({}, acc, {}, e.requiredKey.includes(_DataKey) ? _defineProperty({}, _DataKey, _DataValue) : {});
-    }, {}) : _data;
+    }, {}) : e.requiredKey ? _data || {} : _data;
   };
 
   var _GetData = function _GetData() {
