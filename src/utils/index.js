@@ -611,7 +611,7 @@ export const useResetState = () => {
   const dispatch = useDispatch();
   return () => {
     dispatch({
-      type: 'RESET',
+      type: 'RESET_STATE',
     });
   };
 };

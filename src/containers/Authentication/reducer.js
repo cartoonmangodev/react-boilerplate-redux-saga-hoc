@@ -64,19 +64,10 @@ const updateState = ({
     case 'RESET':
       switch (method) {
         case ON_SUCCESS:
-          return newObject(state, ResetState, InitialState);
-        default:
-          return state;
-      }
-    case 'RESET_API':
-      switch (method) {
-        case ON_SUCCESS:
           return newObject(state, ResetState);
         default:
           return state;
       }
-    case 'MUTATE_STATE':
-      return newObject(state, action.payload);
     // case authenticationConstants.REGISTER_API[CALL]:
     //   switch (method) {
     //     case ON_SUCCESS: {
@@ -228,15 +219,12 @@ export default ({
   const initialState = newObject(InitialState, componentState);
   return (state = initialState, action) => {
     switch (action.type) {
-      // case LANGUAGE_CONSTANTS:
-      //   return newObject(state, { language: action.payload });
-      // case PROFILE_UPDATE:
-      //   return newObject(state, ({ profile }) => ({
-      //     profile: newObject(profile, action.payload),
-      //     isLoggedIn: true,
-      //     authorization: true,
-      //   }));
-
+      case 'RESET_API':
+        return newObject(state, ResetState);
+      case 'MUTATE_STATE':
+        return newObject(state, action.payload);
+      case 'RESET_STATE':
+        return newObject(state, ResetState, InitialState);
       default: {
         let reducerState = newObject(state);
         if (constantReducer) {
