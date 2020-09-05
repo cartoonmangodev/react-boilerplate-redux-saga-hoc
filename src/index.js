@@ -10,6 +10,9 @@ export {
   useMutation,
   toPromise,
   useStaleRefresh,
+  useMutateReducer,
+  useResetState,
+  useResetOnlyApiState,
 } from './utils';
 export { useDispatch, useStore, useSelector } from 'react-redux';
 // export { useTestHook } from './hooks';
