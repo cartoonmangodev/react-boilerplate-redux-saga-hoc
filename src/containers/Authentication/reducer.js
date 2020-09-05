@@ -64,10 +64,19 @@ const updateState = ({
     case 'RESET':
       switch (method) {
         case ON_SUCCESS:
+          return newObject(state, ResetState, InitialState);
+        default:
+          return state;
+      }
+    case 'RESET_API':
+      switch (method) {
+        case ON_SUCCESS:
           return newObject(state, ResetState);
         default:
           return state;
       }
+    case 'MUTATE_STATE':
+      return newObject(state, action.payload);
     // case authenticationConstants.REGISTER_API[CALL]:
     //   switch (method) {
     //     case ON_SUCCESS: {

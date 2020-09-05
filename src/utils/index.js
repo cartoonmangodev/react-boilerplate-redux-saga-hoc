@@ -418,6 +418,7 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
     else _data = safe(store, `.getState()`) || {};
     return _data;
   }, []);
+
   const [data, setData] = useState(_GetData());
   const execute = useCallback(() => {
     // const state = safe(store, `.getState()[${name}]`);
@@ -593,3 +594,33 @@ export function useStaleRefresh(
 
   return [refresh];
 }
+
+export const useMutateReducer = () => {
+  const store = useStore();
+  const dispatch = useDispatch();
+  return callback => {
+    const state = store.getState();
+    dispatch({
+      type: 'MUTATE_STATE',
+      payload: callback(state) || state,
+    });
+  };
+};
+
+export const useResetState = () => {
+  const dispatch = useDispatch();
+  return () => {
+    dispatch({
+      type: 'RESET',
+    });
+  };
+};
+
+export const useResetOnlyApiState = () => {
+  const dispatch = useDispatch();
+  return () => {
+    dispatch({
+      type: 'RESET_API',
+    });
+  };
+};

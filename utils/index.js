@@ -810,7 +810,7 @@ var getData = function getData(data, def) {
   var filter = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
   return _objectSpread({}, safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.')), {}), {
     data: safe(data, ".data".concat(filter.length ? '.' : '').concat(filter.join('.')).concat(filter.length ? '.data' : ''), def),
-    loader: safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.'), ".loading.status"), typeof loader !== 'boolean' ? true : loader),
+    loader: safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.'), ".loading.status"), typeof loader !== 'boolean' ? false : loader),
     lastUpdated: safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.'), ".lastUpdated"), generateTimeStamp()),
     isInfinite: safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.'), ".isInfinite"), false),
     infiniteEnd: safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.'), ".infiniteEnd"), false),
@@ -831,36 +831,40 @@ var checkKeyWithMessage = function checkKeyWithMessage(key, dataType, message) {
   invariant(typeOf(key) === dataType, message);
 };
 
-var previousDataKey = [];
-var previousData = {};
+var previousData = new Map();
 var useHook = function useHook() {
   var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
   var array = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
   var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var callback = arguments.length > 3 ? arguments[3] : undefined;
+  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
   var store = reactRedux.useStore();
 
-  var exeuteRequiredData = function exeuteRequiredData(_data) {
+  var _useState = React.useState({}),
+      _useState2 = _slicedToArray(_useState, 1),
+      _key = _useState2[0];
+
+  var exeuteRequiredData = React.useCallback(function (_data) {
     var e = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    return e.requiredKey && Array.isArray(e.requiredKey) && typeOf(_data) === 'object' ? Object.entries(_data).reduce(function (acc, _ref18) {
+    return e.requiredKey && Array.isArray(e.requiredKey) && e.requiredKey.length > 0 && typeOf(_data) === 'object' ? Object.entries(_data).reduce(function (acc, _ref18) {
       var _ref19 = _slicedToArray(_ref18, 2),
           _DataKey = _ref19[0],
           _DataValue = _ref19[1];
 
       return _objectSpread({}, acc, {}, e.requiredKey.includes(_DataKey) ? _defineProperty({}, _DataKey, _DataValue) : {});
     }, {}) : e.requiredKey ? _data || {} : _data;
-  };
+  }, []);
 
-  var _GetData = function _GetData() {
+  var _checkFilter = React.useCallback(function (e) {
+    return e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : undefined : undefined;
+  }, []);
+
+  var _getData = React.useCallback(function (e, isString) {
+    return (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key) ? !e.defaultDataFormat || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : name ? safe(store, ".getState()[".concat(name, "]").concat(e.query ? e.query : ''), e.default) : safe(store, ".getState()".concat(e.query ? e.query : ''), e.default) : safe(getData(safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e), e.dataQuery), "".concat(e.query && typeOf(e.query) === 'string' ? e.query : ''), e.query ? e.default !== undefined ? e.default : undefined : undefined);
+  }, []);
+
+  var _GetData = React.useCallback(function () {
     var _data = {};
-
-    var _checkFilter = function _checkFilter(e) {
-      return e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : undefined : undefined;
-    };
-
-    var _getData = function _getData(e, isString) {
-      return (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key) ? !e.defaultDataFormat || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : name ? safe(store, ".getState()[".concat(name, "]").concat(e.query ? e.query : ''), e.default) : safe(store, ".getState()".concat(e.query ? e.query : ''), e.default) : safe(getData(safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e), e.dataQuery), "".concat(e.query && typeOf(e.query) === 'string' ? e.query : ''), e.query ? e.default !== undefined ? e.default : undefined : undefined);
-    };
 
     if (name && (Array.isArray(array) && array.length > 0 || typeOf(array) === 'object' && Object.keys(array).length > 0)) {
       // eslint-disable-next-line consistent-return
@@ -889,43 +893,32 @@ var useHook = function useHook() {
     }, []);else if (typeof array === 'string') _data = exeuteRequiredData(_getData(config, true), config);else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
 
     return _data;
-  };
+  }, []);
 
-  var _useState = React.useState(_GetData()),
-      _useState2 = _slicedToArray(_useState, 2),
-      data = _useState2[0],
-      setData = _useState2[1];
+  var _useState3 = React.useState(_GetData()),
+      _useState4 = _slicedToArray(_useState3, 2),
+      data = _useState4[0],
+      setData = _useState4[1];
 
-  var _useState3 = React.useState({}),
-      _useState4 = _slicedToArray(_useState3, 1),
-      _key = _useState4[0];
-
-  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
-
-  var execute = function execute() {
+  var execute = React.useCallback(function () {
     // const state = safe(store, `.getState()[${name}]`);
     // eslint-disable-next-line no-underscore-dangle
     var _data = _GetData();
 
-    var index = previousDataKey.indexOf(_key);
-
-    if (!isEqual(_data, previousData[index])) {
+    if (!isEqual(_data, previousData.get(_key))) {
       // previousData[`${key || name}_${_key}`] = _data;
       var callbackData;
       if (callback && typeof callback === 'function') callbackData = callback(_data);
-      previousData[index] = _data;
+      previousData.set(_key, _data);
       if (callbackData) setData(callbackData);else setData(_data);
     }
-  };
-
+  }, []);
   React.useEffect(function () {
-    var length = previousDataKey.length;
-    previousDataKey.push(_key);
-    previousData[length] = {};
+    previousData.set(_key, {});
     execute();
     var unSubscribe = store.subscribe(execute);
     return function () {
-      delete previousData[length];
+      delete previousData.delete(_key);
       unSubscribe();
     };
   }, []);

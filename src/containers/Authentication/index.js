@@ -1,21 +1,10 @@
-/* eslint-disable indent */
-/* eslint-disable func-names */
-/* eslint-disable import/no-unresolved */
-/**
- * Dashboard
- */
 import React, { useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import invariant from 'invariant';
 import { createStructuredSelector } from 'reselect';
 import { compose, bindActionCreators } from 'redux';
 import axios from '../../config/axios';
-// import { getLanguage } from '../../config/Language/index';
 import generateConstants from './constants';
-// eslint-disable-next-line import/no-useless-path-segments
-// import injectSaga from '../../../../../app/utils/injectSaga';
-// eslint-disable-next-line import/no-useless-path-segments
-// import injectReducer from '../../../../../app/utils/injectReducer';
 import injectSaga, { useInjectSaga } from '../../utils/utils/injectSaga';
 import injectReducer, {
   useInjectReducer,
@@ -30,9 +19,6 @@ import { getData, mapDispatchToProps } from '../../utils';
 import { commonConstants } from '../../utils/commonReduxSagaConverter/commonConstants';
 const safe = nullcheck;
 
-// const shape = {
-//   reducerName: isString,
-// };
 const checkKey = (key, name, dataType) => {
   invariant(
     typeOf(key) === dataType,
@@ -59,8 +45,6 @@ export default ({
   name: reducerName,
   axiosInterceptors,
   useHook: _useHook = false,
-  // injectSaga,
-  // injectReducer,
 } = {}) => {
   invariant(
     !!reducerName && typeOf(reducerName) === 'string',
@@ -130,16 +114,15 @@ export default ({
     },
   };
   const commonProps = useHook || _useHook ? { safe } : { safe, getData };
+  const injectSagaConfig = { key: reducerName, saga };
+  const injectReducerConfig = {
+    key: reducerName,
+    reducer,
+  };
   // eslint-disable-next-line no-underscore-dangle
   const _useHocHook = () => {
-    useInjectSaga({ key: reducerName, saga });
-    useInjectReducer(
-      {
-        key: reducerName,
-        reducer,
-      },
-      createReducer,
-    );
+    useInjectSaga(injectSagaConfig);
+    useInjectReducer(injectReducerConfig, createReducer);
     const dispatch = useDispatch();
     const [state] = useState({
       ...componentData[`${reducerName}_hoc`],
@@ -149,27 +132,11 @@ export default ({
     return state;
   };
   if (useHocHook && !nextJS) return _useHocHook;
-  // eslint-disable-next-line no-unused-vars
-  const hoc = (WrapperComponent, autoLoginCheck = true) => {
+  const hoc = WrapperComponent => {
     function WithHoc(props) {
-      // const [language, setLanguage] = useState(getLanguage('EN'));
-      // useEffect(() => {
-      //   if (props.authentication.language !== language)
-      //     setLanguage(getLanguage(props.authentication.language));
-      // }, [props.authentication.language]);
-      // console.log(props, '================');
-      return (
-        <WrapperComponent
-          // language={language}
-          {...commonProps}
-          {...props}
-        />
-      );
+      return <WrapperComponent {...commonProps} {...props} />;
     }
-
-    WithHoc.propTypes = {
-      // [reducerName]: PropTypes.object.isRequired,
-    };
+    WithHoc.propTypes = {};
     WithHoc.displayName = `withReactBoilerplateReduxSagaHoc(${WrapperComponent.displayName ||
       WrapperComponent.name ||
       'BaseComponent'})`;
