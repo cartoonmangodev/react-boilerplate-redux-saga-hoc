@@ -37,7 +37,7 @@ export default ({ apiEndPoints, generatorKey, dontResetOnLogout }) => {
         },
       }),
       resetState:
-        (dontResetOnLogout[key] === 'undefined' &&
+        (typeof dontResetOnLogout[key] === 'undefined' &&
           newObject({}, acc.resetState, {
             [ConvertData[generatorKey].constants[key][CALL]]: {
               loading: {},
