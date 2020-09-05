@@ -4,7 +4,7 @@
 /**
  * Dashboard
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import invariant from 'invariant';
 import { createStructuredSelector } from 'reselect';
@@ -141,7 +141,7 @@ export default ({
       createReducer,
     );
     const dispatch = useDispatch();
-    const [state] = React.useState({
+    const [state] = useState({
       ...componentData[`${reducerName}_hoc`],
       actions: bindActionCreators(componentActions, dispatch),
       dispatch,

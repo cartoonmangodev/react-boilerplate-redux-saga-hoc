@@ -228,7 +228,7 @@ export const getData = (data, def, loader = true, filter = []) => ({
   loader: safe(
     data,
     `${filter.length ? '.data.' : ''}${filter.join('.')}.loading.status`,
-    typeof loader !== 'boolean' ? true : loader,
+    typeof loader !== 'boolean' ? false : loader,
   ),
   lastUpdated: safe(
     data,
@@ -292,37 +292,49 @@ const checkKey = (key, name, dataType, message) => {
 const checkKeyWithMessage = (key, dataType, message) => {
   invariant(typeOf(key) === dataType, message);
 };
-const previousDataKey = [];
-const previousData = {};
+const previousData = new Map();
 export const useHook = (name = null, array = [], config = {}, callback) => {
+  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
   const store = useStore();
-  const exeuteRequiredData = (_data, e = {}) =>
-    e.requiredKey && Array.isArray(e.requiredKey) && typeOf(_data) === 'object'
-      ? Object.entries(_data).reduce(
-          (acc, [_DataKey, _DataValue]) => ({
-            ...acc,
-            ...(e.requiredKey.includes(_DataKey)
-              ? {
-                  [_DataKey]: _DataValue,
-                }
-              : {}),
-          }),
-          {},
-        )
-      : e.requiredKey
-      ? _data || {}
-      : _data;
-  const _GetData = () => {
-    let _data = {};
-    const _checkFilter = e =>
+  const [_key] = useState({});
+
+  const exeuteRequiredData = useCallback(
+    (_data, e = {}) =>
+      e.requiredKey &&
+      Array.isArray(e.requiredKey) &&
+      e.requiredKey.length > 0 &&
+      typeOf(_data) === 'object'
+        ? Object.entries(_data).reduce(
+            (acc, [_DataKey, _DataValue]) => ({
+              ...acc,
+              ...(e.requiredKey.includes(_DataKey)
+                ? {
+                    [_DataKey]: _DataValue,
+                  }
+                : {}),
+            }),
+            {},
+          )
+        : e.requiredKey
+        ? _data || {}
+        : _data,
+    [],
+  );
+
+  const _checkFilter = useCallback(
+    e =>
       e.filter
         ? Array.isArray(e.filter)
           ? e.filter
           : typeof e.filter === 'string'
           ? [e.filter]
           : undefined
-        : undefined;
-    const _getData = (e, isString) =>
+        : undefined,
+    [],
+  );
+
+  const _getData = useCallback(
+    (e, isString) =>
       (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key)
       ? !e.defaultDataFormat || !(isString ? array : e.key)
       : false)
@@ -357,7 +369,12 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
                 ? e.default
                 : undefined
               : undefined,
-          );
+          ),
+    [],
+  );
+
+  const _GetData = useCallback(() => {
+    let _data = {};
     if (
       name &&
       ((Array.isArray(array) && array.length > 0) ||
@@ -400,34 +417,29 @@ export const useHook = (name = null, array = [], config = {}, callback) => {
     else if (name) _data = safe(store, `.getState()[${name}]`);
     else _data = safe(store, `.getState()`) || {};
     return _data;
-  };
+  }, []);
   const [data, setData] = useState(_GetData());
-  const [_key] = useState({});
-  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
-
-  const execute = () => {
+  const execute = useCallback(() => {
     // const state = safe(store, `.getState()[${name}]`);
     // eslint-disable-next-line no-underscore-dangle
     const _data = _GetData();
-    const index = previousDataKey.indexOf(_key);
-    if (!isEqual(_data, previousData[index])) {
+    if (!isEqual(_data, previousData.get(_key))) {
       // previousData[`${key || name}_${_key}`] = _data;
       let callbackData;
       if (callback && typeof callback === 'function')
         callbackData = callback(_data);
-      previousData[index] = _data;
+      previousData.set(_key, _data);
       if (callbackData) setData(callbackData);
       else setData(_data);
     }
-  };
+  }, []);
+
   useEffect(() => {
-    const { length } = previousDataKey;
-    previousDataKey.push(_key);
-    previousData[length] = {};
+    previousData.set(_key, {});
     execute();
     const unSubscribe = store.subscribe(execute);
     return () => {
-      delete previousData[length];
+      delete previousData.delete(_key);
       unSubscribe();
     };
   }, []);
