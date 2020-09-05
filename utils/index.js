@@ -80,7 +80,7 @@ var nullCheck = function nullCheck(Error) {
   var callBack = arguments.length > 4 ? arguments[4] : undefined;
   var func = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : [];
   var errorDisplay = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
-  var returnDefaultData = def !== undefined ? def : null;
+  var returnDefaultData = def !== undefined ? def : undefined;
 
   if (typeof path !== 'string') {
     if (errorDisplay) {

@@ -23,9 +23,11 @@ import { CALL } from '../../utils/commonReduxSagaConverter/commonConstants';
 import { newObject } from '../../utils/helpers';
 export default ({ apiEndPoints, generatorKey, dontResetOnLogout }) => {
   const ConvertData = convertData(apiEndPoints);
-  const initialState = Object.keys(apiEndPoints[generatorKey]).reduce(
-    (acc, key) =>
-      newObject(acc, {
+  const { initialState, resetState } = Object.keys(
+    apiEndPoints[generatorKey],
+  ).reduce(
+    (acc, key) => ({
+      initialState: newObject({}, acc.initialState, {
         [ConvertData[generatorKey].constants[key][CALL]]: {
           loading: {},
           toast: {},
@@ -34,22 +36,20 @@ export default ({ apiEndPoints, generatorKey, dontResetOnLogout }) => {
             : {}),
         },
       }),
-    {},
-  );
-  const resetState = Object.keys(apiEndPoints[generatorKey]).reduce(
-    (acc, key) =>
-      (!Object.keys(dontResetOnLogout || {}).includes(key) &&
-        newObject(acc, {
-          [ConvertData[generatorKey].constants[key][CALL]]: {
-            loading: {},
-            toast: {},
-            ...(apiEndPoints[generatorKey][key].initialData
-              ? { data: apiEndPoints[generatorKey][key] }
-              : {}),
-          },
-        })) ||
-      acc,
-    {},
+      resetState:
+        (dontResetOnLogout[key] === 'undefined' &&
+          newObject({}, acc.resetState, {
+            [ConvertData[generatorKey].constants[key][CALL]]: {
+              loading: {},
+              toast: {},
+              ...(apiEndPoints[generatorKey][key].initialData
+                ? { data: apiEndPoints[generatorKey][key] }
+                : {}),
+            },
+          })) ||
+        acc.resetState,
+    }),
+    { initialState: {}, resetState: {} },
   );
   const { constants, actions, sagaConfig } = ConvertData[generatorKey];
   return {
