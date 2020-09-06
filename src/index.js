@@ -12,7 +12,7 @@ export {
   useStaleRefresh,
   useMutateReducer,
   useResetState,
-  useResetOnlyApiState,
+  useResetOnlyApiEndPointsState,
 } from './utils';
 export { useDispatch, useStore, useSelector } from 'react-redux';
 // export { useTestHook } from './hooks';

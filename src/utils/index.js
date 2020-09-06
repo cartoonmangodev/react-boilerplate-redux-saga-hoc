@@ -1,13 +1,12 @@
+/* eslint-disable indent */
 /* eslint-disable camelcase */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
-/* eslint-disable indent */
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { bindActionCreators } from 'redux';
 import { useStore, useDispatch } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import invariant from 'invariant';
-// import { connect } from 'react-redux';
 import {
   ON_ERROR,
   ON_SUCCESS,
@@ -23,8 +22,6 @@ import {
   filterArrayResetHandler,
 } from './customHandlers';
 import nullcheck from './nullCheck';
-// import { componentActions as DashboardActions } from '../containers/Dashboard/actions';
-// import { componentActions as AuthenticationActions } from '../containers/Authentication/actions';
 const cache = {};
 const cacheActions = {};
 const safe = nullcheck;
@@ -616,7 +613,7 @@ export const useResetState = () => {
   };
 };
 
-export const useResetOnlyApiState = () => {
+export const useResetOnlyApiEndPointsState = () => {
   const dispatch = useDispatch();
   return () => {
     dispatch({
