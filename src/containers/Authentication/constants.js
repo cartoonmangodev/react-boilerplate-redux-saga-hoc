@@ -1,23 +1,3 @@
-// import * as apiEndPoints from '../../config/apiEndPoints';
-// import { convertData } from '../../utils/commonReduxSagaConverter/sagaConverter';
-// import { CALL } from '../../utils/commonReduxSagaConverter/commonConstants';
-// import { newObject } from '../../utils/helpers';
-// const generatorKey = 'authentication';
-// const initialState = Object.keys(apiEndPoints[generatorKey]).reduce(
-//   (acc, key) =>
-//     newObject(acc, {
-//       [convertData[generatorKey].constants[key][CALL]]: {
-//         loading: {},
-//         toast: {},
-//       },
-//     }),
-//   {},
-// );
-
-// const { constants } = convertData[generatorKey];
-// export { constants, initialState, generatorKey };
-/* <============================ END ==============================> */
-
 import { convertData } from '../../utils/commonReduxSagaConverter/sagaConverter';
 import { CALL } from '../../utils/commonReduxSagaConverter/commonConstants';
 import { newObject } from '../../utils/helpers';

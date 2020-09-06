@@ -800,8 +800,6 @@ var commonConstants = {
   CUSTOM: CUSTOM
 };
 
-// import { componentActions as AuthenticationActions } from '../containers/Authentication/actions';
-
 var cache = {};
 var cacheActions = {};
 var safe = nullcheck;
