@@ -15,11 +15,15 @@ export {
 } from './utils/helpers';
 export {
   getData,
-  useHook as useQuery,
-  useActionsHook as useActions,
-  useMutation,
+  useQuery,
   toPromise,
+  useMutation,
+  useResetState,
   useStaleRefresh,
+  useMutateReducer,
+  useOptimizedQuery,
+  useActionsHook as useActions,
+  useResetOnlyApiEndPointsState,
 } from './utils';
 export { commonConstants } from './utils/commonReduxSagaConverter/commonConstants';
 export { default as withReduxSaga } from './utils/utils/next/withReduxSaga';
