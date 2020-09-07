@@ -20,9 +20,10 @@ import { commonConstants } from '../../utils/commonReduxSagaConverter/commonCons
 const safe = nullcheck;
 
 const checkKey = (key, name, dataType) => {
+  const convertArray = Array.isArray(dataType) ? dataType : [dataType];
   invariant(
-    (Array.isArray(dataType) ? dataType : [dataType]).includes(typeOf(key)),
-    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a (${dataType.join(
+    convertArray.includes(typeOf(key)),
+    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a (${convertArray.join(
       ' | ',
     )})`,
   );
@@ -54,7 +55,7 @@ export default ({
   );
   checkKey(apiEndPoints, 'apiEndPoints', 'object');
   checkKey(initialState, 'initialState', 'object');
-  checkKey(dontResetOnLogout, 'dontReset', 'object');
+  checkKey(dontResetOnLogout, 'dontReset', ['object', 'array']);
   if (sagaFunction) checkKey(sagaFunction, 'saga', 'function');
   checkKey(constantSaga, 'constantSaga', 'array');
   checkKey(handlers, 'handlers', 'array');

@@ -979,8 +979,8 @@ var useMutation = function useMutation(reducerName) {
         }
       });
     } else dispatch({
-      type: 'MUTATE_STATE',
-      payload: typeof value === 'function' ? value(store.getState()[reducerName][type]) : value
+      type: "".concat(reducerName, "_MUTATE_STATE"),
+      payload: _defineProperty({}, type, typeof value === 'function' ? value(store.getState()[reducerName][type]) : value)
     });
   };
 };
