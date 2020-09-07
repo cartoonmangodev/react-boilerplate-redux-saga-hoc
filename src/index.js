@@ -5,13 +5,14 @@ export { default as Safe } from './utils/nullCheck';
 export { default as FormValidator } from './utils/formValidation';
 export {
   getData,
-  useHook as useQuery,
-  useActionsHook as useActions,
-  useMutation,
+  useQuery,
   toPromise,
+  useMutation,
+  useResetState,
   useStaleRefresh,
   useMutateReducer,
-  useResetState,
+  useOptimizedQuery,
+  useActionsHook as useActions,
   useResetOnlyApiEndPointsState,
 } from './utils';
 export { useDispatch, useStore, useSelector } from 'react-redux';

@@ -290,7 +290,7 @@ const checkKeyWithMessage = (key, dataType, message) => {
   invariant(typeOf(key) === dataType, message);
 };
 const previousData = new Map();
-export const useHook = (name = null, array = [], config = {}, callback) => {
+export const useQuery = (name = null, array = [], config = {}, callback) => {
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
   const store = useStore();
   const [_key] = useState({});
@@ -629,4 +629,167 @@ export const useResetOnlyApiEndPointsState = reducerName => {
       type: reducerName ? `${reducerName}_RESET_API` : 'RESET_API',
     });
   };
+};
+
+export const useOptimizedQuery = (
+  name = null,
+  array = [],
+  config = {},
+  callback,
+) => {
+  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
+  const store = useStore();
+  const [_key] = useState({});
+
+  const exeuteRequiredData = useCallback(
+    (_data, e = {}) =>
+      e.requiredKey &&
+      Array.isArray(e.requiredKey) &&
+      e.requiredKey.length > 0 &&
+      typeOf(_data) === 'object'
+        ? Object.entries(_data).reduce(
+            (acc, [_DataKey, _DataValue]) => ({
+              ...acc,
+              ...(e.requiredKey.includes(_DataKey)
+                ? {
+                    [_DataKey]: _DataValue,
+                  }
+                : {}),
+            }),
+            {},
+          )
+        : e.requiredKey
+        ? _data || {}
+        : _data,
+    [],
+  );
+
+  const _checkFilter = useCallback(
+    e =>
+      e.filter
+        ? Array.isArray(e.filter)
+          ? e.filter
+          : typeof e.filter === 'string'
+          ? [e.filter]
+          : undefined
+        : undefined,
+    [],
+  );
+
+  const _getData = useCallback(
+    (e, isString) =>
+      ((typeof e.defaultDataFormat === 'boolean'
+        ? e.defaultDataFormat
+        : true) || !(isString ? array : e.key)
+      ? !(typeof e.defaultDataFormat === 'boolean'
+          ? e.defaultDataFormat
+          : true) || !(isString ? array : e.key)
+      : false)
+        ? (isString
+          ? array
+          : e.key)
+          ? safe(
+              store,
+              `.getState()[${name}][${isString ? array : e.key}]${
+                e.query ? e.query : ''
+              }`,
+              e.default,
+            )
+          : name
+          ? safe(
+              store,
+              `.getState()[${name}]${e.query ? e.query : ''}`,
+              e.default,
+            )
+          : safe(store, `.getState()${e.query ? e.query : ''}`, e.default)
+        : safe(
+            getData(
+              safe(store, `.getState()[${name}][${isString ? array : e.key}]`),
+              e.query ? undefined : e.default || undefined,
+              e.initialLoaderState || false,
+              _checkFilter(e),
+              e.dataQuery,
+            ),
+            `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
+            e.query
+              ? e.default !== undefined
+                ? e.default
+                : undefined
+              : undefined,
+          ),
+    [],
+  );
+
+  const _GetData = useCallback(() => {
+    let _data = {};
+    if (
+      name &&
+      ((Array.isArray(array) && array.length > 0) ||
+        (typeOf(array) === 'object' && Object.keys(array).length > 0))
+    ) {
+      // eslint-disable-next-line consistent-return
+      // eslint-disable-next-line no-underscore-dangle
+      _data = (typeOf(array) === 'object' ? [array] : array).reduce(
+        (acc, e) => {
+          if (typeOf(e) === 'object') {
+            if (typeOf(array) === 'object')
+              return exeuteRequiredData(_getData(e), e);
+            const _arr = [...acc];
+            _arr.push(exeuteRequiredData(_getData(e), e));
+            return _arr;
+          }
+          if (typeOf(array) === 'object')
+            return safe(store, `.getState()[${name}][${e}]`);
+          const _arr = [...acc];
+          _arr.push(safe(store, `.getState()[${name}][${e}]`));
+          return _arr;
+        },
+        typeOf(array) === 'object' ? {} : [],
+      );
+      // if()
+    } else if (
+      typeof array === 'string' &&
+      config &&
+      typeOf(config) === 'array'
+    )
+      _data = config.reduce(
+        (acc, _config) => [
+          ...acc,
+          exeuteRequiredData(_getData(_config, true), _config),
+        ],
+        [],
+      );
+    else if (typeof array === 'string')
+      _data = exeuteRequiredData(_getData(config, true), config);
+    else if (name) _data = safe(store, `.getState()[${name}]`);
+    else _data = safe(store, `.getState()`) || {};
+    return _data;
+  }, []);
+
+  const [data, setData] = useState(_GetData());
+  const execute = useCallback(() => {
+    // const state = safe(store, `.getState()[${name}]`);
+    // eslint-disable-next-line no-underscore-dangle
+    const _data = _GetData();
+    if (!isEqual(_data, previousData.get(_key))) {
+      // previousData[`${key || name}_${_key}`] = _data;
+      let callbackData;
+      if (callback && typeof callback === 'function')
+        callbackData = callback(_data);
+      previousData.set(_key, _data);
+      if (callbackData) setData(callbackData);
+      else setData(_data);
+    }
+  }, []);
+
+  useEffect(() => {
+    previousData.set(_key, {});
+    execute();
+    const unSubscribe = store.subscribe(execute);
+    return () => {
+      delete previousData.delete(_key);
+      unSubscribe();
+    };
+  }, []);
+  return data;
 };
