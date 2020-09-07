@@ -516,11 +516,13 @@ export const useMutation = reducerName => {
       });
     } else
       dispatch({
-        type: 'MUTATE_STATE',
-        payload:
-          typeof value === 'function'
-            ? value(store.getState()[reducerName][type])
-            : value,
+        type: `${reducerName}_MUTATE_STATE`,
+        payload: {
+          [type]:
+            typeof value === 'function'
+              ? value(store.getState()[reducerName][type])
+              : value,
+        },
       });
   };
 };
@@ -599,32 +601,32 @@ export function useStaleRefresh(
   return [refresh];
 }
 
-export const useMutateReducer = () => {
+export const useMutateReducer = reducerName => {
   const store = useStore();
   const dispatch = useDispatch();
   return callback => {
     const state = store.getState();
     dispatch({
-      type: 'MUTATE_STATE',
+      type: reducerName ? `${reducerName}_MUTATE_STATE` : 'MUTATE_STATE',
       payload: callback(state) || state,
     });
   };
 };
 
-export const useResetState = () => {
+export const useResetState = reducerName => {
   const dispatch = useDispatch();
   return () => {
     dispatch({
-      type: 'RESET_STATE',
+      type: reducerName ? `${reducerName}_RESET_STATE` : 'RESET_STATE',
     });
   };
 };
 
-export const useResetOnlyApiEndPointsState = () => {
+export const useResetOnlyApiEndPointsState = reducerName => {
   const dispatch = useDispatch();
   return () => {
     dispatch({
-      type: 'RESET_API',
+      type: reducerName ? `${reducerName}_RESET_API` : 'RESET_API',
     });
   };
 };

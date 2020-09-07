@@ -958,27 +958,29 @@ var useMutation = function useMutation(reducerName) {
     if (type) invariant(_reducer_keys.includes(type), // type.includes('_CALL') && type.slice(-5) === '_CALL',
     "'key' is invalid.".concat(type, " not found in ").concat(reducerName, " reducer"));
     checkKey(filter, 'filter', 'array');
-    checkKey(value, 'value', 'object');
     checkKey(type, 'key', 'string');
-    if (type.includes('_CALL') && type.slice(-5) === '_CALL') dispatch({
-      type: type.slice(0, -4).concat('CUSTOM_TASK'),
-      response: {
-        type: type,
-        method: ON_SUCCESS,
-        statusCode: 200,
-        mutation: true,
-        customTask: true,
-        data: {
-          data: value
-        },
-        payload: {
-          filter: filter
+
+    if (type.includes('_CALL') && type.slice(-5) === '_CALL') {
+      checkKey(value, 'value', 'object');
+      dispatch({
+        type: type.slice(0, -4).concat('CUSTOM_TASK'),
+        response: {
+          type: type,
+          method: ON_SUCCESS,
+          statusCode: 200,
+          mutation: true,
+          customTask: true,
+          data: {
+            data: typeof value === 'function' ? value(store.getState()[reducerName][type]) : value
+          },
+          payload: {
+            filter: filter
+          }
         }
-      }
-    });else dispatch({
-      type: type,
-      value: value,
-      filter: filter
+      });
+    } else dispatch({
+      type: 'MUTATE_STATE',
+      payload: typeof value === 'function' ? value(store.getState()[reducerName][type]) : value
     });
   };
 };

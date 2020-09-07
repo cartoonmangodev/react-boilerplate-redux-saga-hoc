@@ -21,8 +21,10 @@ const safe = nullcheck;
 
 const checkKey = (key, name, dataType) => {
   invariant(
-    typeOf(key) === dataType,
-    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a ${dataType}`,
+    (Array.isArray(dataType) ? dataType : [dataType]).includes(typeOf(key)),
+    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be a (${dataType.join(
+      ' | ',
+    )})`,
   );
 };
 
@@ -96,6 +98,7 @@ export default ({
     constantReducer,
     isMobile,
     handlers,
+    reducerName,
   });
   const componentData = {
     [`${reducerName}_hoc`]: {

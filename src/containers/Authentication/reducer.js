@@ -215,6 +215,7 @@ export default ({
   resetState: ResetState = {},
   isMobile: isMobileApp = false,
   constantReducer,
+  reducerName,
 }) => {
   const initialState = newObject(InitialState, componentState);
   return (state = initialState, action) => {
@@ -224,6 +225,12 @@ export default ({
       case 'MUTATE_STATE':
         return newObject(state, action.payload);
       case 'RESET_STATE':
+        return newObject(state, ResetState, InitialState);
+      case `${reducerName}_RESET_API`:
+        return newObject(state, ResetState);
+      case `${reducerName}_MUTATE_STATE`:
+        return newObject(state, action.payload);
+      case `${reducerName}_RESET_STATE`:
         return newObject(state, ResetState, InitialState);
       default: {
         let reducerState = newObject(state);

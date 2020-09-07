@@ -1,7 +1,18 @@
+/* eslint-disable indent */
+/* eslint-disable no-underscore-dangle */
 import { convertData } from '../../utils/commonReduxSagaConverter/sagaConverter';
 import { CALL } from '../../utils/commonReduxSagaConverter/commonConstants';
 import { newObject } from '../../utils/helpers';
 export default ({ apiEndPoints, generatorKey, dontResetOnLogout }) => {
+  const _dontResetOnLogout = Array.isArray(dontResetOnLogout)
+    ? dontResetOnLogout.reduce(
+        (acc, key) =>
+          Object.assign(acc, {
+            [key]: key,
+          }),
+        {},
+      )
+    : dontResetOnLogout;
   const ConvertData = convertData(apiEndPoints);
   const { initialState, resetState } = Object.keys(
     apiEndPoints[generatorKey],
@@ -17,7 +28,7 @@ export default ({ apiEndPoints, generatorKey, dontResetOnLogout }) => {
         },
       }),
       resetState:
-        (typeof dontResetOnLogout[key] === 'undefined' &&
+        (typeof _dontResetOnLogout[key] === 'undefined' &&
           newObject({}, acc.resetState, {
             [ConvertData[generatorKey].constants[key][CALL]]: {
               loading: {},
