@@ -492,9 +492,9 @@ export const useMutation = reducerName => {
         `'key' is invalid.${type} not found in ${reducerName} reducer`,
       );
     checkKey(filter, 'filter', 'array');
-    checkKey(value, 'value', 'object');
     checkKey(type, 'key', 'string');
-    if (type.includes('_CALL') && type.slice(-5) === '_CALL')
+    if (type.includes('_CALL') && type.slice(-5) === '_CALL') {
+      checkKey(value, 'value', 'object');
       dispatch({
         type: type.slice(0, -4).concat('CUSTOM_TASK'),
         response: {
@@ -503,17 +503,24 @@ export const useMutation = reducerName => {
           statusCode: 200,
           mutation: true,
           customTask: true,
-          data: { data: value },
+          data: {
+            data:
+              typeof value === 'function'
+                ? value(store.getState()[reducerName][type])
+                : value,
+          },
           payload: {
             filter,
           },
         },
       });
-    else
+    } else
       dispatch({
-        type,
-        value,
-        filter,
+        type: 'MUTATE_STATE',
+        payload:
+          typeof value === 'function'
+            ? value(store.getState()[reducerName][type])
+            : value,
       });
   };
 };
