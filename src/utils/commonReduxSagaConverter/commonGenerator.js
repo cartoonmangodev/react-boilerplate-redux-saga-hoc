@@ -287,7 +287,7 @@ export default function({
           ));
           let successCallbackResponse = null;
           if (typeof successCallback === 'function')
-            successCallbackResponse = yield call(successCallback, {
+            successCallbackResponse = yield* call(successCallback, {
               response: postData,
               posts: data,
               data: data.data,
@@ -367,7 +367,7 @@ export default function({
               message: successMessage = '',
             } = {},
           } = data || {};
-          const pollingRes = yield call(pollingCallback, {
+          const pollingRes = yield* call(pollingCallback, {
             response: data,
             data: data && data.data,
             message: successMessage,
@@ -432,7 +432,7 @@ export default function({
             } = {},
           } = error || {};
           if (typeof errorCallback === 'function')
-            yield errorCallback({
+            yield* call(errorCallback, {
               error,
               errorData: isResponseErrorParser
                 ? errorData &&
@@ -501,7 +501,12 @@ export default function({
       } finally {
         const Cancelled = yield cancelled();
         if (typeof finalCallback === 'function')
-          yield finalCallback({ type, action, payload: commonData, Cancelled });
+          yield* call(finalCallback, {
+            type,
+            action,
+            payload: commonData,
+            Cancelled,
+          });
         yield call(requestResponseHandler, {
           type,
           action,

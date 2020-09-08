@@ -208,12 +208,32 @@ export const DEFAULT_REDUCER_HANDLER = ({
   for (let i = 0; i < _method.length; i += 1) {
     switch (_method[i]) {
       case ON_SUCCESS: {
-        const updatedState = newObject(
-          DATA,
-          ({ [updateDataReducerKey || type]: Data }) => ({
-            [updateDataReducerKey || type]: commonHandler(Data, state, type),
-          }),
-        );
+        let updatedState;
+        if (
+          Array.isArray(updateDataReducerKey) &&
+          updateDataReducerKey.length
+        ) {
+          for (let j = 0; i < updateDataReducerKey.length; j += 1) {
+            DATA = newObject(
+              DATA,
+              ({ [updateDataReducerKey[j] || type]: Data }) => ({
+                [updateDataReducerKey[j] || type]: commonHandler(
+                  Data,
+                  state,
+                  type,
+                ),
+              }),
+            );
+          }
+          updatedState = DATA;
+        } else {
+          updatedState = newObject(
+            DATA,
+            ({ [updateDataReducerKey || type]: Data }) => ({
+              [updateDataReducerKey || type]: commonHandler(Data, state, type),
+            }),
+          );
+        }
         DATA = updateStateCallback
           ? updateStateCallback({
               state: updatedState,

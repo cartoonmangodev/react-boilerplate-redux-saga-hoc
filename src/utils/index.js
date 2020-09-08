@@ -274,11 +274,6 @@ export const mapDispatchToProps = (
     : {}),
 });
 
-// export const connectHoc = connect(
-//   null,
-//   mapDispatchToProps({ ...AuthenticationActions, ...DashboardActions }),
-// );
-
 const checkKey = (key, name, dataType, message) => {
   invariant(
     typeOf(key) === dataType,
