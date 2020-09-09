@@ -191,13 +191,14 @@ export default function({
       let postData = '';
       let cancelTask = '';
       try {
+        const cacheId = `${_url || ''}_${JSON.stringify(request)}`;
         if (
           cacheControl &&
           request.method === 'GET' &&
-          _cache[_url] &&
+          _cache[cacheId] &&
           !polling
         ) {
-          postData = { ..._cache[_url] };
+          postData = { ..._cache[cacheId] };
         } else {
           const { posts: _postData, cancel: _cancelTask } = yield race({
             posts:
@@ -394,7 +395,7 @@ export default function({
               response: postData,
               data: data && data.data && data.data.data,
             });
-            _cache[_url] = postData;
+            _cache[cacheId] = postData;
           }
       } catch (error) {
         if (error && typeof error === 'object' && !error.isAxiosError)

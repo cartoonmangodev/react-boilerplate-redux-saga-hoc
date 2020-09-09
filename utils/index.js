@@ -1056,10 +1056,7 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
   React.useEffect(function () {
     prevArgs.current = arg;
   });
-  return {
-    refresh: refresh,
-    isUpdating: isUpdating
-  };
+  return [refresh, isUpdating];
 }
 var useMutateReducer = function useMutateReducer(reducerName) {
   var store = reactRedux.useStore();
