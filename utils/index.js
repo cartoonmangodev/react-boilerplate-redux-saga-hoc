@@ -1010,7 +1010,12 @@ function hashArgs() {
 function useStaleRefresh(fn, name) // initialLoadingstate = true,
 {
   var arg = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var prevArgs = React.useRef(null); // const [data, setData] = useState(null);
+  var prevArgs = React.useRef(null);
+
+  var _useState7 = React.useState(null),
+      _useState8 = _slicedToArray(_useState7, 2),
+      isUpdating = _useState8[0],
+      setIsUpdating = _useState8[1];
 
   var refresh = React.useCallback(function () {
     var _ref22 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -1022,6 +1027,7 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
     var cacheID = hashArgs(name, args); // look in cache and set response if present
     // fetch new data
 
+    if (CACHE[cacheID]) setIsUpdating(true);
     toPromise(fn, Object.assign({}, args, CACHE[cacheID] && !loader ? {
       initialCallData: CACHE[cacheID]
     } : {}, clearData ? {
@@ -1031,6 +1037,8 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
         clearDataOnStart: true
       }
     } : {})).then(function (newData) {
+      if (CACHE[cacheID]) setIsUpdating(false);
+
       if (newData && newData.status === 'SUCCESS') {
         CACHE[cacheID] = newData.data; // setData(newData);
       } // setLoading(false);
@@ -1048,16 +1056,19 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
   React.useEffect(function () {
     prevArgs.current = arg;
   });
-  return [refresh];
+  return {
+    refresh: refresh,
+    isUpdating: isUpdating
+  };
 }
 var useMutateReducer = function useMutateReducer(reducerName) {
   var store = reactRedux.useStore();
   var dispatch = reactRedux.useDispatch();
   return function (callback) {
-    var state = store.getState();
+    var state = reducerName ? store.getState()[reducerName] : store.getState();
     dispatch({
       type: reducerName ? "".concat(reducerName, "_MUTATE_STATE") : 'MUTATE_STATE',
-      payload: callback(state) || state
+      payload: callback(state) || {}
     });
   };
 };
@@ -1085,9 +1096,9 @@ var useOptimizedQuery = function useOptimizedQuery() {
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
   var store = reactRedux.useStore();
 
-  var _useState7 = React.useState({}),
-      _useState8 = _slicedToArray(_useState7, 1),
-      _key = _useState8[0];
+  var _useState9 = React.useState({}),
+      _useState10 = _slicedToArray(_useState9, 1),
+      _key = _useState10[0];
 
   var exeuteRequiredData = React.useCallback(function (_data) {
     var e = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -1140,10 +1151,10 @@ var useOptimizedQuery = function useOptimizedQuery() {
     return _data;
   }, []);
 
-  var _useState9 = React.useState(_GetData()),
-      _useState10 = _slicedToArray(_useState9, 2),
-      data = _useState10[0],
-      setData = _useState10[1];
+  var _useState11 = React.useState(_GetData()),
+      _useState12 = _slicedToArray(_useState11, 2),
+      data = _useState12[0],
+      setData = _useState12[1];
 
   var execute = React.useCallback(function () {
     // const state = safe(store, `.getState()[${name}]`);

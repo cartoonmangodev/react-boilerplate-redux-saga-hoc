@@ -595,7 +595,7 @@ export function useStaleRefresh(
     prevArgs.current = arg;
   });
 
-  return { refresh, isUpdating };
+  return [refresh, isUpdating];
 }
 
 export const useMutateReducer = reducerName => {
