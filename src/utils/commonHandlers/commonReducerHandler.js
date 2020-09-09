@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 /* eslint-disable indent */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
@@ -194,11 +195,15 @@ export const DEFAULT_REDUCER_HANDLER = ({
   );
   const {
     response: {
-      data: { data: successData = {} } = {},
+      customTask,
+      mutation,
+      data: { data: successData = {}, ...rest } = {},
       payload: {
         callback: { updateStateCallback } = {},
+        tasks,
         updateDataReducerKey,
       } = {},
+      error: { data: errorData = {} } = {},
     } = {},
   } = action;
   let DATA = state;
@@ -209,7 +214,56 @@ export const DEFAULT_REDUCER_HANDLER = ({
     switch (_method[i]) {
       case ON_SUCCESS: {
         let updatedState;
-        if (
+        const _tasks = tasks
+          ? Array.isArray(tasks) && tasks.filter(e => typeOf(e) === 'object')
+          : null;
+        if (_tasks && Array.isArray(_tasks) && _tasks.length > 0) {
+          for (let k = 0; k < _tasks.length; k += 1) {
+            const _commonHandler = COMMON_HANDLER.bind(null, {
+              handlers,
+              successData,
+              errorData,
+              successDataStatusCode: rest.statusCode,
+              customTask,
+              mutation,
+              ...action.response.payload,
+              ..._tasks[k],
+              tasks: undefined,
+            });
+            const _updateDataReducerKey =
+              (_tasks[k] && _tasks[k].updateDataReducerKey) ||
+              updateDataReducerKey;
+            if (
+              Array.isArray(_updateDataReducerKey) &&
+              _updateDataReducerKey.length > 0
+            ) {
+              for (let l = 0; l < _updateDataReducerKey.length; l += 1) {
+                DATA = newObject(
+                  DATA,
+                  ({ [_updateDataReducerKey[l] || type]: Data }) => ({
+                    [_updateDataReducerKey[l] || type]: _commonHandler(
+                      Data,
+                      state,
+                      type,
+                    ),
+                  }),
+                );
+              }
+            } else {
+              DATA = newObject(
+                DATA,
+                ({ [updateDataReducerKey || type]: Data }) => ({
+                  [updateDataReducerKey || type]: _commonHandler(
+                    Data,
+                    state,
+                    type,
+                  ),
+                }),
+              );
+            }
+          }
+          updatedState = DATA;
+        } else if (
           Array.isArray(updateDataReducerKey) &&
           updateDataReducerKey.length
         ) {
