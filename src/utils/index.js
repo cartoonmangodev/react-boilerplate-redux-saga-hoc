@@ -551,12 +551,13 @@ export function useStaleRefresh(
   // initialLoadingstate = true,
 ) {
   const prevArgs = useRef(null);
-  // const [data, setData] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(null);
   const refresh = useCallback(({ loader, clearData, config } = {}) => {
     const args = config || arg;
     const cacheID = hashArgs(name, args);
     // look in cache and set response if present
     // fetch new data
+    if (CACHE[cacheID]) setIsUpdating(true);
     toPromise(
       fn,
       Object.assign(
@@ -572,6 +573,7 @@ export function useStaleRefresh(
           : {},
       ),
     ).then(newData => {
+      if (CACHE[cacheID]) setIsUpdating(false);
       if (newData && newData.status === 'SUCCESS') {
         CACHE[cacheID] = newData.data;
         // setData(newData);
@@ -593,21 +595,22 @@ export function useStaleRefresh(
     prevArgs.current = arg;
   });
 
-  return [refresh];
+  return { refresh, isUpdating };
 }
 
 export const useMutateReducer = reducerName => {
   const store = useStore();
   const dispatch = useDispatch();
   return callback => {
-    const state = store.getState();
+    const state = reducerName
+      ? store.getState()[reducerName]
+      : store.getState();
     dispatch({
       type: reducerName ? `${reducerName}_MUTATE_STATE` : 'MUTATE_STATE',
-      payload: callback(state) || state,
+      payload: callback(state) || {},
     });
   };
 };
-
 export const useResetState = reducerName => {
   const dispatch = useDispatch();
   return () => {
