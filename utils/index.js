@@ -983,11 +983,13 @@ var useMutation = function useMutation(reducerName) {
 };
 var toPromise = function toPromise(action) {
   var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var isReject = arguments.length > 2 ? arguments[2] : undefined;
   if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined') checkKeyWithMessage(config, 'object', "toPromise() : Expected a config (second parameter) to be object");
   return new Promise(function (resolve, reject) {
     return action(_objectSpread({}, config, {
       resolve: resolve,
-      reject: reject
+      reject: reject,
+      isReject: isReject
     }));
   });
 };

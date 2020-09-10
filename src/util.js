@@ -21,6 +21,7 @@ export {
   useResetState,
   useStaleRefresh,
   useMutateReducer,
+  toPromiseFunction,
   useOptimizedQuery,
   useActionsHook as useActions,
   useResetOnlyApiEndPointsState,

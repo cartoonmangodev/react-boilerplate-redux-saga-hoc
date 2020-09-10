@@ -534,6 +534,18 @@ export const toPromise = (action, config = {}, isReject) => {
   );
 };
 
+export const toPromiseFunction = (action, isReject) => config => {
+  if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined')
+    checkKeyWithMessage(
+      config,
+      'object',
+      `toPromise() : Expected a config (second parameter) to be object`,
+    );
+  return new Promise((resolve, reject) =>
+    action({ ...config, resolve, reject, isReject }),
+  );
+};
+
 const CACHE = {};
 
 function stringify(val) {
