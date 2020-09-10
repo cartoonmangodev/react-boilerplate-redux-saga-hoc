@@ -52,6 +52,7 @@ export default function({
     payload: {
       resolve,
       reject,
+      isReject,
       request: {
         asyncFunction = null,
         asyncFunctionParams = null,
@@ -404,7 +405,13 @@ export default function({
         if (!polling && retry && retry - 1 >= count) {
           // console.log(count);
         } else {
-          if (resolve && typeOf(resolve) === 'function')
+          if (isReject && reject && typeOf(reject) === 'function')
+            reject({
+              status: 'ERROR',
+              error,
+              respone: error && error.response,
+            });
+          else if (resolve && typeOf(resolve) === 'function')
             resolve({
               status: 'ERROR',
               error,

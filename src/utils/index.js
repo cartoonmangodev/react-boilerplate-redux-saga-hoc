@@ -522,7 +522,7 @@ export const useMutation = reducerName => {
   };
 };
 
-export const toPromise = (action, config = {}) => {
+export const toPromise = (action, config = {}, isReject) => {
   if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined')
     checkKeyWithMessage(
       config,
@@ -530,7 +530,7 @@ export const toPromise = (action, config = {}) => {
       `toPromise() : Expected a config (second parameter) to be object`,
     );
   return new Promise((resolve, reject) =>
-    action({ ...config, resolve, reject }),
+    action({ ...config, resolve, reject, isReject }),
   );
 };
 
