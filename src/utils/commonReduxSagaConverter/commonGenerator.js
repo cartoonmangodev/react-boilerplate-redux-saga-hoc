@@ -292,6 +292,7 @@ export default function({
               response: postData,
               posts: data,
               data: data.data,
+              res: data && data.data && data.data.data,
               message: successMessage,
               status: successStatus,
             });
