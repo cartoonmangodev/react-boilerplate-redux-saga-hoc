@@ -1024,6 +1024,7 @@ function hashArgs() {
 function useStaleRefresh(fn, name) // initialLoadingstate = true,
 {
   var arg = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  var initial = arguments.length > 3 ? arguments[3] : undefined;
   var prevArgs = React.useRef(null);
 
   var _useState7 = React.useState(null),
@@ -1058,15 +1059,15 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
       } // setLoading(false);
 
     });
-  }, []);
+  }, [arg, initial]);
   React.useEffect(function () {
     // args is an object so deep compare to rule out false changes
     if (isEqual(arg, prevArgs.current)) {
       return;
     }
 
-    refresh(); // cacheID is how a cache is identified against a unique request
-  }, [arg, fn, name]);
+    if (initial) refresh(); // cacheID is how a cache is identified against a unique request
+  }, [arg, fn, name, initial]);
   React.useEffect(function () {
     prevArgs.current = arg;
   });

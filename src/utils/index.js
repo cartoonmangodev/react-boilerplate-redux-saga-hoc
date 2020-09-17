@@ -285,6 +285,7 @@ const checkKeyWithMessage = (key, dataType, message) => {
   invariant(typeOf(key) === dataType, message);
 };
 const previousData = new Map();
+const previousConfig = new Map();
 export const useQuery = (name = null, array = [], config = {}, callback) => {
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
   const store = useStore();
@@ -362,7 +363,7 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
                 : undefined
               : undefined,
           ),
-    [],
+    [array],
   );
 
   const _GetData = useCallback(() => {
@@ -409,7 +410,7 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
     else if (name) _data = safe(store, `.getState()[${name}]`);
     else _data = safe(store, `.getState()`) || {};
     return _data;
-  }, []);
+  }, [config, array]);
 
   const [data, setData] = useState(_GetData());
   const execute = useCallback(() => {
@@ -425,17 +426,31 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
       if (callbackData) setData(callbackData);
       else setData(_data);
     }
-  }, []);
+  }, [config, array]);
 
   useEffect(() => {
-    previousData.set(_key, {});
-    execute();
     const unSubscribe = store.subscribe(execute);
     return () => {
       delete previousData.delete(_key);
       unSubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    previousData.set(_key, {});
+    if (
+      !isEqual(previousConfig.get(_key), {
+        array,
+        config,
+      })
+    ) {
+      previousConfig.set(_key, {
+        array,
+        config,
+      });
+      execute();
+    }
+  }, [config, array]);
   return data;
 };
 
