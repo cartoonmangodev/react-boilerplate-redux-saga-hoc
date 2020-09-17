@@ -564,35 +564,38 @@ export function useStaleRefresh(
 ) {
   const prevArgs = useRef(null);
   const [isUpdating, setIsUpdating] = useState(null);
-  const refresh = useCallback(({ loader, clearData, config } = {}) => {
-    const args = config || arg;
-    const cacheID = hashArgs(name, args);
-    // look in cache and set response if present
-    // fetch new data
-    if (CACHE[cacheID]) setIsUpdating(true);
-    toPromise(
-      fn,
-      Object.assign(
-        {},
-        args,
-        CACHE[cacheID] && !loader ? { initialCallData: CACHE[cacheID] } : {},
-        clearData
-          ? {
-              task: args.task
-                ? { ...args.task, clearDataOnStart: true }
-                : { clearDataOnStart: true },
-            }
-          : {},
-      ),
-    ).then(newData => {
-      if (CACHE[cacheID]) setIsUpdating(false);
-      if (newData && newData.status === 'SUCCESS') {
-        CACHE[cacheID] = newData.data;
-        // setData(newData);
-      }
-      // setLoading(false);
-    });
-  }, []);
+  const refresh = useCallback(
+    ({ loader, clearData, config } = {}) => {
+      const args = config || arg;
+      const cacheID = hashArgs(name, args);
+      // look in cache and set response if present
+      // fetch new data
+      if (CACHE[cacheID]) setIsUpdating(true);
+      toPromise(
+        fn,
+        Object.assign(
+          {},
+          args,
+          CACHE[cacheID] && !loader ? { initialCallData: CACHE[cacheID] } : {},
+          clearData
+            ? {
+                task: args.task
+                  ? { ...args.task, clearDataOnStart: true }
+                  : { clearDataOnStart: true },
+              }
+            : {},
+        ),
+      ).then(newData => {
+        if (CACHE[cacheID]) setIsUpdating(false);
+        if (newData && newData.status === 'SUCCESS') {
+          CACHE[cacheID] = newData.data;
+          // setData(newData);
+        }
+        // setLoading(false);
+      });
+    },
+    [arg],
+  );
 
   useEffect(() => {
     // args is an object so deep compare to rule out false changes
