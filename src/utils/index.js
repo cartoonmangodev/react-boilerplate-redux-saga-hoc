@@ -560,6 +560,7 @@ export function useStaleRefresh(
   fn,
   name, // reducer constants
   arg = {},
+  initial,
   // initialLoadingstate = true,
 ) {
   const prevArgs = useRef(null);
@@ -594,7 +595,7 @@ export function useStaleRefresh(
         // setLoading(false);
       });
     },
-    [arg],
+    [arg, initial],
   );
 
   useEffect(() => {
@@ -602,9 +603,9 @@ export function useStaleRefresh(
     if (isEqual(arg, prevArgs.current)) {
       return;
     }
-    refresh();
+    if (initial) refresh();
     // cacheID is how a cache is identified against a unique request
-  }, [arg, fn, name]);
+  }, [arg, fn, name, initial]);
 
   useEffect(() => {
     prevArgs.current = arg;
