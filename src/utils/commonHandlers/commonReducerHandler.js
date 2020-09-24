@@ -23,6 +23,7 @@ import {
   deleteKeyHandler,
   updateHandler,
   errorHandler,
+  callbackHandler,
   updateKeyHandler,
   dontUpdateDataHandler,
 } from '../customHandlers';
@@ -59,6 +60,10 @@ const HANDLERS = [
   {
     name: 'Splice-Data-Handler',
     handler: spliceHandler,
+  },
+  {
+    name: 'callback-Handler',
+    handler: callbackHandler,
   },
   {
     name: "Don't-Update-Data-Handler",

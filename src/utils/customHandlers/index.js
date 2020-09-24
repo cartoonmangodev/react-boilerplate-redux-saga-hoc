@@ -17,3 +17,4 @@ export { toggleKeyHandler } from './toggleKeyHandler';
 export { dataHandler } from './dataHandler';
 export { dontUpdateDataHandler } from './dont-update-Handler';
 export { spliceHandler } from './spliceHandler';
+export { callbackHandler } from './callbackHandler';
