@@ -10,11 +10,11 @@ export const convertData = apiEndPoints =>
       (acc, key) =>
         newObject(acc, {
           [key]: {
-            [CALL]: `app/conatainers/${curr}/${key}_${CALL}`,
-            [SUCCESS]: `app/conatainers/${curr}/${key}_${SUCCESS}`,
-            [CUSTOM]: `app/conatainers/${curr}/${key}_${CUSTOM}`,
-            [ERROR]: `app/conatainers/${curr}/${key}_${ERROR}`,
-            [CANCEL]: `app/conatainers/${curr}/${key}_${CANCEL}`,
+            [CALL]: `app/containers/${curr}/${key}_${CALL}`,
+            [SUCCESS]: `app/containers/${curr}/${key}_${SUCCESS}`,
+            [CUSTOM]: `app/containers/${curr}/${key}_${CUSTOM}`,
+            [ERROR]: `app/containers/${curr}/${key}_${ERROR}`,
+            [CANCEL]: `app/containers/${curr}/${key}_${CANCEL}`,
           },
         }),
       {},
