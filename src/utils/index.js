@@ -645,9 +645,10 @@ export const useMutateReducer = reducerName => {
 
 export const useResetState = reducerName => {
   const dispatch = useDispatch();
-  return () => {
+  return (dontResetKeys = []) => {
     dispatch({
       type: reducerName ? `${reducerName}_RESET_STATE` : 'RESET_STATE',
+      payload: dontResetKeys,
     });
   };
 };

@@ -1108,8 +1108,10 @@ var useResetState = function useResetState(reducerName) {
 var useResetOnlyApiEndPointsState = function useResetOnlyApiEndPointsState(reducerName) {
   var dispatch = reactRedux.useDispatch();
   return function () {
+    var dontResetKeys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     dispatch({
-      type: reducerName ? "".concat(reducerName, "_RESET_API") : 'RESET_API'
+      type: reducerName ? "".concat(reducerName, "_RESET_API") : 'RESET_API',
+      payload: dontResetKeys
     });
   };
 };
