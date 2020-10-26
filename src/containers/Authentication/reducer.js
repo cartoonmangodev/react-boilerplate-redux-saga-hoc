@@ -207,6 +207,20 @@ const updateState = ({
   }
 };
 
+const dontResetKeyCheck = (ResetState, action) =>
+  (action.payload.dontResetKeys || []).length > 0
+    ? Object.entries(ResetState).reduce(
+        (acc, [key, val]) =>
+          (action.payload.dontResetKeys || []).includes(key)
+            ? acc
+            : {
+                ...acc,
+                [key]: val,
+              },
+        {},
+      )
+    : ResetState;
+
 export default ({
   reducerFunction,
   constants: authenticationConstants,
@@ -221,17 +235,25 @@ export default ({
   return (state = initialState, action) => {
     switch (action.type) {
       case 'RESET_API':
-        return newObject(state, ResetState);
+        return newObject(state, dontResetKeyCheck(ResetState, action));
       case 'MUTATE_STATE':
         return newObject(state, action.payload);
       case 'RESET_STATE':
-        return newObject(state, ResetState, InitialState);
+        return newObject(
+          state,
+          dontResetKeyCheck(ResetState, action),
+          dontResetKeyCheck(InitialState, action),
+        );
       case `${reducerName}_RESET_API`:
-        return newObject(state, ResetState);
+        return newObject(state, dontResetKeyCheck(ResetState, action));
       case `${reducerName}_MUTATE_STATE`:
         return newObject(state, action.payload);
       case `${reducerName}_RESET_STATE`:
-        return newObject(state, ResetState, InitialState);
+        return newObject(
+          state,
+          dontResetKeyCheck(ResetState, action),
+          dontResetKeyCheck(InitialState, action),
+        );
       default: {
         let reducerState = newObject(state);
         if (constantReducer) {

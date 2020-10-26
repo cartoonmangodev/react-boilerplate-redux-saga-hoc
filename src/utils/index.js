@@ -642,6 +642,7 @@ export const useMutateReducer = reducerName => {
     });
   };
 };
+
 export const useResetState = reducerName => {
   const dispatch = useDispatch();
   return () => {
@@ -653,9 +654,10 @@ export const useResetState = reducerName => {
 
 export const useResetOnlyApiEndPointsState = reducerName => {
   const dispatch = useDispatch();
-  return () => {
+  return (dontResetKeys = []) => {
     dispatch({
       type: reducerName ? `${reducerName}_RESET_API` : 'RESET_API',
+      payload: dontResetKeys,
     });
   };
 };
