@@ -261,8 +261,8 @@ export const DEFAULT_REDUCER_HANDLER = ({
             } else {
               DATA = newObject(
                 DATA,
-                ({ [updateDataReducerKey || type]: Data }) => ({
-                  [updateDataReducerKey || type]: _commonHandler(
+                ({ [_updateDataReducerKey || type]: Data }) => ({
+                  [_updateDataReducerKey || type]: _commonHandler(
                     Data,
                     state,
                     type,
@@ -274,7 +274,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
           updatedState = DATA;
         } else if (
           Array.isArray(updateDataReducerKey) &&
-          updateDataReducerKey.length
+          updateDataReducerKey.length > 0
         ) {
           for (let j = 0; i < updateDataReducerKey.length; j += 1) {
             DATA = newObject(

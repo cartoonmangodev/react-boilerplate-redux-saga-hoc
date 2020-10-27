@@ -1100,8 +1100,10 @@ var useMutateReducer = function useMutateReducer(reducerName) {
 var useResetState = function useResetState(reducerName) {
   var dispatch = reactRedux.useDispatch();
   return function () {
+    var dontResetKeys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     dispatch({
-      type: reducerName ? "".concat(reducerName, "_RESET_STATE") : 'RESET_STATE'
+      type: reducerName ? "".concat(reducerName, "_RESET_STATE") : 'RESET_STATE',
+      payload: dontResetKeys
     });
   };
 };
