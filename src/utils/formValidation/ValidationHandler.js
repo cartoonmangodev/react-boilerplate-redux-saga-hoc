@@ -44,7 +44,17 @@ export default function validateForm(validationData) {
 
       const typeMatch = {};
       if (typeof callback === 'function' && !isEmpty)
-        error[`${key}`] = callback(value) || null;
+        error[`${key}`] =
+          callback({
+            type,
+            value,
+            message,
+            optional,
+            formatMessage,
+            emptyMessage,
+            length,
+            regex,
+          }) || null;
       else if (!isEmpty) {
         // Add more cases depending upon the types that need to be checked
         // eslint-disable-next-line default-case
