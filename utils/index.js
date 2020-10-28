@@ -414,7 +414,9 @@ function validateForm(validationData) {
         optional = _formObject$optional === void 0 ? false : _formObject$optional,
         formatMessage = formObject.formatMessage,
         emptyMessage = formObject.emptyMessage,
-        length = formObject.length; // const isEmpty = validate._isEmpty(validationData[value].value);
+        length = formObject.length,
+        _formObject$regex = formObject.regex,
+        regex = _formObject$regex === void 0 ? {} : _formObject$regex; // const isEmpty = validate._isEmpty(validationData[value].value);
 
     var isEmpty;
 
@@ -432,7 +434,7 @@ function validateForm(validationData) {
         // eslint-disable-next-line default-case
         switch (type) {
           case 'email':
-            typeMatch.hasPassed = _isValidEmail(value);
+            typeMatch.hasPassed = (regex.test || _isValidEmail)(value);
 
             if (!typeMatch.hasPassed) {
               error["".concat(key)] = message || 'Please enter Valid Email eg. (abc@abc.com)';
@@ -450,7 +452,7 @@ function validateForm(validationData) {
             break;
 
           case 'password':
-            typeMatch.hasPassed = _isValidPassword(value);
+            typeMatch.hasPassed = (regex.test || _isValidPassword)(value);
 
             if (!typeMatch.hasPassed) {
               error["".concat(key)] = message || 'Passwords must contain at least 6 characters to 20 characters';
@@ -473,7 +475,7 @@ function validateForm(validationData) {
             }
 
           case 'string':
-            typeMatch.hasPassed = _isValidString(value);
+            typeMatch.hasPassed = (regex.test || _isValidString)(value);
 
             if (!typeMatch.hasPassed) {
               error["".concat(key)] = message || 'Invalid format';
@@ -482,7 +484,7 @@ function validateForm(validationData) {
             break;
 
           case 'name':
-            typeMatch.hasPassed = _isValidName(value);
+            typeMatch.hasPassed = (regex.test || _isValidName)(value);
 
             if (!typeMatch.hasPassed) {
               error["".concat(key)] = formatMessage || 'Invalid format';
@@ -495,7 +497,7 @@ function validateForm(validationData) {
             break;
 
           case 'number':
-            typeMatch.hasPassed = _isValidNumber(value);
+            typeMatch.hasPassed = (regex.test || _isValidNumber)(value);
 
             if (!typeMatch.hasPassed) {
               error["".concat(key)] = message || 'Invalid format';
@@ -504,7 +506,7 @@ function validateForm(validationData) {
             break;
 
           case 'float':
-            typeMatch.hasPassed = _isValidFloatNumber(value);
+            typeMatch.hasPassed = (regex.test || _isValidFloatNumber)(value);
 
             if (!typeMatch.hasPassed) {
               error["".concat(key)] = message || 'Invalid format';
@@ -513,7 +515,7 @@ function validateForm(validationData) {
             break;
 
           case 'postiveIntegerReg':
-            typeMatch.hasPassed = _isPostiveInteger(value);
+            typeMatch.hasPassed = (regex.test || _isPostiveInteger)(value);
 
             if (!typeMatch.hasPassed) {
               error["".concat(key)] = message || 'Enter a valid input';

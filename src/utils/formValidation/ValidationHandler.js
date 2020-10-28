@@ -31,6 +31,7 @@ export default function validateForm(validationData) {
       emptyMessage,
       length,
       regex = {},
+      callback,
     } = formObject;
     // const isEmpty = validate._isEmpty(validationData[value].value);
     let isEmpty;
@@ -42,7 +43,9 @@ export default function validateForm(validationData) {
       }
 
       const typeMatch = {};
-      if (!isEmpty) {
+      if (typeof callback === 'function' && !isEmpty)
+        error[`${key}`] = callback(value) || null;
+      else if (!isEmpty) {
         // Add more cases depending upon the types that need to be checked
         // eslint-disable-next-line default-case
         switch (type) {
