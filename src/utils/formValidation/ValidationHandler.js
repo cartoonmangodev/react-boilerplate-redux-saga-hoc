@@ -30,6 +30,7 @@ export default function validateForm(validationData) {
       formatMessage,
       emptyMessage,
       length,
+      regex = {},
     } = formObject;
     // const isEmpty = validate._isEmpty(validationData[value].value);
     let isEmpty;
@@ -46,7 +47,7 @@ export default function validateForm(validationData) {
         // eslint-disable-next-line default-case
         switch (type) {
           case 'email':
-            typeMatch.hasPassed = validate._isValidEmail(value);
+            typeMatch.hasPassed = (regex.test || validate._isValidEmail)(value);
             if (!typeMatch.hasPassed) {
               error[`${key}`] =
                 message || 'Please enter Valid Email eg. (abc@abc.com)';
@@ -59,7 +60,9 @@ export default function validateForm(validationData) {
             }
             break;
           case 'password':
-            typeMatch.hasPassed = validate._isValidPassword(value);
+            typeMatch.hasPassed = (regex.test || validate._isValidPassword)(
+              value,
+            );
             if (!typeMatch.hasPassed) {
               error[`${key}`] =
                 message ||
@@ -78,13 +81,15 @@ export default function validateForm(validationData) {
             break;
           }
           case 'string':
-            typeMatch.hasPassed = validate._isValidString(value);
+            typeMatch.hasPassed = (regex.test || validate._isValidString)(
+              value,
+            );
             if (!typeMatch.hasPassed) {
               error[`${key}`] = message || 'Invalid format';
             }
             break;
           case 'name':
-            typeMatch.hasPassed = validate._isValidName(value);
+            typeMatch.hasPassed = (regex.test || validate._isValidName)(value);
             if (!typeMatch.hasPassed) {
               error[`${key}`] = formatMessage || 'Invalid format';
             }
@@ -97,19 +102,25 @@ export default function validateForm(validationData) {
             }
             break;
           case 'number':
-            typeMatch.hasPassed = validate._isValidNumber(value);
+            typeMatch.hasPassed = (regex.test || validate._isValidNumber)(
+              value,
+            );
             if (!typeMatch.hasPassed) {
               error[`${key}`] = message || 'Invalid format';
             }
             break;
           case 'float':
-            typeMatch.hasPassed = validate._isValidFloatNumber(value);
+            typeMatch.hasPassed = (regex.test || validate._isValidFloatNumber)(
+              value,
+            );
             if (!typeMatch.hasPassed) {
               error[`${key}`] = message || 'Invalid format';
             }
             break;
           case 'postiveIntegerReg':
-            typeMatch.hasPassed = validate._isPostiveInteger(value);
+            typeMatch.hasPassed = (regex.test || validate._isPostiveInteger)(
+              value,
+            );
             if (!typeMatch.hasPassed) {
               error[`${key}`] = message || 'Enter a valid input';
             }

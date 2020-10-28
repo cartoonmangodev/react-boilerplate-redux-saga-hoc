@@ -411,7 +411,10 @@ function validateForm(validationData) {
         value = formObject.value,
         message = formObject.message,
         _formObject$optional = formObject.optional,
-        optional = _formObject$optional === void 0 ? false : _formObject$optional; // const isEmpty = validate._isEmpty(validationData[value].value);
+        optional = _formObject$optional === void 0 ? false : _formObject$optional,
+        formatMessage = formObject.formatMessage,
+        emptyMessage = formObject.emptyMessage,
+        length = formObject.length; // const isEmpty = validate._isEmpty(validationData[value].value);
 
     var isEmpty;
 
@@ -482,10 +485,10 @@ function validateForm(validationData) {
             typeMatch.hasPassed = _isValidName(value);
 
             if (!typeMatch.hasPassed) {
-              error["".concat(key)] = message || 'Invalid format';
+              error["".concat(key)] = formatMessage || 'Invalid format';
             }
 
-            if (validationData[value] && value.length < 3) {
+            if (validationData[value] && value.length < (length === 0 ? length : 3)) {
               error["".concat(key)] = message || 'Name Must Be Greater Than 2 Characters';
             }
 
@@ -546,7 +549,7 @@ function validateForm(validationData) {
             break;
         }
       } else {
-        error[key] = validationData[key].type === 'mobile' ? message || 'Please enter Valid Mobile Number' : message || 'Please provide the necessary details';
+        error[key] = validationData[key].type === 'mobile' ? emptyMessage || 'Please enter Valid Mobile Number' : emptyMessage || 'Please provide the necessary details';
       }
     }
   });

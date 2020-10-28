@@ -8,3 +8,14 @@ export const stringReg = new RegExp(/^[a-zA-Z0-9\s,'-]*$/);
 export const numberReg = new RegExp('^[\\d]+$');
 export const decimalReg = new RegExp('^[+-]?([0-9]*[.])?[0-9]+');
 export const postiveIntegerReg = new RegExp('^([1-9][0-9]+|[0-9])$');
+
+export const regex = {
+  password: passwordReg,
+  email: emailReg,
+  mobile: mobileReg,
+  name: nameReg,
+  string: stringReg,
+  number: numberReg,
+  float: decimalReg,
+  postiveIntegerReg,
+};
