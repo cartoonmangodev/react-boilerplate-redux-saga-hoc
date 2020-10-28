@@ -16,12 +16,21 @@
 import * as validate from './Validator';
 // import findKey from 'lodash/isEmpty';
 /* eslint-disable no-underscore-dangle */
+
 export default function validateForm(validationData) {
   // let value = this[`${type}Ref`].value(),
   const error = { isError: false };
   // eslint-disable-next-line
   Object.entries(validationData).map(([key, formObject]) => {
-    const { type, value, message, optional = false } = formObject;
+    const {
+      type,
+      value,
+      message,
+      optional = false,
+      formatMessage,
+      emptyMessage,
+      length,
+    } = formObject;
     // const isEmpty = validate._isEmpty(validationData[value].value);
     let isEmpty;
     if (!optional || value) {
@@ -77,9 +86,12 @@ export default function validateForm(validationData) {
           case 'name':
             typeMatch.hasPassed = validate._isValidName(value);
             if (!typeMatch.hasPassed) {
-              error[`${key}`] = message || 'Invalid format';
+              error[`${key}`] = formatMessage || 'Invalid format';
             }
-            if (validationData[value] && value.length < 3) {
+            if (
+              validationData[value] &&
+              value.length < (length === 0 ? length : 3)
+            ) {
               error[`${key}`] =
                 message || 'Name Must Be Greater Than 2 Characters';
             }
@@ -126,8 +138,8 @@ export default function validateForm(validationData) {
       } else {
         error[key] =
           validationData[key].type === 'mobile'
-            ? message || 'Please enter Valid Mobile Number'
-            : message || 'Please provide the necessary details';
+            ? emptyMessage || 'Please enter Valid Mobile Number'
+            : emptyMessage || 'Please provide the necessary details';
       }
     }
   });
