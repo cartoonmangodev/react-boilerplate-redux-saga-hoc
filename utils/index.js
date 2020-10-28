@@ -429,7 +429,16 @@ function validateForm(validationData) {
       }
 
       var typeMatch = {};
-      if (typeof callback === 'function' && !isEmpty) error["".concat(key)] = callback(value) || null;else if (!isEmpty) {
+      if (typeof callback === 'function' && !isEmpty) error["".concat(key)] = callback({
+        type: type,
+        value: value,
+        message: message,
+        optional: optional,
+        formatMessage: formatMessage,
+        emptyMessage: emptyMessage,
+        length: length,
+        regex: regex
+      }) || null;else if (!isEmpty) {
         // Add more cases depending upon the types that need to be checked
         // eslint-disable-next-line default-case
         switch (type) {

@@ -296,7 +296,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
           Array.isArray(updateDataReducerKey) &&
           updateDataReducerKey.length > 0
         ) {
-          for (let j = 0; i < updateDataReducerKey.length; j += 1) {
+          for (let j = 0; j < updateDataReducerKey.length; j += 1) {
             DATA = newObject(
               DATA,
               ({ [updateDataReducerKey[j] || type]: Data }) => ({
