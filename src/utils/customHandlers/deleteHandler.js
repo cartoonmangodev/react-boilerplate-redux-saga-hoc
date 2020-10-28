@@ -39,5 +39,6 @@ export const deleteHandler = ({
     statusCode: successDataStatusCode || statusCode,
     lastUpdated: generateTimeStamp(),
     isError: false,
+    reset: false,
   };
 };

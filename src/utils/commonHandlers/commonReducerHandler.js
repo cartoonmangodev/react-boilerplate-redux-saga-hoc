@@ -26,6 +26,10 @@ import {
   callbackHandler,
   updateKeyHandler,
   dontUpdateDataHandler,
+  resetReducerHandler,
+  reducerErrorHandler,
+  reducerLoadingHandler,
+  reducerToastHandler,
 } from '../customHandlers';
 
 const HANDLERS = [
@@ -62,8 +66,24 @@ const HANDLERS = [
     handler: spliceHandler,
   },
   {
-    name: 'callback-Handler',
+    name: 'Callback-Handler',
     handler: callbackHandler,
+  },
+  {
+    name: 'Reset-Handler',
+    handler: resetReducerHandler,
+  },
+  {
+    name: 'Toast-Handler',
+    handler: reducerToastHandler,
+  },
+  {
+    name: 'Error-Handler',
+    handler: reducerErrorHandler,
+  },
+  {
+    name: 'Loading-Handler',
+    handler: reducerLoadingHandler,
   },
   {
     name: "Don't-Update-Data-Handler",
