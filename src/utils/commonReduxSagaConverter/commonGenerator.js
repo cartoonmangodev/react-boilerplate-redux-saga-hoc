@@ -471,8 +471,8 @@ export default function({
               });
             if (errorCallbackResponse) {
               if (
-                typeOf(commonData._errortask) === 'boolean' &&
-                commonData._errortask
+                typeOf(errorCallbackResponse) === 'boolean' &&
+                errorCallbackResponse
               )
                 commonData._errortask = true;
               else if (
