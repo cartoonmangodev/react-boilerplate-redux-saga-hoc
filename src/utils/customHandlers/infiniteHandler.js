@@ -49,7 +49,7 @@ export const infiniteHandler = ({
   error: false,
   lastUpdated: generateTimeStamp(),
   statusCode: successDataStatusCode || statusCode,
-  isInfinite: true,
+  isInfinite: limit !== undefined,
   isError: false,
   infiniteEnd:
     setInfiniteEnd !== undefined && typeof setInfiniteEnd === 'function'
