@@ -487,6 +487,8 @@ export default function({
                 if (errorCallbackResponse.updateDataReducerKey)
                   commonData.updateDataReducerKey =
                     errorCallbackResponse.updateDataReducerKey;
+                if (typeOf(errorCallbackResponse.tasks) !== 'undefined')
+                  commonData.tasks = errorCallbackResponse.tasks;
                 if (
                   typeOf(errorCallbackResponse.tasks) === 'array' &&
                   errorCallbackResponse.tasks.filter(e => e.task || e.filter)
