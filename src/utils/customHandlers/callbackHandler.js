@@ -9,8 +9,8 @@ export const callbackHandler = ({
   successDataStatusCode,
 }) => ({ data: oldData = {}, statusCode, ...rest } = {}) =>
   callback({
-    old: oldData,
-    new: successData,
-    rest,
+    oldData: oldData,
+    newData: successData,
+    rest: { ...rest, statusCode },
     status: statusCode || successDataStatusCode,
   });

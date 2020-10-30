@@ -299,6 +299,7 @@ export default function({
             });
           if (successCallbackResponse)
             if (typeOf(successCallbackResponse) === 'object') {
+              commonData._errortask = undefined;
               if (typeOf(successCallbackResponse.task) === 'object')
                 commonData.task = successCallbackResponse.task;
               if (successCallbackResponse.filter)
@@ -307,7 +308,7 @@ export default function({
                 commonData.updateDataReducerKey =
                   successCallbackResponse.updateDataReducerKey;
               if (
-                typeOf(successCallbackResponse) === 'array' &&
+                typeOf(successCallbackResponse.tasks) === 'array' &&
                 successCallbackResponse.tasks.filter(e => e.task || e.filter)
                   .length > 0
               )
@@ -440,32 +441,70 @@ export default function({
               } = {},
             } = {},
           } = error || {};
-          if (typeof errorCallback === 'function')
-            yield call(errorCallback, {
-              error,
-              errorData: isResponseErrorParser
-                ? errorData &&
-                  typeof responseErrorParser(errorData) === 'object' &&
-                  Object.keys(responseErrorParser(errorData) || {}).length > 0
-                  ? responseErrorParser(errorData)
-                  : errorData
-                : errorData,
-              ...(typeof errorParser === 'function'
-                ? {
-                    errorParser: errorParser({
-                      error,
-                      errorData,
-                      status: errorStatus,
-                      response: error && error.response,
-                      message: errorMessage,
-                    }),
-                  }
-                : {}),
-              message: errorMessage,
-              status: errorStatus,
-              response: error && error.response,
-              errors: errorData,
-            });
+          if (typeof errorCallback === 'function') {
+            let errorCallbackResponse = null;
+            if (typeof errorCallback === 'function')
+              errorCallbackResponse = yield call(errorCallback, {
+                error,
+                errorData: isResponseErrorParser
+                  ? errorData &&
+                    typeof responseErrorParser(errorData) === 'object' &&
+                    Object.keys(responseErrorParser(errorData) || {}).length > 0
+                    ? responseErrorParser(errorData)
+                    : errorData
+                  : errorData,
+                ...(typeof errorParser === 'function'
+                  ? {
+                      errorParser: errorParser({
+                        error,
+                        errorData,
+                        status: errorStatus,
+                        response: error && error.response,
+                        message: errorMessage,
+                      }),
+                    }
+                  : {}),
+                message: errorMessage,
+                status: errorStatus,
+                response: error && error.response,
+                errors: errorData,
+              });
+            if (errorCallbackResponse) {
+              if (
+                typeOf(commonData._errortask) === 'boolean' &&
+                commonData._errortask
+              )
+                commonData._errortask = true;
+              else if (
+                typeOf(errorCallbackResponse) === 'object' &&
+                Object.keys(errorCallbackResponse).length > 0
+              ) {
+                commonData._errortask = true;
+                if (typeOf(errorCallbackResponse.task) === 'object')
+                  commonData.task = errorCallbackResponse.task;
+                if (errorCallbackResponse.filter)
+                  commonData.filter = errorCallbackResponse.filter;
+                if (errorCallbackResponse.updateDataReducerKey)
+                  commonData.updateDataReducerKey =
+                    errorCallbackResponse.updateDataReducerKey;
+                if (
+                  typeOf(errorCallbackResponse.tasks) === 'array' &&
+                  errorCallbackResponse.tasks.filter(e => e.task || e.filter)
+                    .length > 0
+                )
+                  commonData.tasks = errorCallbackResponse.tasks;
+              } else if (
+                typeOf(errorCallbackResponse) === 'array' &&
+                errorCallbackResponse.filter(e => typeOf(e) === 'object')
+                  .length > 0
+              ) {
+                commonData._errortask = true;
+                commonData.tasks = errorCallbackResponse.filter(
+                  e => typeOf(e) === 'object',
+                );
+              } else commonData._errortask = false;
+            }
+          }
           yield (action.error = action.error.bind(
             {},
             errorStatus,

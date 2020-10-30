@@ -231,14 +231,16 @@ export const DEFAULT_REDUCER_HANDLER = ({
         callback: { updateStateCallback } = {},
         tasks,
         updateDataReducerKey,
+        _errortask,
       } = {},
       error: { data: errorData = {} } = {},
     } = {},
   } = action;
   let DATA = state;
-  const _method = (Array.isArray(method) ? method : [method]).filter(e =>
-    [ON_SUCCESS, ON_ERROR, ON_UNMOUNT].includes(e),
-  );
+  const _method = (Array.isArray(method)
+    ? method
+    : [method, _errortask ? ON_SUCCESS : null]
+  ).filter(e => [ON_SUCCESS, ON_ERROR, ON_UNMOUNT].includes(e));
   for (let i = 0; i < _method.length; i += 1) {
     switch (_method[i]) {
       case ON_SUCCESS: {
