@@ -229,6 +229,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
       data: { data: successData = {}, ...rest } = {},
       payload: {
         callback: { updateStateCallback } = {},
+        updateStateCallbackOnError,
         tasks,
         updateDataReducerKey,
         _errortask,
@@ -319,18 +320,28 @@ export const DEFAULT_REDUCER_HANDLER = ({
             }),
           );
         }
-        DATA = updateStateCallback
-          ? updateStateCallback({
-              state: updatedState,
-              data: successData,
-            }) || updatedState
-          : updatedState;
+        DATA =
+          updateStateCallback && !_errortask
+            ? updateStateCallback({
+                state: updatedState,
+                data: successData,
+                type: 'SUCCESS',
+              }) || updatedState
+            : updatedState;
         break;
       }
       case ON_ERROR: {
-        DATA = newObject(DATA, ({ [type]: Data }) => ({
+        const updatedState = newObject(DATA, ({ [type]: Data }) => ({
           [type]: newObject(Data, commmonErrorHandler()),
         }));
+        DATA =
+          updateStateCallback && updateStateCallbackOnError
+            ? updateStateCallback({
+                state: updatedState,
+                data: successData,
+                type: 'ERROR',
+              }) || updatedState
+            : updatedState;
         break;
       }
       case ON_UNMOUNT: {
