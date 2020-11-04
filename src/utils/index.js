@@ -397,7 +397,7 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
             return _arr;
           }
           if (typeOf(array) === 'object')
-            return safe(store, `.getState()[${name}][${e}]`);
+            return safe(store, `.getState()[${name}][${e.key}]`);
           const _arr = [...acc];
           _arr.push(safe(store, `.getState()[${name}][${e}]`));
           return _arr;

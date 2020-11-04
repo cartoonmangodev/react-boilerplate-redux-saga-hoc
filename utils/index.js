@@ -856,20 +856,23 @@ var useQuery = function useQuery() {
 
   var exeuteRequiredData = React.useCallback(function (_data) {
     var e = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    return e.requiredKey && Array.isArray(e.requiredKey) && e.requiredKey.length > 0 && typeOf(_data) === 'object' ? Object.entries(_data).reduce(function (acc, _ref18) {
+    return e && e.requiredKey && Array.isArray(e.requiredKey) && e.requiredKey.length > 0 && typeOf(_data) === 'object' ? Object.entries(_data).reduce(function (acc, _ref18) {
       var _ref19 = _slicedToArray(_ref18, 2),
           _DataKey = _ref19[0],
           _DataValue = _ref19[1];
 
       return _objectSpread({}, acc, {}, e.requiredKey.includes(_DataKey) ? _defineProperty({}, _DataKey, _DataValue) : {});
-    }, {}) : e.requiredKey ? _data || {} : _data;
+    }, {}) : e && e.requiredKey ? _data || {} : _data;
   }, []);
 
   var _checkFilter = React.useCallback(function (e) {
-    return e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : undefined : undefined;
+    return e && e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : undefined : undefined;
   }, []);
 
-  var _getData = React.useCallback(function (e, isString) {
+  var _getData = React.useCallback(function () {
+    var ee = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var isString = arguments.length > 1 ? arguments[1] : undefined;
+    var e = ee || {};
     return (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key) ? !e.defaultDataFormat || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : name ? safe(store, ".getState()[".concat(name, "]").concat(e.query ? e.query : ''), e.default) : safe(store, ".getState()".concat(e.query ? e.query : ''), e.default) : safe(getData(safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e), e.dataQuery), "".concat(e.query && typeOf(e.query) === 'string' ? e.query : ''), e.query ? e.default !== undefined ? e.default : undefined : undefined);
   }, [array]);
 
@@ -1173,7 +1176,9 @@ var useOptimizedQuery = function useOptimizedQuery() {
     return e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : undefined : undefined;
   }, []);
 
-  var _getData = React.useCallback(function (e, isString) {
+  var _getData = React.useCallback(function () {
+    var e = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var isString = arguments.length > 1 ? arguments[1] : undefined;
     return ((typeof e.defaultDataFormat === 'boolean' ? e.defaultDataFormat : true) || !(isString ? array : e.key) ? !(typeof e.defaultDataFormat === 'boolean' ? e.defaultDataFormat : true) || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : name ? safe(store, ".getState()[".concat(name, "]").concat(e.query ? e.query : ''), e.default) : safe(store, ".getState()".concat(e.query ? e.query : ''), e.default) : safe(getData(safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e), e.dataQuery), "".concat(e.query && typeOf(e.query) === 'string' ? e.query : ''), e.query ? e.default !== undefined ? e.default : undefined : undefined);
   }, []);
 
