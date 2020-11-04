@@ -292,6 +292,7 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
 
   const exeuteRequiredData = useCallback(
     (_data, e = {}) =>
+      e &&
       e.requiredKey &&
       Array.isArray(e.requiredKey) &&
       e.requiredKey.length > 0 &&
@@ -307,7 +308,7 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
             }),
             {},
           )
-        : e.requiredKey
+        : e && e.requiredKey
         ? _data || {}
         : _data,
     [],
@@ -315,7 +316,7 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
 
   const _checkFilter = useCallback(
     e =>
-      e.filter
+      e && e.filter
         ? Array.isArray(e.filter)
           ? e.filter
           : typeof e.filter === 'string'
@@ -326,8 +327,10 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
   );
 
   const _getData = useCallback(
-    (e, isString) =>
-      (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key)
+    (ee = {}, isString) => {
+      const e = ee || {};
+      return (typeof e.defaultDataFormat === 'boolean' ||
+      !(isString ? array : e.key)
       ? !e.defaultDataFormat || !(isString ? array : e.key)
       : false)
         ? (isString
@@ -361,7 +364,8 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
                 ? e.default
                 : undefined
               : undefined,
-          ),
+          );
+    },
     [array],
   );
 
@@ -717,7 +721,7 @@ export const useOptimizedQuery = (
   );
 
   const _getData = useCallback(
-    (e, isString) =>
+    (e = {}, isString) =>
       ((typeof e.defaultDataFormat === 'boolean'
         ? e.defaultDataFormat
         : true) || !(isString ? array : e.key)
