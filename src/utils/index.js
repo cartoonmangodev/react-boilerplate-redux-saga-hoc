@@ -230,7 +230,6 @@ export const getData = (data, def, loader = true, filter = []) => ({
   lastUpdated: safe(
     data,
     `${filter.length ? '.data.' : ''}${filter.join('.')}.lastUpdated`,
-    generateTimeStamp(),
   ),
   isInfinite: safe(
     data,

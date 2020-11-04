@@ -888,6 +888,21 @@ var useQuery = function useQuery() {
           _arr2.push(exeuteRequiredData(_getData(e), e));
 
           return _arr2;
+        } // Below condition ( one config for all the keys )
+
+
+        if (typeOf(e) === 'string' && typeOf(config) === 'object') {
+          var _config = _objectSpread({
+            key: e
+          }, config);
+
+          if (typeOf(array) === 'object') return exeuteRequiredData(_getData(_config), _config);
+
+          var _arr3 = _toConsumableArray(acc);
+
+          _arr3.push(exeuteRequiredData(_getData(_config), _config));
+
+          return _arr3;
         }
 
         if (typeOf(array) === 'object') return safe(store, ".getState()[".concat(name, "][").concat(e, "]"));
@@ -1172,11 +1187,11 @@ var useOptimizedQuery = function useOptimizedQuery() {
         if (typeOf(e) === 'object') {
           if (typeOf(array) === 'object') return exeuteRequiredData(_getData(e), e);
 
-          var _arr3 = _toConsumableArray(acc);
+          var _arr4 = _toConsumableArray(acc);
 
-          _arr3.push(exeuteRequiredData(_getData(e), e));
+          _arr4.push(exeuteRequiredData(_getData(e), e));
 
-          return _arr3;
+          return _arr4;
         }
 
         if (typeOf(array) === 'object') return safe(store, ".getState()[".concat(name, "][").concat(e, "]"));
