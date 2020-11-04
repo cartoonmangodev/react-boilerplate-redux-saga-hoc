@@ -384,6 +384,15 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
             _arr.push(exeuteRequiredData(_getData(e), e));
             return _arr;
           }
+          // Below condition ( one config for all the keys )
+          if (typeOf(e) === 'string' && typeOf(config) === 'object') {
+            const _config = { key: e, ...config };
+            if (typeOf(array) === 'object')
+              return exeuteRequiredData(_getData(_config), _config);
+            const _arr = [...acc];
+            _arr.push(exeuteRequiredData(_getData(_config), _config));
+            return _arr;
+          }
           if (typeOf(array) === 'object')
             return safe(store, `.getState()[${name}][${e}]`);
           const _arr = [...acc];
