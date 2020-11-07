@@ -908,7 +908,7 @@ var useQuery = function useQuery() {
           return _arr3;
         }
 
-        if (typeOf(array) === 'object') return safe(store, ".getState()[".concat(name, "][").concat(e, "]"));
+        if (typeOf(array) === 'object') return safe(store, ".getState()[".concat(name, "][").concat(e.key, "]"));
 
         var _arr = _toConsumableArray(acc);
 
