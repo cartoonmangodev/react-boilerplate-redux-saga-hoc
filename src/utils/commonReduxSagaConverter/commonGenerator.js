@@ -225,7 +225,7 @@ export default function({
             cancel: take(action.cancel),
           });
           cancelTask = _cancelTask;
-          postData = _postData;
+          postData = { ..._postData };
         }
         let data = postData ? { ...postData } : postData;
         postData = postData || {};
@@ -355,11 +355,18 @@ export default function({
           loop = false;
         } else if (process.env.NODE_ENV === 'test' && action.success)
           yield put(action.success({ data }));
-        else
+        else {
+          if (typeof errorCallback === 'function' && !cancelTask) {
+            errorCallback({
+              error: _postData,
+              isError: true,
+            });
+          }
           yield call(loaderGenerator, {
             type,
             commonData,
           });
+        }
         if (
           polling &&
           typeof window !== 'undefined' &&
@@ -437,6 +444,7 @@ export default function({
                   error.response.data &&
                   error.response.data[action.api.errorMessageKey]) ||
                   (error && error.response && error.response.statusText) ||
+                  (error && error.message) ||
                   '',
               } = {},
             } = {},
@@ -464,6 +472,9 @@ export default function({
                       }),
                     }
                   : {}),
+                isNetworkError:
+                  error && error.request && error.message === 'Network Error',
+                errorMessage: error && error.message,
                 message: errorMessage,
                 status: errorStatus,
                 response: error && error.response,
