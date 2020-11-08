@@ -359,6 +359,7 @@ export default function({
           if (typeof errorCallback === 'function' && !cancelTask) {
             errorCallback({
               error: _postData,
+              response: _postData,
               isError: true,
             });
           }

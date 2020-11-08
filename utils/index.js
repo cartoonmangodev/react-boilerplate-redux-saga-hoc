@@ -1268,7 +1268,7 @@ function withReduxSaga() {
     _createClass(WrappedComponent, [{
       key: "render",
       value: function render() {
-        return React__default.createElement(BaseComponent, this.props);
+        return /*#__PURE__*/React__default.createElement(BaseComponent, this.props);
       }
     }], [{
       key: "getInitialProps",
