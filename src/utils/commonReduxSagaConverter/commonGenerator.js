@@ -78,6 +78,7 @@ export default function({
         logoutCallback,
         finalCallback,
         pollingCallback,
+        cancelCallback,
         ...restCallback
       } = {},
       ...restPayload
@@ -227,6 +228,7 @@ export default function({
           cancelTask = _cancelTask;
           postData = { ..._postData };
         }
+        console.log(_postData);
         let data = postData ? { ...postData } : postData;
         postData = postData || {};
         if (postData && postData.data) {
@@ -275,7 +277,7 @@ export default function({
           }
         }
 
-        if (data) {
+        if (data && postData.data) {
           const {
             data: {
               status: successStatus = postData && postData.status,
@@ -335,6 +337,7 @@ export default function({
           if (typeof logoutCallback === 'function')
             setTimeout(() => logoutCallback(data), 500);
         } else if (cancelTask && typeof source.cancel === 'function') {
+          if (typeof cancelCallback === 'function') cancelCallback();
           yield source.cancel();
           const {
             response: { method: customMethod },
