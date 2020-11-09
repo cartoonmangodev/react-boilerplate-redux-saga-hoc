@@ -228,7 +228,6 @@ export default function({
           cancelTask = _cancelTask;
           postData = { ..._postData };
         }
-        console.log(_postData);
         let data = postData ? { ...postData } : postData;
         postData = postData || {};
         if (postData && postData.data) {
