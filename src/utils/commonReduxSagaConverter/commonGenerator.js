@@ -243,9 +243,9 @@ export default function({
               statusCode:
                 (postData.data || {})[statusKey] ||
                 (postData && postData.status),
-              message: (postData.data || {})[
-                action.api.responseMessageKey || 'message'
-              ],
+              message:
+                (postData.data || {})[action.api.responseMessageKey || ''] ||
+                (postData && postData.message),
               data:
                 (postData.data || {})[action.api.responseDataKey] ||
                 postData.data ||
@@ -361,6 +361,8 @@ export default function({
               error: _postData,
               response: _postData,
               isError: true,
+              isNetworkError:
+                _postData && _postData.message === 'Network Error',
             });
           }
           yield call(loaderGenerator, {
