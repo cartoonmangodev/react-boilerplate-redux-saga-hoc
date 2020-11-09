@@ -20,6 +20,7 @@ const type = {
   '[object Boolean]': 'boolean',
   '[object Object]': 'object',
   '[object Function]': 'function',
+  '[object Error]': 'error',
   // '[object Symbol]': 'symbol',
   // '[object GeneratorFunction]': 'generatorFunction',
 };

@@ -336,8 +336,9 @@ export default function({
           if (typeof logoutCallback === 'function')
             setTimeout(() => logoutCallback(data), 500);
         } else if (cancelTask && typeof source.cancel === 'function') {
-          if (typeof cancelCallback === 'function') cancelCallback();
-          yield source.cancel();
+          const cancelResponse = yield source.cancel();
+          if (typeof cancelCallback === 'function')
+            cancelCallback(cancelResponse);
           const {
             response: { method: customMethod },
           } = cancelTask || {};
@@ -413,156 +414,161 @@ export default function({
             _cache[cacheId] = postData;
           }
       } catch (error) {
-        if (error && typeof error === 'object' && !error.isAxiosError)
-          throw new Error(error);
-        if (!polling && retry && retry - 1 >= count) {
-          // console.log(count);
-        } else {
-          if (isReject && reject && typeOf(reject) === 'function')
-            reject({
-              status: 'ERROR',
-              error,
-              respone: error && error.response,
-            });
-          else if (resolve && typeOf(resolve) === 'function')
-            resolve({
-              status: 'ERROR',
-              error,
-              respone: error && error.response,
-            });
-          if (process.env.NODE_ENV === 'test') console.log(error);
-          const {
-            response: {
-              data: {
-                [action.api.errorDataKey || 'error']: errorData = (error &&
-                  error.response &&
-                  error.response.data) ||
-                  (error && error.response) ||
-                  '',
-                status: errorStatus = error &&
-                  error.response &&
-                  error.response.data &&
-                  (error.response.data[action.api.errorStatusKey] ||
-                    (error && error.response && error.response.status)),
-                message: errorMessage = (error &&
-                  error.response &&
-                  error.response.data &&
-                  error.response.data[action.api.errorMessageKey]) ||
-                  (error && error.response && error.response.statusText) ||
-                  (error && error.message) ||
-                  '',
-              } = {},
-            } = {},
-          } = error || {};
-          if (typeof errorCallback === 'function') {
-            let errorCallbackResponse = null;
-            if (typeof errorCallback === 'function')
-              errorCallbackResponse = yield call(errorCallback, {
-                error,
-                errorData: isResponseErrorParser
-                  ? errorData &&
-                    typeof responseErrorParser(errorData) === 'object' &&
-                    Object.keys(responseErrorParser(errorData) || {}).length > 0
-                    ? responseErrorParser(errorData)
-                    : errorData
-                  : errorData,
-                ...(typeof errorParser === 'function'
-                  ? {
-                      errorParser: errorParser({
-                        error,
-                        errorData,
-                        status: errorStatus,
-                        response: error && error.response,
-                        message: errorMessage,
-                      }),
-                    }
-                  : {}),
-                isNetworkError:
-                  error && error.request && error.message === 'Network Error',
-                errorMessage: error && error.message,
-                message: errorMessage,
-                status: errorStatus,
-                response: error && error.response,
-                errors: errorData,
-              });
-            if (errorCallbackResponse) {
-              if (
-                typeOf(errorCallbackResponse) === 'boolean' &&
-                errorCallbackResponse
-              )
-                commonData._errortask = true;
-              else if (
-                typeOf(errorCallbackResponse) === 'object' &&
-                Object.keys(errorCallbackResponse).length > 0
-              ) {
-                commonData._errortask = true;
-                if (typeOf(errorCallbackResponse.task) === 'object')
-                  commonData.task = errorCallbackResponse.task;
-                if (errorCallbackResponse.filter)
-                  commonData.filter = errorCallbackResponse.filter;
-                if (errorCallbackResponse.updateDataReducerKey)
-                  commonData.updateDataReducerKey =
-                    errorCallbackResponse.updateDataReducerKey;
-                if (typeOf(errorCallbackResponse.tasks) !== 'undefined')
-                  commonData.tasks = errorCallbackResponse.tasks;
-                if (
-                  typeOf(errorCallbackResponse.tasks) === 'array' &&
-                  errorCallbackResponse.tasks.filter(e => e.task || e.filter)
-                    .length > 0
-                )
-                  commonData.tasks = errorCallbackResponse.tasks;
-              } else if (
-                typeOf(errorCallbackResponse) === 'array' &&
-                errorCallbackResponse.filter(e => typeOf(e) === 'object')
-                  .length > 0
-              ) {
-                commonData._errortask = true;
-                commonData.tasks = errorCallbackResponse.filter(
-                  e => typeOf(e) === 'object',
-                );
-              } else commonData._errortask = false;
-            }
-          }
-          yield (action.error = action.error.bind(
-            {},
-            errorStatus,
-            errorMessage,
-          ));
-          if (axios.isCancel(error) && action.cancel) {
-            yield call(loaderGenerator, {
-              type,
-              commonData,
-            });
-            yield call(requestResponseHandler, {
-              type,
-              action,
-              payload: commonData,
-              actionData: rest,
-              method: constants.ON_CANCEL_ERROR,
-            });
+        try {
+          if (error && typeof error === 'object' && !error.isAxiosError)
+            throw new Error(error);
+          if (!polling && retry && retry - 1 >= count) {
+            // console.log(count);
           } else {
-            const loader = yield call(requestResponseHandler, {
-              error: {
-                response: {
-                  data: {
-                    status: errorStatus,
-                    data: errorDataHandling ? errorData : null,
-                    message: errorMessage,
-                  },
-                },
-              },
-              type,
-              action,
-              payload: commonData,
-              actionData: rest,
-              method: constants.ON_ERROR,
-            });
-            if (loader)
+            if (isReject && reject && typeOf(reject) === 'function')
+              reject({
+                status: 'ERROR',
+                error,
+                respone: error && error.response,
+              });
+            else if (resolve && typeOf(resolve) === 'function')
+              resolve({
+                status: 'ERROR',
+                error,
+                respone: error && error.response,
+              });
+            if (process.env.NODE_ENV === 'test') console.log(error);
+            const {
+              response: {
+                data: {
+                  [action.api.errorDataKey || 'error']: errorData = (error &&
+                    error.response &&
+                    error.response.data) ||
+                    (error && error.response) ||
+                    '',
+                  status: errorStatus = error &&
+                    error.response &&
+                    error.response.data &&
+                    (error.response.data[action.api.errorStatusKey] ||
+                      (error && error.response && error.response.status)),
+                  message: errorMessage = (error &&
+                    error.response &&
+                    error.response.data &&
+                    error.response.data[action.api.errorMessageKey]) ||
+                    (error && error.response && error.response.statusText) ||
+                    (error && error.message) ||
+                    '',
+                } = {},
+              } = {},
+            } = error || {};
+            if (typeof errorCallback === 'function') {
+              let errorCallbackResponse = null;
+              if (typeof errorCallback === 'function')
+                errorCallbackResponse = yield call(errorCallback, {
+                  error,
+                  errorData: isResponseErrorParser
+                    ? errorData &&
+                      typeof responseErrorParser(errorData) === 'object' &&
+                      Object.keys(responseErrorParser(errorData) || {}).length >
+                        0
+                      ? responseErrorParser(errorData)
+                      : errorData
+                    : errorData,
+                  ...(typeof errorParser === 'function'
+                    ? {
+                        errorParser: errorParser({
+                          error,
+                          errorData,
+                          status: errorStatus,
+                          response: error && error.response,
+                          message: errorMessage,
+                        }),
+                      }
+                    : {}),
+                  isNetworkError:
+                    error && error.request && error.message === 'Network Error',
+                  errorMessage: error && error.message,
+                  message: errorMessage,
+                  status: errorStatus,
+                  response: error && error.response,
+                  errors: errorData,
+                });
+              if (errorCallbackResponse) {
+                if (
+                  typeOf(errorCallbackResponse) === 'boolean' &&
+                  errorCallbackResponse
+                )
+                  commonData._errortask = true;
+                else if (
+                  typeOf(errorCallbackResponse) === 'object' &&
+                  Object.keys(errorCallbackResponse).length > 0
+                ) {
+                  commonData._errortask = true;
+                  if (typeOf(errorCallbackResponse.task) === 'object')
+                    commonData.task = errorCallbackResponse.task;
+                  if (errorCallbackResponse.filter)
+                    commonData.filter = errorCallbackResponse.filter;
+                  if (errorCallbackResponse.updateDataReducerKey)
+                    commonData.updateDataReducerKey =
+                      errorCallbackResponse.updateDataReducerKey;
+                  if (typeOf(errorCallbackResponse.tasks) !== 'undefined')
+                    commonData.tasks = errorCallbackResponse.tasks;
+                  if (
+                    typeOf(errorCallbackResponse.tasks) === 'array' &&
+                    errorCallbackResponse.tasks.filter(e => e.task || e.filter)
+                      .length > 0
+                  )
+                    commonData.tasks = errorCallbackResponse.tasks;
+                } else if (
+                  typeOf(errorCallbackResponse) === 'array' &&
+                  errorCallbackResponse.filter(e => typeOf(e) === 'object')
+                    .length > 0
+                ) {
+                  commonData._errortask = true;
+                  commonData.tasks = errorCallbackResponse.filter(
+                    e => typeOf(e) === 'object',
+                  );
+                } else commonData._errortask = false;
+              }
+            }
+            yield (action.error = action.error.bind(
+              {},
+              errorStatus,
+              errorMessage,
+            ));
+            if (axios.isCancel(error) && action.cancel) {
               yield call(loaderGenerator, {
                 type,
                 commonData,
               });
+              yield call(requestResponseHandler, {
+                type,
+                action,
+                payload: commonData,
+                actionData: rest,
+                method: constants.ON_CANCEL_ERROR,
+              });
+            } else {
+              const loader = yield call(requestResponseHandler, {
+                error: {
+                  response: {
+                    data: {
+                      status: errorStatus,
+                      data: errorDataHandling ? errorData : null,
+                      message: errorMessage,
+                    },
+                  },
+                },
+                type,
+                action,
+                payload: commonData,
+                actionData: rest,
+                method: constants.ON_ERROR,
+              });
+              if (loader)
+                yield call(loaderGenerator, {
+                  type,
+                  commonData,
+                });
+            }
           }
+        } catch (e) {
+          throw new Error(e);
         }
       } finally {
         const Cancelled = yield cancelled();
