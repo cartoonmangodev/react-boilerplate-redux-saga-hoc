@@ -275,9 +275,13 @@ var __importStar =
     return result;
   };
 
-Object.defineProperty(exports, '__esModule', {
-  value: true,
-});
+Object.defineProperty(
+  typeof exports !== 'undefined' ? exports : {},
+  '__esModule',
+  {
+    value: true,
+  },
+);
 
 var react_1 = __importStar(require('react'));
 

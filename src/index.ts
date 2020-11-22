@@ -1,14 +1,20 @@
 export { HOC } from './containers';
 export { default as Safe } from './utils/nullCheck';
-export { default as IndianStates } from './utils/indianStates';
-// export * as Regex from './utils/regex';
+// export { default as IndianStates } from './utils/indianStates';
+export { regex as FormValidatorRegex } from './utils/formValidation/ValidationRegex';
 export { default as FormValidator } from './utils/formValidation';
 export {
   getData,
-  useHook as useQuery,
-  useActionsHook as useActions,
-  useMutation,
+  useQuery,
   toPromise,
+  useMutation,
+  useResetState,
+  useStaleRefresh,
+  useMutateReducer,
+  toPromiseFunction,
+  useOptimizedQuery,
+  useActionsHook as useActions,
+  useResetOnlyApiEndPointsState,
 } from './utils';
 export { useDispatch, useStore, useSelector } from 'react-redux';
 // export { useTestHook } from './hooks';
@@ -33,5 +39,5 @@ export {
 export { default as injectSaga, useInjectSaga } from './utils/utils/injectSaga';
 export { default as axios } from './config/axios';
 export { default as withReduxSaga } from './utils/utils/next/withReduxSaga';
-export { default as withRedux } from './utils/utils/next/withRedux';
 export { default as CustomError } from './utils/customError';
+export { default as withRedux } from './utils/utils/next/withRedux';

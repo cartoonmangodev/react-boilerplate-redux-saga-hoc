@@ -41,8 +41,11 @@ const callAction = actionType => (payload = {}) => ({
   type: actionType,
   payload,
 });
-const cancelAction = actionType => (type, method, filter) => ({
-  type: actionType,
+const cancelAction = actionType => (type, method, filter, cancelFilter) => ({
+  type:
+    cancelFilter && Array.isArray(cancelFilter) && cancelFilter.length
+      ? `${actionType}_${cancelFilter.join('_')}`
+      : actionType,
   response: {
     type,
     method,

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable indent */
@@ -60,6 +61,7 @@ export default function({
         params = {},
         query,
         paramsSerializer = { arrayFormat: 'brackets' },
+        cancelFilter,
         axiosConfig = {},
         useCache: cacheControl = false,
         errorDataHandling = true,
@@ -192,6 +194,7 @@ export default function({
       if (request.effect) delete request.effect;
       let postData = '';
       let cancelTask = '';
+
       try {
         const cacheId = `${_url || ''}_${JSON.stringify(request)}`;
         if (
@@ -202,7 +205,11 @@ export default function({
         ) {
           postData = { ..._cache[cacheId] };
         } else {
-          const { posts: _postData, cancel: _cancelTask } = yield race({
+          const {
+            posts: _postData,
+            cancel: _cancelTask,
+            cancel_filter: cancelFilterTask,
+          } = yield race({
             posts:
               typeof asyncFunction === 'function'
                 ? call(
@@ -224,9 +231,14 @@ export default function({
                       axiosConfig),
                   }),
             cancel: take(action.cancel),
+            cancel_filter: take(
+              cancelFilter && Array.isArray(cancelFilter) && cancelFilter.length
+                ? `${action.cancel}_${cancelFilter.join('_')}`
+                : action.cancel,
+            ),
           });
-          cancelTask = _cancelTask;
-          postData = { ..._postData };
+          cancelTask = _cancelTask || cancelFilterTask;
+          postData = typeof _postData !== 'undefined' ? { ..._postData } : {};
         }
         let data = postData ? { ...postData } : postData;
         postData = postData || {};
@@ -361,11 +373,10 @@ export default function({
         else {
           if (typeof errorCallback === 'function' && !cancelTask) {
             errorCallback({
-              error: _postData,
-              response: _postData,
+              error: postData,
+              response: postData,
               isError: true,
-              isNetworkError:
-                _postData && _postData.message === 'Network Error',
+              isNetworkError: postData && postData.message === 'Network Error',
             });
           }
           yield call(loaderGenerator, {
