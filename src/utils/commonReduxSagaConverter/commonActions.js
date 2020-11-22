@@ -1,5 +1,6 @@
 // <============================ common actions ==============================>
 import * as constants from './commonConstants';
+import { typeOf } from '../helpers';
 
 const successAction = actionType => (
   type,
@@ -41,10 +42,10 @@ const callAction = actionType => (payload = {}) => ({
   type: actionType,
   payload,
 });
-const cancelAction = actionType => (type, method, filter, cancelFilter) => ({
+const cancelAction = actionType => (type, method, filter, cancelKey) => ({
   type:
-    cancelFilter && Array.isArray(cancelFilter) && cancelFilter.length
-      ? `${actionType}_${cancelFilter.join('_')}`
+    cancelKey && typeOf(cancelKey) === 'string' && cancelKey.length
+      ? `${actionType}_[${cancelKey}]`
       : actionType,
   response: {
     type,

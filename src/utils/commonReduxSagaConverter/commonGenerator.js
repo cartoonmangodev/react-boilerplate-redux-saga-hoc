@@ -61,7 +61,7 @@ export default function({
         params = {},
         query,
         paramsSerializer = { arrayFormat: 'brackets' },
-        cancelFilter,
+        cancelKey,
         axiosConfig = {},
         useCache: cacheControl = false,
         errorDataHandling = true,
@@ -232,8 +232,8 @@ export default function({
                   }),
             cancel: take(action.cancel),
             cancel_filter: take(
-              cancelFilter && Array.isArray(cancelFilter) && cancelFilter.length
-                ? `${action.cancel}_${cancelFilter.join('_')}`
+              cancelKey && typeOf(cancelKey) === 'string' && cancelKey.length
+                ? `${action.cancel}_[${cancelKey}]`
                 : action.cancel,
             ),
           });
