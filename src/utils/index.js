@@ -435,7 +435,7 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
     // const state = safe(store, `.getState()[${name}]`);
     // eslint-disable-next-line no-underscore-dangle
     const _data = _GetData(state);
-    let _queryData = previousCallbackData.get(_key) || previousData.get(_key);
+    let _queryData = previousData.get(_key);
     if (!isEqual(_data, _queryData)) {
       // previousData[`${key || name}_${_key}`] = _data;
       let callbackData;
@@ -455,7 +455,7 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
         previousCallbackData.set(_key, null);
         _queryData = _data;
       }
-    }
+    } else _queryData = previousCallbackData.get(_key) || _queryData;
     return _queryData;
   }, []);
 
