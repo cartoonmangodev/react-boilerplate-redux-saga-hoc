@@ -430,27 +430,30 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
     [config, array],
   );
   // const [data, setData] = useState(_GetData());
-  const execute = useCallback(() => {
-    // const state = safe(store, `.getState()[${name}]`);
-    // eslint-disable-next-line no-underscore-dangle
-    const _data = _GetData();
-    let _queryData = previousData.get(_key);
-    if (!isEqual(_data, _queryData)) {
-      // previousData[`${key || name}_${_key}`] = _data;
-      let callbackData;
-      if (callback && typeof callback === 'function')
-        callbackData = callback(_data);
-      previousData.set(
-        _key,
-        _queryData && typeof _queryData === 'object'
-          ? JSON.parse(JSON.stringify(_queryData))
-          : _queryData,
-      );
-      if (callbackData) _queryData = callbackData;
-      else _queryData = _data;
-    }
-    return _queryData;
-  }, [config, array]);
+  const execute = useCallback(
+    state => {
+      // const state = safe(store, `.getState()[${name}]`);
+      // eslint-disable-next-line no-underscore-dangle
+      const _data = _GetData(state);
+      let _queryData = previousData.get(_key);
+      if (!isEqual(_data, _queryData)) {
+        // previousData[`${key || name}_${_key}`] = _data;
+        let callbackData;
+        if (callback && typeof callback === 'function')
+          callbackData = callback(_data);
+        previousData.set(
+          _key,
+          _data && typeof _data === 'object'
+            ? JSON.parse(JSON.stringify(_data))
+            : _data,
+        );
+        if (callbackData) _queryData = callbackData;
+        else _queryData = _data;
+      }
+      return _queryData;
+    },
+    [config, array],
+  );
 
   // useEffect(() => {
   //   const unSubscribe = store.subscribe(execute);

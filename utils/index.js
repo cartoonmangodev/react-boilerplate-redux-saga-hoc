@@ -842,14 +842,12 @@ var checkKeyWithMessage = function checkKeyWithMessage(key, dataType, message) {
 };
 
 var previousData = new Map();
-var previousConfig = new Map();
 var useQuery = function useQuery() {
   var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
   var array = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
   var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var callback = arguments.length > 3 ? arguments[3] : undefined;
-  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
-  var store = reactRedux.useStore();
+  if (name) checkKey(name, 'reducer name', 'string', 'valid string'); // const store = useStore();
 
   var _useState = React.useState({}),
       _useState2 = _slicedToArray(_useState, 1),
@@ -873,11 +871,16 @@ var useQuery = function useQuery() {
   var _getData = React.useCallback(function () {
     var ee = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var isString = arguments.length > 1 ? arguments[1] : undefined;
+
+    var _state = arguments.length > 2 ? arguments[2] : undefined;
+
+    var state = _state || {};
     var e = ee || {};
-    return (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key) ? !e.defaultDataFormat || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : name ? safe(store, ".getState()[".concat(name, "]").concat(e.query ? e.query : ''), e.default) : safe(store, ".getState()".concat(e.query ? e.query : ''), e.default) : safe(getData(safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e), e.dataQuery), "".concat(e.query && typeOf(e.query) === 'string' ? e.query : ''), e.query ? e.default !== undefined ? e.default : undefined : undefined);
+    return (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key) ? !e.defaultDataFormat || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(state, "[".concat(name, "][").concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : name ? safe(state, "[".concat(name, "]").concat(e.query ? e.query : ''), e.default) : safe(state, "".concat(e.query ? e.query : ''), e.default) : safe(getData(safe(state, "[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e), e.dataQuery), "".concat(e.query && typeOf(e.query) === 'string' ? e.query : ''), e.query ? e.default !== undefined ? e.default : undefined : undefined);
   }, [array]);
 
-  var _GetData = React.useCallback(function () {
+  var _GetData = React.useCallback(function (_state) {
+    var state = _state || {};
     var _data = {};
 
     if (name && (Array.isArray(array) && array.length > 0 || typeOf(array) === 'object' && Object.keys(array).length > 0)) {
@@ -885,11 +888,11 @@ var useQuery = function useQuery() {
       // eslint-disable-next-line no-underscore-dangle
       _data = (typeOf(array) === 'object' ? [array] : array).reduce(function (acc, e) {
         if (typeOf(e) === 'object') {
-          if (typeOf(array) === 'object') return exeuteRequiredData(_getData(e), e);
+          if (typeOf(array) === 'object') return exeuteRequiredData(_getData(e, undefined, state), e);
 
           var _arr2 = _toConsumableArray(acc);
 
-          _arr2.push(exeuteRequiredData(_getData(e), e));
+          _arr2.push(exeuteRequiredData(_getData(e, undefined, state), e));
 
           return _arr2;
         } // Below condition ( one config for all the keys )
@@ -900,76 +903,85 @@ var useQuery = function useQuery() {
             key: e
           }, config);
 
-          if (typeOf(array) === 'object') return exeuteRequiredData(_getData(_config), _config);
+          if (typeOf(array) === 'object') return exeuteRequiredData(_getData(_config, undefined, state), _config);
 
           var _arr3 = _toConsumableArray(acc);
 
-          _arr3.push(exeuteRequiredData(_getData(_config), _config));
+          _arr3.push(exeuteRequiredData(_getData(_config, undefined, state), _config));
 
           return _arr3;
         }
 
-        if (typeOf(array) === 'object') return safe(store, ".getState()[".concat(name, "][").concat(e.key, "]"));
+        if (typeOf(array) === 'object') return safe(state, "[".concat(name, "][").concat(e.key, "]"));
 
         var _arr = _toConsumableArray(acc);
 
-        _arr.push(safe(store, ".getState()[".concat(name, "][").concat(e, "]")));
+        _arr.push(safe(state, "[".concat(name, "][").concat(e, "]")));
 
         return _arr;
       }, typeOf(array) === 'object' ? {} : []); // if()
     } else if (typeof array === 'string' && config && typeOf(config) === 'array') _data = config.reduce(function (acc, _config) {
-      return [].concat(_toConsumableArray(acc), [exeuteRequiredData(_getData(_config, true), _config)]);
-    }, []);else if (typeof array === 'string') _data = exeuteRequiredData(_getData(config, true), config);else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
+      return [].concat(_toConsumableArray(acc), [exeuteRequiredData(_getData(_config, true, state), _config)]);
+    }, []);else if (typeof array === 'string') _data = exeuteRequiredData(_getData(config, true, state), config);else if (name) _data = safe(state, "[".concat(name, "]"));else _data = state || {};
 
     return _data;
-  }, [config, array]);
+  }, [config, array]); // const [data, setData] = useState(_GetData());
 
-  var _useState3 = React.useState(_GetData()),
-      _useState4 = _slicedToArray(_useState3, 2),
-      data = _useState4[0],
-      setData = _useState4[1];
 
   var execute = React.useCallback(function () {
     // const state = safe(store, `.getState()[${name}]`);
     // eslint-disable-next-line no-underscore-dangle
     var _data = _GetData();
 
-    if (!isEqual(_data, previousData.get(_key))) {
+    var _queryData = previousData.get(_key);
+
+    if (!isEqual(_data, _queryData)) {
       // previousData[`${key || name}_${_key}`] = _data;
       var callbackData;
       if (callback && typeof callback === 'function') callbackData = callback(_data);
-      previousData.set(_key, _data);
-      if (callbackData) setData(callbackData);else setData(_data);
+      previousData.set(_key, _queryData && _typeof(_queryData) === 'object' ? JSON.parse(JSON.stringify(_queryData)) : _queryData);
+      if (callbackData) _queryData = callbackData;else _queryData = _data;
     }
-  }, [config, array]);
-  React.useEffect(function () {
-    var unSubscribe = store.subscribe(execute);
-    return function () {
-      delete previousData.delete(_key);
-      unSubscribe();
-    };
-  }, []);
+
+    return _queryData;
+  }, [config, array]); // useEffect(() => {
+  //   const unSubscribe = store.subscribe(execute);
+  //   return () => {
+  //     delete previousData.delete(_key);
+  //     unSubscribe();
+  //   };
+  // }, []);
+  // useEffect(() => {
+  //   previousData.set(_key, {});
+  //   if (
+  //     !isEqual(previousConfig.get(_key), {
+  //       array,
+  //       config,
+  //     })
+  //   ) {
+  //     previousConfig.set(_key, {
+  //       array,
+  //       config,
+  //     });
+  //     execute();
+  //   }
+  // }, [config, array]);
+
   React.useEffect(function () {
     previousData.set(_key, {});
+  }, []);
 
-    if (!isEqual(previousConfig.get(_key), {
-      array: array,
-      config: config
-    })) {
-      previousConfig.set(_key, {
-        array: array,
-        config: config
-      });
-      execute();
-    }
-  }, [config, array]);
-  return data;
+  var _selectorData = reactRedux.useSelector(execute, function (e, f) {
+    return isEqual(e, f);
+  });
+
+  return _selectorData;
 };
 var useActionsHook = function useActionsHook(name, actions) {
-  var _useState5 = React.useState({}),
-      _useState6 = _slicedToArray(_useState5, 2),
-      dispatchAction = _useState6[0],
-      setDispatchAction = _useState6[1];
+  var _useState3 = React.useState({}),
+      _useState4 = _slicedToArray(_useState3, 2),
+      dispatchAction = _useState4[0],
+      setDispatchAction = _useState4[1];
 
   var dispatch = reactRedux.useDispatch();
   React.useEffect(function () {
@@ -1073,10 +1085,10 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
   var initial = arguments.length > 3 ? arguments[3] : undefined;
   var prevArgs = React.useRef(null);
 
-  var _useState7 = React.useState(null),
-      _useState8 = _slicedToArray(_useState7, 2),
-      isUpdating = _useState8[0],
-      setIsUpdating = _useState8[1];
+  var _useState5 = React.useState(null),
+      _useState6 = _slicedToArray(_useState5, 2),
+      isUpdating = _useState6[0],
+      setIsUpdating = _useState6[1];
 
   var refresh = React.useCallback(function () {
     var _ref22 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -1158,9 +1170,9 @@ var useOptimizedQuery = function useOptimizedQuery() {
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
   var store = reactRedux.useStore();
 
-  var _useState9 = React.useState({}),
-      _useState10 = _slicedToArray(_useState9, 1),
-      _key = _useState10[0];
+  var _useState7 = React.useState({}),
+      _useState8 = _slicedToArray(_useState7, 1),
+      _key = _useState8[0];
 
   var exeuteRequiredData = React.useCallback(function (_data) {
     var e = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -1215,10 +1227,10 @@ var useOptimizedQuery = function useOptimizedQuery() {
     return _data;
   }, []);
 
-  var _useState11 = React.useState(_GetData()),
-      _useState12 = _slicedToArray(_useState11, 2),
-      data = _useState12[0],
-      setData = _useState12[1];
+  var _useState9 = React.useState(_GetData()),
+      _useState10 = _slicedToArray(_useState9, 2),
+      data = _useState10[0],
+      setData = _useState10[1];
 
   var execute = React.useCallback(function () {
     // const state = safe(store, `.getState()[${name}]`);
