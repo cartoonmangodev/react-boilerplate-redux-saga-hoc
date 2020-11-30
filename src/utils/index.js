@@ -284,6 +284,7 @@ const checkKeyWithMessage = (key, dataType, message) => {
   invariant(typeOf(key) === dataType, message);
 };
 const previousData = new Map();
+const previousCallbackData = new Map();
 export const useQuery = (name = null, array = [], config = {}, callback) => {
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
   // const store = useStore();
@@ -430,30 +431,33 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
     [config, array],
   );
   // const [data, setData] = useState(_GetData());
-  const execute = useCallback(
-    state => {
-      // const state = safe(store, `.getState()[${name}]`);
-      // eslint-disable-next-line no-underscore-dangle
-      const _data = _GetData(state);
-      let _queryData = previousData.get(_key);
-      if (!isEqual(_data, _queryData)) {
-        // previousData[`${key || name}_${_key}`] = _data;
-        let callbackData;
-        if (callback && typeof callback === 'function')
-          callbackData = callback(_data);
-        previousData.set(
-          _key,
-          _data && typeof _data === 'object'
-            ? JSON.parse(JSON.stringify(_data))
-            : _data,
-        );
-        if (callbackData) _queryData = callbackData;
-        else _queryData = _data;
+  const execute = useCallback(state => {
+    // const state = safe(store, `.getState()[${name}]`);
+    // eslint-disable-next-line no-underscore-dangle
+    const _data = _GetData(state);
+    let _queryData = previousCallbackData.get(_key) || previousData.get(_key);
+    if (!isEqual(_data, _queryData)) {
+      // previousData[`${key || name}_${_key}`] = _data;
+      let callbackData;
+      if (callback && typeof callback === 'function')
+        callbackData = callback(_data);
+      previousData.set(
+        _key,
+        _data && typeof _data === 'object'
+          ? JSON.parse(JSON.stringify(_data))
+          : _data,
+      );
+
+      if (callbackData) {
+        _queryData = callbackData;
+        previousCallbackData.set(_key, callbackData);
+      } else {
+        previousCallbackData.set(_key, null);
+        _queryData = _data;
       }
-      return _queryData;
-    },
-    [config, array],
-  );
+    }
+    return _queryData;
+  }, []);
 
   // useEffect(() => {
   //   const unSubscribe = store.subscribe(execute);
@@ -479,6 +483,10 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
   // }, [config, array]);
   useEffect(() => {
     previousData.set(_key, {});
+    return () => {
+      previousData.delete(_key);
+      previousCallbackData.delete(_key);
+    };
   }, []);
   const _selectorData = useSelector(execute, (e, f) => isEqual(e, f));
   return _selectorData;

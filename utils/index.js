@@ -928,10 +928,10 @@ var useQuery = function useQuery() {
   }, [config, array]); // const [data, setData] = useState(_GetData());
 
 
-  var execute = React.useCallback(function () {
+  var execute = React.useCallback(function (state) {
     // const state = safe(store, `.getState()[${name}]`);
     // eslint-disable-next-line no-underscore-dangle
-    var _data = _GetData();
+    var _data = _GetData(state);
 
     var _queryData = previousData.get(_key);
 
@@ -939,7 +939,7 @@ var useQuery = function useQuery() {
       // previousData[`${key || name}_${_key}`] = _data;
       var callbackData;
       if (callback && typeof callback === 'function') callbackData = callback(_data);
-      previousData.set(_key, _queryData && _typeof(_queryData) === 'object' ? JSON.parse(JSON.stringify(_queryData)) : _queryData);
+      previousData.set(_key, _data && _typeof(_data) === 'object' ? JSON.parse(JSON.stringify(_data)) : _data);
       if (callbackData) _queryData = callbackData;else _queryData = _data;
     }
 
