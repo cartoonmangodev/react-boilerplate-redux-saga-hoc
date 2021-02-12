@@ -285,7 +285,13 @@ const checkKeyWithMessage = (key, dataType, message) => {
 };
 const previousData = new Map();
 const previousCallbackData = new Map();
-export const useQuery = (name = null, array = [], config = {}, callback) => {
+export const useQuery = (
+  name = null,
+  array = [],
+  config = {},
+  callback,
+  callbackSuccess,
+) => {
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
   // const store = useStore();
   const [_key] = useState({});
@@ -488,7 +494,11 @@ export const useQuery = (name = null, array = [], config = {}, callback) => {
       previousCallbackData.delete(_key);
     };
   }, []);
-  const _selectorData = useSelector(execute, (e, f) => isEqual(e, f));
+  const _selectorData = useSelector(execute, (e, f) => {
+    const _isEqual = isEqual(e, f);
+    if (!_isEqual && typeof callbackSuccess === 'function') callbackSuccess();
+    return _isEqual;
+  });
   return _selectorData;
 };
 

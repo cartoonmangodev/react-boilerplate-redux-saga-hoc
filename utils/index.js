@@ -934,7 +934,7 @@ var useQuery = function useQuery() {
     // eslint-disable-next-line no-underscore-dangle
     var _data = _GetData(state);
 
-    var _queryData = previousCallbackData.get(_key) || previousData.get(_key);
+    var _queryData = previousData.get(_key);
 
     if (!isEqual(_data, _queryData)) {
       // previousData[`${key || name}_${_key}`] = _data;
@@ -949,7 +949,7 @@ var useQuery = function useQuery() {
         previousCallbackData.set(_key, null);
         _queryData = _data;
       }
-    }
+    } else _queryData = previousCallbackData.get(_key) || _queryData;
 
     return _queryData;
   }, []); // useEffect(() => {
