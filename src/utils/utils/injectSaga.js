@@ -46,14 +46,16 @@ export default ({ key, saga, mode }) => WrappedComponent => {
   return hoistNonReactStatics(InjectSaga, WrappedComponent);
 };
 
-const useInjectSaga = ({ key, saga, mode }) => {
+const useInjectSaga = ({ key, saga, mode }, inject = true) => {
   const context = React.useContext(ReactReduxContext);
   React.useEffect(() => {
     const injectors = getInjectors(context.store);
-    injectors.injectSaga(key, { saga, mode });
+    if (inject) {
+      injectors.injectSaga(key, { saga, mode });
+    }
 
     return () => {
-      injectors.ejectSaga(key);
+      if (inject) injectors.ejectSaga(key);
     };
   }, []);
 };

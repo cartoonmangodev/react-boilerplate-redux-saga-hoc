@@ -135,6 +135,18 @@ export default ({
     });
     return state;
   };
+  // eslint-disable-next-line no-underscore-dangle
+  const _useHocHookNextJs = (inject = true) => {
+    useInjectSaga(injectSagaConfig, inject);
+    useInjectReducer(injectReducerConfig, createReducer, inject);
+    const dispatch = useDispatch();
+    const [state] = useState({
+      ...componentData[`${reducerName}_hoc`],
+      actions: bindActionCreators(componentActions, dispatch),
+      dispatch,
+    });
+    return state;
+  };
   if (useHocHook && !nextJS) return _useHocHook;
   const hoc = WrapperComponent => {
     function WithHoc(props) {
@@ -199,7 +211,7 @@ export default ({
     return {
       hoc,
       saga,
-      hook: _useHocHook,
+      hook: _useHocHookNextJs,
       reducer: { name: reducerName, reducer },
       actions: { ...componentActions },
       ...componentData[`${reducerName}_hoc`],
@@ -208,7 +220,7 @@ export default ({
     return {
       hoc,
       saga,
-      hook: _useHocHook,
+      hook: _useHocHookNextJs,
       reducer: { name: reducerName, reducer },
     };
   if (getDefaultConfig) {

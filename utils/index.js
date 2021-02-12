@@ -848,6 +848,7 @@ var useQuery = function useQuery() {
   var array = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
   var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var callback = arguments.length > 3 ? arguments[3] : undefined;
+  var callbackSuccess = arguments.length > 4 ? arguments[4] : undefined;
   if (name) checkKey(name, 'reducer name', 'string', 'valid string'); // const store = useStore();
 
   var _useState = React.useState({}),
@@ -984,7 +985,10 @@ var useQuery = function useQuery() {
   }, []);
 
   var _selectorData = reactRedux.useSelector(execute, function (e, f) {
-    return isEqual(e, f);
+    var _isEqual = isEqual(e, f);
+
+    if (!_isEqual && typeof callbackSuccess === 'function') callbackSuccess();
+    return _isEqual;
   });
 
   return _selectorData;
