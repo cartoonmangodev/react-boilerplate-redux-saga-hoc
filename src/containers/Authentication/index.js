@@ -124,9 +124,9 @@ export default ({
     reducer,
   };
   // eslint-disable-next-line no-underscore-dangle
-  const _useHocHook = () => {
-    useInjectSaga(injectSagaConfig);
-    useInjectReducer(injectReducerConfig, createReducer);
+  const _useHocHook = (inject = true) => {
+    useInjectSaga(injectSagaConfig, inject);
+    useInjectReducer(injectReducerConfig, createReducer, inject);
     const dispatch = useDispatch();
     const [state] = useState({
       ...componentData[`${reducerName}_hoc`],
