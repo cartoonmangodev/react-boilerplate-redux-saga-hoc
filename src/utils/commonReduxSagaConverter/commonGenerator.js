@@ -17,6 +17,7 @@ import {
 // import isFunction from 'lodash/isFunction';
 // import isObject from 'lodash/isObject';
 import invariant from 'invariant';
+import AxiosDefault from 'axios';
 import * as constants from './commonConstants';
 import { responseErrorParser } from '../index';
 import Axios from '../../config/axios';
@@ -98,7 +99,7 @@ export default function({
         requestAxios ||
         axiosInterceptors ||
         Axios;
-      const { CancelToken } = axios;
+      const { CancelToken } = AxiosDefault;
       const source = yield CancelToken.source();
       yield (action = {
         ...action,
