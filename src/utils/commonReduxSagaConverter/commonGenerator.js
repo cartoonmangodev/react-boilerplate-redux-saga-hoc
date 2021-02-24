@@ -548,7 +548,7 @@ export default function({
               errorStatus,
               errorMessage,
             ));
-            if (axios.isCancel(error) && action.cancel) {
+            if (AxiosDefault.isCancel(error) && action.cancel) {
               yield call(loaderGenerator, {
                 type,
                 commonData,
