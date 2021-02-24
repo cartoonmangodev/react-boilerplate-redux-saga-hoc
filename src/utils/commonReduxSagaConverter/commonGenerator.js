@@ -60,6 +60,7 @@ export default function({
         payload = {},
         params = {},
         query,
+        axios: requestAxios,
         paramsSerializer = { arrayFormat: 'brackets' },
         cancelKey,
         axiosConfig = {},
@@ -91,7 +92,8 @@ export default function({
     let count = 1;
     let pollingRequestConfig = {};
     do {
-      const axios = axiosInterceptors || Axios;
+      const axios =
+        action.api.axios || requestAxios || axiosInterceptors || Axios;
       const { CancelToken } = axios;
       const source = yield CancelToken.source();
       let action = yield actionType[type];
