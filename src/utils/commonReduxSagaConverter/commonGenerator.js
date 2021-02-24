@@ -92,14 +92,14 @@ export default function({
     let count = 1;
     let pollingRequestConfig = {};
     do {
-      const { CancelToken } = axios;
-      const source = yield CancelToken.source();
       let action = yield actionType[type];
       const axios =
         (action.api && action.api.axios) ||
         requestAxios ||
         axiosInterceptors ||
         Axios;
+      const { CancelToken } = axios;
+      const source = yield CancelToken.source();
       yield (action = {
         ...action,
         error: action.error || action.actions[constants.ERROR],
