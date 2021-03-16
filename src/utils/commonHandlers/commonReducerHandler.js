@@ -229,6 +229,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
       data: { data: successData = {}, ...rest } = {},
       payload: {
         callback: { updateStateCallback } = {},
+        excuteUpdateStateCallbackOnError,
         updateStateCallbackOnError,
         tasks,
         updateDataReducerKey,
@@ -240,7 +241,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
   let DATA = state;
   const _method = (Array.isArray(method)
     ? method
-    : [_errortask ? ON_SUCCESS : null, method]
+    : [method, _errortask ? ON_SUCCESS : null]
   ).filter(e => [ON_SUCCESS, ON_ERROR, ON_UNMOUNT].includes(e));
   for (let i = 0; i < _method.length; i += 1) {
     switch (_method[i]) {
@@ -321,7 +322,8 @@ export const DEFAULT_REDUCER_HANDLER = ({
           );
         }
         DATA =
-          updateStateCallback && !_errortask
+          updateStateCallback &&
+          (!_errortask || excuteUpdateStateCallbackOnError)
             ? updateStateCallback({
                 state: updatedState,
                 data: successData,
@@ -335,7 +337,8 @@ export const DEFAULT_REDUCER_HANDLER = ({
           [type]: newObject(Data, commmonErrorHandler()),
         }));
         DATA =
-          updateStateCallback && updateStateCallbackOnError
+          updateStateCallback &&
+          (excuteUpdateStateCallbackOnError || updateStateCallbackOnError)
             ? updateStateCallback({
                 state: updatedState,
                 data: successData,
