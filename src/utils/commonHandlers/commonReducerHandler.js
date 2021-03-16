@@ -240,7 +240,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
   let DATA = state;
   const _method = (Array.isArray(method)
     ? method
-    : [method, _errortask ? ON_SUCCESS : null]
+    : [_errortask ? ON_SUCCESS : null, method]
   ).filter(e => [ON_SUCCESS, ON_ERROR, ON_UNMOUNT].includes(e));
   for (let i = 0; i < _method.length; i += 1) {
     switch (_method[i]) {
