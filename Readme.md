@@ -1,5 +1,7 @@
 # React Boilerplate Redux Saga HOC
 
+> ### **Note:** This package is depricated.It is currently used for internal purpose only.
+ 
 React Boilerplate Redux Saga HOC is a hoc for handling api calls as well as mataintaing redux state.
 
 ## # Installation
