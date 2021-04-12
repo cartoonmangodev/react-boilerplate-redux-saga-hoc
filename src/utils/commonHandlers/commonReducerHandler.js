@@ -321,15 +321,13 @@ export const DEFAULT_REDUCER_HANDLER = ({
             }),
           );
         }
-        DATA =
-          updateStateCallback &&
-          (!_errortask || excuteUpdateStateCallbackOnError)
-            ? updateStateCallback({
-                state: updatedState,
-                data: successData,
-                type: 'SUCCESS',
-              }) || updatedState
-            : updatedState;
+        DATA = updateStateCallback
+          ? updateStateCallback({
+              state: updatedState,
+              data: successData,
+              type: 'SUCCESS',
+            }) || updatedState
+          : updatedState;
         break;
       }
       case ON_ERROR: {
