@@ -235,7 +235,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
         updateDataReducerKey,
         _errortask,
       } = {},
-      error: { data: errorData = {} } = {},
+      error: { data: errorData = {}, status } = {},
     } = {},
   } = action;
   let DATA = state;
@@ -326,6 +326,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
               state: updatedState,
               data: successData,
               type: 'SUCCESS',
+              status: status || rest.statusCode,
             }) || updatedState
           : updatedState;
         break;
@@ -336,11 +337,14 @@ export const DEFAULT_REDUCER_HANDLER = ({
         }));
         DATA =
           updateStateCallback &&
-          (excuteUpdateStateCallbackOnError || updateStateCallbackOnError)
+          (excuteUpdateStateCallbackOnError || updateStateCallbackOnError) &&
+          !_errortask
             ? updateStateCallback({
                 state: updatedState,
                 data: successData,
                 type: 'ERROR',
+                error: errorData,
+                status: status || rest.statusCode,
               }) || updatedState
             : updatedState;
         break;
