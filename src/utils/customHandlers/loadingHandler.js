@@ -28,6 +28,7 @@ const returnData = (data, initialData, clearData, loader) =>
       status: loader,
       lastUpdated: generateTimeStamp(),
     },
+    initialState: false,
     ...(clearData || initialData
       ? {
           data: Array.isArray(_data) ? initialData || [] : initialData || {},

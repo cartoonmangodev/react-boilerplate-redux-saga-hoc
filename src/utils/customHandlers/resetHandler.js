@@ -21,6 +21,7 @@ export const resetHandler = (
       statusCode: 200,
       infiniteEnd: typeof infiniteEnd === 'boolean' ? false : undefined,
       lastUpdated: generateTimeStamp(),
+      initialState: true,
     })),
   }));
 const _CheckFilter = Filter =>
@@ -73,6 +74,7 @@ export const filterArrayResetHandler = (
             isError: false,
             infiniteEnd: typeof infiniteEnd === 'boolean' ? false : undefined,
             lastUpdated: generateTimeStamp(),
+            initialState: true,
           })),
         );
       })(),
