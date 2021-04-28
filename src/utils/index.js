@@ -140,6 +140,7 @@ export const commmonStateHandler = ({
                 : status || loader,
             lastUpdated: generateTimeStamp(),
           },
+          initialState: false,
           ...((clearData || initialData) &&
           ![ON_SUCCESS, ON_ERROR].includes(method)
             ? { data: initialData || (Array.isArray(_data) ? [] : {}) }
@@ -191,6 +192,7 @@ export const commmonStateHandler = ({
               ? customToast
               : {}),
           },
+          initialState: false,
         }),
       }));
   }
