@@ -40,5 +40,6 @@ export const deleteHandler = ({
     lastUpdated: generateTimeStamp(),
     isError: false,
     reset: false,
+    initialState: false,
   };
 };

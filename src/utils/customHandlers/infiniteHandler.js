@@ -51,6 +51,7 @@ export const infiniteHandler = ({
   statusCode: successDataStatusCode || statusCode,
   isInfinite: typeof limit === 'number',
   isError: false,
+  initialState: false,
   infiniteEnd:
     setInfiniteEnd !== undefined && typeof setInfiniteEnd === 'function'
       ? setInfiniteEnd(successData)

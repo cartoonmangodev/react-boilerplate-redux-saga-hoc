@@ -118,4 +118,5 @@ export const updateHandler = ({
 
   lastUpdated: generateTimeStamp(),
   isError: false,
+  initialState: false,
 });

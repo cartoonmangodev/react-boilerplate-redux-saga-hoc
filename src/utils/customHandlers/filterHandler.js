@@ -36,6 +36,7 @@ export const commonFilterHandler = customHandler => ({
           lastUpdated: generateTimeStamp(),
           error: false,
           isError: false,
+          initialState: false,
         },
         customHandler(paramKey),
       ),

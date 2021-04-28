@@ -140,4 +140,5 @@ export const updateKeyHandler = ({
 
   lastUpdated: generateTimeStamp(),
   isError: false,
+  initialState: false,
 });

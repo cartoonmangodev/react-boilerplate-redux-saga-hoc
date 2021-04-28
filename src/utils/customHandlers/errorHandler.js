@@ -26,6 +26,7 @@ export const errorHandler = ({ errorData, clearDataOnError = false } = {}) => ({
   lastUpdated: generateTimeStamp(),
   isInfinite: null,
   infiniteEnd: null,
+  initialState: false,
 });
 
 const _CheckFilter = Filter =>
@@ -71,6 +72,7 @@ export const filterArrayErrorHandler = ({
         lastUpdated: generateTimeStamp(),
         isInfinite: null,
         infiniteEnd: null,
+        initialState: false,
       })),
     );
   })(),

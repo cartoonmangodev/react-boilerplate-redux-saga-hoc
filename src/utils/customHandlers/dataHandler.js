@@ -51,4 +51,5 @@ export const dataHandler = ({
         isInfinite: null,
         infiniteEnd: null,
         isError: false,
+        initialState: false,
       };

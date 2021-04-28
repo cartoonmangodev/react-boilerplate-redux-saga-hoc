@@ -14,4 +14,5 @@ export const reducerErrorHandler = ({
   error: errorData || error || {},
   isError: typeof isError === 'boolean' ? isError : isErrorOld,
   lastUpdated: generateTimeStamp(),
+  initialState: false,
 });

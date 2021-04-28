@@ -22,6 +22,7 @@ export default ({ apiEndPoints, generatorKey, dontResetOnLogout }) => {
         [ConvertData[generatorKey].constants[key][CALL]]: {
           loading: {},
           toast: {},
+          initialState: true,
           ...(apiEndPoints[generatorKey][key].initialData
             ? { data: apiEndPoints[generatorKey][key].initialData }
             : {}),
@@ -33,6 +34,7 @@ export default ({ apiEndPoints, generatorKey, dontResetOnLogout }) => {
             [ConvertData[generatorKey].constants[key][CALL]]: {
               loading: {},
               toast: {},
+              initialState: true,
               ...(apiEndPoints[generatorKey][key].initialData
                 ? { data: apiEndPoints[generatorKey][key].initialData }
                 : {}),

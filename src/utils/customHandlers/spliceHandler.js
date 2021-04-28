@@ -49,4 +49,5 @@ export const spliceHandler = ({
   error: false,
   lastUpdated: generateTimeStamp(),
   isError: false,
+  initialState: false,
 });

@@ -66,5 +66,6 @@ export const deleteKeyHandler = ({
     statusCode: successDataStatusCode || statusCode,
     lastUpdated: generateTimeStamp(),
     isError: false,
+    initialState: false,
   };
 };

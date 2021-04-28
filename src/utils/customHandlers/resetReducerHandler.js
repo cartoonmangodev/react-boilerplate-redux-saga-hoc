@@ -19,4 +19,5 @@ export const resetReducerHandler = ({
   statusCode: null,
   infiniteEnd: typeof infiniteEnd === 'boolean' ? false : undefined,
   lastUpdated: generateTimeStamp(),
+  initialState: true,
 });
