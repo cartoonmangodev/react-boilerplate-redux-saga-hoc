@@ -286,6 +286,7 @@ const checkKeyWithMessage = (key, dataType, message) => {
   invariant(typeOf(key) === dataType, message);
 };
 const previousData = new Map();
+const initialRender = new Map();
 const previousCallbackData = new Map();
 export const useQuery = (
   name = null,
@@ -298,29 +299,38 @@ export const useQuery = (
   // const store = useStore();
   const [_key] = useState({});
 
-  const exeuteRequiredData = useCallback(
-    (_data, e = {}) =>
-      e &&
+  const exeuteRequiredData = useCallback((_data, e = {}) => {
+    const initialData = (e.requiredKey || []).reduce(
+      (acc, _reqKey) => ({
+        ...acc,
+        ...(_reqKey && typeOf(_reqKey.key || _reqKey) === 'string'
+          ? typeOf(_reqKey) === 'string'
+            ? { [_reqKey]: undefined }
+            : { [_reqKey.key]: _reqKey.default }
+          : {}),
+      }),
+      {},
+    );
+    return e &&
       e.requiredKey &&
       Array.isArray(e.requiredKey) &&
       e.requiredKey.length > 0 &&
       typeOf(_data) === 'object'
-        ? Object.entries(_data).reduce(
-            (acc, [_DataKey, _DataValue]) => ({
-              ...acc,
-              ...(e.requiredKey.includes(_DataKey)
-                ? {
-                    [_DataKey]: _DataValue,
-                  }
-                : {}),
-            }),
-            {},
-          )
-        : e && e.requiredKey
-        ? _data || {}
-        : _data,
-    [],
-  );
+      ? e.requiredKey.reduce(
+          (acc, _reqKey) => ({
+            ...acc,
+            ...(_reqKey && typeOf(_reqKey.key || _reqKey) === 'string'
+              ? {
+                  [_reqKey.key || _reqKey]: _data[_reqKey] || _reqKey.default,
+                }
+              : {}),
+          }),
+          { ...initialData },
+        )
+      : e && e.requiredKey
+      ? _data || { ...initialData }
+      : _data;
+  }, []);
 
   const _checkFilter = useCallback(
     e =>
@@ -337,37 +347,51 @@ export const useQuery = (
   const _getData = useCallback(
     (ee = {}, isString, _state) => {
       const state = _state || {};
-      const e = ee || {};
-      return (typeof e.defaultDataFormat === 'boolean' ||
-      !(isString ? array : e.key)
-      ? !e.defaultDataFormat || !(isString ? array : e.key)
-      : false)
-        ? (isString
-          ? array
-          : e.key)
-          ? safe(
-              state,
-              `[${name}][${isString ? array : e.key}]${e.query ? e.query : ''}`,
-              e.default,
-            )
-          : name
-          ? safe(state, `[${name}]${e.query ? e.query : ''}`, e.default)
-          : safe(state, `${e.query ? e.query : ''}`, e.default)
-        : safe(
-            getData(
-              safe(state, `[${name}][${isString ? array : e.key}]`),
-              e.query ? undefined : e.default || undefined,
-              e.initialLoaderState || false,
-              _checkFilter(e),
-              e.dataQuery,
-            ),
-            `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
-            e.query
-              ? e.default !== undefined
-                ? e.default
-                : undefined
-              : undefined,
-          );
+      const _getDataFunc = e =>
+        (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key)
+        ? !e.defaultDataFormat || !(isString ? array : e.key)
+        : false)
+          ? (isString
+            ? array
+            : e.key)
+            ? safe(
+                state,
+                `[${name}][${isString ? array : e.key}]${
+                  e.query ? e.query : ''
+                }`,
+                e.default,
+              )
+            : name
+            ? safe(state, `[${name}]${e.query ? e.query : ''}`, e.default)
+            : safe(state, `${e.query ? e.query : ''}`, e.default)
+          : safe(
+              getData(
+                safe(state, `[${name}][${isString ? array : e.key}]`),
+                e.query ? undefined : e.default || undefined,
+                e.initialLoaderState || false,
+                _checkFilter(e),
+                e.dataQuery,
+              ),
+              `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
+              e.query
+                ? e.default !== undefined
+                  ? e.default
+                  : undefined
+                : undefined,
+            );
+      return Array.isArray(ee.query)
+        ? ee.query.reduce(
+            (acc, _query) =>
+              acc.concat([
+                _getDataFunc({
+                  ...ee,
+                  query: _query.key || _query,
+                  default: _query.default || undefined,
+                }),
+              ]),
+            [],
+          )
+        : _getDataFunc(ee);
     },
     [array],
   );
@@ -491,6 +515,7 @@ export const useQuery = (
   // }, [config, array]);
   useEffect(() => {
     previousData.set(_key, {});
+    initialRender.set(_key, true);
     return () => {
       previousData.delete(_key);
       previousCallbackData.delete(_key);
@@ -498,7 +523,13 @@ export const useQuery = (
   }, []);
   const _selectorData = useSelector(execute, (e, f) => {
     const _isEqual = isEqual(e, f);
-    if (!_isEqual && typeof callbackSuccess === 'function') callbackSuccess();
+    if (
+      (!_isEqual || initialRender.get(_key)) &&
+      typeof callbackSuccess === 'function'
+    ) {
+      initialRender.set(_key, false);
+      callbackSuccess(e, f);
+    }
     return _isEqual;
   });
   return _selectorData;
