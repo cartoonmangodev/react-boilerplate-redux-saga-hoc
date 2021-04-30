@@ -327,7 +327,9 @@ export const useQuery = (
           }),
           { ...initialData },
         )
-      : e && e.requiredKey
+      : e &&
+        e.requiredKey &&
+        (Array.isArray(e.requiredKey) ? e.requiredKey : []).length > 0
       ? _data || { ...initialData }
       : _data;
   }, []);
