@@ -863,7 +863,7 @@ var useQuery = function useQuery() {
     }, {});
     return e && e.requiredKey && Array.isArray(e.requiredKey) && e.requiredKey.length > 0 && typeOf(_data) === 'object' ? e.requiredKey.reduce(function (acc, _reqKey) {
       return _objectSpread({}, acc, {}, _reqKey && typeOf(_reqKey.key || _reqKey) === 'string' ? _defineProperty({}, _reqKey.key || _reqKey, _data[_reqKey] || _reqKey.default) : {});
-    }, _objectSpread({}, initialData)) : e && e.requiredKey ? _data || _objectSpread({}, initialData) : _data;
+    }, _objectSpread({}, initialData)) : e && e.requiredKey && (Array.isArray(e.requiredKey) ? e.requiredKey : []).length > 0 ? _data || _objectSpread({}, initialData) : _data;
   }, []);
 
   var _checkFilter = React.useCallback(function (e) {

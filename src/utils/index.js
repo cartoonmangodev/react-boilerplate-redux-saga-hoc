@@ -311,6 +311,7 @@ export const useQuery = (
       }),
       {},
     );
+
     return e &&
       e.requiredKey &&
       Array.isArray(e.requiredKey) &&
@@ -321,15 +322,16 @@ export const useQuery = (
             ...acc,
             ...(_reqKey && typeOf(_reqKey.key || _reqKey) === 'string'
               ? {
-                  [_reqKey.key || _reqKey]: _data[_reqKey] || _reqKey.default,
+                  [_reqKey.key || _reqKey]:
+                    typeOf(_data[_reqKey.key || _reqKey]) !== undefined
+                      ? _data[_reqKey.key || _reqKey]
+                      : _reqKey.default,
                 }
               : {}),
           }),
           { ...initialData },
         )
-      : e &&
-        e.requiredKey &&
-        (Array.isArray(e.requiredKey) ? e.requiredKey : []).length > 0
+      : e && e.requiredKey
       ? _data || { ...initialData }
       : _data;
   }, []);
