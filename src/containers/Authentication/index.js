@@ -35,6 +35,7 @@ export default ({
   createReducer = null,
   useHook = false,
   useHocHook = false,
+  hookWithHoc = false,
 }) => ({
   apiEndPoints = {},
   initialState = {},
@@ -147,7 +148,7 @@ export default ({
     });
     return state;
   };
-  if (useHocHook && !nextJS) return _useHocHook;
+  if (useHocHook && !nextJS && !hookWithHoc) return _useHocHook;
   const hoc = WrapperComponent => {
     function WithHoc(props) {
       return <WrapperComponent {...commonProps} {...props} />;
@@ -207,6 +208,7 @@ export default ({
       authenticationSaga,
     )(WithHoc);
   };
+  if (!nextJS && hookWithHoc) return { hook: _useHocHook, hoc };
   if (nextJS && getDefaultConfig)
     return {
       hoc,
