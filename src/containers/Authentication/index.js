@@ -137,17 +137,7 @@ export default ({
     return state;
   };
   // eslint-disable-next-line no-underscore-dangle
-  const _useHocHookNextJs = (inject = true) => {
-    useInjectSaga(injectSagaConfig, inject);
-    useInjectReducer(injectReducerConfig, createReducer, inject);
-    const dispatch = useDispatch();
-    const [state] = useState({
-      ...componentData[`${reducerName}_hoc`],
-      actions: bindActionCreators(componentActions, dispatch),
-      dispatch,
-    });
-    return state;
-  };
+
   if (useHocHook && !nextJS && !hookWithHoc) return _useHocHook;
   const hoc = WrapperComponent => {
     function WithHoc(props) {
@@ -208,7 +198,26 @@ export default ({
       authenticationSaga,
     )(WithHoc);
   };
+  if (!nextJS && hookWithHoc && getDefaultConfig)
+    return {
+      hook: _useHocHook,
+      hoc,
+      actions: { ...componentActions },
+      ...componentData[`${reducerName}_hoc`],
+    };
   if (!nextJS && hookWithHoc) return { hook: _useHocHook, hoc };
+  // eslint-disable-next-line no-underscore-dangle
+  const _useHocHookNextJs = (inject = true) => {
+    useInjectSaga(injectSagaConfig, inject);
+    useInjectReducer(injectReducerConfig, createReducer, inject);
+    const dispatch = useDispatch();
+    const [state] = useState({
+      ...componentData[`${reducerName}_hoc`],
+      actions: bindActionCreators(componentActions, dispatch),
+      dispatch,
+    });
+    return state;
+  };
   if (nextJS && getDefaultConfig)
     return {
       hoc,
