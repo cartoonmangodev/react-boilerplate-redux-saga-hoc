@@ -17,12 +17,15 @@ import { updateIn, newObject, generateTimeStamp } from '../helpers';
 //   ),
 // });
 
-export const errorHandler = ({ errorData, clearDataOnError = false } = {}) => ({
-  data: Data = {},
-}) => ({
+export const errorHandler = ({
+  errorData,
+  clearDataOnError = false,
+  statusCode,
+} = {}) => ({ data: Data = {} }) => ({
   ...(clearDataOnError ? { data: Array.isArray(Data) ? [] : {} } : {}),
   error: errorData || null,
   isError: true,
+  statusCode,
   lastUpdated: generateTimeStamp(),
   isInfinite: null,
   infiniteEnd: null,
@@ -40,6 +43,7 @@ export const filterArrayErrorHandler = ({
   errorData,
   filter,
   clearDataOnError,
+  statusCode,
 } = {}) => ({ data: Data = {} }) => ({
   data: (() => {
     if (filter && filter.some(fil => Array.isArray(fil))) {
@@ -53,7 +57,7 @@ export const filterArrayErrorHandler = ({
                     : {}),
                   error: errorData || null,
                   isError: true,
-                  statusCode: 'ERROR',
+                  statusCode,
                   lastUpdated: generateTimeStamp(),
                   isInfinite: null,
                   infiniteEnd: null,
@@ -68,7 +72,7 @@ export const filterArrayErrorHandler = ({
         ...(clearDataOnError ? { data: Array.isArray(oldData) ? [] : {} } : {}),
         error: errorData || null,
         isError: true,
-        statusCode: 'ERROR',
+        statusCode,
         lastUpdated: generateTimeStamp(),
         isInfinite: null,
         infiniteEnd: null,

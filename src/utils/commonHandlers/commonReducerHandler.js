@@ -205,6 +205,7 @@ export const COMMON_REDUCER_HANDLER = (action, handlers) => {
     query,
     filter,
     clearDataOnError,
+    statusCode: rest.statusCode,
   });
 
   return [commonHandler, commmonErrorHandler];
@@ -345,6 +346,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
                 type: 'ERROR',
                 error: errorData,
                 status: status || rest.statusCode,
+                statusCode: rest.statusCode,
               }) || updatedState
             : updatedState;
         break;
