@@ -107,7 +107,7 @@ export const commmonStateHandler = ({
         : false) ||
       (customTask &&
         customLoader !== undefined &&
-        (filter || responseFilter).length > 0)
+        (filter || responseFilter || []).length > 0)
     )
       State = newObject(State, ({ [type || action.type]: obj }) => ({
         [type || action.type]: newObject(
