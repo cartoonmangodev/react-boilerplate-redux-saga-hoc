@@ -256,7 +256,7 @@ export default function({
                 ((action.api.responseStatusCode || []).includes(
                   (postData.data || {})[statusKey],
                 )
-                  ? 200
+                  ? postData.status || 200
                   : (postData.data || {})[statusKey]) ||
                 (postData && postData.status),
               statusCode:
