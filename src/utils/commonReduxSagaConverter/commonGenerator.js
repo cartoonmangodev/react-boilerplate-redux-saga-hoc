@@ -247,8 +247,8 @@ export default function({
           postData = typeof _postData !== 'undefined' ? { ..._postData } : {};
         }
         let data = postData ? { ...postData } : postData;
-        postData = postData || { data: {} };
-        if (postData && postData.data && !cancelTask) {
+        postData = postData || {};
+        if (postData && postData.data) {
           const statusKey = action.api.responseStatusCodeKey || '';
           data = {
             data: {
@@ -268,8 +268,7 @@ export default function({
               data:
                 (postData.data || {})[action.api.responseDataKey] ||
                 postData.data ||
-                postData ||
-                {},
+                postData,
             },
           };
           if (
@@ -295,7 +294,7 @@ export default function({
           }
         }
 
-        if (data && postData.data && !cancelTask) {
+        if (data && postData.data) {
           const {
             data: {
               status: successStatus = postData && postData.status,
@@ -378,12 +377,15 @@ export default function({
         } else if (process.env.NODE_ENV === 'test' && action.success)
           yield put(action.success({ data }));
         else {
-          if (typeof errorCallback === 'function' && !cancelTask) {
-            errorCallback({
-              error: postData,
+          if (typeof successCallback === 'function' && !cancelTask) {
+            successCallback({
               response: postData,
-              isError: true,
-              isNetworkError: postData && postData.message === 'Network Error',
+              status: successStatus,
+              // isError: true
+              // error: postData,
+              // response: postData,
+              // isError: true,
+              // isNetworkError: postData && postData.message === 'Network Error',
             });
           }
           yield call(loaderGenerator, {
