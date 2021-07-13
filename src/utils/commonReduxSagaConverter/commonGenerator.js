@@ -248,7 +248,7 @@ export default function({
         }
         let data = postData ? { ...postData } : postData;
         postData = postData || { data: {} };
-        if (postData && postData.data) {
+        if (postData && postData.data && !cancelTask) {
           const statusKey = action.api.responseStatusCodeKey || '';
           data = {
             data: {
@@ -295,7 +295,7 @@ export default function({
           }
         }
 
-        if (data && postData.data) {
+        if (data && postData.data && !cancelTask) {
           const {
             data: {
               status: successStatus = postData && postData.status,
