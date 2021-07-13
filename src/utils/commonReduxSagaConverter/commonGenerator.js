@@ -380,7 +380,7 @@ export default function({
           if (typeof successCallback === 'function' && !cancelTask) {
             successCallback({
               response: postData,
-              status: successStatus,
+              status: postData && postData.status,
               // isError: true
               // error: postData,
               // response: postData,
