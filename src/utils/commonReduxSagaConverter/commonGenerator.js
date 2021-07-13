@@ -268,7 +268,8 @@ export default function({
               data:
                 (postData.data || {})[action.api.responseDataKey] ||
                 postData.data ||
-                postData,
+                postData ||
+                {},
             },
           };
           if (
