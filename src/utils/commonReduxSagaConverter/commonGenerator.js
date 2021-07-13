@@ -247,7 +247,7 @@ export default function({
           postData = typeof _postData !== 'undefined' ? { ..._postData } : {};
         }
         let data = postData ? { ...postData } : postData;
-        postData = postData || {};
+        postData = postData || { data: {} };
         if (postData && postData.data) {
           const statusKey = action.api.responseStatusCodeKey || '';
           data = {
