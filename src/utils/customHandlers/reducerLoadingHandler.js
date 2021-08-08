@@ -22,4 +22,5 @@ export const reducerLoadingHandler = ({
     status: typeof loader === 'boolean' ? loader : status,
     lastUpdated: generateTimeStamp(),
   },
+  lastUpdated: generateTimeStamp(),
 });

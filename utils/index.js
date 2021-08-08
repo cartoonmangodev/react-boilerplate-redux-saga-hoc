@@ -1045,8 +1045,8 @@ var useMutation = function useMutation(reducerName) {
     checkKey(filter, 'filter', 'array');
     checkKey(type, 'key', 'string');
 
-    if (type.includes('_CALL') && type.slice(-5) === '_CALL') {
-      checkKey(value, 'value', 'object');
+    if (type.includes('_CALL') && type.slice(-5) === '_CALL' && filter && Array.isArray(filter)) {
+      // checkKey(value, 'value', 'object');
       dispatch({
         type: type.slice(0, -4).concat('CUSTOM_TASK'),
         response: {
