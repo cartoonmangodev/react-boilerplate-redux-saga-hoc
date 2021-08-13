@@ -15,7 +15,13 @@ const updateData = (data, successData, updateCallback) => {
 };
 
 export const updateHandler = ({
-  task: { key, id, subKey = [], values = {} } = {},
+  task: {
+    key,
+    id,
+    subKey = [],
+    values = {},
+    dontUpdateResponseData = false,
+  } = {},
   callback: { updateCallback } = {},
   successData = {},
   successDataStatusCode,
@@ -25,7 +31,9 @@ export const updateHandler = ({
       ? updateIn(
           {
             ...data,
-            ...(typeOf(successData) === 'object' ? successData : {}),
+            ...(typeOf(successData) === 'object' && !dontUpdateResponseData
+              ? successData
+              : {}),
             [subKey[0]]: data[subKey[0]],
           },
           subKey,
