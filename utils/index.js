@@ -949,8 +949,11 @@ var useQuery = function useQuery() {
     if (!isEqual(_data, _queryData)) {
       // previousData[`${key || name}_${_key}`] = _data;
       var callbackData;
+      previousData.set(_key, _data // _data && typeof _data === 'object'
+      //   ? JSON.parse(JSON.stringify(_data))
+      //   : _data,
+      );
       if (callback && typeof callback === 'function') callbackData = callback(_data);
-      previousData.set(_key, _data && _typeof(_data) === 'object' ? JSON.parse(JSON.stringify(_data)) : _data);
 
       if (callbackData) {
         _queryData = callbackData;
@@ -991,6 +994,7 @@ var useQuery = function useQuery() {
     return function () {
       previousData.delete(_key);
       previousCallbackData.delete(_key);
+      initialRender.delete();
     };
   }, []);
 
