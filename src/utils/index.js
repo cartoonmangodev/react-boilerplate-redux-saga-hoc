@@ -477,15 +477,15 @@ export const useQuery = (
     if (!isEqual(_data, _queryData)) {
       // previousData[`${key || name}_${_key}`] = _data;
       let callbackData;
-      if (callback && typeof callback === 'function')
-        callbackData = callback(_data);
       previousData.set(
         _key,
-        _data && typeof _data === 'object'
-          ? JSON.parse(JSON.stringify(_data))
-          : _data,
+        _data,
+        // _data && typeof _data === 'object'
+        //   ? JSON.parse(JSON.stringify(_data))
+        //   : _data,
       );
-
+      if (callback && typeof callback === 'function')
+        callbackData = callback(_data);
       if (callbackData) {
         _queryData = callbackData;
         previousCallbackData.set(_key, callbackData);
@@ -525,6 +525,7 @@ export const useQuery = (
     return () => {
       previousData.delete(_key);
       previousCallbackData.delete(_key);
+      initialRender.delete();
     };
   }, []);
   const _selectorData = useSelector(execute, (e, f) => {
