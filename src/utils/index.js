@@ -350,124 +350,113 @@ export const useQuery = (
     [],
   );
 
-  const _getData = useCallback(
-    (ee = {}, isString, _state) => {
-      const state = _state || {};
-      const _getDataFunc = e =>
-        (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key)
-        ? !e.defaultDataFormat || !(isString ? array : e.key)
-        : false)
-          ? (isString
-            ? array
-            : e.key)
-            ? safe(
-                state,
-                `[${name}][${isString ? array : e.key}]${
-                  e.query ? e.query : ''
-                }`,
-                e.default,
-              )
-            : name
-            ? safe(state, `[${name}]${e.query ? e.query : ''}`, e.default)
-            : safe(state, `${e.query ? e.query : ''}`, e.default)
-          : safe(
-              getData(
-                safe(state, `[${name}][${isString ? array : e.key}]`),
-                e.query ? undefined : e.default || undefined,
-                e.initialLoaderState || false,
-                _checkFilter(e),
-                e.dataQuery,
-              ),
-              `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
-              e.query
-                ? e.default !== undefined
-                  ? e.default
-                  : undefined
-                : undefined,
-            );
-      return Array.isArray(ee.query)
-        ? ee.query.reduce(
-            (acc, _query) =>
-              acc.concat([
-                _getDataFunc({
-                  ...ee,
-                  query: _query.key || _query,
-                  default: _query.default || undefined,
-                }),
-              ]),
-            [],
-          )
-        : _getDataFunc(ee);
-    },
-    [array],
-  );
-
-  const _GetData = useCallback(
-    _state => {
-      const state = _state || {};
-      let _data = {};
-      if (
-        name &&
-        ((Array.isArray(array) && array.length > 0) ||
-          (typeOf(array) === 'object' && Object.keys(array).length > 0))
-      ) {
-        // eslint-disable-next-line consistent-return
-        // eslint-disable-next-line no-underscore-dangle
-        _data = (typeOf(array) === 'object' ? [array] : array).reduce(
-          (acc, e) => {
-            if (typeOf(e) === 'object') {
-              if (typeOf(array) === 'object')
-                return exeuteRequiredData(_getData(e, undefined, state), e);
-              const _arr = [...acc];
-              _arr.push(exeuteRequiredData(_getData(e, undefined, state), e));
-              return _arr;
-            }
-            // Below condition ( one config for all the keys )
-            if (typeOf(e) === 'string' && typeOf(config) === 'object') {
-              const _config = { key: e, ...config };
-              if (typeOf(array) === 'object')
-                return exeuteRequiredData(
-                  _getData(_config, undefined, state),
-                  _config,
-                );
-              const _arr = [...acc];
-              _arr.push(
-                exeuteRequiredData(
-                  _getData(_config, undefined, state),
-                  _config,
-                ),
-              );
-              return _arr;
-            }
-            if (typeOf(array) === 'object')
-              return safe(state, `[${name}][${e.key}]`);
-            const _arr = [...acc];
-            _arr.push(safe(state, `[${name}][${e}]`));
-            return _arr;
-          },
-          typeOf(array) === 'object' ? {} : [],
-        );
-        // if()
-      } else if (
-        typeof array === 'string' &&
-        config &&
-        typeOf(config) === 'array'
-      )
-        _data = config.reduce(
-          (acc, _config) => [
-            ...acc,
-            exeuteRequiredData(_getData(_config, true, state), _config),
-          ],
+  const _getData = useCallback((ee = {}, isString, _state) => {
+    const state = _state || {};
+    const _getDataFunc = e =>
+      (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key)
+      ? !e.defaultDataFormat || !(isString ? array : e.key)
+      : false)
+        ? (isString
+          ? array
+          : e.key)
+          ? safe(
+              state,
+              `[${name}][${isString ? array : e.key}]${e.query ? e.query : ''}`,
+              e.default,
+            )
+          : name
+          ? safe(state, `[${name}]${e.query ? e.query : ''}`, e.default)
+          : safe(state, `${e.query ? e.query : ''}`, e.default)
+        : safe(
+            getData(
+              safe(state, `[${name}][${isString ? array : e.key}]`),
+              e.query ? undefined : e.default || undefined,
+              e.initialLoaderState || false,
+              _checkFilter(e),
+              e.dataQuery,
+            ),
+            `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
+            e.query
+              ? e.default !== undefined
+                ? e.default
+                : undefined
+              : undefined,
+          );
+    return Array.isArray(ee.query)
+      ? ee.query.reduce(
+          (acc, _query) =>
+            acc.concat([
+              _getDataFunc({
+                ...ee,
+                query: _query.key || _query,
+                default: _query.default || undefined,
+              }),
+            ]),
           [],
-        );
-      else if (typeof array === 'string')
-        _data = exeuteRequiredData(_getData(config, true, state), config);
-      else if (name) _data = safe(state, `[${name}]`);
-      else _data = state || {};
-      return _data;
-    },
-    [config, array],
-  );
+        )
+      : _getDataFunc(ee);
+  }, []);
+
+  const _GetData = useCallback(_state => {
+    const state = _state || {};
+    let _data = {};
+    if (
+      name &&
+      ((Array.isArray(array) && array.length > 0) ||
+        (typeOf(array) === 'object' && Object.keys(array).length > 0))
+    ) {
+      // eslint-disable-next-line consistent-return
+      // eslint-disable-next-line no-underscore-dangle
+      _data = (typeOf(array) === 'object' ? [array] : array).reduce(
+        (acc, e) => {
+          if (typeOf(e) === 'object') {
+            if (typeOf(array) === 'object')
+              return exeuteRequiredData(_getData(e, undefined, state), e);
+            const _arr = [...acc];
+            _arr.push(exeuteRequiredData(_getData(e, undefined, state), e));
+            return _arr;
+          }
+          // Below condition ( one config for all the keys )
+          if (typeOf(e) === 'string' && typeOf(config) === 'object') {
+            const _config = { key: e, ...config };
+            if (typeOf(array) === 'object')
+              return exeuteRequiredData(
+                _getData(_config, undefined, state),
+                _config,
+              );
+            const _arr = [...acc];
+            _arr.push(
+              exeuteRequiredData(_getData(_config, undefined, state), _config),
+            );
+            return _arr;
+          }
+          if (typeOf(array) === 'object')
+            return safe(state, `[${name}][${e.key}]`);
+          const _arr = [...acc];
+          _arr.push(safe(state, `[${name}][${e}]`));
+          return _arr;
+        },
+        typeOf(array) === 'object' ? {} : [],
+      );
+      // if()
+    } else if (
+      typeof array === 'string' &&
+      config &&
+      typeOf(config) === 'array'
+    )
+      _data = config.reduce(
+        (acc, _config) => [
+          ...acc,
+          exeuteRequiredData(_getData(_config, true, state), _config),
+        ],
+        [],
+      );
+    else if (typeof array === 'string')
+      _data = exeuteRequiredData(_getData(config, true, state), config);
+    else if (name) _data = safe(state, `[${name}]`);
+    else _data = state || {};
+    return _data;
+  }, []);
   // const [data, setData] = useState(_GetData());
   const execute = useCallback(state => {
     // const state = safe(store, `.getState()[${name}]`);
@@ -525,10 +514,10 @@ export const useQuery = (
     return () => {
       previousData.delete(_key);
       previousCallbackData.delete(_key);
-      initialRender.delete();
+      initialRender.delete(_key);
     };
   }, []);
-  const _selectorData = useSelector(execute, (e, f) => {
+  const equalityCheckFunction = useCallback((e, f) => {
     const _isEqual = isEqual(e, f);
     if (
       (!_isEqual || initialRender.get(_key)) &&
@@ -538,7 +527,8 @@ export const useQuery = (
       callbackSuccess(e, f);
     }
     return _isEqual;
-  });
+  }, []);
+  const _selectorData = useSelector(execute, equalityCheckFunction);
   return _selectorData;
 };
 
