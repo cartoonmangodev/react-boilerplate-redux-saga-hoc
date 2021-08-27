@@ -888,7 +888,7 @@ var useQuery = function useQuery() {
         default: _query.default || undefined
       }))]);
     }, []) : _getDataFunc(ee);
-  }, [array]);
+  }, []);
 
   var _GetData = React.useCallback(function (_state) {
     var state = _state || {};
@@ -936,7 +936,7 @@ var useQuery = function useQuery() {
     }, []);else if (typeof array === 'string') _data = exeuteRequiredData(_getData(config, true, state), config);else if (name) _data = safe(state, "[".concat(name, "]"));else _data = state || {};
 
     return _data;
-  }, [config, array]); // const [data, setData] = useState(_GetData());
+  }, []); // const [data, setData] = useState(_GetData());
 
 
   var execute = React.useCallback(function (state) {
@@ -994,11 +994,10 @@ var useQuery = function useQuery() {
     return function () {
       previousData.delete(_key);
       previousCallbackData.delete(_key);
-      initialRender.delete();
+      initialRender.delete(_key);
     };
   }, []);
-
-  var _selectorData = reactRedux.useSelector(execute, function (e, f) {
+  var equalityCheckFunction = React.useCallback(function (e, f) {
     var _isEqual = isEqual(e, f);
 
     if ((!_isEqual || initialRender.get(_key)) && typeof callbackSuccess === 'function') {
@@ -1007,7 +1006,9 @@ var useQuery = function useQuery() {
     }
 
     return _isEqual;
-  });
+  }, []);
+
+  var _selectorData = reactRedux.useSelector(execute, equalityCheckFunction);
 
   return _selectorData;
 };
