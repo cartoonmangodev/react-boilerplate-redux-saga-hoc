@@ -137,8 +137,12 @@ export default ({
         }
       : null;
   const _useHocHook = (inject = true) => {
-    useInjectSaga(injectSagaConfig, inject);
-    useInjectReducer(injectReducerConfig, createReducer, inject);
+    if (inject) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useInjectSaga(injectSagaConfig, inject);
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useInjectReducer(injectReducerConfig, createReducer, inject);
+    }
     const dispatch = useDispatch();
     const [state] = useState(
       stateProps || {
