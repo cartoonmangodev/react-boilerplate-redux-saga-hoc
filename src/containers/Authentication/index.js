@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable indent */
 import React, { useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import invariant from 'invariant';
@@ -48,6 +50,7 @@ export default ({
   reducer: reducerFunction,
   name: reducerName,
   axiosInterceptors,
+  store: _store,
   useHook: _useHook = false,
 } = {}) => {
   invariant(
@@ -125,15 +128,25 @@ export default ({
     reducer,
   };
   // eslint-disable-next-line no-underscore-dangle
+  const stateProps =
+    _store && _store.dispatch
+      ? {
+          ...componentData[`${reducerName}_hoc`],
+          actions: bindActionCreators(componentActions, _store.dispatch),
+          dispatch: _store.dispatch,
+        }
+      : null;
   const _useHocHook = (inject = true) => {
     useInjectSaga(injectSagaConfig, inject);
     useInjectReducer(injectReducerConfig, createReducer, inject);
     const dispatch = useDispatch();
-    const [state] = useState({
-      ...componentData[`${reducerName}_hoc`],
-      actions: bindActionCreators(componentActions, dispatch),
-      dispatch,
-    });
+    const [state] = useState(
+      stateProps || {
+        ...componentData[`${reducerName}_hoc`],
+        actions: bindActionCreators(componentActions, dispatch),
+        dispatch,
+      },
+    );
     return state;
   };
   // eslint-disable-next-line no-underscore-dangle
@@ -211,11 +224,13 @@ export default ({
     useInjectSaga(injectSagaConfig, inject);
     useInjectReducer(injectReducerConfig, createReducer, inject);
     const dispatch = useDispatch();
-    const [state] = useState({
-      ...componentData[`${reducerName}_hoc`],
-      actions: bindActionCreators(componentActions, dispatch),
-      dispatch,
-    });
+    const [state] = useState(
+      stateProps || {
+        ...componentData[`${reducerName}_hoc`],
+        actions: bindActionCreators(componentActions, dispatch),
+        dispatch,
+      },
+    );
     return state;
   };
   if (nextJS && getDefaultConfig)
