@@ -844,6 +844,8 @@ var checkKeyWithMessage = function checkKeyWithMessage(key, dataType, message) {
 var previousData = new Map();
 var initialRender = new Map();
 var previousCallbackData = new Map();
+var previousDependencyArrayData = new Map();
+var isPreviousDependencyArrayCheckPassed = new Map();
 var useQuery = function useQuery() {
   var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
   var array = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
@@ -940,11 +942,38 @@ var useQuery = function useQuery() {
 
 
   var execute = React.useCallback(function (state) {
-    // const state = safe(store, `.getState()[${name}]`);
-    // eslint-disable-next-line no-underscore-dangle
-    var _data = _GetData(state);
-
     var _queryData = previousData.get(_key);
+
+    var isPassed = isPreviousDependencyArrayCheckPassed.get(_key);
+
+    if ((config && config.dependencyArray && !Array.isArray(config.dependencyArray)) && !isPassed) {
+      invariant(false, 'dependencyArray expected an array but got ' + typeOf(config.dependencyArray));
+    } else if (isPassed || config && config.dependencyArray && Array.isArray(config.dependencyArray) && config.dependencyArray.length > 0) {
+      if (!isPassed && config.dependencyArray.filter(function (e) {
+        return typeof e !== 'string';
+      })[0]) invariant(false, 'dependencyArray must be array of string');else {
+        if (!isPassed) isPreviousDependencyArrayCheckPassed.set(_key, true);
+
+        var _next = config.dependencyArray.map(function (_e) {
+          return safe(state[name], _e);
+        });
+
+        var _previous = previousDependencyArrayData.get(_key);
+
+        previousDependencyArrayData.set(_key, _next);
+
+        if (isEqual(_previous, _next)) {
+          return {
+            isEqualCheck: true,
+            data: previousCallbackData.get(_key) || _queryData
+          };
+        }
+      }
+    } // const state = safe(store, `.getState()[${name}]`);
+    // eslint-disable-next-line no-underscore-dangle
+
+
+    var _data = _GetData(state);
 
     if (!isEqual(_data, _queryData)) {
       // previousData[`${key || name}_${_key}`] = _data;
@@ -964,7 +993,10 @@ var useQuery = function useQuery() {
       }
     } else _queryData = previousCallbackData.get(_key) || _queryData;
 
-    return _queryData;
+    return {
+      isEqualCheck: false,
+      data: _queryData
+    };
   }, []); // useEffect(() => {
   //   const unSubscribe = store.subscribe(execute);
   //   return () => {
@@ -995,14 +1027,15 @@ var useQuery = function useQuery() {
       previousData.delete(_key);
       previousCallbackData.delete(_key);
       initialRender.delete(_key);
+      previousDependencyArrayData.delete(_key);
     };
   }, []);
   var equalityCheckFunction = React.useCallback(function (e, f) {
-    var _isEqual = isEqual(e, f);
+    var _isEqual = e.isEqualCheck ? true : isEqual(e.data, f.data);
 
     if ((!_isEqual || initialRender.get(_key)) && typeof callbackSuccess === 'function') {
       initialRender.set(_key, false);
-      callbackSuccess(e, f);
+      callbackSuccess(e.data, f.data);
     }
 
     return _isEqual;
@@ -1010,7 +1043,7 @@ var useQuery = function useQuery() {
 
   var _selectorData = reactRedux.useSelector(execute, equalityCheckFunction);
 
-  return _selectorData;
+  return _selectorData.data;
 };
 var useActionsHook = function useActionsHook(name, actions) {
   var _useState3 = React.useState({}),

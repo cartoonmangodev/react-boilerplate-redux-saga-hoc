@@ -262,24 +262,26 @@ export const getData = (data, def, loader = true, filter = []) => ({
   ),
 });
 
-export const mapDispatchToProps =
-  (actions, componentData, reducerName) => (dispatch) => ({
-    dispatch,
-    ...(actions && Object.keys(actions).length
-      ? newObject(componentData, ({ [`${reducerName}_hoc`]: data }) => ({
-          [`${reducerName}_hoc`]: newObject(data, {
-            actions: bindActionCreators(actions, dispatch),
-          }),
-        }))
-      : {}),
-  });
+export const mapDispatchToProps = (
+  actions,
+  componentData,
+  reducerName,
+) => dispatch => ({
+  dispatch,
+  ...(actions && Object.keys(actions).length
+    ? newObject(componentData, ({ [`${reducerName}_hoc`]: data }) => ({
+        [`${reducerName}_hoc`]: newObject(data, {
+          actions: bindActionCreators(actions, dispatch),
+        }),
+      }))
+    : {}),
+});
 
 const checkKey = (key, name, dataType, message) => {
   invariant(
     typeOf(key) === dataType,
-    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be  ${
-      message || dataType
-    }`,
+    `(react-boilerplate-redux-saga-hoc)  Expected \`${name}\` to be  ${message ||
+      dataType}`,
   );
 };
 const checkKeyWithMessage = (key, dataType, message) => {
@@ -339,7 +341,7 @@ export const useQuery = (
   }, []);
 
   const _checkFilter = useCallback(
-    (e) =>
+    e =>
       e && e.filter
         ? Array.isArray(e.filter)
           ? e.filter
@@ -352,13 +354,13 @@ export const useQuery = (
 
   const _getData = useCallback((ee = {}, isString, _state) => {
     const state = _state || {};
-    const _getDataFunc = (e) =>
-      (
-        typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key)
-          ? !e.defaultDataFormat || !(isString ? array : e.key)
-          : false
-      )
-        ? (isString ? array : e.key)
+    const _getDataFunc = e =>
+      (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key)
+      ? !e.defaultDataFormat || !(isString ? array : e.key)
+      : false)
+        ? (isString
+          ? array
+          : e.key)
           ? safe(
               state,
               `[${name}][${isString ? array : e.key}]${e.query ? e.query : ''}`,
@@ -397,7 +399,7 @@ export const useQuery = (
       : _getDataFunc(ee);
   }, []);
 
-  const _GetData = useCallback((_state) => {
+  const _GetData = useCallback(_state => {
     const state = _state || {};
     let _data = {};
     if (
@@ -458,7 +460,7 @@ export const useQuery = (
     return _data;
   }, []);
   // const [data, setData] = useState(_GetData());
-  const execute = useCallback((state) => {
+  const execute = useCallback(state => {
     let _queryData = previousData.get(_key);
     const isPassed = isPreviousDependencyArrayCheckPassed.get(_key);
     if (
@@ -482,12 +484,12 @@ export const useQuery = (
     ) {
       if (
         !isPassed &&
-        config.dependencyArray.filter((e) => typeof e !== 'string')[0]
+        config.dependencyArray.filter(e => typeof e !== 'string')[0]
       )
         invariant(false, 'dependencyArray must be array of string');
       else {
         if (!isPassed) isPreviousDependencyArrayCheckPassed.set(_key, true);
-        const _next = config.dependencyArray.map((_e) => safe(state[name], _e));
+        const _next = config.dependencyArray.map(_e => safe(state[name], _e));
         const _previous = previousDependencyArrayData.get(_key);
         previousDependencyArrayData.set(_key, _next);
         if (isEqual(_previous, _next)) {
@@ -584,7 +586,7 @@ export const useActionsHook = (name, actions) => {
   return dispatchAction;
 };
 
-export const useMutation = (reducerName) => {
+export const useMutation = reducerName => {
   if (!reducerName)
     checkKeyWithMessage(
       reducerName,
@@ -671,7 +673,7 @@ export const toPromise = (action, config = {}, isReject) => {
   );
 };
 
-export const toPromiseFunction = (action, isReject) => (config) => {
+export const toPromiseFunction = (action, isReject) => config => {
   if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined')
     checkKeyWithMessage(
       config,
@@ -723,7 +725,7 @@ export function useStaleRefresh(
               }
             : {},
         ),
-      ).then((newData) => {
+      ).then(newData => {
         if (CACHE[cacheID]) setIsUpdating(false);
         if (newData && newData.status === 'SUCCESS') {
           CACHE[cacheID] = newData.data;
@@ -751,21 +753,23 @@ export function useStaleRefresh(
   return [refresh, isUpdating];
 }
 
-export const useMutateReducer = (reducerName) => {
+export const useMutateReducer = reducerName => {
   const store = useStore();
   const dispatch = useDispatch();
-  return (callback) => {
+  return callback => {
     const state = reducerName
       ? store.getState()[reducerName]
       : store.getState();
-    dispatch({
-      type: reducerName ? `${reducerName}_MUTATE_STATE` : 'MUTATE_STATE',
-      payload: callback(state) || {},
-    });
+    const newState = callback(state);
+    if (newState)
+      dispatch({
+        type: reducerName ? `${reducerName}_MUTATE_STATE` : 'MUTATE_STATE',
+        payload: newState || {},
+      });
   };
 };
 
-export const useResetState = (reducerName) => {
+export const useResetState = reducerName => {
   const dispatch = useDispatch();
   return (dontResetKeys = []) => {
     dispatch({
@@ -775,7 +779,7 @@ export const useResetState = (reducerName) => {
   };
 };
 
-export const useResetOnlyApiEndPointsState = (reducerName) => {
+export const useResetOnlyApiEndPointsState = reducerName => {
   const dispatch = useDispatch();
   return (dontResetKeys = []) => {
     dispatch({
@@ -819,7 +823,7 @@ export const useOptimizedQuery = (
   );
 
   const _checkFilter = useCallback(
-    (e) =>
+    e =>
       e.filter
         ? Array.isArray(e.filter)
           ? e.filter
@@ -832,16 +836,16 @@ export const useOptimizedQuery = (
 
   const _getData = useCallback(
     (e = {}, isString) =>
-      (
-        (typeof e.defaultDataFormat === 'boolean'
+      ((typeof e.defaultDataFormat === 'boolean'
+        ? e.defaultDataFormat
+        : true) || !(isString ? array : e.key)
+      ? !(typeof e.defaultDataFormat === 'boolean'
           ? e.defaultDataFormat
           : true) || !(isString ? array : e.key)
-          ? !(typeof e.defaultDataFormat === 'boolean'
-              ? e.defaultDataFormat
-              : true) || !(isString ? array : e.key)
-          : false
-      )
-        ? (isString ? array : e.key)
+      : false)
+        ? (isString
+          ? array
+          : e.key)
           ? safe(
               store,
               `.getState()[${name}][${isString ? array : e.key}]${
