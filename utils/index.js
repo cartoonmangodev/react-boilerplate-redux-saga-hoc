@@ -22,6 +22,7 @@ var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallC
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
 var _createSuper = _interopDefault(require('@babel/runtime/helpers/createSuper'));
 var _inherits = _interopDefault(require('@babel/runtime/helpers/inherits'));
+var hoistNonReactStatics = _interopDefault(require('hoist-non-react-statics'));
 
 /* eslint-disable no-console */
 
@@ -947,7 +948,7 @@ var useQuery = function useQuery() {
     var isPassed = isPreviousDependencyArrayCheckPassed.get(_key);
 
     if ((config && config.dependencyArray && !Array.isArray(config.dependencyArray)) && !isPassed) {
-      invariant(false, 'dependencyArray expected an array but got ' + typeOf(config.dependencyArray));
+      invariant(false, "dependencyArray expected an array but got ".concat(typeOf(config.dependencyArray)));
     } else if (isPassed || config && config.dependencyArray && Array.isArray(config.dependencyArray) && config.dependencyArray.length > 0) {
       if (!isPassed && config.dependencyArray.filter(function (e) {
         return typeof e !== 'string';
@@ -1069,7 +1070,8 @@ var useMutation = function useMutation(reducerName) {
     if (!store.getState()[reducerName]) checkKeyWithMessage(null, 'string', " reducerName '".concat(reducerName, "' not a valid reducer key."));
   }, []);
   var dispatch = reactRedux.useDispatch();
-  return function (_ref21) {
+
+  var _callback = React.useCallback(function (_ref21) {
     var type = _ref21.key,
         value = _ref21.value,
         _ref21$filter = _ref21.filter,
@@ -1105,7 +1107,9 @@ var useMutation = function useMutation(reducerName) {
       type: "".concat(reducerName, "_MUTATE_STATE"),
       payload: _defineProperty({}, type, typeof value === 'function' ? value(store.getState()[reducerName][type]) : value)
     });
-  };
+  }, []);
+
+  return _callback;
 };
 var toPromise = function toPromise(action) {
   var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -1202,128 +1206,43 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
 var useMutateReducer = function useMutateReducer(reducerName) {
   var store = reactRedux.useStore();
   var dispatch = reactRedux.useDispatch();
-  return function (callback) {
+
+  var _callback = React.useCallback(function (callback) {
     var state = reducerName ? store.getState()[reducerName] : store.getState();
     var newState = callback(state);
     if (newState) dispatch({
       type: reducerName ? "".concat(reducerName, "_MUTATE_STATE") : 'MUTATE_STATE',
       payload: newState || {}
     });
-  };
+  }, []);
+
+  return _callback;
 };
 var useResetState = function useResetState(reducerName) {
   var dispatch = reactRedux.useDispatch();
-  return function () {
+
+  var _callback = React.useCallback(function () {
     var dontResetKeys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     dispatch({
       type: reducerName ? "".concat(reducerName, "_RESET_STATE") : 'RESET_STATE',
       payload: dontResetKeys
     });
-  };
+  }, []);
+
+  return _callback;
 };
 var useResetOnlyApiEndPointsState = function useResetOnlyApiEndPointsState(reducerName) {
   var dispatch = reactRedux.useDispatch();
-  return function () {
+
+  var _callback = React.useCallback(function () {
     var dontResetKeys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     dispatch({
       type: reducerName ? "".concat(reducerName, "_RESET_API") : 'RESET_API',
       payload: dontResetKeys
     });
-  };
-};
-var useOptimizedQuery = function useOptimizedQuery() {
-  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-  var array = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var callback = arguments.length > 3 ? arguments[3] : undefined;
-  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
-  var store = reactRedux.useStore();
-
-  var _useState7 = React.useState({}),
-      _useState8 = _slicedToArray(_useState7, 1),
-      _key = _useState8[0];
-
-  var exeuteRequiredData = React.useCallback(function (_data) {
-    var e = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    return e.requiredKey && Array.isArray(e.requiredKey) && e.requiredKey.length > 0 && typeOf(_data) === 'object' ? Object.entries(_data).reduce(function (acc, _ref23) {
-      var _ref24 = _slicedToArray(_ref23, 2),
-          _DataKey = _ref24[0],
-          _DataValue = _ref24[1];
-
-      return _objectSpread({}, acc, {}, e.requiredKey.includes(_DataKey) ? _defineProperty({}, _DataKey, _DataValue) : {});
-    }, {}) : e.requiredKey ? _data || {} : _data;
   }, []);
 
-  var _checkFilter = React.useCallback(function (e) {
-    return e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : undefined : undefined;
-  }, []);
-
-  var _getData = React.useCallback(function () {
-    var e = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var isString = arguments.length > 1 ? arguments[1] : undefined;
-    return ((typeof e.defaultDataFormat === 'boolean' ? e.defaultDataFormat : true) || !(isString ? array : e.key) ? !(typeof e.defaultDataFormat === 'boolean' ? e.defaultDataFormat : true) || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : name ? safe(store, ".getState()[".concat(name, "]").concat(e.query ? e.query : ''), e.default) : safe(store, ".getState()".concat(e.query ? e.query : ''), e.default) : safe(getData(safe(store, ".getState()[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e), e.dataQuery), "".concat(e.query && typeOf(e.query) === 'string' ? e.query : ''), e.query ? e.default !== undefined ? e.default : undefined : undefined);
-  }, []);
-
-  var _GetData = React.useCallback(function () {
-    var _data = {};
-
-    if (name && (Array.isArray(array) && array.length > 0 || typeOf(array) === 'object' && Object.keys(array).length > 0)) {
-      // eslint-disable-next-line consistent-return
-      // eslint-disable-next-line no-underscore-dangle
-      _data = (typeOf(array) === 'object' ? [array] : array).reduce(function (acc, e) {
-        if (typeOf(e) === 'object') {
-          if (typeOf(array) === 'object') return exeuteRequiredData(_getData(e), e);
-
-          var _arr4 = _toConsumableArray(acc);
-
-          _arr4.push(exeuteRequiredData(_getData(e), e));
-
-          return _arr4;
-        }
-
-        if (typeOf(array) === 'object') return safe(store, ".getState()[".concat(name, "][").concat(e, "]"));
-
-        var _arr = _toConsumableArray(acc);
-
-        _arr.push(safe(store, ".getState()[".concat(name, "][").concat(e, "]")));
-
-        return _arr;
-      }, typeOf(array) === 'object' ? {} : []); // if()
-    } else if (typeof array === 'string' && config && typeOf(config) === 'array') _data = config.reduce(function (acc, _config) {
-      return [].concat(_toConsumableArray(acc), [exeuteRequiredData(_getData(_config, true), _config)]);
-    }, []);else if (typeof array === 'string') _data = exeuteRequiredData(_getData(config, true), config);else if (name) _data = safe(store, ".getState()[".concat(name, "]"));else _data = safe(store, ".getState()") || {};
-
-    return _data;
-  }, []);
-
-  var _useState9 = React.useState(_GetData()),
-      _useState10 = _slicedToArray(_useState9, 2),
-      data = _useState10[0],
-      setData = _useState10[1];
-
-  var execute = React.useCallback(function () {
-    // const state = safe(store, `.getState()[${name}]`);
-    // eslint-disable-next-line no-underscore-dangle
-    var _data = _GetData();
-
-    if (!isEqual(_data, previousData.get(_key))) {
-      // previousData[`${key || name}_${_key}`] = _data;
-      var callbackData;
-      if (callback && typeof callback === 'function') callbackData = callback(_data);
-      previousData.set(_key, _data);
-      if (callbackData) setData(callbackData);else setData(_data);
-    }
-  }, []);
-  React.useEffect(function () {
-    previousData.set(_key, {});
-    execute();
-    var unSubscribe = store.subscribe(execute);
-    return function () {
-      delete previousData.delete(_key);
-      unSubscribe();
-    };
-  }, []);
-  return data;
+  return _callback;
 };
 
 var CHANNEL_END_TYPE = '@@redux-saga/CHANNEL_END';
@@ -1460,6 +1379,532 @@ if (Object.setPrototypeOf) {
   Object.setPrototypeOf(CustomError, Error);
 }
 
+/* eslint-disable */
+
+function _instanceof(left, right) {
+  if (right != null && typeof Symbol !== 'undefined' && right[Symbol.hasInstance]) {
+    return !!right[Symbol.hasInstance](left);
+  } else {
+    return left instanceof right;
+  }
+}
+
+var __extends =  function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || _instanceof({
+      __proto__: []
+    }, Array) && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) {
+        if (b.hasOwnProperty(p)) d[p] = b[p];
+      }
+    };
+
+    return _extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    _extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+var __assign =  function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __awaiter =  function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return _instanceof(value, P) ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator['throw'](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+var __generator =  function (thisArg, body) {
+  var _ = {
+    label: 0,
+    sent: function sent() {
+      if (t[0] & 1) throw t[1];
+      return t[1];
+    },
+    trys: [],
+    ops: []
+  },
+      f,
+      y,
+      t,
+      g;
+  return g = {
+    next: verb(0),
+    throw: verb(1),
+    return: verb(2)
+  }, typeof Symbol === 'function' && (g[Symbol.iterator] = function () {
+    return this;
+  }), g;
+
+  function verb(n) {
+    return function (v) {
+      return step([n, v]);
+    };
+  }
+
+  function step(op) {
+    if (f) throw new TypeError('Generator is already executing.');
+
+    while (_) {
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y['return'] : op[0] ? y['throw'] || ((t = y['return']) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+        if (y = 0, t) op = [op[0] & 2, t.value];
+
+        switch (op[0]) {
+          case 0:
+          case 1:
+            t = op;
+            break;
+
+          case 4:
+            _.label++;
+            return {
+              value: op[1],
+              done: false
+            };
+
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+
+          case 7:
+            op = _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+
+              _.ops.push(op);
+
+              break;
+            }
+
+            if (t[2]) _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+        }
+
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    }
+
+    if (op[0] & 5) throw op[1];
+    return {
+      value: op[0] ? op[1] : void 0,
+      done: true
+    };
+  }
+};
+
+var __rest =  function (s, e) {
+  var t = {};
+
+  for (var p in s) {
+    if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  }
+
+  if (s != null && typeof Object.getOwnPropertySymbols === 'function') for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+
+var __importStar =  function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+  }
+  result['default'] = mod;
+  return result;
+};
+
+Object.defineProperty(typeof exports !== 'undefined' ? exports : {}, '__esModule', {
+  value: true
+});
+
+var react_1 = __importStar(require('react'));
+
+var defaultConfig = {
+  storeKey: '__NEXT_REDUX_STORE__',
+  debug: false,
+  serializeState: function serializeState(state) {
+    return state;
+  },
+  deserializeState: function deserializeState(state) {
+    return state;
+  }
+};
+function withRedux (makeStore, config) {
+  config = __assign(__assign({}, defaultConfig), config);
+  var isServer = typeof window === 'undefined';
+
+  var initStore = function initStore(_a) {
+    var initialState = _a.initialState,
+        ctx = _a.ctx;
+    var storeKey = config.storeKey;
+
+    var createStore = function createStore() {
+      return makeStore(config.deserializeState(initialState), __assign(__assign(__assign({}, ctx), config), {
+        isServer: isServer
+      }));
+    };
+
+    if (isServer) return createStore(); // Memoize store if client
+
+    if (!(storeKey in window)) {
+      window[storeKey] = createStore();
+    }
+
+    return window[storeKey];
+  };
+
+  return function (App) {
+    var _a;
+
+    return _a =
+    /** @class */
+    function (_super) {
+      __extends(WrappedApp, _super);
+
+      function WrappedApp(props, context) {
+        var _this = _super.call(this, props, context) || this;
+
+        var initialState = props.initialState;
+        if (config.debug) console.log('4. WrappedApp.render created new store with initialState', initialState);
+        _this.store = initStore({
+          initialState: initialState
+        });
+        return _this;
+      }
+
+      WrappedApp.prototype.render = function () {
+        var _a = this.props,
+            initialProps = _a.initialProps,
+            initialState = _a.initialState,
+            props = __rest(_a, ['initialProps', 'initialState']); // Cmp render must return something like <Provider><Component/></Provider>
+
+
+        return react_1.default.createElement(App, __assign({}, props, initialProps, {
+          store: this.store
+        }));
+      };
+
+      return WrappedApp;
+    }(react_1.Component),
+    /* istanbul ignore next */
+    _a.displayName = 'withRedux(' + (App.displayName || App.name || 'App') + ')', _a.getInitialProps = function (appCtx) {
+      return __awaiter(void 0, void 0, void 0, function () {
+        var store, initialProps;
+        return __generator(this, function (_a) {
+          switch (_a.label) {
+            case 0:
+              /* istanbul ignore next */
+              if (!appCtx) throw new Error('No app context');
+              /* istanbul ignore next */
+
+              if (!appCtx.ctx) throw new Error('No page context');
+              store = initStore({
+                ctx: appCtx.ctx
+              });
+              if (config.debug) console.log('1. WrappedApp.getInitialProps wrapper got the store with state', store.getState());
+              appCtx.ctx.store = store;
+              appCtx.ctx.isServer = isServer;
+              initialProps = {};
+              if (!('getInitialProps' in App)) return [3,
+              /*break*/
+              2];
+              return [4,
+              /*yield*/
+              App.getInitialProps.call(App, appCtx)];
+
+            case 1:
+              initialProps = _a.sent();
+              _a.label = 2;
+
+            case 2:
+              if (config.debug) console.log('3. WrappedApp.getInitialProps has store state', store.getState());
+              return [2,
+              /*return*/
+              {
+                isServer: isServer,
+                initialState: isServer ? config.serializeState(store.getState()) : store.getState(),
+                initialProps: initialProps
+              }];
+          }
+        });
+      });
+    }, _a;
+  };
+}
+
+// import isFunction from 'lodash/isFunction';
+/**
+ * Validate the shape of redux store
+ */
+// export default function checkStore(store) {
+//   const shape = {
+//     dispatch: isFunction,
+//     subscribe: isFunction,
+//     getState: isFunction,
+//     replaceReducer: isFunction,
+//     runSaga: isFunction,
+//     injectedReducers: isObject,
+//     injectedSagas: isObject,
+// //   };
+//   invariant(
+//     conformsTo(store, shape),
+//     '(app/utils...) injectors: Expected a valid redux store',
+//   );
+// }
+
+function checkStore(store) {
+  invariant(typeOf(store) === 'object' && typeOf(store.dispatch) === 'function' && typeOf(store.subscribe) === 'function' && typeOf(store.getState) === 'function' && typeOf(store.replaceReducer) === 'function' && typeOf(store.runSaga) === 'function' && typeOf(store.injectedReducers) === 'object' && typeOf(store.injectedSagas) === 'object', '(app/utils...) injectors: Expected a valid redux store');
+}
+
+var RESTART_ON_REMOUNT = '@@saga-injector/restart-on-remount';
+var DAEMON = '@@saga-injector/daemon';
+var ONCE_TILL_UNMOUNT = '@@saga-injector/once-till-unmount';
+
+var allowedModes = [RESTART_ON_REMOUNT, DAEMON, ONCE_TILL_UNMOUNT];
+
+var checkKey$1 = function checkKey(key) {
+  return invariant(key && typeOf(key) === 'string', '(app/utils...) injectSaga: Expected `key` to be a non empty string');
+};
+
+var checkDescriptor = function checkDescriptor(descriptor) {
+  // const shape = {
+  //   saga: isFunction,
+  //   mode: mode => isString(mode) && allowedModes.includes(mode),
+  // };
+  invariant(typeOf(descriptor) === 'object' && typeof descriptor.saga === 'function' && allowedModes.includes(descriptor.mode), '(app/utils...) injectSaga: Expected a valid saga descriptor');
+};
+
+function injectSagaFactory(store, isValid) {
+  return function injectSaga(key) {
+    var descriptor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var args = arguments.length > 2 ? arguments[2] : undefined;
+    if (!isValid) checkStore(store);
+
+    var newDescriptor = _objectSpread({}, descriptor, {
+      mode: descriptor.mode || DAEMON
+    });
+
+    var saga = newDescriptor.saga,
+        mode = newDescriptor.mode;
+    checkKey$1(key);
+    checkDescriptor(newDescriptor);
+    var hasSaga = Reflect.has(store.injectedSagas, key);
+
+    if (process.env.NODE_ENV !== 'production') {
+      var oldDescriptor = store.injectedSagas[key]; // enable hot reloading of daemon and once-till-unmount sagas
+
+      if (hasSaga && oldDescriptor.saga !== saga) {
+        oldDescriptor.task.cancel();
+        hasSaga = false;
+      }
+    }
+
+    if (!hasSaga || hasSaga && mode !== DAEMON && mode !== ONCE_TILL_UNMOUNT) {
+      /* eslint-disable no-param-reassign */
+      store.injectedSagas[key] = _objectSpread({}, newDescriptor, {
+        task: store.runSaga(saga, args)
+      });
+      /* eslint-enable no-param-reassign */
+    }
+  };
+}
+function ejectSagaFactory(store, isValid) {
+  return function ejectSaga(key) {
+    if (!isValid) checkStore(store);
+    checkKey$1(key);
+
+    if (Reflect.has(store.injectedSagas, key)) {
+      var descriptor = store.injectedSagas[key];
+
+      if (descriptor.mode && descriptor.mode !== DAEMON) {
+        descriptor.task.cancel(); // Clean up in production; in development we need `descriptor.saga` for hot reloading
+
+        if (process.env.NODE_ENV === 'production') {
+          // Need some value to be able to detect `ONCE_TILL_UNMOUNT` sagas in `injectSaga`
+          store.injectedSagas[key] = 'done'; // eslint-disable-line no-param-reassign
+        }
+      }
+    }
+  };
+}
+function getInjectors(store) {
+  checkStore(store);
+  return {
+    injectSaga: injectSagaFactory(store, true),
+    ejectSaga: ejectSagaFactory(store, true)
+  };
+}
+
+/**
+ * Dynamically injects a saga, passes component's props as saga arguments
+ *
+ * @param {string} key A key of the saga
+ * @param {function} saga A root saga that will be injected
+ * @param {string} [mode] By default (constants.DAEMON) the saga will be started
+ * on component mount and never canceled or started again. Another two options:
+ *   - constants.RESTART_ON_REMOUNT — the saga will be started on component mount and
+ *   cancelled with `task.cancel()` on component unmount for improved performance,
+ *   - constants.ONCE_TILL_UNMOUNT — behaves like 'RESTART_ON_REMOUNT' but never runs it again.
+ *
+ */
+
+var injectSaga = (function (_ref) {
+  var key = _ref.key,
+      saga = _ref.saga,
+      mode = _ref.mode;
+  return function (WrappedComponent) {
+    var InjectSaga = /*#__PURE__*/function (_React$Component) {
+      _inherits(InjectSaga, _React$Component);
+
+      var _super = _createSuper(InjectSaga);
+
+      function InjectSaga(props, context) {
+        var _this;
+
+        _classCallCheck(this, InjectSaga);
+
+        _this = _super.call(this, props, context);
+        _this.injectors = getInjectors(context.store);
+
+        _this.injectors.injectSaga(key, {
+          saga: saga,
+          mode: mode
+        }, _this.props);
+
+        return _this;
+      }
+
+      _createClass(InjectSaga, [{
+        key: "componentWillUnmount",
+        value: function componentWillUnmount() {
+          this.injectors.ejectSaga(key);
+        }
+      }, {
+        key: "render",
+        value: function render() {
+          return React__default.createElement(WrappedComponent, this.props);
+        }
+      }]);
+
+      return InjectSaga;
+    }(React__default.Component);
+
+    _defineProperty(InjectSaga, "WrappedComponent", WrappedComponent);
+
+    _defineProperty(InjectSaga, "contextType", reactRedux.ReactReduxContext);
+
+    _defineProperty(InjectSaga, "displayName", "withSaga(".concat(WrappedComponent.displayName || WrappedComponent.name || 'Component', ")"));
+
+    return hoistNonReactStatics(InjectSaga, WrappedComponent);
+  };
+});
+
+var useInjectSaga = function useInjectSaga(_ref2) {
+  var key = _ref2.key,
+      saga = _ref2.saga,
+      mode = _ref2.mode;
+  var inject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+  var context = React__default.useContext(reactRedux.ReactReduxContext);
+  React__default.useEffect(function () {
+    var injectors = getInjectors(context.store);
+
+    if (inject) {
+      injectors.injectSaga(key, {
+        saga: saga,
+        mode: mode
+      });
+    }
+
+    return function () {
+      if (inject) injectors.ejectSaga(key);
+    };
+  }, []);
+};
+
 exports.CustomError = CustomError;
 exports.FormValidator = validateForm;
 exports.IndianStates = indianStates;
@@ -1470,6 +1915,7 @@ exports.deleteIn = deleteIn;
 exports.generateTimeStamp = generateTimeStamp;
 exports.getData = getData;
 exports.getIn = getIn;
+exports.injectSaga = injectSaga;
 exports.newObject = newObject;
 exports.objectEquals = objectEquals;
 exports.setIn = setIn;
@@ -1479,11 +1925,12 @@ exports.toPromiseFunction = toPromiseFunction;
 exports.typeOf = typeOf;
 exports.updateIn = updateIn;
 exports.useActions = useActionsHook;
+exports.useInjectSaga = useInjectSaga;
 exports.useMutateReducer = useMutateReducer;
 exports.useMutation = useMutation;
-exports.useOptimizedQuery = useOptimizedQuery;
 exports.useQuery = useQuery;
 exports.useResetOnlyApiEndPointsState = useResetOnlyApiEndPointsState;
 exports.useResetState = useResetState;
 exports.useStaleRefresh = useStaleRefresh;
+exports.withRedux = withRedux;
 exports.withReduxSaga = withReduxSaga;

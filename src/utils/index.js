@@ -480,8 +480,7 @@ export const useQuery = (
       isPassed ||
       (config &&
         config.dependencyArray &&
-        Array.isArray(config.dependencyArray) &&
-        config.dependencyArray.length > 0)
+        Array.isArray(config.dependencyArray))
     ) {
       if (
         !isPassed &&
