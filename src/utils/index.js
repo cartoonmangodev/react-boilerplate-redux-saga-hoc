@@ -472,8 +472,9 @@ export const useQuery = (
     ) {
       invariant(
         false,
-        'dependencyArray expected an array but got ' +
-          typeOf(config.dependencyArray),
+        `dependencyArray expected an array but got ${typeOf(
+          config.dependencyArray,
+        )}`,
       );
     } else if (
       isPassed ||
@@ -611,7 +612,7 @@ export const useMutation = reducerName => {
   }, []);
 
   const dispatch = useDispatch();
-  return ({ key: type, value, filter = [] }) => {
+  const _callback = useCallback(({ key: type, value, filter = [] }) => {
     if (!type) checkKey(null, 'key', 'string', 'valid string');
     const _reducer_keys = Object.keys(store.getState()[reducerName]);
     if (type)
@@ -658,7 +659,8 @@ export const useMutation = reducerName => {
               : value,
         },
       });
-  };
+  }, []);
+  return _callback;
 };
 
 export const toPromise = (action, config = {}, isReject) => {
@@ -756,7 +758,7 @@ export function useStaleRefresh(
 export const useMutateReducer = reducerName => {
   const store = useStore();
   const dispatch = useDispatch();
-  return callback => {
+  const _callback = useCallback(callback => {
     const state = reducerName
       ? store.getState()[reducerName]
       : store.getState();
@@ -766,27 +768,30 @@ export const useMutateReducer = reducerName => {
         type: reducerName ? `${reducerName}_MUTATE_STATE` : 'MUTATE_STATE',
         payload: newState || {},
       });
-  };
+  }, []);
+  return _callback;
 };
 
 export const useResetState = reducerName => {
   const dispatch = useDispatch();
-  return (dontResetKeys = []) => {
+  const _callback = useCallback((dontResetKeys = []) => {
     dispatch({
       type: reducerName ? `${reducerName}_RESET_STATE` : 'RESET_STATE',
       payload: dontResetKeys,
     });
-  };
+  }, []);
+  return _callback;
 };
 
 export const useResetOnlyApiEndPointsState = reducerName => {
   const dispatch = useDispatch();
-  return (dontResetKeys = []) => {
+  const _callback = useCallback((dontResetKeys = []) => {
     dispatch({
       type: reducerName ? `${reducerName}_RESET_API` : 'RESET_API',
       payload: dontResetKeys,
     });
-  };
+  }, []);
+  return _callback;
 };
 
 export const useOptimizedQuery = (
