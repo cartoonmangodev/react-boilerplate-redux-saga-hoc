@@ -949,7 +949,7 @@ var useQuery = function useQuery() {
 
     if ((config && config.dependencyArray && !Array.isArray(config.dependencyArray)) && !isPassed) {
       invariant(false, "dependencyArray expected an array but got ".concat(typeOf(config.dependencyArray)));
-    } else if (isPassed || config && config.dependencyArray && Array.isArray(config.dependencyArray) && config.dependencyArray.length > 0) {
+    } else if (isPassed || config && config.dependencyArray && Array.isArray(config.dependencyArray)) {
       if (!isPassed && config.dependencyArray.filter(function (e) {
         return typeof e !== 'string';
       })[0]) invariant(false, 'dependencyArray must be array of string');else {

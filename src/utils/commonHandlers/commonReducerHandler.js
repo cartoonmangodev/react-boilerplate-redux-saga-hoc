@@ -126,13 +126,15 @@ const COMMON_HANDLER = (payload, data) => {
       let customTaskBindAction = null;
       // const isMultiTask = Array.isArray(payload.tasks);
       // if (isMultiTask)
-      if (task.response)
+      if (task.response && !task.dontUpdateResponseData)
         checkKey(task.response, 'task { response  : { data }}', 'object');
       customTaskBindAction = Action =>
         Action({
           ...payload,
           filter: _CheckFilter(filter || payload.filter),
-          successData: (task.response || {}).data || payload.successData,
+          successData: task.dontUpdateResponseData
+            ? {}
+            : (task.response || {}).data || payload.successData,
         });
 
       const customHandler = CheckCustomHanderFormat(task.customHandler);
