@@ -139,15 +139,14 @@ export default ({
       useInjectReducer(injectReducerConfig, createReducer, inject);
     }
     const dispatch = useDispatch();
-    if (!stateProps && dispatch)
-      stateProps =
-        _store && _store.dispatch
-          ? {
-              ...componentData[`${reducerName}_hoc`],
-              actions: bindActionCreators(componentActions, dispatch),
-              dispatch,
-            }
-          : null;
+    if (!stateProps)
+      stateProps = dispatch
+        ? {
+            ...componentData[`${reducerName}_hoc`],
+            actions: bindActionCreators(componentActions, dispatch),
+            dispatch,
+          }
+        : null;
     const [state] = useState(stateProps);
     // const [state] = useState(
     //   stateProps || {
