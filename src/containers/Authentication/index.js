@@ -53,6 +53,8 @@ export default ({
   store: _store,
   useHook: _useHook = false,
 } = {}) => {
+  let nextStateProps = null;
+  let stateProps = null;
   invariant(
     !!reducerName && typeOf(reducerName) === 'string',
     '(react-boilerplate-redux-saga-hoc)  Expected `name` to be a non empty string',
@@ -128,14 +130,7 @@ export default ({
     reducer,
   };
   // eslint-disable-next-line no-underscore-dangle
-  const stateProps =
-    _store && _store.dispatch
-      ? {
-          ...componentData[`${reducerName}_hoc`],
-          actions: bindActionCreators(componentActions, _store.dispatch),
-          dispatch: _store.dispatch,
-        }
-      : null;
+
   const _useHocHook = (inject = true) => {
     if (inject) {
       // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -144,13 +139,23 @@ export default ({
       useInjectReducer(injectReducerConfig, createReducer, inject);
     }
     const dispatch = useDispatch();
-    const [state] = useState(
-      stateProps || {
-        ...componentData[`${reducerName}_hoc`],
-        actions: bindActionCreators(componentActions, dispatch),
-        dispatch,
-      },
-    );
+    if (!stateProps && dispatch)
+      stateProps =
+        _store && _store.dispatch
+          ? {
+              ...componentData[`${reducerName}_hoc`],
+              actions: bindActionCreators(componentActions, dispatch),
+              dispatch,
+            }
+          : null;
+    const [state] = useState(stateProps);
+    // const [state] = useState(
+    //   stateProps || {
+    //     ...componentData[`${reducerName}_hoc`],
+    //     actions: bindActionCreators(componentActions, dispatch),
+    //     dispatch,
+    //   },
+    // );
     return state;
   };
   // eslint-disable-next-line no-underscore-dangle
@@ -225,16 +230,20 @@ export default ({
   if (!nextJS && hookWithHoc) return { hook: _useHocHook, hoc };
   // eslint-disable-next-line no-underscore-dangle
   const _useHocHookNextJs = (inject = true) => {
-    useInjectSaga(injectSagaConfig, inject);
-    useInjectReducer(injectReducerConfig, createReducer, inject);
+    if (inject) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useInjectSaga(injectSagaConfig, inject);
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useInjectReducer(injectReducerConfig, createReducer, inject);
+    }
     const dispatch = useDispatch();
-    const [state] = useState(
-      stateProps || {
+    if (!nextStateProps && dispatch)
+      nextStateProps = {
         ...componentData[`${reducerName}_hoc`],
         actions: bindActionCreators(componentActions, dispatch),
         dispatch,
-      },
-    );
+      };
+    const [state] = useState(nextStateProps);
     return state;
   };
   if (nextJS && getDefaultConfig)
