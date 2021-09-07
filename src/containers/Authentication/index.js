@@ -50,7 +50,7 @@ export default ({
   reducer: reducerFunction,
   name: reducerName,
   axiosInterceptors,
-  store: _store,
+  // store: _store,
   useHook: _useHook = false,
 } = {}) => {
   let nextStateProps = null;
