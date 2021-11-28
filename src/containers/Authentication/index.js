@@ -203,10 +203,12 @@ export default ({
         if (WrapperComponent.getInitialProps)
           data = await WrapperComponent.getInitialProps({
             ...props,
+            // eslint-disable-next-line prettier/prettier
             ...mapDispatchToProps(
               componentActions,
               componentData,
               reducerName,
+              // eslint-disable-next-line prettier/prettier
             )(store.dispatch),
           });
         return data || {};

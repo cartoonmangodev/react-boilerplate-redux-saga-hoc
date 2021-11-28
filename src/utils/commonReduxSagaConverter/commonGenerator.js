@@ -353,8 +353,11 @@ export default function({
 
           if (typeof logoutCallback === 'function')
             setTimeout(() => logoutCallback(data), 500);
-        } else if (cancelTask && typeof source.cancel === 'function') {
-          const cancelResponse = yield source.cancel();
+        } else if (
+          cancelTask &&
+          (typeof source.cancel === 'function' || rest.onCancelTask)
+        ) {
+          const cancelResponse = yield (rest.onCancelTask || source.cancel)();
           if (typeof cancelCallback === 'function')
             cancelCallback(cancelResponse);
           const {
