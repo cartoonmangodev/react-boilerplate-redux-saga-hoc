@@ -1047,12 +1047,13 @@ var useQuery = function useQuery() {
   return _selectorData.data;
 };
 var useActionsHook = function useActionsHook(name, actions) {
-  var _useState3 = React.useState({}),
+  var dispatch = reactRedux.useDispatch();
+
+  var _useState3 = React.useState(!actions ? cacheActions[name] || {} : redux.bindActionCreators(actions, dispatch)),
       _useState4 = _slicedToArray(_useState3, 2),
       dispatchAction = _useState4[0],
       setDispatchAction = _useState4[1];
 
-  var dispatch = reactRedux.useDispatch();
   React.useEffect(function () {
     if (!isEqual(cacheActions[name], actions)) {
       cacheActions[name] = actions;
