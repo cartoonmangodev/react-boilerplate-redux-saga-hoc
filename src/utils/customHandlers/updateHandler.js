@@ -123,7 +123,6 @@ export const updateHandler = ({
           return updateData(data, successData, updateCallback);
         })(),
   statusCode: successDataStatusCode || statusCode,
-
   lastUpdated: generateTimeStamp(),
   isError: false,
   initialState: false,

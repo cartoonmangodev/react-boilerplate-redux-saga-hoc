@@ -574,8 +574,10 @@ export const useQuery = (
 };
 
 export const useActionsHook = (name, actions) => {
-  const [dispatchAction, setDispatchAction] = useState({});
   const dispatch = useDispatch();
+  const [dispatchAction, setDispatchAction] = useState(
+    !actions ? cacheActions[name] || {} : bindActionCreators(actions, dispatch),
+  );
   useEffect(() => {
     if (!isEqual(cacheActions[name], actions)) {
       cacheActions[name] = actions;
