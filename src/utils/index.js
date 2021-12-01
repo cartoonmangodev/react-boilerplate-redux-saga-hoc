@@ -715,7 +715,7 @@ function stringify(val) {
 function hashArgs(...args) {
   return args.reduce((acc, arg) => `${stringify(arg)}:${acc}`, '');
 }
-/* Example used for background refresh it won't trigger the loader everytime api starts
+/* Example => used for background refresh it won't trigger the loader everytime api starts
   const pollingConfig = {
     request: {
       polling: true,

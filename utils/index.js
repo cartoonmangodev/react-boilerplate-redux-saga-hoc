@@ -1063,6 +1063,17 @@ var useActionsHook = function useActionsHook(name, actions) {
   }, [isEqual(cacheActions[name], actions)]);
   return dispatchAction;
 };
+/** example
+ * const mutateState = useMutation(reducerName);
+ * mutateState({
+ *   key: DEMP_API,
+ *   value: {
+ *     data: {}
+ *   }
+ *   filter: []
+ * })
+ */
+
 var useMutation = function useMutation(reducerName) {
   if (!reducerName) checkKeyWithMessage(reducerName, 'string', 'useMutation(`reducerkey`) : Expected a valid reducer key');
   var store = reactRedux.useStore();
@@ -1112,6 +1123,12 @@ var useMutation = function useMutation(reducerName) {
 
   return _callback;
 };
+/** example
+ * async function() {
+ *   const { data, status } = await toPromiseFunction(DEMP_API_CALL, { task: 'Data-Handler' });
+ * }
+ */
+
 var toPromise = function toPromise(action) {
   var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var isReject = arguments.length > 2 ? arguments[2] : undefined;
@@ -1124,8 +1141,15 @@ var toPromise = function toPromise(action) {
     }));
   });
 };
-var toPromiseFunction = function toPromiseFunction(action, isReject) {
-  return function (config) {
+/** example
+ * const asyncFunction = toPromiseFunction(DEMP_API_CALL);
+ * async function() {
+ *   const { data, status } = await asyncFunction({ task: 'Data-Handler' });
+ * }
+ */
+
+var toPromiseFunction = function toPromiseFunction(action) {
+  return function (config, isReject) {
     if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined') checkKeyWithMessage(config, 'object', "toPromise() : Expected a config (second parameter) to be object");
     return new Promise(function (resolve, reject) {
       return action(_objectSpread({}, config, {
@@ -1151,6 +1175,44 @@ function hashArgs() {
     return "".concat(stringify(arg), ":").concat(acc);
   }, '');
 }
+/* Example used for background refresh it won't trigger the loader everytime api starts
+  const pollingConfig = {
+    request: {
+      polling: true,
+      delay: 8000,
+    },
+  };
+  const [refresh, isUpdating] = useStaleRefresh(
+    VENDORS_GET_DASBOARD_API_CALL,
+    VENDORS_GET_DASBOARD_API,
+    pollingConfig,
+  );
+  const [refreshOrders, isUpdating] = useStaleRefresh(
+    VENDORS_GET_ORDERS_BY_DAY_API_CALL,
+    VENDORS_GET_ORDERS_BY_DAY_API,
+    pollingConfig,
+  );
+  useEffect(() => {
+    function pollingStart() {
+      /// refresh({loader, clearData, config}); optional parameters
+      refreshOrders();
+    }
+    function pollingEnd() {
+      VENDORS_GET_DASBOARD_API_CANCEL();
+      VENDORS_GET_ORDERS_BY_DAY_API_CANCEL();
+    }
+    pollingStart();
+    window.addEventListener('online', pollingStart);
+    window.addEventListener('offline', pollingEnd);
+    return () => {
+      window.removeEventListener('online', pollingStart);
+      window.removeEventListener('offline', pollingEnd);
+      VENDORS_GET_DASBOARD_API_CANCEL();
+      VENDORS_GET_ORDERS_BY_DAY_API_CANCEL();
+    };
+  }, []);
+ */
+
 
 function useStaleRefresh(fn, name) // initialLoadingstate = true,
 {
@@ -1204,6 +1266,11 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
   });
   return [refresh, isUpdating];
 }
+/** example
+ * const mutateReducer = useMutateReducer(reducerName);
+ * mutateReducer(state => state)
+ */
+
 var useMutateReducer = function useMutateReducer(reducerName) {
   var store = reactRedux.useStore();
   var dispatch = reactRedux.useDispatch();
@@ -1219,6 +1286,12 @@ var useMutateReducer = function useMutateReducer(reducerName) {
 
   return _callback;
 };
+/** example
+ * const resetState = useResetState(reducerName);
+ * const dontResetKeys = ['isLoggedIn'];
+ * resetState(dontResetKeys); it will reset state to initial state except some dontResetKeys
+ */
+
 var useResetState = function useResetState(reducerName) {
   var dispatch = reactRedux.useDispatch();
 
@@ -1232,6 +1305,12 @@ var useResetState = function useResetState(reducerName) {
 
   return _callback;
 };
+/** example
+ * const resetState = useResetOnlyApiEndPointsState(reducerName);
+ * const dontResetKeys = ['isLoggedIn'];
+ * resetState(dontResetKeys); it will reset only endpoints to initial state except some dontResetKeys
+ */
+
 var useResetOnlyApiEndPointsState = function useResetOnlyApiEndPointsState(reducerName) {
   var dispatch = reactRedux.useDispatch();
 
