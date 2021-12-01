@@ -587,7 +587,16 @@ export const useActionsHook = (name, actions) => {
   }, [isEqual(cacheActions[name], actions)]);
   return dispatchAction;
 };
-
+/** example
+ * const mutateState = useMutation(reducerName);
+ * mutateState({
+ *   key: DEMP_API,
+ *   value: {
+ *     data: {}
+ *   }
+ *   filter: []
+ * })
+ */
 export const useMutation = reducerName => {
   if (!reducerName)
     checkKeyWithMessage(
@@ -663,7 +672,11 @@ export const useMutation = reducerName => {
   }, []);
   return _callback;
 };
-
+/** example
+ * async function() {
+ *   const { data, status } = await toPromiseFunction(DEMP_API_CALL, { task: 'Data-Handler' });
+ * }
+ */
 export const toPromise = (action, config = {}, isReject) => {
   if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined')
     checkKeyWithMessage(
@@ -675,8 +688,13 @@ export const toPromise = (action, config = {}, isReject) => {
     action({ ...config, resolve, reject, isReject }),
   );
 };
-
-export const toPromiseFunction = (action, isReject) => config => {
+/** example
+ * const asyncFunction = toPromiseFunction(DEMP_API_CALL);
+ * async function() {
+ *   const { data, status } = await asyncFunction({ task: 'Data-Handler' });
+ * }
+ */
+export const toPromiseFunction = action => (config, isReject) => {
   if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined')
     checkKeyWithMessage(
       config,
@@ -697,7 +715,43 @@ function stringify(val) {
 function hashArgs(...args) {
   return args.reduce((acc, arg) => `${stringify(arg)}:${acc}`, '');
 }
-
+/* Example used for background refresh it won't trigger the loader everytime api starts
+  const pollingConfig = {
+    request: {
+      polling: true,
+      delay: 8000,
+    },
+  };
+  const [refresh, isUpdating] = useStaleRefresh(
+    VENDORS_GET_DASBOARD_API_CALL,
+    VENDORS_GET_DASBOARD_API,
+    pollingConfig,
+  );
+  const [refreshOrders, isUpdating] = useStaleRefresh(
+    VENDORS_GET_ORDERS_BY_DAY_API_CALL,
+    VENDORS_GET_ORDERS_BY_DAY_API,
+    pollingConfig,
+  );
+  useEffect(() => {
+    function pollingStart() {
+      /// refresh({loader, clearData, config}); optional parameters
+      refreshOrders();
+    }
+    function pollingEnd() {
+      VENDORS_GET_DASBOARD_API_CANCEL();
+      VENDORS_GET_ORDERS_BY_DAY_API_CANCEL();
+    }
+    pollingStart();
+    window.addEventListener('online', pollingStart);
+    window.addEventListener('offline', pollingEnd);
+    return () => {
+      window.removeEventListener('online', pollingStart);
+      window.removeEventListener('offline', pollingEnd);
+      VENDORS_GET_DASBOARD_API_CANCEL();
+      VENDORS_GET_ORDERS_BY_DAY_API_CANCEL();
+    };
+  }, []);
+ */
 export function useStaleRefresh(
   fn,
   name, // reducer constants
@@ -755,7 +809,10 @@ export function useStaleRefresh(
 
   return [refresh, isUpdating];
 }
-
+/** example
+ * const mutateReducer = useMutateReducer(reducerName);
+ * mutateReducer(state => state)
+ */
 export const useMutateReducer = reducerName => {
   const store = useStore();
   const dispatch = useDispatch();
@@ -772,7 +829,11 @@ export const useMutateReducer = reducerName => {
   }, []);
   return _callback;
 };
-
+/** example
+ * const resetState = useResetState(reducerName);
+ * const dontResetKeys = ['isLoggedIn'];
+ * resetState(dontResetKeys); it will reset state to initial state except some dontResetKeys
+ */
 export const useResetState = reducerName => {
   const dispatch = useDispatch();
   const _callback = useCallback((dontResetKeys = []) => {
@@ -783,7 +844,11 @@ export const useResetState = reducerName => {
   }, []);
   return _callback;
 };
-
+/** example
+ * const resetState = useResetOnlyApiEndPointsState(reducerName);
+ * const dontResetKeys = ['isLoggedIn'];
+ * resetState(dontResetKeys); it will reset only endpoints to initial state except some dontResetKeys
+ */
 export const useResetOnlyApiEndPointsState = reducerName => {
   const dispatch = useDispatch();
   const _callback = useCallback((dontResetKeys = []) => {
@@ -793,167 +858,4 @@ export const useResetOnlyApiEndPointsState = reducerName => {
     });
   }, []);
   return _callback;
-};
-
-export const useOptimizedQuery = (
-  name = null,
-  array = [],
-  config = {},
-  callback,
-) => {
-  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
-  const store = useStore();
-  const [_key] = useState({});
-
-  const exeuteRequiredData = useCallback(
-    (_data, e = {}) =>
-      e.requiredKey &&
-      Array.isArray(e.requiredKey) &&
-      e.requiredKey.length > 0 &&
-      typeOf(_data) === 'object'
-        ? Object.entries(_data).reduce(
-            (acc, [_DataKey, _DataValue]) => ({
-              ...acc,
-              ...(e.requiredKey.includes(_DataKey)
-                ? {
-                    [_DataKey]: _DataValue,
-                  }
-                : {}),
-            }),
-            {},
-          )
-        : e.requiredKey
-        ? _data || {}
-        : _data,
-    [],
-  );
-
-  const _checkFilter = useCallback(
-    e =>
-      e.filter
-        ? Array.isArray(e.filter)
-          ? e.filter
-          : typeof e.filter === 'string'
-          ? [e.filter]
-          : undefined
-        : undefined,
-    [],
-  );
-
-  const _getData = useCallback(
-    (e = {}, isString) =>
-      ((typeof e.defaultDataFormat === 'boolean'
-        ? e.defaultDataFormat
-        : true) || !(isString ? array : e.key)
-      ? !(typeof e.defaultDataFormat === 'boolean'
-          ? e.defaultDataFormat
-          : true) || !(isString ? array : e.key)
-      : false)
-        ? (isString
-          ? array
-          : e.key)
-          ? safe(
-              store,
-              `.getState()[${name}][${isString ? array : e.key}]${
-                e.query ? e.query : ''
-              }`,
-              e.default,
-            )
-          : name
-          ? safe(
-              store,
-              `.getState()[${name}]${e.query ? e.query : ''}`,
-              e.default,
-            )
-          : safe(store, `.getState()${e.query ? e.query : ''}`, e.default)
-        : safe(
-            getData(
-              safe(store, `.getState()[${name}][${isString ? array : e.key}]`),
-              e.query ? undefined : e.default || undefined,
-              e.initialLoaderState || false,
-              _checkFilter(e),
-              e.dataQuery,
-            ),
-            `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
-            e.query
-              ? e.default !== undefined
-                ? e.default
-                : undefined
-              : undefined,
-          ),
-    [],
-  );
-
-  const _GetData = useCallback(() => {
-    let _data = {};
-    if (
-      name &&
-      ((Array.isArray(array) && array.length > 0) ||
-        (typeOf(array) === 'object' && Object.keys(array).length > 0))
-    ) {
-      // eslint-disable-next-line consistent-return
-      // eslint-disable-next-line no-underscore-dangle
-      _data = (typeOf(array) === 'object' ? [array] : array).reduce(
-        (acc, e) => {
-          if (typeOf(e) === 'object') {
-            if (typeOf(array) === 'object')
-              return exeuteRequiredData(_getData(e), e);
-            const _arr = [...acc];
-            _arr.push(exeuteRequiredData(_getData(e), e));
-            return _arr;
-          }
-          if (typeOf(array) === 'object')
-            return safe(store, `.getState()[${name}][${e}]`);
-          const _arr = [...acc];
-          _arr.push(safe(store, `.getState()[${name}][${e}]`));
-          return _arr;
-        },
-        typeOf(array) === 'object' ? {} : [],
-      );
-      // if()
-    } else if (
-      typeof array === 'string' &&
-      config &&
-      typeOf(config) === 'array'
-    )
-      _data = config.reduce(
-        (acc, _config) => [
-          ...acc,
-          exeuteRequiredData(_getData(_config, true), _config),
-        ],
-        [],
-      );
-    else if (typeof array === 'string')
-      _data = exeuteRequiredData(_getData(config, true), config);
-    else if (name) _data = safe(store, `.getState()[${name}]`);
-    else _data = safe(store, `.getState()`) || {};
-    return _data;
-  }, []);
-
-  const [data, setData] = useState(_GetData());
-  const execute = useCallback(() => {
-    // const state = safe(store, `.getState()[${name}]`);
-    // eslint-disable-next-line no-underscore-dangle
-    const _data = _GetData();
-    if (!isEqual(_data, previousData.get(_key))) {
-      // previousData[`${key || name}_${_key}`] = _data;
-      let callbackData;
-      if (callback && typeof callback === 'function')
-        callbackData = callback(_data);
-      previousData.set(_key, _data);
-      if (callbackData) setData(callbackData);
-      else setData(_data);
-    }
-  }, []);
-
-  useEffect(() => {
-    previousData.set(_key, {});
-    execute();
-    const unSubscribe = store.subscribe(execute);
-    return () => {
-      delete previousData.delete(_key);
-      unSubscribe();
-    };
-  }, []);
-  return data;
 };

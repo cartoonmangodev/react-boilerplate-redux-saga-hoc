@@ -12,7 +12,6 @@ export {
   useStaleRefresh,
   useMutateReducer,
   toPromiseFunction,
-  // useOptimizedQuery,
   useActionsHook as useActions,
   useResetOnlyApiEndPointsState,
 } from './utils';
