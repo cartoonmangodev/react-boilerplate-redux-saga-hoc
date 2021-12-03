@@ -848,14 +848,33 @@ var previousCallbackData = new Map();
 var previousDependencyArrayData = new Map();
 var isPreviousDependencyArrayCheckPassed = new Map();
 var useQuery = function useQuery() {
-  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-  var array = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var callback = arguments.length > 3 ? arguments[3] : undefined;
-  var callbackSuccess = arguments.length > 4 ? arguments[4] : undefined;
+  var _name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+  var _array = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+  var _config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+  var _callback = arguments.length > 3 ? arguments[3] : undefined;
+
+  var _callbackSuccess = arguments.length > 4 ? arguments[4] : undefined;
 
   var _ref18 = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : {},
-      refreshKey = _ref18.refreshKey;
+      _refreshKey = _ref18.refreshKey;
+
+  var _ref19 = typeOf(_name) === 'object' ? _name : {
+    reducerName: _name,
+    key: _array,
+    config: _config,
+    callback: _callback,
+    callbackSuccess: _callbackSuccess,
+    refreshKey: _refreshKey
+  },
+      name = _ref19.reducerName,
+      array = _ref19.key,
+      config = _ref19.config,
+      callback = _ref19.callback,
+      callbackSuccess = _ref19.callbackSuccess,
+      refreshKey = _ref19.refreshKey;
 
   if (name) checkKey(name, 'reducer name', 'string', 'valid string'); // const store = useStore();
 
@@ -917,15 +936,15 @@ var useQuery = function useQuery() {
 
 
         if (typeOf(e) === 'string' && typeOf(config) === 'object') {
-          var _config = _objectSpread({
+          var _config2 = _objectSpread({
             key: e
           }, config);
 
-          if (typeOf(array) === 'object') return exeuteRequiredData(_getData(_config, undefined, state), _config);
+          if (typeOf(array) === 'object') return exeuteRequiredData(_getData(_config2, undefined, state), _config2);
 
           var _arr3 = _toConsumableArray(acc);
 
-          _arr3.push(exeuteRequiredData(_getData(_config, undefined, state), _config));
+          _arr3.push(exeuteRequiredData(_getData(_config2, undefined, state), _config2));
 
           return _arr3;
         }
@@ -1091,11 +1110,11 @@ var useMutation = function useMutation(reducerName) {
   }, []);
   var dispatch = reactRedux.useDispatch();
 
-  var _callback = React.useCallback(function (_ref22) {
-    var type = _ref22.key,
-        value = _ref22.value,
-        _ref22$filter = _ref22.filter,
-        filter = _ref22$filter === void 0 ? [] : _ref22$filter;
+  var _callback = React.useCallback(function (_ref23) {
+    var type = _ref23.key,
+        value = _ref23.value,
+        _ref23$filter = _ref23.filter,
+        filter = _ref23$filter === void 0 ? [] : _ref23$filter;
     if (!type) checkKey(null, 'key', 'string', 'valid string');
 
     var _reducer_keys = Object.keys(store.getState()[reducerName]);
@@ -1234,10 +1253,10 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
       setIsUpdating = _useState6[1];
 
   var refresh = React.useCallback(function () {
-    var _ref23 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        loader = _ref23.loader,
-        clearData = _ref23.clearData,
-        config = _ref23.config;
+    var _ref24 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        loader = _ref24.loader,
+        clearData = _ref24.clearData,
+        config = _ref24.config;
 
     var args = config || arg;
     var cacheID = hashArgs(name, args); // look in cache and set response if present
