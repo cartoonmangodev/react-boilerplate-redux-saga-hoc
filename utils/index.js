@@ -853,7 +853,10 @@ var useQuery = function useQuery() {
   var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var callback = arguments.length > 3 ? arguments[3] : undefined;
   var callbackSuccess = arguments.length > 4 ? arguments[4] : undefined;
-  var refreshKey = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
+
+  var _ref18 = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : {},
+      refreshKey = _ref18.refreshKey;
+
   if (name) checkKey(name, 'reducer name', 'string', 'valid string'); // const store = useStore();
 
   var _useState = React.useState({}),
@@ -1088,11 +1091,11 @@ var useMutation = function useMutation(reducerName) {
   }, []);
   var dispatch = reactRedux.useDispatch();
 
-  var _callback = React.useCallback(function (_ref21) {
-    var type = _ref21.key,
-        value = _ref21.value,
-        _ref21$filter = _ref21.filter,
-        filter = _ref21$filter === void 0 ? [] : _ref21$filter;
+  var _callback = React.useCallback(function (_ref22) {
+    var type = _ref22.key,
+        value = _ref22.value,
+        _ref22$filter = _ref22.filter,
+        filter = _ref22$filter === void 0 ? [] : _ref22$filter;
     if (!type) checkKey(null, 'key', 'string', 'valid string');
 
     var _reducer_keys = Object.keys(store.getState()[reducerName]);
@@ -1231,10 +1234,10 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
       setIsUpdating = _useState6[1];
 
   var refresh = React.useCallback(function () {
-    var _ref22 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        loader = _ref22.loader,
-        clearData = _ref22.clearData,
-        config = _ref22.config;
+    var _ref23 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        loader = _ref23.loader,
+        clearData = _ref23.clearData,
+        config = _ref23.config;
 
     var args = config || arg;
     var cacheID = hashArgs(name, args); // look in cache and set response if present
