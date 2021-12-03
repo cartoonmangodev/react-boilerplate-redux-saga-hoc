@@ -298,7 +298,7 @@ export const useQuery = (
   config = {},
   callback,
   callbackSuccess,
-  refreshKey = null,
+  { refreshKey } = {},
 ) => {
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
   // const store = useStore();
