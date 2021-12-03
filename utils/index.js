@@ -853,6 +853,7 @@ var useQuery = function useQuery() {
   var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var callback = arguments.length > 3 ? arguments[3] : undefined;
   var callbackSuccess = arguments.length > 4 ? arguments[4] : undefined;
+  var refreshKey = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
   if (name) checkKey(name, 'reducer name', 'string', 'valid string'); // const store = useStore();
 
   var _useState = React.useState({}),
@@ -867,7 +868,7 @@ var useQuery = function useQuery() {
     return e && e.requiredKey && Array.isArray(e.requiredKey) && e.requiredKey.length > 0 && typeOf(_data) === 'object' ? e.requiredKey.reduce(function (acc, _reqKey) {
       return _objectSpread({}, acc, {}, _reqKey && typeOf(_reqKey.key || _reqKey) === 'string' ? _defineProperty({}, _reqKey.key || _reqKey, typeOf(_data[_reqKey.key || _reqKey]) !== undefined ? _data[_reqKey.key || _reqKey] : _reqKey.default) : {});
     }, _objectSpread({}, initialData)) : e && e.requiredKey ? _data || _objectSpread({}, initialData) : _data;
-  }, []);
+  }, [refreshKey]);
 
   var _checkFilter = React.useCallback(function (e) {
     return e && e.filter ? Array.isArray(e.filter) ? e.filter : typeof e.filter === 'string' ? [e.filter] : undefined : undefined;
@@ -891,7 +892,7 @@ var useQuery = function useQuery() {
         default: _query.default || undefined
       }))]);
     }, []) : _getDataFunc(ee);
-  }, []);
+  }, [refreshKey]);
 
   var _GetData = React.useCallback(function (_state) {
     var state = _state || {};
@@ -939,7 +940,7 @@ var useQuery = function useQuery() {
     }, []);else if (typeof array === 'string') _data = exeuteRequiredData(_getData(config, true, state), config);else if (name) _data = safe(state, "[".concat(name, "]"));else _data = state || {};
 
     return _data;
-  }, []); // const [data, setData] = useState(_GetData());
+  }, [refreshKey]); // const [data, setData] = useState(_GetData());
 
 
   var execute = React.useCallback(function (state) {
@@ -998,7 +999,7 @@ var useQuery = function useQuery() {
       isEqualCheck: false,
       data: _queryData
     };
-  }, []); // useEffect(() => {
+  }, [refreshKey]); // useEffect(() => {
   //   const unSubscribe = store.subscribe(execute);
   //   return () => {
   //     delete previousData.delete(_key);
@@ -1036,7 +1037,11 @@ var useQuery = function useQuery() {
 
     if ((!_isEqual || initialRender.get(_key)) && typeof callbackSuccess === 'function') {
       initialRender.set(_key, false);
-      callbackSuccess(e.data, f.data);
+      callbackSuccess(e.data
+      /* Updated Data */
+      , f.data
+      /* Previous Data */
+      );
     }
 
     return _isEqual;
@@ -1175,7 +1180,7 @@ function hashArgs() {
     return "".concat(stringify(arg), ":").concat(acc);
   }, '');
 }
-/* Example used for background refresh it won't trigger the loader everytime api starts
+/* Example => used for background refresh it won't trigger the loader everytime api starts
   const pollingConfig = {
     request: {
       polling: true,
