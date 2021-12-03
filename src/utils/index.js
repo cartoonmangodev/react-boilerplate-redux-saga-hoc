@@ -293,13 +293,31 @@ const previousCallbackData = new Map();
 const previousDependencyArrayData = new Map();
 const isPreviousDependencyArrayCheckPassed = new Map();
 export const useQuery = (
-  name = null,
-  array = [],
-  config = {},
-  callback,
-  callbackSuccess,
-  { refreshKey } = {},
+  _name = null,
+  _array = [],
+  _config = {},
+  _callback,
+  _callbackSuccess,
+  { refreshKey: _refreshKey } = {},
 ) => {
+  const {
+    reducerName: name,
+    key: array,
+    config,
+    callback,
+    callbackSuccess,
+    refreshKey,
+  } =
+    typeOf(_name) === 'object'
+      ? _name
+      : {
+          reducerName: _name,
+          key: _array,
+          config: _config,
+          callback: _callback,
+          callbackSuccess: _callbackSuccess,
+          refreshKey: _refreshKey,
+        };
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
   // const store = useStore();
   const [_key] = useState({});
