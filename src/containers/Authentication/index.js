@@ -35,6 +35,7 @@ export default ({
   handlers = [],
   nextJS = false,
   createReducer = null,
+  mapStateToProps: _mapStateToProps = true,
   useHook = false,
   useHocHook = false,
   hookWithHoc = false,
@@ -123,7 +124,8 @@ export default ({
       reducerName,
     },
   };
-  const commonProps = useHook || _useHook ? { safe } : { safe, getData };
+  const commonProps =
+    useHook || _useHook || !_mapStateToProps ? { safe } : { safe, getData };
   const injectSagaConfig = { key: reducerName, saga };
   const injectReducerConfig = {
     key: reducerName,
@@ -188,7 +190,7 @@ export default ({
     );
     const authenticationSaga = injectSaga({ key: reducerName, saga });
     const withConnect = connect(
-      useHook ? null : mapStateToProps,
+      useHook || !_mapStateToProps ? null : mapStateToProps,
       mapDispatchToProps(componentActions, componentData, reducerName),
     );
     if (nextJS) {
