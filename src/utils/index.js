@@ -609,7 +609,7 @@ export const useQuery = (
   return _selectorData.data;
 };
 
-export const useActionsHook = (name, actions) => {
+export const useActionsHook = (name = '', actions = {}) => {
   const dispatch = useDispatch();
   const [dispatchAction, setDispatchAction] = useState(
     !actions ? cacheActions[name] || {} : bindActionCreators(actions, dispatch),
