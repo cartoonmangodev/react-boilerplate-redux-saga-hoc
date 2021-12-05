@@ -295,7 +295,7 @@ const isPreviousDependencyArrayCheckPassed = new Map();
 export const useQuery = (
   _name = null,
   _array = [],
-  _config = {},
+  __config = {},
   _callback,
   _callbackSuccess,
   { refreshKey: _refreshKey } = {},
@@ -313,7 +313,7 @@ export const useQuery = (
       : {
           reducerName: _name,
           key: _array,
-          config: _config,
+          config: __config,
           callback: _callback,
           callbackSuccess: _callbackSuccess,
           refreshKey: _refreshKey,
