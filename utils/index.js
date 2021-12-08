@@ -1073,7 +1073,9 @@ var useQuery = function useQuery() {
 
   return _selectorData.data;
 };
-var useActionsHook = function useActionsHook(name, actions) {
+var useActionsHook = function useActionsHook() {
+  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var actions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var dispatch = reactRedux.useDispatch();
 
   var _useState3 = React.useState(!actions ? cacheActions[name] || {} : redux.bindActionCreators(actions, dispatch)),
@@ -1152,7 +1154,7 @@ var useMutation = function useMutation(reducerName) {
 };
 /** example
  * async function() {
- *   const { data, status } = await toPromiseFunction(DEMP_API_CALL, { task: 'Data-Handler' });
+ *   const { data, status } = await toPromise(DEMP_API_CALL, { task: 'Data-Handler' });
  * }
  */
 
@@ -1177,7 +1179,7 @@ var toPromise = function toPromise(action) {
 
 var toPromiseFunction = function toPromiseFunction(action) {
   return function (config, isReject) {
-    if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined') checkKeyWithMessage(config, 'object', "toPromise() : Expected a config (second parameter) to be object");
+    if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined') checkKeyWithMessage(config, 'object', "toPromise() : Expected a config (first parameter) to be object");
     return new Promise(function (resolve, reject) {
       return action(_objectSpread({}, config, {
         resolve: resolve,
@@ -1376,7 +1378,7 @@ function withReduxSaga() {
     _createClass(WrappedComponent, [{
       key: "render",
       value: function render() {
-        return React__default.createElement(BaseComponent, this.props);
+        return /*#__PURE__*/React__default.createElement(BaseComponent, this.props);
       }
     }], [{
       key: "getInitialProps",
@@ -1973,7 +1975,7 @@ var injectSaga = (function (_ref) {
       }, {
         key: "render",
         value: function render() {
-          return React__default.createElement(WrappedComponent, this.props);
+          return /*#__PURE__*/React__default.createElement(WrappedComponent, this.props);
         }
       }]);
 

@@ -710,7 +710,7 @@ export const useMutation = reducerName => {
 };
 /** example
  * async function() {
- *   const { data, status } = await toPromiseFunction(DEMP_API_CALL, { task: 'Data-Handler' });
+ *   const { data, status } = await toPromise(DEMP_API_CALL, { task: 'Data-Handler' });
  * }
  */
 export const toPromise = (action, config = {}, isReject) => {
@@ -735,10 +735,57 @@ export const toPromiseFunction = action => (config, isReject) => {
     checkKeyWithMessage(
       config,
       'object',
-      `toPromise() : Expected a config (second parameter) to be object`,
+      `toPromise() : Expected a config (first parameter) to be object`,
     );
   return new Promise((resolve, reject) =>
     action({ ...config, resolve, reject, isReject }),
+  );
+};
+
+/**
+ *  const execute = toPromiseAllFunction([DEMO_URL_CALL, DEMO_API_URL_CALL]);
+ *  const asyncfunc = async () => {
+      try {
+        const data = await execute([],{ isReject: false });
+        console.log(data, '=============');
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    asyncfunc();
+*/
+export const toPromiseAllFunction = (actions = []) => (
+  config = [],
+  defaultConfig = {},
+) => {
+  if (
+    typeOf(config) !== 'null' &&
+    typeOf(config) !== 'undefined' &&
+    typeOf(config) !== 'array'
+  )
+    checkKeyWithMessage(
+      config,
+      'object',
+      `toPromise() : Expected a (first parameter) to be an Array or Object`,
+    );
+  return Promise.all(
+    actions.map(
+      (action, i) =>
+        new Promise((resolve, reject) =>
+          action({
+            ...((typeOf(config) === 'object'
+              ? config
+              : config[i] && config[i].config) ||
+              defaultConfig.config ||
+              {}),
+            resolve,
+            reject,
+            isReject: !!(typeOf(config) === 'object'
+              ? config.isReject || defaultConfig.isReject
+              : (config[i] && config[i].isReject) || defaultConfig.isReject),
+          }),
+        ),
+    ),
   );
 };
 

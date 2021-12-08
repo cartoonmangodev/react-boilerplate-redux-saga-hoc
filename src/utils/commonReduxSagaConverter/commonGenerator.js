@@ -421,7 +421,8 @@ export default function({
             pollingRequestConfig = pollingRes;
         }
         if (!polling && retry) loop = false;
-        if (resolve && typeOf(resolve) === 'function')
+
+        if (resolve && typeOf(resolve) === 'function') {
           if (cancelTask && typeof source.cancel === 'function') {
             resolve({
               status: 'CANCELLED',
@@ -436,6 +437,7 @@ export default function({
             });
             _cache[cacheId] = postData;
           }
+        }
       } catch (error) {
         try {
           if (error && typeof error === 'object' && !error.isAxiosError)
@@ -446,13 +448,13 @@ export default function({
             if (isReject && reject && typeOf(reject) === 'function')
               reject({
                 status: 'ERROR',
-                error,
+                error: error || 'NETWORK ERROR',
                 respone: error && error.response,
               });
             else if (resolve && typeOf(resolve) === 'function')
               resolve({
                 status: 'ERROR',
-                error,
+                error: error || 'NETWORK ERROR',
                 respone: error && error.response,
               });
             if (process.env.NODE_ENV === 'test') console.log(error);

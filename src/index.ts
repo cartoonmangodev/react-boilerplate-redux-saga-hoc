@@ -12,6 +12,7 @@ export {
   useStaleRefresh,
   useMutateReducer,
   toPromiseFunction,
+  toPromiseAllFunction,
   useActionsHook as useActions,
   useResetOnlyApiEndPointsState,
 } from './utils';
