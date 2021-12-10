@@ -15,6 +15,7 @@ export const commonFilterHandler = customHandler => ({
   successDataStatusCode,
   ...rest
 } = {}) => ({ data: Data = {}, statusCode }) => ({
+  lastUpdated: generateTimeStamp(),
   data: (() => {
     const paramKey = { filter, ...rest };
     if (filter && filter.some(fil => Array.isArray(fil))) {

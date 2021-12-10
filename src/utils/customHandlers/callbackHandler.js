@@ -21,10 +21,13 @@ export const callbackHandler = ({
   successDataStatusCode,
 }) => ({ data: oldData = {}, statusCode, ...rest } = {}) => {
   checkKey(callback);
-  return callback({
-    oldData: oldData,
-    newData: successData,
-    rest: { ...rest, statusCode },
-    status: statusCode || successDataStatusCode,
-  });
+  return {
+    lastUpdated: generateTimeStamp(),
+    ...callback({
+      oldData: oldData,
+      newData: successData,
+      rest: { ...rest, statusCode },
+      status: statusCode || successDataStatusCode,
+    }),
+  };
 };

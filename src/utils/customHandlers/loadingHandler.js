@@ -28,6 +28,7 @@ const returnData = (data, initialData, clearData, loader) =>
       status: loader,
       lastUpdated: generateTimeStamp(),
     },
+    lastUpdated: generateTimeStamp(),
     initialState: false,
     ...(clearData || initialData
       ? {
@@ -42,6 +43,7 @@ export const filterArrayloadingHandler = ({
   clearData,
   initialData,
 } = {}) => ({ data: Data = {} }) => ({
+  lastUpdated: generateTimeStamp(),
   data: (() => {
     if (filter && filter.some(fil => Array.isArray(fil))) {
       return filter.reduce(

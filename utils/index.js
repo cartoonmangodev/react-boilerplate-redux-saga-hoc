@@ -1004,10 +1004,7 @@ var useQuery = function useQuery() {
     if (!_isEqual) {
       // previousData[`${key || name}_${_key}`] = _data;
       var callbackData;
-      previousData.set(_key, _data // _data && typeof _data === 'object'
-      //   ? JSON.parse(JSON.stringify(_data))
-      //   : _data,
-      );
+      previousData[_key] = _data;
       if (callback && typeof callback === 'function') callbackData = callback(_data);
 
       if (callbackData) {
@@ -1051,7 +1048,11 @@ var useQuery = function useQuery() {
     // initialRender.set(_key, true);
     previousData[_key] = {};
     initialRender[_key] = {};
-    return function () {// previousData.delete(_key);
+    return function () {
+      previousData[_key] = null;
+      previousCallbackData[_key] = null;
+      initialRender[_key] = null;
+      previousDependencyArrayData[_key] = null; // previousData.delete(_key);
       // previousCallbackData.delete(_key);
       // initialRender.delete(_key);
       // previousDependencyArrayData.delete(_key);

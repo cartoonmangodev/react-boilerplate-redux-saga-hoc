@@ -13,6 +13,7 @@ const _CheckFilter = Filter =>
 export const filterArrayToastEmptyHandler = ({ filter, isInfinite } = {}) => ({
   data: Data = {},
 }) => ({
+  lastUpdated: generateTimeStamp(),
   data: (() => {
     if (filter && filter.some(fil => Array.isArray(fil))) {
       return filter.reduce(
@@ -66,6 +67,7 @@ export const filterArrayToastEmptyHandler = ({ filter, isInfinite } = {}) => ({
 export const filterToastEmptyHandler = ({ isInfinite, filter }) => ({
   data: Data = {},
 } = {}) => ({
+  lastUpdated: generateTimeStamp(),
   data: newObject(Data, ({ [filter]: filterData = {} }) => ({
     [filter]: newObject(filterData, ({ toast = {} }) => ({
       isInfinite,
@@ -109,6 +111,7 @@ export const filterArrayToastHandler = ({
   isError,
   type,
 } = {}) => ({ data: Data = {} }) => ({
+  lastUpdated: generateTimeStamp(),
   data: (() => {
     if (filter && filter.some(fil => Array.isArray(fil))) {
       return filter.reduce(
@@ -134,6 +137,7 @@ export const filterArrayToastHandler = ({
     }
     return updateIn(Data, filter, data =>
       newObject(data, {
+        lastUpdated: generateTimeStamp(),
         toast: {
           isError:
             typeof isError === 'boolean'

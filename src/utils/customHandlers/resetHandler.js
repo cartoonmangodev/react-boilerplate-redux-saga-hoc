@@ -42,6 +42,7 @@ export const filterArrayResetHandler = (
   } = action;
   return newObject(state, ({ [customType || type]: oldData }) => ({
     [type]: newObject(oldData, ({ data: Data = {} } = {}) => ({
+      lastUpdated: generateTimeStamp(),
       data: (() => {
         if (filter && filter.some(fil => Array.isArray(fil))) {
           return filter.reduce(
