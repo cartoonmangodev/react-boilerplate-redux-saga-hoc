@@ -170,16 +170,22 @@ export default ({
     WithHoc.displayName = `withReactBoilerplateReduxSagaHoc(${WrapperComponent.displayName ||
       WrapperComponent.name ||
       'BaseComponent'})`;
-    const MakeSelectAuthenticationState = makeSelectAuthenticationState({
-      apiEndPoints: ApiEndPoints,
-      initialState: newObject(initialState, InitialState),
-      InitialState: initialState,
-      generatorKey: reducerName,
-      constants,
-    });
-    const mapStateToProps = createStructuredSelector({
-      [`${reducerName}_data`]: MakeSelectAuthenticationState(),
-    });
+    const MakeSelectAuthenticationState =
+      useHook || !_mapStateToProps
+        ? null
+        : makeSelectAuthenticationState({
+            apiEndPoints: ApiEndPoints,
+            initialState: newObject(initialState, InitialState),
+            InitialState: initialState,
+            generatorKey: reducerName,
+            constants,
+          });
+    const mapStateToProps =
+      useHook || !_mapStateToProps
+        ? null
+        : createStructuredSelector({
+            [`${reducerName}_data`]: MakeSelectAuthenticationState(),
+          });
 
     const authenticationReducer = injectReducer(
       {

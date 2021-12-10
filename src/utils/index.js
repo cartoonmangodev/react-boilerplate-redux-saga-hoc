@@ -287,12 +287,11 @@ const checkKey = (key, name, dataType, message) => {
 const checkKeyWithMessage = (key, dataType, message) => {
   invariant(typeOf(key) === dataType, message);
 };
-const previousData = [];
-const useQueryIndexArray = [];
-const initialRender = [];
-const previousCallbackData = [];
-const previousDependencyArrayData = [];
-const isPreviousDependencyArrayCheckPassed = [];
+const previousData = new Map();
+const initialRender = new Map();
+const previousCallbackData = new Map();
+const previousDependencyArrayData = new Map();
+const isPreviousDependencyArrayCheckPassed = new Map();
 export const useQuery = (
   _name = null,
   _array = [],
@@ -321,7 +320,7 @@ export const useQuery = (
         };
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
   // const store = useStore();
-  const [_key] = useState(useQueryIndexArray.push(null));
+  const [_key] = useState({});
 
   const exeuteRequiredData = useCallback(
     (_data, e = {}) => {
@@ -496,9 +495,8 @@ export const useQuery = (
   // const [data, setData] = useState(_GetData());
   const execute = useCallback(
     state => {
-      // let _queryData = previousData[_key];
-      let _queryData = previousData[_key];
-      const isPassed = isPreviousDependencyArrayCheckPassed[_key];
+      let _queryData = previousData.get(_key);
+      const isPassed = isPreviousDependencyArrayCheckPassed.get(_key);
       if (
         (name,
         config &&
@@ -524,14 +522,14 @@ export const useQuery = (
         )
           invariant(false, 'dependencyArray must be array of string');
         else {
-          if (!isPassed) isPreviousDependencyArrayCheckPassed[_key] = true;
+          if (!isPassed) isPreviousDependencyArrayCheckPassed.set(_key, true);
           const _next = config.dependencyArray.map(_e => safe(state[name], _e));
-          const _previous = previousDependencyArrayData[_key];
-          previousDependencyArrayData[_key] = _next;
+          const _previous = previousDependencyArrayData.get(_key);
+          previousDependencyArrayData.set(_key, _next);
           if (isEqual(_previous, _next)) {
             return {
               isEqualCheck: true,
-              data: previousCallbackData[_key] || _queryData,
+              data: previousCallbackData.get(_key) || _queryData,
             };
           }
         }
@@ -543,17 +541,23 @@ export const useQuery = (
       if (!_isEqual) {
         // previousData[`${key || name}_${_key}`] = _data;
         let callbackData;
-        previousData[_key] = _data;
+        previousData.set(
+          _key,
+          _data,
+          // _data && typeof _data === 'object'
+          //   ? JSON.parse(JSON.stringify(_data))
+          //   : _data,
+        );
         if (callback && typeof callback === 'function')
           callbackData = callback(_data);
         if (callbackData) {
           _queryData = callbackData;
-          previousCallbackData[_key] = callbackData;
+          previousCallbackData.set(_key, callbackData);
         } else {
-          previousCallbackData[_key] = null;
+          previousCallbackData.set(_key, null);
           _queryData = _data;
         }
-      } else _queryData = previousCallbackData[_key] || _queryData;
+      } else _queryData = previousCallbackData.get(_key) || _queryData;
       return { isEqualCheck: _isEqual, data: _queryData };
     },
     [refreshKey],
@@ -569,7 +573,7 @@ export const useQuery = (
   // useEffect(() => {
   //   previousData.set(_key, {});
   //   if (
-  //     !isEqual(previousConfig[_key], {
+  //     !isEqual(previousConfig.get(_key), {
   //       array,
   //       config,
   //     })
@@ -582,34 +586,26 @@ export const useQuery = (
   //   }
   // }, [config, array]);
   useEffect(() => {
-    // previousData.set(_key, {});
-    // initialRender.set(_key, true);
-    previousData[_key] = {};
-    initialRender[_key] = {};
+    previousData.set(_key, {});
+    initialRender.set(_key, true);
     return () => {
-      previousData[_key] = null;
-      previousCallbackData[_key] = null;
-      initialRender[_key] = null;
-      previousDependencyArrayData[_key] = null;
-      // previousData.delete(_key);
-      // previousCallbackData.delete(_key);
-      // initialRender.delete(_key);
-      // previousDependencyArrayData.delete(_key);
+      previousData.delete(_key);
+      previousCallbackData.delete(_key);
+      initialRender.delete(_key);
+      previousDependencyArrayData.delete(_key);
     };
   }, []);
   const equalityCheckFunction = useCallback((e, f) => {
-    // const _isEqual = e.isEqualCheck ? true : isEqual(e.data, f.data);
     const _isEqual =
       typeof e.isEqualCheck === 'undefined'
         ? isEqual(e.data, f.data)
         : e.isEqualCheck;
-
+    // const _isEqual = e.isEqualCheck ? true : isEqual(e.data, f.data);
     if (
-      (!_isEqual || initialRender[_key]) &&
+      (!_isEqual || initialRender.get(_key)) &&
       typeof callbackSuccess === 'function'
     ) {
-      // initialRender.set(_key, false);
-      initialRender[_key] = false;
+      initialRender.set(_key, false);
       callbackSuccess(e.data /* Updated Data */, f.data /* Previous Data */);
     }
     return _isEqual;
