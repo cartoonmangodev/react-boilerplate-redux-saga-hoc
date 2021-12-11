@@ -4,7 +4,7 @@
 /* eslint-disable no-nested-ternary */
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { bindActionCreators } from 'redux';
-import { useStore, useDispatch, useSelector } from 'react-redux';
+import { useStore, useDispatch } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import invariant from 'invariant';
 import {
@@ -298,7 +298,7 @@ export const useQuery = (
   __config = {},
   _callback,
   _callbackSuccess,
-  { refreshKey: _refreshKey } = {},
+  { refreshKey: _refreshKey = undefined } = {},
 ) => {
   const {
     reducerName: name,
@@ -319,7 +319,7 @@ export const useQuery = (
           refreshKey: _refreshKey,
         };
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
-  // const store = useStore();
+  const store = useStore();
   const [_key] = useState({});
 
   const exeuteRequiredData = useCallback(
@@ -492,7 +492,7 @@ export const useQuery = (
     },
     [refreshKey],
   );
-  // const [data, setData] = useState(_GetData());
+
   const execute = useCallback(
     state => {
       let _queryData = previousData.get(_key);
@@ -562,7 +562,7 @@ export const useQuery = (
     },
     [refreshKey],
   );
-
+  const [executedData, setData] = useState(() => execute(store.getState()));
   // useEffect(() => {
   //   const unSubscribe = store.subscribe(execute);
   //   return () => {
@@ -588,7 +588,22 @@ export const useQuery = (
   useEffect(() => {
     previousData.set(_key, {});
     initialRender.set(_key, true);
+    var unSubscribe = store.subscribe(function() {
+      var _data2 = execute(store.getState());
+      if (
+        (!_data2.isEqualCheck || initialRender.get(_key)) &&
+        typeof callbackSuccess === 'function'
+      ) {
+        initialRender.set(_key, false);
+        callbackSuccess(e.data /* Updated Data */, f.data /* Previous Data */);
+      }
+      if (!_data2.isEqualCheck) {
+        console.log('new Data');
+        setData(_data2);
+      }
+    });
     return () => {
+      unSubscribe();
       previousData.delete(_key);
       previousCallbackData.delete(_key);
       initialRender.delete(_key);
@@ -610,8 +625,8 @@ export const useQuery = (
     }
     return _isEqual;
   }, []);
-  const _selectorData = useSelector(execute, equalityCheckFunction);
-  return _selectorData.data;
+  // const _selectorData = useSelector(execute, equalityCheckFunction);
+  return executedData.data;
 };
 
 export const useActionsHook = (name = '', actions = {}) => {
