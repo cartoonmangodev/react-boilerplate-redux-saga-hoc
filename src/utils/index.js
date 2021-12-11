@@ -588,17 +588,16 @@ export const useQuery = (
   useEffect(() => {
     previousData.set(_key, {});
     initialRender.set(_key, true);
-    var unSubscribe = store.subscribe(function() {
-      var _data2 = execute(store.getState());
+    const unSubscribe = store.subscribe(() => {
+      const _data2 = execute(store.getState());
       if (
         (!_data2.isEqualCheck || initialRender.get(_key)) &&
         typeof callbackSuccess === 'function'
       ) {
         initialRender.set(_key, false);
-        callbackSuccess(e.data /* Updated Data */, f.data /* Previous Data */);
+        callbackSuccess(_data2);
       }
       if (!_data2.isEqualCheck) {
-        console.log('new Data');
         setData(_data2);
       }
     });
