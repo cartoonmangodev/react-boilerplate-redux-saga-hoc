@@ -24,6 +24,7 @@ import Axios from '../../config/axios';
 import { typeOf } from '../helpers';
 // import { headers } from '../../../utils/constants';
 import * as commonActions from './commonActions';
+import { ON_UNMOUNT } from './commonConstants';
 import CustomError from '../customError';
 const headers = '';
 function* loaderGenerator({ type, commonData }) {
@@ -51,6 +52,7 @@ export default function({
   axiosInterceptors,
 }) {
   function* commonGenerator({
+    method,
     payload: {
       resolve,
       reject,
@@ -372,10 +374,11 @@ export default function({
               method: constants.ON_CANCEL,
               axiosCancel: cancelTask,
             });
-          yield call(loaderGenerator, {
-            type,
-            commonData,
-          });
+          if (method === ON_UNMOUNT)
+            yield call(loaderGenerator, {
+              type,
+              commonData,
+            });
           loop = false;
         } else if (process.env.NODE_ENV === 'test' && action.success)
           yield put(action.success({ data }));

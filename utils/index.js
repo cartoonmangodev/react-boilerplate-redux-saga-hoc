@@ -1022,7 +1022,8 @@ var useQuery = function useQuery() {
 
     return {
       isEqualCheck: _isEqual,
-      data: _queryData
+      data: _queryData,
+      previousData: previousCallbackData.get(_key) || previousData.get(_key)
     };
   }, [refreshKey]);
 
@@ -1063,7 +1064,7 @@ var useQuery = function useQuery() {
 
       if ((!_data2.isEqualCheck || initialRender.get(_key)) && typeof callbackSuccess === 'function') {
         initialRender.set(_key, false);
-        callbackSuccess(_data2);
+        callbackSuccess(_data2.data, _data2.previousData);
       }
 
       if (!_data2.isEqualCheck) {
@@ -1077,22 +1078,22 @@ var useQuery = function useQuery() {
       initialRender.delete(_key);
       previousDependencyArrayData.delete(_key);
     };
-  }, []);
-  var equalityCheckFunction = React.useCallback(function (e, f) {
-    var _isEqual = typeof e.isEqualCheck === 'undefined' ? isEqual(e.data, f.data) : e.isEqualCheck; // const _isEqual = e.isEqualCheck ? true : isEqual(e.data, f.data);
-
-
-    if ((!_isEqual || initialRender.get(_key)) && typeof callbackSuccess === 'function') {
-      initialRender.set(_key, false);
-      callbackSuccess(e.data
-      /* Updated Data */
-      , f.data
-      /* Previous Data */
-      );
-    }
-
-    return _isEqual;
-  }, []); // const _selectorData = useSelector(execute, equalityCheckFunction);
+  }, []); // const equalityCheckFunction = useCallback((e, f) => {
+  //   const _isEqual =
+  //     typeof e.isEqualCheck === 'undefined'
+  //       ? isEqual(e.data, f.data)
+  //       : e.isEqualCheck;
+  //   // const _isEqual = e.isEqualCheck ? true : isEqual(e.data, f.data);
+  //   if (
+  //     (!_isEqual || initialRender.get(_key)) &&
+  //     typeof callbackSuccess === 'function'
+  //   ) {
+  //     initialRender.set(_key, false);
+  //     callbackSuccess(e.data /* Updated Data */, f.data /* Previous Data */);
+  //   }
+  //   return _isEqual;
+  // }, []);
+  // const _selectorData = useSelector(execute, equalityCheckFunction);
 
   return executedData.data;
 };
