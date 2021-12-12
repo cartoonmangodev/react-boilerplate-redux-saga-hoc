@@ -24,7 +24,7 @@ import Axios from '../../config/axios';
 import { typeOf } from '../helpers';
 // import { headers } from '../../../utils/constants';
 import * as commonActions from './commonActions';
-import { ON_UNMOUNT } from './commonConstants';
+// import { ON_UNMOUNT } from './commonConstants';
 import CustomError from '../customError';
 const headers = '';
 function* loaderGenerator({ type, commonData }) {
@@ -177,6 +177,18 @@ export default function({
               paramsSerializer,
           );
         };
+      }
+      if (pollingRequestConfig && pollingRequestConfig.payload) {
+        request.data =
+          (pollingRequestConfig && pollingRequestConfig.payload) || payload;
+        // eslint-disable-next-line no-loop-func
+        // request.paramsSerializer = function(param) {
+        //   return Qs.stringify(
+        //     param,
+        //     (pollingRequestConfig && pollingRequestConfig.paramsSerializer) ||
+        //       paramsSerializer,
+        //   );
+        // };
       }
       const _query =
         (pollingRequestConfig && pollingRequestConfig.query) || query;
