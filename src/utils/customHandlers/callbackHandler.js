@@ -4,7 +4,7 @@
 // const _checkIsNotObject = data =>
 //   Object.prototype.toString.call(data) !== '[object Object]';
 import invariant from 'invariant';
-import { typeOf } from '../helpers';
+import { typeOf, generateTimeStamp } from '../helpers';
 const checkKey = callback => {
   invariant(
     typeOf(callback) === 'function',

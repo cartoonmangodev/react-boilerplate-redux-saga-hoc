@@ -374,11 +374,11 @@ export default function({
               method: constants.ON_CANCEL,
               axiosCancel: cancelTask,
             });
-          if (method === ON_UNMOUNT)
-            yield call(loaderGenerator, {
-              type,
-              commonData,
-            });
+          // if (method !== ON_UNMOUNT)
+          //   yield call(loaderGenerator, {
+          //     type,
+          //     commonData,
+          //   });
           loop = false;
         } else if (process.env.NODE_ENV === 'test' && action.success)
           yield put(action.success({ data }));
