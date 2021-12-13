@@ -4,7 +4,7 @@
 /* eslint-disable no-nested-ternary */
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { bindActionCreators } from 'redux';
-import { useStore, useDispatch } from 'react-redux';
+import { useStore, useDispatch, useSelector } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import invariant from 'invariant';
 import {
@@ -319,7 +319,7 @@ export const useQuery = (
           refreshKey: _refreshKey,
         };
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
-  const store = useStore();
+  // const store = useStore();
   const [_key] = useState({});
 
   const exeuteRequiredData = useCallback(
@@ -561,12 +561,12 @@ export const useQuery = (
       return {
         isEqualCheck: _isEqual,
         data: _queryData,
-        previousData: previousCallbackData.get(_key) || previousData.get(_key),
+        // previousData: previousCallbackData.get(_key) || previousData.get(_key),
       };
     },
     [refreshKey],
   );
-  const [executedData, setData] = useState(() => execute(store.getState()));
+  // const [executedData, setData] = useState(() => execute(store.getState()));
   // useEffect(() => {
   //   const unSubscribe = store.subscribe(execute);
   //   return () => {
@@ -592,44 +592,44 @@ export const useQuery = (
   useEffect(() => {
     previousData.set(_key, {});
     initialRender.set(_key, true);
-    const unSubscribe = store.subscribe(() => {
-      const _data2 = execute(store.getState());
-      if (
-        (!_data2.isEqualCheck || initialRender.get(_key)) &&
-        typeof callbackSuccess === 'function'
-      ) {
-        initialRender.set(_key, false);
-        callbackSuccess(_data2.data, _data2.previousData);
-      }
-      if (!_data2.isEqualCheck) {
-        setData(_data2);
-      }
-    });
+    // const unSubscribe = store.subscribe(() => {
+    //   const _data2 = execute(store.getState());
+    //   if (
+    //     (!_data2.isEqualCheck || initialRender.get(_key)) &&
+    //     typeof callbackSuccess === 'function'
+    //   ) {
+    //     initialRender.set(_key, false);
+    //     callbackSuccess(_data2.data, _data2.previousData);
+    //   }
+    //   if (!_data2.isEqualCheck) {
+    //     setData(_data2);
+    //   }
+    // });
     return () => {
-      unSubscribe();
+      // unSubscribe();
       previousData.delete(_key);
       previousCallbackData.delete(_key);
       initialRender.delete(_key);
       previousDependencyArrayData.delete(_key);
     };
   }, []);
-  // const equalityCheckFunction = useCallback((e, f) => {
-  //   const _isEqual =
-  //     typeof e.isEqualCheck === 'undefined'
-  //       ? isEqual(e.data, f.data)
-  //       : e.isEqualCheck;
-  //   // const _isEqual = e.isEqualCheck ? true : isEqual(e.data, f.data);
-  //   if (
-  //     (!_isEqual || initialRender.get(_key)) &&
-  //     typeof callbackSuccess === 'function'
-  //   ) {
-  //     initialRender.set(_key, false);
-  //     callbackSuccess(e.data /* Updated Data */, f.data /* Previous Data */);
-  //   }
-  //   return _isEqual;
-  // }, []);
-  // const _selectorData = useSelector(execute, equalityCheckFunction);
-  return executedData.data;
+  const equalityCheckFunction = useCallback((e, f) => {
+    const _isEqual =
+      typeof e.isEqualCheck === 'undefined'
+        ? isEqual(e.data, f.data)
+        : e.isEqualCheck;
+    // const _isEqual = e.isEqualCheck ? true : isEqual(e.data, f.data);
+    if (
+      (!_isEqual || initialRender.get(_key)) &&
+      typeof callbackSuccess === 'function'
+    ) {
+      initialRender.set(_key, false);
+      callbackSuccess(e.data /* Updated Data */, f.data /* Previous Data */);
+    }
+    return _isEqual;
+  }, []);
+  const _selectorData = useSelector(execute, equalityCheckFunction);
+  return _selectorData.data;
 };
 
 export const useActionsHook = (name = '', actions = {}) => {
