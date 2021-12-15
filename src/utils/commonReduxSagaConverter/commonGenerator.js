@@ -75,6 +75,7 @@ export default function({
         delay: Delay = 8000,
         retry = 0,
         pollingCount = 'unlimited',
+        callAfterDelay = false,
         ...rest
       } = {},
       callback: {
@@ -93,6 +94,25 @@ export default function({
     let loop = true;
     let count = 1;
     let pollingRequestConfig = {};
+    if (polling && callAfterDelay && loop && count === 1) {
+      const { cancel: cancelTask } = yield race({
+        posts: call(delay, Delay),
+        cancel: take(action.cancel),
+      });
+      if (cancelTask) {
+        loop = false;
+        const { response: { method: customMethod } = {} } = cancelTask || {};
+        if (!customMethod)
+          yield call(requestResponseHandler, {
+            type,
+            action,
+            payload: commonData,
+            actionData: rest,
+            method: constants.ON_CANCEL,
+            axiosCancel: cancelTask,
+          });
+      }
+    }
     while (loop) {
       let action = yield actionType[type];
       const axios =
