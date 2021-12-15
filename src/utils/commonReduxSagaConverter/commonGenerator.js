@@ -320,15 +320,32 @@ export default function({
             successMessage,
           ));
           let successCallbackResponse = null;
-          if (typeof successCallback === 'function')
-            successCallbackResponse = yield call(successCallback, {
-              response: postData,
-              posts: data,
-              data: data.data,
-              res: data && data.data && data.data.data,
-              message: successMessage,
-              status: successStatus,
+          if (typeof successCallback === 'function') {
+            const {
+              cancel: CancelPolling,
+              successCallbackResponse: _successCallbackResponse = null,
+            } = yield race({
+              successCallbackResponse: call(successCallback, {
+                response: postData,
+                posts: data,
+                data: data.data,
+                res: data && data.data && data.data.data,
+                message: successMessage,
+                status: successStatus,
+              }),
+              cancel: take(action.cancel),
             });
+            if (CancelPolling) loop = false;
+            successCallbackResponse = _successCallbackResponse;
+            // successCallbackResponse = yield call(successCallback, {
+            //   response: postData,
+            //   posts: data,
+            //   data: data.data,
+            //   res: data && data.data && data.data.data,
+            //   message: successMessage,
+            //   status: successStatus,
+            // });
+          }
           if (successCallbackResponse)
             if (typeOf(successCallbackResponse) === 'object') {
               commonData._errortask = undefined;
@@ -363,7 +380,6 @@ export default function({
               type,
               commonData,
             });
-
           if (typeof logoutCallback === 'function')
             setTimeout(() => logoutCallback(data), 500);
         } else if (
@@ -419,13 +435,24 @@ export default function({
               message: successMessage = '',
             } = {},
           } = data || {};
-          const pollingRes = yield call(pollingCallback, {
-            response: data,
-            data: data && data.data,
-            message: successMessage,
-            status: successStatus,
-            count,
+          const { cancel: CancelPolling, pollingRes } = yield race({
+            pollingRes: call(pollingCallback, {
+              response: data,
+              data: data && data.data,
+              message: successMessage,
+              status: successStatus,
+              count,
+            }),
+            cancel: take(action.cancel),
           });
+          if (CancelPolling) loop = false;
+          // const pollingRes = yield call(pollingCallback, {
+          //   response: data,
+          //   data: data && data.data,
+          //   message: successMessage,
+          //   status: successStatus,
+          //   count,
+          // });
           if (typeof pollingRes === 'boolean') loop = pollingRes;
           else if (
             Object.prototype.toString.call(pollingRes) === '[object Object]'
@@ -495,36 +522,76 @@ export default function({
             } = error || {};
             if (typeof errorCallback === 'function') {
               let errorCallbackResponse = null;
-              if (typeof errorCallback === 'function')
-                errorCallbackResponse = yield call(errorCallback, {
-                  error,
-                  errorData: isResponseErrorParser
-                    ? errorData &&
-                      typeof responseErrorParser(errorData) === 'object' &&
-                      Object.keys(responseErrorParser(errorData) || {}).length >
-                        0
-                      ? responseErrorParser(errorData)
-                      : errorData
-                    : errorData,
-                  ...(typeof errorParser === 'function'
-                    ? {
-                        errorParser: errorParser({
-                          error,
-                          errorData,
-                          status: errorStatus,
-                          response: error && error.response,
-                          message: errorMessage,
-                        }),
-                      }
-                    : {}),
-                  isNetworkError:
-                    error && error.request && error.message === 'Network Error',
-                  errorMessage: error && error.message,
-                  message: errorMessage,
-                  status: errorStatus,
-                  response: error && error.response,
-                  errors: errorData,
+              if (typeof errorCallback === 'function') {
+                const {
+                  cancel: CancelPolling,
+                  errorCallbackResponse: _errorCallbackResponse = null,
+                } = yield race({
+                  errorCallbackResponse: call(errorCallback, {
+                    error,
+                    errorData: isResponseErrorParser
+                      ? errorData &&
+                        typeof responseErrorParser(errorData) === 'object' &&
+                        Object.keys(responseErrorParser(errorData) || {})
+                          .length > 0
+                        ? responseErrorParser(errorData)
+                        : errorData
+                      : errorData,
+                    ...(typeof errorParser === 'function'
+                      ? {
+                          errorParser: errorParser({
+                            error,
+                            errorData,
+                            status: errorStatus,
+                            response: error && error.response,
+                            message: errorMessage,
+                          }),
+                        }
+                      : {}),
+                    isNetworkError:
+                      error &&
+                      error.request &&
+                      error.message === 'Network Error',
+                    errorMessage: error && error.message,
+                    message: errorMessage,
+                    status: errorStatus,
+                    response: error && error.response,
+                    errors: errorData,
+                  }),
+                  cancel: take(action.cancel),
                 });
+                if (CancelPolling) loop = false;
+                errorCallbackResponse = _errorCallbackResponse;
+                // errorCallbackResponse = yield call(errorCallback, {
+                //   error,
+                //   errorData: isResponseErrorParser
+                //     ? errorData &&
+                //       typeof responseErrorParser(errorData) === 'object' &&
+                //       Object.keys(responseErrorParser(errorData) || {}).length >
+                //         0
+                //       ? responseErrorParser(errorData)
+                //       : errorData
+                //     : errorData,
+                //   ...(typeof errorParser === 'function'
+                //     ? {
+                //         errorParser: errorParser({
+                //           error,
+                //           errorData,
+                //           status: errorStatus,
+                //           response: error && error.response,
+                //           message: errorMessage,
+                //         }),
+                //       }
+                //     : {}),
+                //   isNetworkError:
+                //     error && error.request && error.message === 'Network Error',
+                //   errorMessage: error && error.message,
+                //   message: errorMessage,
+                //   status: errorStatus,
+                //   response: error && error.response,
+                //   errors: errorData,
+                // });
+              }
               if (errorCallbackResponse) {
                 if (
                   typeOf(errorCallbackResponse) === 'boolean' &&
@@ -609,13 +676,24 @@ export default function({
         }
       } finally {
         const Cancelled = yield cancelled();
-        if (typeof finalCallback === 'function')
-          yield call(finalCallback, {
-            type,
-            action,
-            payload: commonData,
-            Cancelled,
+        if (typeof finalCallback === 'function') {
+          const { cancel: CancelPolling } = yield race({
+            finalRes: call(finalCallback, {
+              type,
+              action,
+              payload: commonData,
+              Cancelled,
+            }),
+            cancel: take(action.cancel),
           });
+          if (CancelPolling) loop = false;
+          // yield call(finalCallback, {
+          //   type,
+          //   action,
+          //   payload: commonData,
+          //   Cancelled,
+          // });
+        }
         yield call(requestResponseHandler, {
           type,
           action,

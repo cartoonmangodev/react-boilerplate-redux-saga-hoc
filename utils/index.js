@@ -877,8 +877,7 @@ var useQuery = function useQuery() {
       callbackSuccess = _ref19.callbackSuccess,
       refreshKey = _ref19.refreshKey;
 
-  if (name) checkKey(name, 'reducer name', 'string', 'valid string');
-  var store = reactRedux.useStore();
+  if (name) checkKey(name, 'reducer name', 'string', 'valid string'); // const store = useStore();
 
   var _useState = React.useState({}),
       _useState2 = _slicedToArray(_useState, 1),
@@ -1022,17 +1021,11 @@ var useQuery = function useQuery() {
 
     return {
       isEqualCheck: _isEqual,
-      data: _queryData,
-      previousData: previousCallbackData.get(_key) || previousData.get(_key)
-    };
-  }, [refreshKey]);
+      data: _queryData // previousData: previousCallbackData.get(_key) || previousData.get(_key),
 
-  var _useState3 = React.useState(function () {
-    return execute(store.getState());
-  }),
-      _useState4 = _slicedToArray(_useState3, 2),
-      executedData = _useState4[0],
-      setData = _useState4[1]; // useEffect(() => {
+    };
+  }, [refreshKey]); // const [executedData, setData] = useState(() => execute(store.getState()));
+  // useEffect(() => {
   //   const unSubscribe = store.subscribe(execute);
   //   return () => {
   //     delete previousData.delete(_key);
@@ -1055,57 +1048,59 @@ var useQuery = function useQuery() {
   //   }
   // }, [config, array]);
 
-
   React.useEffect(function () {
     previousData.set(_key, {});
-    initialRender.set(_key, true);
-    var unSubscribe = store.subscribe(function () {
-      var _data2 = execute(store.getState());
+    initialRender.set(_key, true); // const unSubscribe = store.subscribe(() => {
+    //   const _data2 = execute(store.getState());
+    //   if (
+    //     (!_data2.isEqualCheck || initialRender.get(_key)) &&
+    //     typeof callbackSuccess === 'function'
+    //   ) {
+    //     initialRender.set(_key, false);
+    //     callbackSuccess(_data2.data, _data2.previousData);
+    //   }
+    //   if (!_data2.isEqualCheck) {
+    //     setData(_data2);
+    //   }
+    // });
 
-      if ((!_data2.isEqualCheck || initialRender.get(_key)) && typeof callbackSuccess === 'function') {
-        initialRender.set(_key, false);
-        callbackSuccess(_data2.data, _data2.previousData);
-      }
-
-      if (!_data2.isEqualCheck) {
-        setData(_data2);
-      }
-    });
     return function () {
-      unSubscribe();
+      // unSubscribe();
       previousData.delete(_key);
       previousCallbackData.delete(_key);
       initialRender.delete(_key);
       previousDependencyArrayData.delete(_key);
     };
-  }, []); // const equalityCheckFunction = useCallback((e, f) => {
-  //   const _isEqual =
-  //     typeof e.isEqualCheck === 'undefined'
-  //       ? isEqual(e.data, f.data)
-  //       : e.isEqualCheck;
-  //   // const _isEqual = e.isEqualCheck ? true : isEqual(e.data, f.data);
-  //   if (
-  //     (!_isEqual || initialRender.get(_key)) &&
-  //     typeof callbackSuccess === 'function'
-  //   ) {
-  //     initialRender.set(_key, false);
-  //     callbackSuccess(e.data /* Updated Data */, f.data /* Previous Data */);
-  //   }
-  //   return _isEqual;
-  // }, []);
-  // const _selectorData = useSelector(execute, equalityCheckFunction);
+  }, []);
+  var equalityCheckFunction = React.useCallback(function (e, f) {
+    var _isEqual = typeof e.isEqualCheck === 'undefined' ? isEqual(e.data, f.data) : e.isEqualCheck; // const _isEqual = e.isEqualCheck ? true : isEqual(e.data, f.data);
 
-  return executedData.data;
+
+    if ((!_isEqual || initialRender.get(_key)) && typeof callbackSuccess === 'function') {
+      initialRender.set(_key, false);
+      callbackSuccess(e.data
+      /* Updated Data */
+      , f.data
+      /* Previous Data */
+      );
+    }
+
+    return _isEqual;
+  }, []);
+
+  var _selectorData = reactRedux.useSelector(execute, equalityCheckFunction);
+
+  return _selectorData.data;
 };
 var useActionsHook = function useActionsHook() {
   var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
   var actions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var dispatch = reactRedux.useDispatch();
 
-  var _useState5 = React.useState(!actions ? cacheActions[name] || {} : redux.bindActionCreators(actions, dispatch)),
-      _useState6 = _slicedToArray(_useState5, 2),
-      dispatchAction = _useState6[0],
-      setDispatchAction = _useState6[1];
+  var _useState3 = React.useState(!actions ? cacheActions[name] || {} : redux.bindActionCreators(actions, dispatch)),
+      _useState4 = _slicedToArray(_useState3, 2),
+      dispatchAction = _useState4[0],
+      setDispatchAction = _useState4[1];
 
   React.useEffect(function () {
     if (!isEqual(cacheActions[name], actions)) {
@@ -1273,10 +1268,10 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
   var initial = arguments.length > 3 ? arguments[3] : undefined;
   var prevArgs = React.useRef(null);
 
-  var _useState7 = React.useState(null),
-      _useState8 = _slicedToArray(_useState7, 2),
-      isUpdating = _useState8[0],
-      setIsUpdating = _useState8[1];
+  var _useState5 = React.useState(null),
+      _useState6 = _slicedToArray(_useState5, 2),
+      isUpdating = _useState6[0],
+      setIsUpdating = _useState6[1];
 
   var refresh = React.useCallback(function () {
     var _ref24 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
