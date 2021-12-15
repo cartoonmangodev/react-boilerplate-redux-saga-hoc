@@ -94,25 +94,6 @@ export default function({
     let loop = true;
     let count = 1;
     let pollingRequestConfig = {};
-    if (polling && callAfterDelay && loop && count === 1) {
-      const { cancel: cancelTask } = yield race({
-        posts: call(delay, Delay),
-        cancel: take(action.cancel),
-      });
-      if (cancelTask) {
-        loop = false;
-        const { response: { method: customMethod } = {} } = cancelTask || {};
-        if (!customMethod)
-          yield call(requestResponseHandler, {
-            type,
-            action,
-            payload: commonData,
-            actionData: rest,
-            method: constants.ON_CANCEL,
-            axiosCancel: cancelTask,
-          });
-      }
-    }
     while (loop) {
       let action = yield actionType[type];
       const axios =
@@ -233,7 +214,26 @@ export default function({
       if (request.effect) delete request.effect;
       let postData = '';
       let cancelTask = '';
-
+      if (polling && callAfterDelay && loop && count === 1) {
+        const { cancel: _cancelTask } = yield race({
+          posts: call(delay, Delay),
+          cancel: take(action.cancel),
+        });
+        cancelTask = _cancelTask;
+        if (cancelTask) {
+          loop = false;
+          // const { response: { method: customMethod } = {} } = cancelTask || {};
+          yield call(requestResponseHandler, {
+            type,
+            action,
+            payload: commonData,
+            actionData: rest,
+            method: constants.ON_CANCEL,
+            axiosCancel: cancelTask,
+          });
+          break;
+        }
+      }
       try {
         const cacheId = `${_url || ''}_${JSON.stringify(request)}`;
         if (
