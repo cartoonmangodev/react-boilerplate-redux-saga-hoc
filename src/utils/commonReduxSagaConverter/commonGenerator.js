@@ -93,7 +93,7 @@ export default function({
     let loop = true;
     let count = 1;
     let pollingRequestConfig = {};
-    do {
+    while (loop) {
       let action = yield actionType[type];
       const axios =
         (action.api && action.api.axios) ||
@@ -427,7 +427,8 @@ export default function({
         if (
           polling &&
           typeof window !== 'undefined' &&
-          typeof pollingCallback === 'function'
+          typeof pollingCallback === 'function' &&
+          loop
         ) {
           const {
             data: {
@@ -722,7 +723,7 @@ export default function({
           count += 1;
         } else loop = false;
       } else loop = false;
-    } while (loop);
+    }
   }
 
   const generatorPattern = Object.keys(actionType).map(pattern =>
