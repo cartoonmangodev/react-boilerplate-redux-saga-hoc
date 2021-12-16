@@ -119,6 +119,7 @@ export default ({
       ),
       constants,
       initialState,
+      constantActions: componentActions,
       axios: axiosInterceptors || axios,
       resetState,
       reducerName,
