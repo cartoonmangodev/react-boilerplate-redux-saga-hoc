@@ -558,8 +558,8 @@ export const useQuery = (
           _queryData = _data;
         }
       } else _queryData = previousCallbackData.get(_key) || _queryData;
+      previousData.set(_key, _data);
       return {
-        isEqualCheck: _isEqual,
         data: _queryData,
         // previousData: previousCallbackData.get(_key) || previousData.get(_key),
       };

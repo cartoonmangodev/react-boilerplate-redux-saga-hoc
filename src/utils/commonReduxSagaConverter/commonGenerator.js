@@ -214,7 +214,14 @@ export default function({
       if (request.effect) delete request.effect;
       let postData = '';
       let cancelTask = '';
-      if (polling && callAfterDelay && loop && count === 1) {
+      if (
+        polling &&
+        callAfterDelay &&
+        loop &&
+        count === 1 &&
+        action &&
+        action.cancel
+      ) {
         const { cancel: _cancelTask } = yield race({
           posts: call(delay, Delay),
           cancel: take(action.cancel),
