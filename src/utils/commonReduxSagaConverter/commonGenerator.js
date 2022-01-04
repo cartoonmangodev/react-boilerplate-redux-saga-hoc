@@ -201,8 +201,9 @@ export default function({
 
       if (process.env.NODE_ENV !== 'test' || !action.test)
         yield delete request.headers;
+      let requestData = null;
       if (!dontUpdateReduceronSucess)
-        const requestData = yield call(dontUpdateReducerOnSucess, {
+        requestData = yield call(dontUpdateReducerOnSucess, {
           type,
           action,
           request,
