@@ -48,7 +48,7 @@ const checkKey = (key, name, dataType) => {
 const _cache = {};
 export default function({
   actionType = {},
-  requestResponseHandler,
+  dontUpdateReducerOnSucess,
   axiosInterceptors,
 }) {
   function* commonGenerator({
@@ -62,6 +62,7 @@ export default function({
         payload = {},
         params = {},
         query,
+        dontUpdateReduceronSucess = false,
         axios: requestAxios,
         paramsSerializer = { arrayFormat: 'brackets' },
         cancelKey,
@@ -200,14 +201,15 @@ export default function({
 
       if (process.env.NODE_ENV !== 'test' || !action.test)
         yield delete request.headers;
-      const requestData = yield call(requestResponseHandler, {
-        type,
-        action,
-        request,
-        payload: commonData,
-        actionData: rest,
-        method: constants.ON_REQUEST,
-      });
+      if (!dontUpdateReduceronSucess)
+        const requestData = yield call(dontUpdateReducerOnSucess, {
+          type,
+          action,
+          request,
+          payload: commonData,
+          actionData: rest,
+          method: constants.ON_REQUEST,
+        });
       yield (request = requestData || request);
       if (!['POST', 'PATCH', 'PUT', 'DELETE'].includes(request.method))
         yield delete request.data;
@@ -230,7 +232,7 @@ export default function({
         if (cancelTask) {
           loop = false;
           // const { response: { method: customMethod } = {} } = cancelTask || {};
-          yield call(requestResponseHandler, {
+          yield call(dontUpdateReducerOnSucess, {
             type,
             action,
             payload: commonData,
@@ -394,14 +396,16 @@ export default function({
               successCallbackResponse.filter(e => e.task || e.filter).length > 0
             )
               commonData.tasks = successCallbackResponse;
-          const loader = yield call(requestResponseHandler, {
-            data,
-            type,
-            action,
-            payload: commonData,
-            actionData: rest,
-            method: constants.ON_SUCCESS,
-          });
+          let loader = null;
+          if (!dontUpdateReduceronSucess)
+            loader = yield call(dontUpdateReducerOnSucess, {
+              data,
+              type,
+              action,
+              payload: commonData,
+              actionData: rest,
+              method: constants.ON_SUCCESS,
+            });
           if (loader)
             yield call(loaderGenerator, {
               type,
@@ -417,8 +421,8 @@ export default function({
           if (typeof cancelCallback === 'function')
             cancelCallback(cancelResponse);
           const { response: { method: customMethod } = {} } = cancelTask || {};
-          if (!customMethod)
-            yield call(requestResponseHandler, {
+          if (!customMethod && !dontUpdateReduceronSucess)
+            yield call(dontUpdateReducerOnSucess, {
               type,
               action,
               payload: commonData,
@@ -668,7 +672,7 @@ export default function({
                 type,
                 commonData,
               });
-              yield call(requestResponseHandler, {
+              yield call(dontUpdateReducerOnSucess, {
                 type,
                 action,
                 payload: commonData,
@@ -676,7 +680,7 @@ export default function({
                 method: constants.ON_CANCEL_ERROR,
               });
             } else {
-              const loader = yield call(requestResponseHandler, {
+              const loader = yield call(dontUpdateReducerOnSucess, {
                 error: {
                   response: {
                     data: {
@@ -722,7 +726,7 @@ export default function({
           //   Cancelled,
           // });
         }
-        yield call(requestResponseHandler, {
+        yield call(dontUpdateReducerOnSucess, {
           type,
           action,
           payload: commonData,
