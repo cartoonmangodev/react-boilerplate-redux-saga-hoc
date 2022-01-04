@@ -202,15 +202,14 @@ export default function({
       if (process.env.NODE_ENV !== 'test' || !action.test)
         yield delete request.headers;
       let requestData = null;
-      if (!dontUpdateReducerOnSucess)
-        requestData = yield call(requestResponseHandler, {
-          type,
-          action,
-          request,
-          payload: commonData,
-          actionData: rest,
-          method: constants.ON_REQUEST,
-        });
+      requestData = yield call(requestResponseHandler, {
+        type,
+        action,
+        request,
+        payload: commonData,
+        actionData: rest,
+        method: constants.ON_REQUEST,
+      });
       yield (request = requestData || request);
       if (!['POST', 'PATCH', 'PUT', 'DELETE'].includes(request.method))
         yield delete request.data;
@@ -422,7 +421,7 @@ export default function({
           if (typeof cancelCallback === 'function')
             cancelCallback(cancelResponse);
           const { response: { method: customMethod } = {} } = cancelTask || {};
-          if (!customMethod && !dontUpdateReducerOnSucess)
+          if (!customMethod)
             yield call(requestResponseHandler, {
               type,
               action,
