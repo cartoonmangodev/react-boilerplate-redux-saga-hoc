@@ -14,6 +14,7 @@ var React__default = _interopDefault(React);
 var redux = require('redux');
 var reactRedux = require('react-redux');
 var isEqual = _interopDefault(require('lodash.isequal'));
+var reselect = require('reselect');
 var invariant = _interopDefault(require('invariant'));
 require('@babel/runtime/helpers/objectWithoutProperties');
 var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
@@ -906,7 +907,9 @@ var useQuery = function useQuery() {
     var state = _state || {};
 
     var _getDataFunc = function _getDataFunc(e) {
-      return (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key) ? !e.defaultDataFormat || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(state, "[".concat(name, "][").concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : name ? safe(state, "[".concat(name, "]").concat(e.query ? e.query : ''), e.default) : safe(state, "".concat(e.query ? e.query : ''), e.default) : safe(getData(safe(state, "[".concat(name, "][").concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e), e.dataQuery), "".concat(e.query && typeOf(e.query) === 'string' ? e.query : ''), e.query ? e.default !== undefined ? e.default : undefined : undefined);
+      return (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key) ? !e.defaultDataFormat || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(state, "[".concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : // : name
+      // ? safe(state, `${e.query ? e.query : ''}`, e.default)
+      safe(state, "".concat(e.query ? e.query : ''), e.default) : safe(getData(safe(state, "[".concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e), e.dataQuery), "".concat(e.query && typeOf(e.query) === 'string' ? e.query : ''), e.query ? e.default !== undefined ? e.default : undefined : undefined);
     };
 
     return Array.isArray(ee.query) ? ee.query.reduce(function (acc, _query) {
@@ -950,17 +953,17 @@ var useQuery = function useQuery() {
           return _arr3;
         }
 
-        if (typeOf(array) === 'object') return safe(state, "[".concat(name, "][").concat(e.key, "]"));
+        if (typeOf(array) === 'object') return safe(state, "[".concat(e.key, "]"));
 
         var _arr = _toConsumableArray(acc);
 
-        _arr.push(safe(state, "[".concat(name, "][").concat(e, "]")));
+        _arr.push(safe(state, "[".concat(e, "]")));
 
         return _arr;
       }, typeOf(array) === 'object' ? {} : []); // if()
     } else if (typeof array === 'string' && config && typeOf(config) === 'array') _data = config.reduce(function (acc, _config) {
       return [].concat(_toConsumableArray(acc), [exeuteRequiredData(_getData(_config, true, state), _config)]);
-    }, []);else if (typeof array === 'string') _data = exeuteRequiredData(_getData(config, true, state), config);else if (name) _data = safe(state, "[".concat(name, "]"));else _data = state || {};
+    }, []);else if (typeof array === 'string') _data = exeuteRequiredData(_getData(config, true, state), config);else if (name) _data = safe(state, "");else _data = state || {};
 
     return _data;
   }, [refreshKey]);
@@ -979,7 +982,7 @@ var useQuery = function useQuery() {
         if (!isPassed) isPreviousDependencyArrayCheckPassed.set(_key, true);
 
         var _next = config.dependencyArray.map(function (_e) {
-          return safe(state[name], _e);
+          return safe(state, _e);
         });
 
         var _previous = previousDependencyArrayData.get(_key);
@@ -993,7 +996,7 @@ var useQuery = function useQuery() {
           };
         }
       }
-    } // const state = safe(store, `.getState()[${name}]`);
+    } // const state = safe(store, `.getState()`);
     // eslint-disable-next-line no-underscore-dangle
 
 
@@ -1087,8 +1090,11 @@ var useQuery = function useQuery() {
 
     return _isEqual;
   }, []);
+  var selectState = React.useCallback(function (state) {
+    return name ? state[name] : state;
+  }, [name]);
 
-  var _selectorData = reactRedux.useSelector(execute, equalityCheckFunction);
+  var _selectorData = reactRedux.useSelector(reselect.createSelector(selectState, execute), equalityCheckFunction);
 
   return _selectorData.data;
 };

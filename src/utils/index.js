@@ -492,7 +492,7 @@ export const useQuery = (
         );
       else if (typeof array === 'string')
         _data = exeuteRequiredData(_getData(config, true, state), config);
-      else if (name) _data = safe(state, ``);
+      else if (name) _data = state;
       else _data = state || {};
       return _data;
     },
