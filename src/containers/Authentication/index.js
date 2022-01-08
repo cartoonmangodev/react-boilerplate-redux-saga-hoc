@@ -138,12 +138,12 @@ export default ({
     const isInjected = useRef(false);
     if (!isMounted[reducerName] || isInjected.current || inject) {
       if (!isMounted[reducerName]) console.log('=====Mounted=====');
-      isInjected.current = true;
+      if (!isInjected.current && !inject) isInjected.current = true;
       isMounted[reducerName] = true;
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      useInjectSaga(injectSagaConfig, inject);
+      useInjectSaga(injectSagaConfig);
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      useInjectReducer(injectReducerConfig, createReducer, inject);
+      useInjectReducer(injectReducerConfig, createReducer);
     }
     const dispatch = useDispatch();
     if (!stateProps)
@@ -246,12 +246,12 @@ export default ({
   const _useHocHookNextJs = (inject = false) => {
     const isInjected = useRef(false);
     if (!isMounted[reducerName] || isInjected.current || inject) {
-      isInjected.current = true;
+      if (!isInjected.current && !inject) isInjected.current = true;
       isMounted[reducerName] = true;
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      useInjectSaga(injectSagaConfig, inject);
+      useInjectSaga(injectSagaConfig);
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      useInjectReducer(injectReducerConfig, createReducer, inject);
+      useInjectReducer(injectReducerConfig, createReducer);
     }
     const dispatch = useDispatch();
     if (!nextStateProps && dispatch)
