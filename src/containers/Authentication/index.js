@@ -30,7 +30,7 @@ const checkKey = (key, name, dataType) => {
     )})`,
   );
 };
-
+const isMounted = {};
 export default ({
   handlers = [],
   nextJS = false,
@@ -134,8 +134,9 @@ export default ({
   };
   // eslint-disable-next-line no-underscore-dangle
 
-  const _useHocHook = (inject = true) => {
-    if (inject) {
+  const _useHocHook = (inject = false) => {
+    if (!isMounted[reducerName] || inject) {
+      isMounted[reducerName] = true;
       // eslint-disable-next-line react-hooks/rules-of-hooks
       useInjectSaga(injectSagaConfig, inject);
       // eslint-disable-next-line react-hooks/rules-of-hooks
