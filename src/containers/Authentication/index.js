@@ -240,8 +240,9 @@ export default ({
     };
   if (!nextJS && hookWithHoc) return { hook: _useHocHook, hoc };
   // eslint-disable-next-line no-underscore-dangle
-  const _useHocHookNextJs = (inject = true) => {
-    if (inject) {
+  const _useHocHookNextJs = (inject = false) => {
+    if (inject || !isMounted[reducerName]) {
+      !isMounted[reducerName] = true;
       // eslint-disable-next-line react-hooks/rules-of-hooks
       useInjectSaga(injectSagaConfig, inject);
       // eslint-disable-next-line react-hooks/rules-of-hooks
