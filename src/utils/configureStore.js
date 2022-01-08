@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable global-require */
 /**
  * Create the store with dynamic reducers
@@ -9,7 +10,11 @@ import createSagaMiddleware from 'redux-saga';
 import { all, fork } from 'redux-saga/effects';
 import createReducer from './reducers';
 
-export default function configureStore(initialState = {}, middleWare = []) {
+export default function configureStore(
+  initialState = {},
+  middleWare = [],
+  enhancers = [],
+) {
   let composeEnhancers = compose;
   const reduxSagaMonitorOptions = {};
   // const routerMiddleware = isWeb
@@ -42,12 +47,13 @@ export default function configureStore(initialState = {}, middleWare = []) {
     // isWeb ? [routerMiddleware(History)] : [],
   );
 
-  const enhancers = [applyMiddleware(...middlewares)];
+  // eslint-disable-next-line no-underscore-dangle
+  const _enhancers = [applyMiddleware(...middlewares), ...enhancers];
 
   const store = createStore(
     createReducer({}),
     initialState,
-    composeEnhancers(...enhancers),
+    composeEnhancers(..._enhancers),
   );
 
   // Extensions
