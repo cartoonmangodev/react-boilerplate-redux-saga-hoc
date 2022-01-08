@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable indent */
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import invariant from 'invariant';
 import { createStructuredSelector } from 'reselect';
@@ -135,7 +135,10 @@ export default ({
   // eslint-disable-next-line no-underscore-dangle
 
   const _useHocHook = (inject = false) => {
-    if (!isMounted[reducerName] || inject) {
+    const isInjected = useRef(false);
+    if (!isMounted[reducerName] || isInjected.current || inject) {
+      if (!isMounted[reducerName]) console.log('=====Mounted=====');
+      isInjected.current = true;
       isMounted[reducerName] = true;
       // eslint-disable-next-line react-hooks/rules-of-hooks
       useInjectSaga(injectSagaConfig, inject);
@@ -241,7 +244,9 @@ export default ({
   if (!nextJS && hookWithHoc) return { hook: _useHocHook, hoc };
   // eslint-disable-next-line no-underscore-dangle
   const _useHocHookNextJs = (inject = false) => {
-    if (inject || !isMounted[reducerName]) {
+    const isInjected = useRef(false);
+    if (!isMounted[reducerName] || isInjected.current || inject) {
+      isInjected.current = true;
       isMounted[reducerName] = true;
       // eslint-disable-next-line react-hooks/rules-of-hooks
       useInjectSaga(injectSagaConfig, inject);
