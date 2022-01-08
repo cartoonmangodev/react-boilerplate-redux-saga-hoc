@@ -14,7 +14,6 @@ var React__default = _interopDefault(React);
 var redux = require('redux');
 var reactRedux = require('react-redux');
 var isEqual = _interopDefault(require('lodash.isequal'));
-var reselect = require('reselect');
 var invariant = _interopDefault(require('invariant'));
 require('@babel/runtime/helpers/objectWithoutProperties');
 var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
@@ -1088,11 +1087,8 @@ var useQuery = function useQuery() {
 
     return _isEqual;
   }, []);
-  var selectState = React.useCallback(function (state) {
-    return name ? state[name] : state;
-  }, [name]);
 
-  var _selectorData = reactRedux.useSelector(reselect.createSelector(selectState, execute), equalityCheckFunction);
+  var _selectorData = reactRedux.useSelector(execute, equalityCheckFunction);
 
   return _selectorData.data;
 };

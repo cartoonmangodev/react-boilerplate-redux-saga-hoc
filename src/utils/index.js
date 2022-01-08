@@ -6,6 +6,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { bindActionCreators } from 'redux';
 import { useStore, useDispatch, useSelector } from 'react-redux';
 import isEqual from 'lodash.isequal';
+import { createSelector } from 'reselect';
 import invariant from 'invariant';
 import {
   ON_ERROR,
@@ -394,17 +395,15 @@ export const useQuery = (
             : e.key)
             ? safe(
                 state,
-                `[${name}][${isString ? array : e.key}]${
-                  e.query ? e.query : ''
-                }`,
+                `[${isString ? array : e.key}]${e.query ? e.query : ''}`,
                 e.default,
               )
-            : name
-            ? safe(state, `[${name}]${e.query ? e.query : ''}`, e.default)
-            : safe(state, `${e.query ? e.query : ''}`, e.default)
+            : // : name
+              // ? safe(state, `${e.query ? e.query : ''}`, e.default)
+              safe(state, `${e.query ? e.query : ''}`, e.default)
           : safe(
               getData(
-                safe(state, `[${name}][${isString ? array : e.key}]`),
+                safe(state, `[${isString ? array : e.key}]`),
                 e.query ? undefined : e.default || undefined,
                 e.initialLoaderState || false,
                 _checkFilter(e),
@@ -471,10 +470,9 @@ export const useQuery = (
               );
               return _arr;
             }
-            if (typeOf(array) === 'object')
-              return safe(state, `[${name}][${e.key}]`);
+            if (typeOf(array) === 'object') return safe(state, `[${e.key}]`);
             const _arr = [...acc];
-            _arr.push(safe(state, `[${name}][${e}]`));
+            _arr.push(safe(state, `[${e}]`));
             return _arr;
           },
           typeOf(array) === 'object' ? {} : [],
@@ -494,7 +492,7 @@ export const useQuery = (
         );
       else if (typeof array === 'string')
         _data = exeuteRequiredData(_getData(config, true, state), config);
-      else if (name) _data = safe(state, `[${name}]`);
+      else if (name) _data = safe(state, ``);
       else _data = state || {};
       return _data;
     },
@@ -531,7 +529,7 @@ export const useQuery = (
           invariant(false, 'dependencyArray must be array of string');
         else {
           if (!isPassed) isPreviousDependencyArrayCheckPassed.set(_key, true);
-          const _next = config.dependencyArray.map(_e => safe(state[name], _e));
+          const _next = config.dependencyArray.map(_e => safe(state, _e));
           const _previous = previousDependencyArrayData.get(_key);
           previousDependencyArrayData.set(_key, _next);
           if (isEqual(_previous, _next)) {
@@ -542,7 +540,7 @@ export const useQuery = (
           }
         }
       }
-      // const state = safe(store, `.getState()[${name}]`);
+      // const state = safe(store, `.getState()`);
       // eslint-disable-next-line no-underscore-dangle
       const _data = _GetData(state);
       const _isEqual = isEqual(_data, _queryData);
@@ -636,7 +634,13 @@ export const useQuery = (
     }
     return _isEqual;
   }, []);
-  const _selectorData = useSelector(execute, equalityCheckFunction);
+  const selectState = useCallback(state => (name ? state[name] : state), [
+    name,
+  ]);
+  const _selectorData = useSelector(
+    createSelector(selectState, execute),
+    equalityCheckFunction,
+  );
   return _selectorData.data;
 };
 
