@@ -6,7 +6,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { bindActionCreators } from 'redux';
 import { useStore, useDispatch, useSelector } from 'react-redux';
 import isEqual from 'lodash.isequal';
-import { createSelector } from 'reselect';
 import invariant from 'invariant';
 import {
   ON_ERROR,
@@ -637,13 +636,7 @@ export const useQuery = (
     }
     return _isEqual;
   }, []);
-  const selectState = useCallback(state => (name ? state[name] : state), [
-    name,
-  ]);
-  const _selectorData = useSelector(
-    createSelector(selectState, execute),
-    equalityCheckFunction,
-  );
+  const _selectorData = useSelector(execute, equalityCheckFunction);
   return _selectorData.data;
 };
 
