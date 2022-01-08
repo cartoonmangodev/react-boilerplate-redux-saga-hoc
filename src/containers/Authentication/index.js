@@ -137,7 +137,10 @@ export default ({
   const _useHocHook = (inject = false) => {
     const isInjected = useRef(false);
     if (!isMounted[reducerName] || isInjected.current || inject) {
-      if (!isMounted[reducerName]) console.log('=====Mounted=====');
+      if (!isMounted[reducerName])
+        console.log(
+          `===== Successfully Injected reducer - ${reducerName} =====`,
+        );
       if (!isInjected.current && !inject) isInjected.current = true;
       isMounted[reducerName] = true;
       // eslint-disable-next-line react-hooks/rules-of-hooks

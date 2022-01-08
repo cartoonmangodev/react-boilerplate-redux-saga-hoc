@@ -233,6 +233,10 @@ export default ({
 }) => {
   const initialState = newObject(InitialState, componentState);
   return (state = initialState, action) => {
+    const {
+      payload: { dontUpdateReducer, dontUpdateReducerOnCall } = {},
+    } = action;
+    if (dontUpdateReducer || dontUpdateReducerOnCall) return state;
     switch (action.type) {
       case 'RESET_API':
         return newObject(state, dontResetKeyCheck(ResetState, action));

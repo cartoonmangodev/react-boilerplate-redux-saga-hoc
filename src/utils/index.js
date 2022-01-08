@@ -47,7 +47,15 @@ export const commmonStateHandler = ({
   updateState,
 }) => {
   /** This action for initial call  */
-  const { payload: { filter, task = {} } = {} } = action;
+  const {
+    payload: {
+      filter,
+      task = {},
+      dontUpdateReducer,
+      dontUpdateReducerOnCall,
+    } = {},
+  } = action;
+  if (dontUpdateReducer || dontUpdateReducerOnCall) return state;
   const {
     payload: {
       task: { clearDataOnStart: clearData } = {},
