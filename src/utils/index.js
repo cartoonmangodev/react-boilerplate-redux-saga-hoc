@@ -2,11 +2,15 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { bindActionCreators } from 'redux';
 import { useStore, useDispatch, useSelector } from 'react-redux';
 import isEqual from 'lodash.isequal';
-import { createSelector } from 'reselect';
+import {
+  createSelector,
+  // createSelectorCreator,
+  // defaultMemoize,
+} from 'reselect';
 import invariant from 'invariant';
 import {
   ON_ERROR,
@@ -301,6 +305,7 @@ const initialRender = new Map();
 const previousCallbackData = new Map();
 const previousDependencyArrayData = new Map();
 const isPreviousDependencyArrayCheckPassed = new Map();
+// const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
 export const useQuery = (
   _name = null,
   _array = [],
@@ -386,9 +391,15 @@ export const useQuery = (
   const _getData = useCallback(
     (ee = {}, isString, _state) => {
       const state = _state || {};
-      const _getDataFunc = e =>
-        (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key)
-        ? !e.defaultDataFormat || !(isString ? array : e.key)
+      const _getDataFunc = e => {
+        const regex = `app\/containers\/${name}\/+.*?_CALL`;
+        const isSearchMatched = ((isString ? array : e.key) || '').search(
+          regex,
+        );
+        return (typeof e.defaultDataFormat === 'boolean' ||
+        isSearchMatched ||
+        !(isString ? array : e.key)
+        ? !e.defaultDataFormat || isSearchMatched || !(isString ? array : e.key)
         : false)
           ? (isString
             ? array
@@ -416,6 +427,7 @@ export const useQuery = (
                   : undefined
                 : undefined,
             );
+      };
       return Array.isArray(ee.query)
         ? ee.query.reduce(
             (acc, _query) =>
@@ -634,11 +646,67 @@ export const useQuery = (
     }
     return _isEqual;
   }, []);
-  const selectState = useCallback(state => (name ? state[name] : state), [
-    name,
-  ]);
+  const selectReducerKey = useMemo(() => {
+    const _arr = [];
+    const executeRequiredKey = _requiredKey =>
+      _requiredKey.forEach(e => {
+        if (typeof e === 'string') _arr.push(e);
+        else if (typeOf(e) === 'object' && e.key) _arr.push(e.key);
+      });
+    if (typeof array === 'string' && array) _arr.push(array);
+    else if (Array.isArray(array) || typeOf(array) === 'object')
+      (Array.isArray(array) ? array : [array]).forEach(arr => {
+        if (typeof arr === 'string') _arr.push(arr);
+        else if (typeOf(arr) === 'object') {
+          if (arr.key) {
+            _arr.push(arr.key);
+          } else if (
+            Array.isArray(arr.requiredKey) &&
+            arr.requiredKey.length > 0
+          ) {
+            executeRequiredKey(arr.requiredKey);
+          } else if (arr.query) {
+            const getKey = _query =>
+              _query[0] === '.' ? _query.split('.')[1] : _query.split('.')[0];
+            if (typeof arr === 'string') _arr.push(getKey(arr));
+            else if (Array.isArray(arr.query) && arr.query.length > 0)
+              arr.query.forEach(e => {
+                if (typeof e === 'string') _arr.push(getKey(e));
+                else if (typeOf(e) === 'object' && e.key)
+                  _arr.push(getKey(e.key));
+              });
+          }
+        }
+      });
+    return _arr;
+  }, [refreshKey]);
+  const selectState = useMemo(() => {
+    const _arr = [];
+    selectReducerKey.forEach(_k => {
+      _arr.push(state => {
+        return state[name] && state[name][_k];
+      });
+    });
+    if (_arr.length > 0) return _arr;
+    return [state => state[name]];
+  }, [selectReducerKey]);
+  const executeSelector = useCallback(
+    (...rest) => {
+      if (selectReducerKey.length > 0) {
+        const _stateObj = selectReducerKey.reduce(
+          (acc, curr, i) => ({ ...acc, [curr]: rest[i] }),
+          {},
+        );
+        return execute(_stateObj);
+      }
+      return execute(rest[0]);
+    },
+    [selectReducerKey],
+  );
   const _selectorData = useSelector(
-    createSelector(selectState, execute),
+    // execute,
+    // createSelector(state => (!name ? state : state[name]), execute),
+    !name ? execute : createSelector(selectState, executeSelector),
     equalityCheckFunction,
   );
   return _selectorData.data;

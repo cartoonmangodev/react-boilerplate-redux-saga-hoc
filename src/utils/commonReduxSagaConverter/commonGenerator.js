@@ -496,6 +496,7 @@ export default function({
           )
             pollingRequestConfig = pollingRes;
         }
+        // cancel looping on success if retry is true
         if (!polling && retry) loop = false;
 
         if (resolve && typeOf(resolve) === 'function') {
