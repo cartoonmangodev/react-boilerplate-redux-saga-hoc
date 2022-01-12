@@ -693,11 +693,10 @@ export const useQuery = (
   }, [selectReducerKey]);
   const executeSelector = useCallback(
     (...rest) => {
-      if (selectReducerKey.length > 0) {
-        const _stateObj = selectReducerKey.reduce(
-          (acc, curr, i) => ({ ...acc, [curr]: rest[i] }),
-          {},
-        );
+      if (
+        selectReducerKey.length > 0 ||
+        (typeOf(array) === 'object' && !array.key && array.requiredKey)
+      ) {
         if (typeOf(array) === 'object' && !array.key && array.requiredKey) {
           if (Array.isArray(array.requiredKey) && array.requiredKey.length)
             return {
@@ -713,6 +712,10 @@ export const useQuery = (
             };
           return { data: {} };
         }
+        const _stateObj = selectReducerKey.reduce(
+          (acc, curr, i) => ({ ...acc, [curr]: rest[i] }),
+          {},
+        );
         return execute(_stateObj);
       }
       return execute(rest[0]);
