@@ -847,7 +847,8 @@ var previousData = new Map();
 var initialRender = new Map();
 var previousCallbackData = new Map();
 var previousDependencyArrayData = new Map();
-var isPreviousDependencyArrayCheckPassed = new Map();
+var isPreviousDependencyArrayCheckPassed = new Map(); // const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
+
 var useQuery = function useQuery() {
   var _name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
@@ -907,7 +908,9 @@ var useQuery = function useQuery() {
     var state = _state || {};
 
     var _getDataFunc = function _getDataFunc(e) {
-      return (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key) ? !e.defaultDataFormat || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(state, "[".concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : // : name
+      var regex = "app/containers/".concat(name, "/+.*?_CALL");
+      var isSearchMatched = ((isString ? array : e.key) || '').search(regex);
+      return (typeof e.defaultDataFormat === 'boolean' || isSearchMatched || !(isString ? array : e.key) ? !e.defaultDataFormat || isSearchMatched || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(state, "[".concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : // : name
       // ? safe(state, `${e.query ? e.query : ''}`, e.default)
       safe(state, "".concat(e.query ? e.query : ''), e.default) : safe(getData(safe(state, "[".concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e), e.dataQuery), "".concat(e.query && typeOf(e.query) === 'string' ? e.query : ''), e.query ? e.default !== undefined ? e.default : undefined : undefined);
     };
@@ -1090,11 +1093,65 @@ var useQuery = function useQuery() {
 
     return _isEqual;
   }, []);
-  var selectState = React.useCallback(function (state) {
-    return name ? state[name] : state;
-  }, [name]);
+  var selectReducerKey = React.useMemo(function () {
+    var _arr = [];
 
-  var _selectorData = reactRedux.useSelector(reselect.createSelector(selectState, execute), equalityCheckFunction);
+    var executeRequiredKey = function executeRequiredKey(_requiredKey) {
+      return _requiredKey.forEach(function (e) {
+        if (typeof e === 'string') _arr.push(e);else if (typeOf(e) === 'object' && e.key) _arr.push(e.key);
+      });
+    };
+
+    if (typeof array === 'string' && array) _arr.push(array);else if (Array.isArray(array) || typeOf(array) === 'object') (Array.isArray(array) ? array : [array]).forEach(function (arr) {
+      if (typeof arr === 'string') _arr.push(arr);else if (typeOf(arr) === 'object') {
+        if (arr.key) {
+          _arr.push(arr.key);
+        } else if (Array.isArray(arr.requiredKey) && arr.requiredKey.length > 0) {
+          executeRequiredKey(arr.requiredKey);
+        } else if (arr.query) {
+          var getKey = function getKey(_query) {
+            return _query[0] === '.' ? _query.split('.')[1] : _query.split('.')[0];
+          };
+
+          if (typeof arr === 'string') _arr.push(getKey(arr));else if (Array.isArray(arr.query) && arr.query.length > 0) arr.query.forEach(function (e) {
+            if (typeof e === 'string') _arr.push(getKey(e));else if (typeOf(e) === 'object' && e.key) _arr.push(getKey(e.key));
+          });
+        }
+      }
+    });
+    return _arr;
+  }, [refreshKey]);
+  var selectState = React.useMemo(function () {
+    var _arr = [];
+    selectReducerKey.forEach(function (_k) {
+      _arr.push(function (state) {
+        return state[name] && state[name][_k];
+      });
+    });
+    if (_arr.length > 0) return _arr;
+    return [function (state) {
+      return state[name];
+    }];
+  }, [selectReducerKey]);
+  var executeSelector = React.useCallback(function () {
+    for (var _len = arguments.length, rest = new Array(_len), _key2 = 0; _key2 < _len; _key2++) {
+      rest[_key2] = arguments[_key2];
+    }
+
+    if (selectReducerKey.length > 0) {
+      var _stateObj = selectReducerKey.reduce(function (acc, curr, i) {
+        return _objectSpread({}, acc, _defineProperty({}, curr, rest[i]));
+      }, {});
+
+      return execute(_stateObj);
+    }
+
+    return execute(rest[0]);
+  }, [selectReducerKey]);
+
+  var _selectorData = reactRedux.useSelector( // execute,
+  // createSelector(state => (!name ? state : state[name]), execute),
+  !name ? execute : reselect.createSelector(selectState, executeSelector), equalityCheckFunction);
 
   return _selectorData.data;
 };
@@ -1221,8 +1278,8 @@ function stringify(val) {
 }
 
 function hashArgs() {
-  for (var _len = arguments.length, args = new Array(_len), _key2 = 0; _key2 < _len; _key2++) {
-    args[_key2] = arguments[_key2];
+  for (var _len2 = arguments.length, args = new Array(_len2), _key3 = 0; _key3 < _len2; _key3++) {
+    args[_key3] = arguments[_key3];
   }
 
   return args.reduce(function (acc, arg) {
