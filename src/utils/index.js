@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable indent */
 /* eslint-disable camelcase */
 /* eslint-disable no-underscore-dangle */
@@ -697,12 +698,22 @@ export const useQuery = (
           (acc, curr, i) => ({ ...acc, [curr]: rest[i] }),
           {},
         );
-        // console.log(selectReducerKey, 'executed', _stateObj);
+        if (typeOf(array) === 'object' && !array.key && array.requiredKey) {
+          if (Array.isArray(array.requiredKey) && array.requiredKey.length)
+            return {
+              data: array.requiredKey.map((_k, i) => {
+                if (typeOf(_k) === 'object')
+                  return rest[i] === undefined ? _k && _k.default : rest[i];
+                return rest[i];
+              }),
+            };
+          return { data: [] };
+        }
         return execute(_stateObj);
       }
       return execute(rest[0]);
     },
-    [selectReducerKey],
+    [selectReducerKey, refreshKey],
   );
   const createdSelector = useMemo(
     () => createSelector(selectState, executeSelector),

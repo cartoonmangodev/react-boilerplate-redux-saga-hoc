@@ -1122,13 +1122,16 @@ var useQuery = function useQuery() {
     return _arr;
   }, [refreshKey]);
   var selectState = React.useMemo(function () {
-    var _arr = [];
-    selectReducerKey.forEach(function (_k) {
-      _arr.push(function (state) {
-        return state[name] && state[name][_k];
+    if (selectReducerKey && selectReducerKey.length) {
+      var _arr = [];
+      selectReducerKey.forEach(function (_k) {
+        return _arr.push(function (state) {
+          return state[name] && state[name][_k];
+        });
       });
-    });
-    if (_arr.length > 0) return _arr;
+      if (_arr.length > 0) return _arr;
+    }
+
     return [function (state) {
       return state[name];
     }];
@@ -1141,17 +1144,21 @@ var useQuery = function useQuery() {
     if (selectReducerKey.length > 0) {
       var _stateObj = selectReducerKey.reduce(function (acc, curr, i) {
         return _objectSpread({}, acc, _defineProperty({}, curr, rest[i]));
-      }, {});
+      }, {}); // console.log(selectReducerKey, 'executed', _stateObj);
+
 
       return execute(_stateObj);
     }
 
     return execute(rest[0]);
   }, [selectReducerKey]);
+  var createdSelector = React.useMemo(function () {
+    return reselect.createSelector(selectState, executeSelector);
+  }, [executeSelector, selectState]);
 
   var _selectorData = reactRedux.useSelector( // execute,
   // createSelector(state => (!name ? state : state[name]), execute),
-  !name ? execute : reselect.createSelector(selectState, executeSelector), equalityCheckFunction);
+  !name ? execute : createdSelector, equalityCheckFunction);
 
   return _selectorData.data;
 };
