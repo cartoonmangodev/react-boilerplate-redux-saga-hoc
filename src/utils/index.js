@@ -701,13 +701,17 @@ export const useQuery = (
         if (typeOf(array) === 'object' && !array.key && array.requiredKey) {
           if (Array.isArray(array.requiredKey) && array.requiredKey.length)
             return {
-              data: array.requiredKey.map((_k, i) => {
-                if (typeOf(_k) === 'object')
-                  return rest[i] === undefined ? _k && _k.default : rest[i];
-                return rest[i];
-              }),
+              data: array.requiredKey.reduce((acc, curr, i) => {
+                if (typeOf(curr) === 'object')
+                  return {
+                    ...acc,
+                    [curr]:
+                      rest[i] === undefined ? curr && curr.default : rest[i],
+                  };
+                return { ...acc, [curr]: rest[i] };
+              }, {}),
             };
-          return { data: [] };
+          return { data: {} };
         }
         return execute(_stateObj);
       }

@@ -1144,14 +1144,25 @@ var useQuery = function useQuery() {
     if (selectReducerKey.length > 0) {
       var _stateObj = selectReducerKey.reduce(function (acc, curr, i) {
         return _objectSpread({}, acc, _defineProperty({}, curr, rest[i]));
-      }, {}); // console.log(selectReducerKey, 'executed', _stateObj);
+      }, {});
 
+      if (typeOf(array) === 'object' && !array.key && array.requiredKey) {
+        if (Array.isArray(array.requiredKey) && array.requiredKey.length) return {
+          data: array.requiredKey.map(function (_k, i) {
+            if (typeOf(_k) === 'object') return rest[i] === undefined ? _k && _k.default : rest[i];
+            return rest[i];
+          })
+        };
+        return {
+          data: []
+        };
+      }
 
       return execute(_stateObj);
     }
 
     return execute(rest[0]);
-  }, [selectReducerKey]);
+  }, [selectReducerKey, refreshKey]);
   var createdSelector = React.useMemo(function () {
     return reselect.createSelector(selectState, executeSelector);
   }, [executeSelector, selectState]);
