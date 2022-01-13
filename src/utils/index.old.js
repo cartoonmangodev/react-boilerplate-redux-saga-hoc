@@ -5,7 +5,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { bindActionCreators } from 'redux';
 import { useStore, useDispatch, useSelector } from 'react-redux';
-import isEqual from 'lodash.isequal';
+import isEqual from 'fast-deep-equal';
 import { createSelector } from 'reselect';
 import invariant from 'invariant';
 import {

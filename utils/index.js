@@ -13,7 +13,7 @@ var React = require('react');
 var React__default = _interopDefault(React);
 var redux = require('redux');
 var reactRedux = require('react-redux');
-var isEqual = _interopDefault(require('lodash.isequal'));
+var isEqual = _interopDefault(require('fast-deep-equal'));
 var reselect = require('reselect');
 var invariant = _interopDefault(require('invariant'));
 require('@babel/runtime/helpers/objectWithoutProperties');
@@ -1141,11 +1141,7 @@ var useQuery = function useQuery() {
       rest[_key2] = arguments[_key2];
     }
 
-    if (selectReducerKey.length > 0) {
-      var _stateObj = selectReducerKey.reduce(function (acc, curr, i) {
-        return _objectSpread({}, acc, _defineProperty({}, curr, rest[i]));
-      }, {});
-
+    if (selectReducerKey.length > 0 || typeOf(array) === 'object' && !array.key && array.requiredKey) {
       if (typeOf(array) === 'object' && !array.key && array.requiredKey) {
         if (Array.isArray(array.requiredKey) && array.requiredKey.length) return {
           data: array.requiredKey.reduce(function (acc, curr, i) {
@@ -1158,6 +1154,10 @@ var useQuery = function useQuery() {
         };
       }
 
+      var _stateObj = selectReducerKey.reduce(function (acc, curr, i) {
+        return _objectSpread({}, acc, _defineProperty({}, curr, rest[i]));
+      }, {});
+
       return execute(_stateObj);
     }
 
@@ -1169,7 +1169,7 @@ var useQuery = function useQuery() {
 
   var _selectorData = reactRedux.useSelector( // execute,
   // createSelector(state => (!name ? state : state[name]), execute),
-  !name ? execute : createdSelector, equalityCheckFunction);
+  !name || !array ? execute : createdSelector, !name || !array ? undefined : equalityCheckFunction);
 
   return _selectorData.data;
 };

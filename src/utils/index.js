@@ -6,7 +6,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { bindActionCreators } from 'redux';
 import { useStore, useDispatch, useSelector } from 'react-redux';
-import isEqual from 'lodash.isequal';
+import isEqual from 'fast-deep-equal';
 import {
   createSelector,
   // createSelectorCreator,
@@ -729,8 +729,8 @@ export const useQuery = (
   const _selectorData = useSelector(
     // execute,
     // createSelector(state => (!name ? state : state[name]), execute),
-    !name ? execute : createdSelector,
-    equalityCheckFunction,
+    !name || !array ? execute : createdSelector,
+    !name || !array ? undefined : equalityCheckFunction,
   );
   return _selectorData.data;
 };
