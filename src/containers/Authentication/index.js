@@ -139,7 +139,7 @@ export default ({
     if (!isMounted[reducerName] || isInjected.current || inject) {
       if (!isMounted[reducerName])
         console.log(
-          `===== Successfully Injected reducer - ${reducerName} =====`,
+          `===== Successfully Injected Reducer - ${reducerName} =====`,
         );
       if (!isInjected.current && !inject) isInjected.current = true;
       isMounted[reducerName] = true;
@@ -158,13 +158,7 @@ export default ({
           }
         : null;
     const [state] = useState(stateProps);
-    // const [state] = useState(
-    //   stateProps || {
-    //     ...componentData[`${reducerName}_hoc`],
-    //     actions: bindActionCreators(componentActions, dispatch),
-    //     dispatch,
-    //   },
-    // );
+
     return state;
   };
   // eslint-disable-next-line no-underscore-dangle

@@ -462,7 +462,7 @@ export const useQuery = (
             if (typeOf(e) === 'object') {
               if (typeOf(array) === 'object')
                 return exeuteRequiredData(_getData(e, undefined, state), e);
-              const _arr = [...acc];
+              const _arr = acc.slice();
               _arr.push(exeuteRequiredData(_getData(e, undefined, state), e));
               return _arr;
             }
@@ -474,7 +474,7 @@ export const useQuery = (
                   _getData(_config, undefined, state),
                   _config,
                 );
-              const _arr = [...acc];
+              const _arr = acc.slice();
               _arr.push(
                 exeuteRequiredData(
                   _getData(_config, undefined, state),
@@ -484,7 +484,7 @@ export const useQuery = (
               return _arr;
             }
             if (typeOf(array) === 'object') return safe(state, `[${e.key}]`);
-            const _arr = [...acc];
+            const _arr = acc.slice();
             _arr.push(safe(state, `[${e}]`));
             return _arr;
           },

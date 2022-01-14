@@ -174,7 +174,7 @@ const nullCheck = (
               propNames[key - 1]
             ].call(type);
         } else {
-          if (func && func[index]) data = data.apply({}, [...func[index]]);
+          if (func && func[index]) data = data.apply(null, [...func[index]]);
           else data = data();
         }
         if (!data && typeof data !== 'boolean' && key === propNames.length - 1)
@@ -274,7 +274,8 @@ const nullCheck = (
     typeof def !== 'undefined' &&
     Object.prototype.toString.call(data) === Object.prototype.toString.call(def)
       ? data
-      : typeof def !== 'undefined'
+      : typeof def !== 'undefined' &&
+        Object.prototype.toString.call(def) !== '[object Null]'
       ? def
       : data;
   return typeof callBack === 'function' ? callBack(verifyData) : verifyData;
