@@ -795,9 +795,12 @@ export const useMutation = reducerName => {
       );
     checkKey(filter, 'filter', 'array');
     checkKey(type, 'key', 'string');
+    const regex = `app\/containers\/${reducerName}\/+.*?_CALL`;
+    const isSearchMatched = (type || '').search(regex);
     if (
       type.includes('_CALL') &&
       type.slice(-5) === '_CALL' &&
+      isSearchMatched &&
       filter &&
       Array.isArray(filter)
     ) {

@@ -391,8 +391,9 @@ export default function({
                   successCallbackResponse.updateDataReducerKey;
               if (
                 typeOf(successCallbackResponse.tasks) === 'array' &&
-                successCallbackResponse.tasks.filter(e => e.task || e.filter)
-                  .length > 0
+                successCallbackResponse.tasks.filter(
+                  e => e.task || e.filter || e.updateDataReducerKey,
+                ).length > 0
               )
                 commonData.tasks = successCallbackResponse.tasks;
             } else if (
