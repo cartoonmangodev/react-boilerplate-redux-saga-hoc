@@ -97,6 +97,7 @@ export default function({
     let loop = true;
     let count = 1;
     let pollingRequestConfig = {};
+    let POLLING_RESPONSE_DATA = {};
     while (loop) {
       let action = yield actionType[type];
       const axios =
@@ -467,35 +468,36 @@ export default function({
           typeof pollingCallback === 'function' &&
           loop
         ) {
-          const {
-            data: {
-              status: successStatus = postData && postData.status,
-              message: successMessage = '',
-            } = {},
-          } = data || {};
-          const { cancel: CancelPolling, pollingRes } = yield race({
-            pollingRes: call(pollingCallback, {
-              response: data,
-              data: data && data.data,
-              message: successMessage,
-              status: successStatus,
-              count,
-            }),
-            cancel: take(action.cancel),
-          });
-          if (CancelPolling) loop = false;
-          // const pollingRes = yield call(pollingCallback, {
-          //   response: data,
-          //   data: data && data.data,
-          //   message: successMessage,
-          //   status: successStatus,
-          //   count,
+          POLLING_RESPONSE_DATA = {
+            response: data,
+            data: data && data.data,
+            message: successMessage,
+            status: successStatus,
+            count,
+          };
+          // const {
+          //   data: {
+          //     status: successStatus = postData && postData.status,
+          //     message: successMessage = '',
+          //   } = {},
+          // } = data || {};
+          // const { cancel: CancelPolling, pollingRes } = yield race({
+          //   pollingRes: call(pollingCallback, {
+          //     response: data,
+          //     data: data && data.data,
+          //     message: successMessage,
+          //     status: successStatus,
+          //     count,
+          //   }),
+          //   cancel: take(action.cancel),
           // });
-          if (typeof pollingRes === 'boolean') loop = pollingRes;
-          else if (
-            Object.prototype.toString.call(pollingRes) === '[object Object]'
-          )
-            pollingRequestConfig = pollingRes;
+          // if (CancelPolling) loop = false;
+
+          // else if (typeof pollingRes === 'boolean') loop = pollingRes;
+          // else if (
+          //   Object.prototype.toString.call(pollingRes) === '[object Object]'
+          // )
+          //   pollingRequestConfig = pollingRes;
         }
         // cancel looping on success if retry is true
         if (!polling && retry) loop = false;
@@ -760,6 +762,23 @@ export default function({
             cancel: take(action.cancel),
           });
           if (CancelPolling) loop = false;
+          else if (
+            polling &&
+            typeof window !== 'undefined' &&
+            typeof pollingCallback === 'function' &&
+            loop
+          ) {
+            const { cancel: _CancelPolling, pollingRes } = yield race({
+              pollingRes: call(pollingCallback, POLLING_RESPONSE_DATA),
+              cancel: take(action.cancel),
+            });
+            if (_CancelPolling) loop = false;
+            else if (typeof pollingRes === 'boolean') loop = pollingRes;
+            else if (
+              Object.prototype.toString.call(pollingRes) === '[object Object]'
+            )
+              pollingRequestConfig = pollingRes;
+          }
         } else loop = false;
       } else if (!polling && retry && loop) {
         if (retry - 1 >= count) {

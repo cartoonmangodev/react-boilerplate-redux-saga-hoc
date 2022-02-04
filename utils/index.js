@@ -156,7 +156,7 @@ var nullCheck = function nullCheck(Error) {
         if (CONSTRUCTOR_CHECK[_typeof(type)]) {
           if (func && func[index]) data = CONSTRUCTOR_CHECK[_typeof(type)].prototype[propNames[key - 1]].apply(type, func[index]);else data = CONSTRUCTOR_CHECK[_typeof(type)].prototype[propNames[key - 1]].call(type);
         } else {
-          if (func && func[index]) data = data.apply({}, _toConsumableArray(func[index]));else data = data();
+          if (func && func[index]) data = data.apply(null, _toConsumableArray(func[index]));else data = data();
         }
 
         if (!data && typeof data !== 'boolean' && key === propNames.length - 1) return typeof callBack === 'function' ? callBack(def !== undefined ? def : data) : def !== undefined ? def : data;
@@ -228,7 +228,7 @@ var nullCheck = function nullCheck(Error) {
     parentObj = error;
   }
 
-  var verifyData = (data || typeof data === 'boolean') && Object.prototype.toString.call(def) !== '[object Null]' && typeof def !== 'undefined' && Object.prototype.toString.call(data) === Object.prototype.toString.call(def) ? data : typeof def !== 'undefined' ? def : data;
+  var verifyData = (data || typeof data === 'boolean') && Object.prototype.toString.call(def) !== '[object Null]' && typeof def !== 'undefined' && Object.prototype.toString.call(data) === Object.prototype.toString.call(def) ? data : typeof def !== 'undefined' && Object.prototype.toString.call(def) !== '[object Null]' ? def : data;
   return typeof callBack === 'function' ? callBack(verifyData) : verifyData;
 };
 
@@ -934,7 +934,7 @@ var useQuery = function useQuery() {
         if (typeOf(e) === 'object') {
           if (typeOf(array) === 'object') return exeuteRequiredData(_getData(e, undefined, state), e);
 
-          var _arr2 = _toConsumableArray(acc);
+          var _arr2 = acc.slice();
 
           _arr2.push(exeuteRequiredData(_getData(e, undefined, state), e));
 
@@ -949,7 +949,7 @@ var useQuery = function useQuery() {
 
           if (typeOf(array) === 'object') return exeuteRequiredData(_getData(_config, undefined, state), _config);
 
-          var _arr3 = _toConsumableArray(acc);
+          var _arr3 = acc.slice();
 
           _arr3.push(exeuteRequiredData(_getData(_config, undefined, state), _config));
 
@@ -958,7 +958,7 @@ var useQuery = function useQuery() {
 
         if (typeOf(array) === 'object') return safe(state, "[".concat(e.key, "]"));
 
-        var _arr = _toConsumableArray(acc);
+        var _arr = acc.slice();
 
         _arr.push(safe(state, "[".concat(e, "]")));
 
@@ -1225,8 +1225,10 @@ var useMutation = function useMutation(reducerName) {
     "'key' is invalid.".concat(type, " not found in ").concat(reducerName, " reducer"));
     checkKey(filter, 'filter', 'array');
     checkKey(type, 'key', 'string');
+    var regex = "app/containers/".concat(reducerName, "/+.*?_CALL");
+    var isSearchMatched = (type || '').search(regex);
 
-    if (type.includes('_CALL') && type.slice(-5) === '_CALL' && filter && Array.isArray(filter)) {
+    if (type.includes('_CALL') && type.slice(-5) === '_CALL' && isSearchMatched && filter && Array.isArray(filter)) {
       // checkKey(value, 'value', 'object');
       dispatch({
         type: type.slice(0, -4).concat('CUSTOM_TASK'),
