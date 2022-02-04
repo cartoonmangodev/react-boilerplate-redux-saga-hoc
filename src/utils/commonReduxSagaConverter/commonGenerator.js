@@ -468,6 +468,12 @@ export default function({
           typeof pollingCallback === 'function' &&
           loop
         ) {
+          const {
+            data: {
+              status: successStatus = postData && postData.status,
+              message: successMessage = '',
+            } = {},
+          } = data || {};
           POLLING_RESPONSE_DATA = {
             response: data,
             data: data && data.data,
@@ -475,12 +481,7 @@ export default function({
             status: successStatus,
             count,
           };
-          // const {
-          //   data: {
-          //     status: successStatus = postData && postData.status,
-          //     message: successMessage = '',
-          //   } = {},
-          // } = data || {};
+
           // const { cancel: CancelPolling, pollingRes } = yield race({
           //   pollingRes: call(pollingCallback, {
           //     response: data,
