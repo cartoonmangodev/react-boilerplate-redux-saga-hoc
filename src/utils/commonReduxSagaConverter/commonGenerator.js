@@ -63,6 +63,7 @@ export default function({
         payload = {},
         params = {},
         query,
+        delayFunction,
         dontUpdateReducerOnSucess = false,
         dontUpdateReducerOnError = false,
         axios: requestAxios,
@@ -229,7 +230,7 @@ export default function({
         action.cancel
       ) {
         const { cancel: _cancelTask } = yield race({
-          posts: call(delay, Delay),
+          posts: call(delayFunction || delay, Delay),
           cancel: take(action.cancel),
         });
         cancelTask = _cancelTask;
@@ -759,7 +760,7 @@ export default function({
         if (pollingCount === 'unlimited' || pollingCount - 1 >= count) {
           count += 1;
           const { cancel: CancelPolling } = yield race({
-            posts: call(delay, Delay),
+            posts: call(delayFunction || delay, Delay),
             cancel: take(action.cancel),
           });
           if (CancelPolling) loop = false;
