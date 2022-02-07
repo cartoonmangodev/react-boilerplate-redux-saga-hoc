@@ -481,6 +481,18 @@ export default function({
             message: successMessage,
             status: successStatus,
             count,
+            request:
+              typeof asyncFunction === 'function'
+                ? Array.isArray(
+                    (pollingRequestConfig &&
+                      pollingRequestConfig.asyncFunctionParams) ||
+                      asyncFunctionParams,
+                  )
+                  ? (pollingRequestConfig &&
+                      pollingRequestConfig.asyncFunctionParams) ||
+                    asyncFunctionParams
+                  : []
+                : pollingRequestConfig || request,
           };
 
           // const { cancel: CancelPolling, pollingRes } = yield race({
