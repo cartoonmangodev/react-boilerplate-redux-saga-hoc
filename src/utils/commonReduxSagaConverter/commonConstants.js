@@ -48,6 +48,7 @@ export const TYPE_SYMBOL = 'symbol';
 export const TYPE_GENERATOR_FUNCTION = 'generatorFunction';
 
 export const commonConstants = {
+  /* Don't Change any key */
   INFINITE_DATA_HANDLER,
   DATA_HANDLER,
   DELETE_DATA_HANDLER,
@@ -62,6 +63,7 @@ export const commonConstants = {
   ERROR_HANDLER,
   LOADER_HANDLER,
   DONT_UPDATE_DATA_HANDLER,
+  /* Don't Change any key */
   ON_CANCEL_ERROR,
   ON_ERROR,
   ON_SUCCESS,
