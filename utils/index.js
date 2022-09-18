@@ -778,14 +778,15 @@ var type = {
   '[object Boolean]': 'boolean',
   '[object Object]': 'object',
   '[object Function]': 'function',
-  '[object Error]': 'error' // '[object Symbol]': 'symbol',
-  // '[object GeneratorFunction]': 'generatorFunction',
-
+  '[object Error]': 'error',
+  '[object Symbol]': 'symbol',
+  '[object GeneratorFunction]': 'generatorFunction'
 };
 var typeOf = function typeOf(_obj) {
   return type[Object.prototype.toString.call(_obj)] || _typeof(_obj);
 };
 
+var REDUCER_BASE_PATH = 'app/containers/';
 var ON_CANCEL_ERROR = 'API_CANCEL_ERROR';
 var ON_ERROR = 'ERROR';
 var ON_SUCCESS = 'SUCCESS';
@@ -813,6 +814,16 @@ var TOAST_HANDLER = 'Toast-Handler';
 var ERROR_HANDLER = 'Error-Handler';
 var LOADING_HANDLER = 'Loading-Handler';
 var DONT_UPDATE_DATA_HANDLER = "Don't-Update-Data-Handler";
+var TYPE_NULL = 'null';
+var TYPE_UNDEFINED = 'undefined';
+var TYPE_STRING = 'string';
+var TYPE_ARRAY = 'array';
+var TYPE_BOOLEAN = 'boolean';
+var TYPE_OBJECT = 'object';
+var TYPE_FUNCTION = 'function';
+var TYPE_ERROR = 'error';
+var TYPE_SYMBOL = 'symbol';
+var TYPE_GENERATOR_FUNCTION = 'generatorFunction';
 var commonConstants = {
   INFINITE_DATA_HANDLER: INFINITE_DATA_HANDLER,
   DATA_HANDLER: DATA_HANDLER,
@@ -840,7 +851,17 @@ var commonConstants = {
   SUCCESS: SUCCESS,
   CALL: CALL,
   CANCEL: CANCEL,
-  CUSTOM: CUSTOM
+  CUSTOM: CUSTOM,
+  TYPE_NULL: TYPE_NULL,
+  TYPE_UNDEFINED: TYPE_UNDEFINED,
+  TYPE_STRING: TYPE_STRING,
+  TYPE_ARRAY: TYPE_ARRAY,
+  TYPE_BOOLEAN: TYPE_BOOLEAN,
+  TYPE_OBJECT: TYPE_OBJECT,
+  TYPE_FUNCTION: TYPE_FUNCTION,
+  TYPE_ERROR: TYPE_ERROR,
+  TYPE_SYMBOL: TYPE_SYMBOL,
+  TYPE_GENERATOR_FUNCTION: TYPE_GENERATOR_FUNCTION
 };
 
 var cache = {};
@@ -934,7 +955,8 @@ var useQuery = function useQuery() {
     var state = _state || {};
 
     var _getDataFunc = function _getDataFunc(e) {
-      var regex = "app/containers/".concat(name, "/+.*?_CALL");
+      // const regex = `app\/containers\/${name}\/+.*?_CALL`;
+      var regex = REDUCER_BASE_PATH.concat(name, '/+.*?_CALL');
       var isSearchMatched = ((isString ? array : e.key) || '').search(regex);
       return (typeof e.defaultDataFormat === 'boolean' || isSearchMatched || !(isString ? array : e.key) ? !e.defaultDataFormat || isSearchMatched || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(state, "[".concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : // : name
       // ? safe(state, `${e.query ? e.query : ''}`, e.default)

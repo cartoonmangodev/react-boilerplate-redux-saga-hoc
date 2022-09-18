@@ -53,6 +53,7 @@ export default ({
   axiosInterceptors,
   // store: _store,
   useHook: _useHook = false,
+  isDevelopment = false,
 } = {}) => {
   let nextStateProps = null;
   let stateProps = null;
@@ -136,8 +137,13 @@ export default ({
 
   const _useHocHook = (inject = false) => {
     const isInjected = useRef(false);
-    if (!isMounted[reducerName] || isInjected.current || inject) {
-      if (!isMounted[reducerName])
+    if (
+      !isMounted[reducerName] ||
+      isInjected.current ||
+      inject ||
+      isDevelopment
+    ) {
+      if (!isMounted[reducerName] && isDevelopment)
         console.log(
           `===== Successfully Injected Reducer - ${reducerName} =====`,
         );
@@ -149,7 +155,7 @@ export default ({
       useInjectReducer(injectReducerConfig, createReducer);
     }
     const dispatch = useDispatch();
-    if (!stateProps)
+    if (!stateProps || isDevelopment)
       stateProps = dispatch
         ? {
             ...componentData[`${reducerName}_hoc`],
@@ -242,7 +248,12 @@ export default ({
   // eslint-disable-next-line no-underscore-dangle
   const _useHocHookNextJs = (inject = false) => {
     const isInjected = useRef(false);
-    if (!isMounted[reducerName] || isInjected.current || inject) {
+    if (
+      !isMounted[reducerName] ||
+      isInjected.current ||
+      inject ||
+      isDevelopment
+    ) {
       if (!isInjected.current && !inject) isInjected.current = true;
       isMounted[reducerName] = true;
       // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -251,7 +262,7 @@ export default ({
       useInjectReducer(injectReducerConfig, createReducer);
     }
     const dispatch = useDispatch();
-    if (!nextStateProps && dispatch)
+    if ((!nextStateProps || isDevelopment) && dispatch)
       nextStateProps = {
         ...componentData[`${reducerName}_hoc`],
         actions: bindActionCreators(componentActions, dispatch),
