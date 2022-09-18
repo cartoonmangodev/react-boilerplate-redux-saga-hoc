@@ -30,7 +30,8 @@ const executeTask = (
         _data[key] === id ? toggleData(_data, toggleKey) : _data,
       );
   return updateCallback
-    ? updateCallback(_updatedData, successData, type, state) || _Data
+    ? updateCallback({ updatedData: _updatedData, successData, type, state }) ||
+        _Data
     : _updatedData;
 };
 

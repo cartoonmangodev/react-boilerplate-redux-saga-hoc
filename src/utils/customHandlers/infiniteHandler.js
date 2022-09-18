@@ -26,12 +26,12 @@ export const infiniteHandler = ({
       return updateIn(_oldCopyData, subKey, _oldData => {
         if (clearData) return Safe(successData, `.${subKey.join('.')}`, []);
         return updateCallback
-          ? updateCallback(
-              _oldData,
-              Safe(successData, `.${subKey.join('.')}`, []),
+          ? updateCallback({
+              oldData: _oldData,
+              successData: Safe(successData, `.${subKey.join('.')}`, []),
               type,
               state,
-            )
+            })
           : isAppendTop
           ? Safe(successData, `.${subKey.join('.')}`, []).concat(_oldData)
           : _oldData.concat(Safe(successData, `.${subKey.join('.')}`, []));
@@ -49,7 +49,7 @@ export const infiniteHandler = ({
       ? appendData
       : successData;
     return updateCallback
-      ? updateCallback(oldData, successData, type, state)
+      ? updateCallback({ oldData, successData, type, state })
       : newData;
   })(),
   error: false,

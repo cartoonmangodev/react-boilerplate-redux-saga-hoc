@@ -5,8 +5,20 @@
 /* eslint-disable indent */
 import { updateIn, newObject, generateTimeStamp } from '../helpers';
 import Safe from '../nullCheck';
-const updateData = (data, successData, updateCallback, updateKey) => {
-  if (updateCallback) return updateCallback(data, successData) || data;
+const updateData = (
+  data,
+  successData,
+  updateCallback,
+  updateKey,
+  type,
+  state,
+  config = {},
+) => {
+  if (updateCallback)
+    return (
+      updateCallback({ oldData: data, successData, type, state, config }) ||
+      data
+    );
   if (
     typeof successData === 'object' &&
     !Array.isArray(successData) &&
@@ -35,6 +47,8 @@ export const updateKeyHandler = ({
   callback: { updateCallback } = {},
   successData = {},
   successDataStatusCode,
+  type,
+  state,
 }) => ({ data = [], statusCode } = {}) => ({
   data:
     subKey.length > 0
@@ -56,6 +70,8 @@ export const updateKeyHandler = ({
                   Safe(successData, `.${subKey.join('.')}`),
                   updateCallback,
                   updateKey,
+                  type,
+                  state,
                 );
               else if (Array.isArray(id) && key && Array.isArray(_Data))
                 return _Data.reduce(
@@ -69,6 +85,12 @@ export const updateKeyHandler = ({
                               values[_values ? index : curr[key]] || curr,
                               updateCallback,
                               updateKey,
+                              type,
+                              state,
+                              {
+                                index,
+                                id: _values ? index : curr[key],
+                              },
                             ),
                           ]);
                         })()
@@ -85,6 +107,12 @@ export const updateKeyHandler = ({
                           values[_values ? index : _data[key]] || _data,
                           updateCallback,
                           updateKey,
+                          type,
+                          state,
+                          {
+                            index,
+                            id: _values ? index : _data[key],
+                          },
                         );
                       })()
                     : _data,
@@ -94,6 +122,8 @@ export const updateKeyHandler = ({
                 Safe(successData, `.${subKey.join('.')}`),
                 updateCallback,
                 updateKey,
+                type,
+                state,
               );
             })(),
         )
@@ -101,7 +131,14 @@ export const updateKeyHandler = ({
           let index = -1;
           const _values = Array.isArray(values);
           if (!Array.isArray(data))
-            return updateData(data, successData, updateCallback, updateKey);
+            return updateData(
+              data,
+              successData,
+              updateCallback,
+              updateKey,
+              type,
+              state,
+            );
           else if (Array.isArray(id) && key)
             return data.reduce(
               (acc, curr = {}) =>
@@ -114,6 +151,12 @@ export const updateKeyHandler = ({
                           values[_values ? index : curr[key]] || curr,
                           updateCallback,
                           updateKey,
+                          type,
+                          state,
+                          {
+                            index,
+                            id: _values ? index : curr[key],
+                          },
                         ),
                       ]);
                     })()
@@ -130,11 +173,24 @@ export const updateKeyHandler = ({
                       values[_values ? index : _data[key]],
                       updateCallback,
                       updateKey,
+                      type,
+                      state,
+                      {
+                        index,
+                        id: _values ? index : _data[key],
+                      },
                     );
                   })()
                 : _data,
             );
-          return updateData(data, successData, updateCallback, updateKey);
+          return updateData(
+            data,
+            successData,
+            updateCallback,
+            updateKey,
+            type,
+            state,
+          );
         })(),
   statusCode: successDataStatusCode || statusCode,
 

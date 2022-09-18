@@ -350,7 +350,9 @@ export const DEFAULT_REDUCER_HANDLER = ({
               state: updatedState,
               data: successData,
               type: SUCCESS,
+              key: type,
               status: status || rest.statusCode,
+              statusCode: rest.statusCode,
             }) || updatedState
           : updatedState;
         break;
@@ -367,6 +369,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
                 state: updatedState,
                 data: successData,
                 type: ERROR,
+                key: type,
                 error: errorData,
                 status: status || rest.statusCode,
                 statusCode: rest.statusCode,

@@ -31,14 +31,16 @@ const checkKey = (key, name, dataType) => {
   );
 };
 const isMounted = {};
+const GET_INITIAL_PROPS_KEY = 'getInitialProps';
 export default ({
   handlers = [],
   nextJS = false,
   createReducer = null,
-  mapStateToProps: _mapStateToProps = true,
   useHook = false,
   useHocHook = false,
   hookWithHoc = false,
+  mapStateToProps: _mapStateToProps = true,
+  getInitialPropsKey = GET_INITIAL_PROPS_KEY,
 }) => ({
   apiEndPoints = {},
   initialState = {},
@@ -208,7 +210,7 @@ export default ({
       mapDispatchToProps(componentActions, componentData, reducerName),
     );
     if (nextJS) {
-      WithHoc.getInitialProps = async props => {
+      WithHoc[getInitialPropsKey] = async props => {
         const { res, req, store, ...rest } = props.ctx || props;
         let data = {
           res,
@@ -216,8 +218,8 @@ export default ({
           store,
           ...rest,
         };
-        if (WrapperComponent.getInitialProps)
-          data = await WrapperComponent.getInitialProps({
+        if (WrapperComponent[getInitialPropsKey])
+          data = await WrapperComponent[getInitialPropsKey]({
             ...props,
             // eslint-disable-next-line prettier/prettier
             ...mapDispatchToProps(

@@ -25,12 +25,12 @@ export const dataHandler = ({
             return updateIn(_oldCopyData, subKey, _oldData => {
               if (clearData) return Safe(successData, `.${subKey.join('.')}`);
               return updateCallback
-                ? updateCallback(
-                    _oldData,
-                    Safe(successData, `.${subKey.join('.')}`),
+                ? updateCallback({
+                    oldData: _oldData,
+                    successData: Safe(successData, `.${subKey.join('.')}`),
                     type,
                     state,
-                  )
+                  })
                 : _checkIsNotObject(
                     Safe(successData, `.${subKey.join('.')}`),
                   ) || _checkIsNotObject(Safe(_oldData, `.${subKey.join('.')}`))
@@ -42,7 +42,7 @@ export const dataHandler = ({
             });
           }
           return updateCallback
-            ? updateCallback(oldData, successData, type, state)
+            ? updateCallback({ oldData, successData, type, state })
             : _checkIsNotObject(successData) ||
               _checkIsNotObject(oldData) ||
               clearData

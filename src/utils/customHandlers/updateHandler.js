@@ -11,7 +11,10 @@ const updateData = (
   config = {},
 ) => {
   if (updateCallback)
-    return updateCallback(data, successData, type, state, config) || data;
+    return (
+      updateCallback({ oldData: data, successData, type, state, config }) ||
+      data
+    );
   if (
     typeof successData === 'object' &&
     !Array.isArray(successData) &&
@@ -29,12 +32,12 @@ export const updateHandler = ({
     subKey = [],
     values = {},
     dontUpdateResponseData = false,
-    type,
-    state,
   } = {},
   callback: { updateCallback } = {},
   successData = {},
   successDataStatusCode,
+  type,
+  state,
 }) => ({ data = [], statusCode } = {}) => ({
   data:
     subKey.length > 0

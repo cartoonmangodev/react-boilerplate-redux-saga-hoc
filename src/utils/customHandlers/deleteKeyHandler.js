@@ -18,11 +18,11 @@ const deletedData = (obj = {}, keyArray = []) => {
 };
 
 const executeTask = (
-  { updateCallback, successData, deleteKey, id, key },
+  { updateCallback, successData, deleteKey, id, key, type, state },
   data,
 ) =>
   updateCallback
-    ? updateCallback(data, successData) || data
+    ? updateCallback({ oldData: data, successData, type, state }) || data
     : !Array.isArray(data)
     ? deletedData(data, deleteKey)
     : Array.isArray(id)
@@ -42,6 +42,8 @@ export const deleteKeyHandler = ({
   callback: { updateCallback } = {},
   successData = {},
   successDataStatusCode,
+  type,
+  state,
 }) => ({ data = {}, statusCode } = {}) => {
   const commonData = {
     updateCallback,
@@ -49,6 +51,8 @@ export const deleteKeyHandler = ({
     deleteKey,
     id,
     key,
+    type,
+    state,
   };
   return {
     data:
