@@ -9,6 +9,8 @@ export const dataHandler = ({
   callback: { updateCallback } = {},
   successData = {},
   successDataStatusCode,
+  type,
+  state,
 }) => ({ data: oldData = {}, statusCode, ...rest } = {}) =>
   isMutation
     ? { data: oldData, statusCode, ...rest, ...successData }
@@ -26,6 +28,8 @@ export const dataHandler = ({
                 ? updateCallback(
                     _oldData,
                     Safe(successData, `.${subKey.join('.')}`),
+                    type,
+                    state,
                   )
                 : _checkIsNotObject(
                     Safe(successData, `.${subKey.join('.')}`),
@@ -38,7 +42,7 @@ export const dataHandler = ({
             });
           }
           return updateCallback
-            ? updateCallback(oldData, successData)
+            ? updateCallback(oldData, successData, type, state)
             : _checkIsNotObject(successData) ||
               _checkIsNotObject(oldData) ||
               clearData

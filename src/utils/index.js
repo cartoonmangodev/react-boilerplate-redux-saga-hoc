@@ -18,6 +18,7 @@ import {
   ON_SUCCESS,
   ON_LOADING,
   ON_TOAST,
+  INFINITE_DATA_HANDLER,
 } from './commonReduxSagaConverter/commonConstants';
 import { newObject, generateTimeStamp, typeOf } from './helpers';
 import {
@@ -99,7 +100,7 @@ export const commmonStateHandler = ({
         [type || action.type]: newObject(
           obj,
           filterArrayToastEmptyHandler({
-            isInfinite: task.name === 'Infinite-Handler',
+            isInfinite: task.name === INFINITE_DATA_HANDLER,
             filter: (Array.isArray(filter) && filter) || [filter],
           })(obj),
         ),
@@ -723,7 +724,11 @@ export const useQuery = (
     [selectReducerKey, refreshKey],
   );
   const createdSelector = useMemo(
-    () => createSelector(selectState, executeSelector),
+    () =>
+      createSelector(
+        selectState,
+        executeSelector,
+      ),
     [executeSelector, selectState],
   );
   const _selectorData = useSelector(

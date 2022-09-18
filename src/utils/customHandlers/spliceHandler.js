@@ -6,6 +6,8 @@ export const spliceHandler = ({
   callback: { updateCallback } = {},
   successData = {},
   successDataStatusCode,
+  type,
+  state,
 }) => ({ data: oldData = {}, statusCode } = {}) => ({
   data: (() => {
     if (subKey.length > 0 && Array.isArray(getIn(oldData, subKey))) {
@@ -21,6 +23,8 @@ export const spliceHandler = ({
           ? updateCallback(
               _oldData,
               Safe(successData, `.${subKey.join('.')}`, []),
+              type,
+              state,
             )
           : Array.isArray(_oldData)
           ? (() => {
@@ -43,7 +47,9 @@ export const spliceHandler = ({
           );
         })()
       : oldData;
-    return updateCallback ? updateCallback(oldData, successData) : newData;
+    return updateCallback
+      ? updateCallback(oldData, successData, type, state)
+      : newData;
   })(),
   statusCode: successDataStatusCode || statusCode,
   error: false,

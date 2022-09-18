@@ -2,8 +2,16 @@
 /* eslint-disable indent */
 import { updateIn, newObject, generateTimeStamp, typeOf } from '../helpers';
 import Safe from '../nullCheck';
-const updateData = (data, successData, updateCallback) => {
-  if (updateCallback) return updateCallback(data, successData) || data;
+const updateData = (
+  data,
+  successData,
+  updateCallback,
+  type,
+  state,
+  config = {},
+) => {
+  if (updateCallback)
+    return updateCallback(data, successData, type, state, config) || data;
   if (
     typeof successData === 'object' &&
     !Array.isArray(successData) &&
@@ -21,6 +29,8 @@ export const updateHandler = ({
     subKey = [],
     values = {},
     dontUpdateResponseData = false,
+    type,
+    state,
   } = {},
   callback: { updateCallback } = {},
   successData = {},
@@ -47,6 +57,8 @@ export const updateHandler = ({
                   _Data,
                   Safe(successData, `.${subKey.join('.')}`),
                   updateCallback,
+                  type,
+                  state,
                 );
               if (Array.isArray(id) && key && Array.isArray(_Data))
                 return _Data.reduce(
@@ -59,6 +71,12 @@ export const updateHandler = ({
                               curr,
                               values[_values ? index : curr[key]] || curr,
                               updateCallback,
+                              type,
+                              state,
+                              {
+                                index,
+                                id: _values ? index : curr[key],
+                              },
                             ),
                           ]);
                         })()
@@ -74,6 +92,12 @@ export const updateHandler = ({
                           _data,
                           values[_values ? index : _data[key]] || _data,
                           updateCallback,
+                          type,
+                          state,
+                          {
+                            index,
+                            id: _values ? index : _data[key],
+                          },
                         );
                       })()
                     : _data,
@@ -82,6 +106,8 @@ export const updateHandler = ({
                 _Data,
                 Safe(successData, `.${subKey.join('.')}`),
                 updateCallback,
+                type,
+                state,
               );
             })(),
         )
@@ -89,7 +115,7 @@ export const updateHandler = ({
           let index = -1;
           const _values = Array.isArray(values);
           if (!Array.isArray(data))
-            return updateData(data, successData, updateCallback);
+            return updateData(data, successData, updateCallback, type, state);
           if (Array.isArray(id) && key)
             return data.reduce(
               (acc, curr = {}) =>
@@ -101,6 +127,12 @@ export const updateHandler = ({
                           curr,
                           values[_values ? index : curr[key]] || curr,
                           updateCallback,
+                          type,
+                          state,
+                          {
+                            index,
+                            id: _values ? index : curr[key],
+                          },
                         ),
                       ]);
                     })()
@@ -116,11 +148,17 @@ export const updateHandler = ({
                       _data,
                       values[_values ? index : _data[key]] || _data,
                       updateCallback,
+                      type,
+                      state,
+                      {
+                        index,
+                        id: _values ? index : _data[key],
+                      },
                     );
                   })()
                 : _data,
             );
-          return updateData(data, successData, updateCallback);
+          return updateData(data, successData, updateCallback, type, state);
         })(),
   statusCode: successDataStatusCode || statusCode,
   lastUpdated: generateTimeStamp(),

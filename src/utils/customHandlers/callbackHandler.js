@@ -10,7 +10,7 @@ const checkKey = callback => {
     typeOf(callback) === 'function',
     `(react-boilerplate-redux-saga-hoc) ${
       typeof callback === 'undefined'
-        ? "'Callback-Handler' required callback key"
+        ? 'Callback Handler required callback key'
         : 'callback is not a function'
     }`,
   );
@@ -19,6 +19,9 @@ export const callbackHandler = ({
   task: { callback } = {},
   successData = {},
   successDataStatusCode,
+  state,
+  type,
+  ...rest
 }) => ({ data: oldData = {}, statusCode, ...rest } = {}) => {
   checkKey(callback);
   return {
@@ -28,6 +31,10 @@ export const callbackHandler = ({
       newData: successData,
       rest: { ...rest, statusCode },
       status: statusCode || successDataStatusCode,
+      successDataStatusCode,
+      state,
+      type,
+      extras: rest || {},
     }),
   };
 };

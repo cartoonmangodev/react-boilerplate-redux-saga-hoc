@@ -11,6 +11,21 @@ import {
   ON_ERROR,
   ON_SUCCESS,
   ON_UNMOUNT,
+  INFINITE_DATA_HANDLER,
+  DATA_HANDLER,
+  DELETE_DATA_HANDLER,
+  UPDATE_DATA_HANDLER,
+  UPDATE_DATA_KEY_HANDLER,
+  DELETE_DATA_KEY_HANDLER,
+  TOGGLE_DATA_KEY_HANDLER,
+  SPLICE_DATA_HANDLER,
+  CALLBACK_HANDLER,
+  RESET_DATA_HANDLER,
+  TOAST_HANDLER,
+  ERROR_HANDLER,
+  LOADING_HANDLER,
+  DONT_UPDATE_DATA_HANDLER,
+  CUSTOM_HANDLER,
 } from '../commonReduxSagaConverter/commonConstants';
 import {
   commonFilterHandler,
@@ -34,59 +49,59 @@ import {
 
 const HANDLERS = [
   {
-    name: 'Infinite-Handler',
+    name: INFINITE_DATA_HANDLER,
     handler: infiniteHandler,
   },
   {
-    name: 'Data-Handler',
+    name: DATA_HANDLER,
     handler: dataHandler,
   },
   {
-    name: 'Delete-Handler',
+    name: DELETE_DATA_HANDLER,
     handler: deleteHandler,
   },
   {
-    name: 'Update-Handler',
+    name: UPDATE_DATA_HANDLER,
     handler: updateHandler,
   },
   {
-    name: 'Update-Key-Handler',
+    name: UPDATE_DATA_KEY_HANDLER,
     handler: updateKeyHandler,
   },
   {
-    name: 'Delete-Key-Handler',
+    name: DELETE_DATA_KEY_HANDLER,
     handler: deleteKeyHandler,
   },
   {
-    name: 'Toggle-Key-Handler',
+    name: TOGGLE_DATA_KEY_HANDLER,
     handler: toggleKeyHandler,
   },
   {
-    name: 'Splice-Data-Handler',
+    name: SPLICE_DATA_HANDLER,
     handler: spliceHandler,
   },
   {
-    name: 'Callback-Handler',
+    name: CALLBACK_HANDLER,
     handler: callbackHandler,
   },
   {
-    name: 'Reset-Handler',
+    name: RESET_DATA_HANDLER,
     handler: resetReducerHandler,
   },
   {
-    name: 'Toast-Handler',
+    name: TOAST_HANDLER,
     handler: reducerToastHandler,
   },
   {
-    name: 'Error-Handler',
+    name: ERROR_HANDLER,
     handler: reducerErrorHandler,
   },
   {
-    name: 'Loading-Handler',
+    name: LOADING_HANDLER,
     handler: reducerLoadingHandler,
   },
   {
-    name: "Don't-Update-Data-Handler",
+    name: DONT_UPDATE_DATA_HANDLER,
     handler: dontUpdateDataHandler,
   },
 ];
@@ -113,7 +128,7 @@ const _CheckFilter = Filter =>
     : Filter && typeof Filter === 'string' && Filter.length > 0
     ? Filter.split('.')
     : null;
-const COMMON_HANDLER = (payload, data) => {
+const COMMON_HANDLER = (payload, data, state, type) => {
   let DATA = data;
   // const bindAction = Action => Action(payload);
   const _tasks =
@@ -131,6 +146,8 @@ const COMMON_HANDLER = (payload, data) => {
       customTaskBindAction = Action =>
         Action({
           ...payload,
+          type,
+          state,
           filter: _CheckFilter(filter || payload.filter),
           successData: task.dontUpdateResponseData
             ? {}
@@ -156,14 +173,14 @@ const COMMON_HANDLER = (payload, data) => {
         DATA = isFilter
           ? BindHandler(commonFilterHandler(_handler.handler))
           : BindHandler(_handler.handler);
-      } else if (customHandler && task.name === 'Custom-Handler')
+      } else if (customHandler && task.name === CUSTOM_HANDLER)
         DATA =
           (isFilter
             ? BindHandler(commonFilterHandler(customHandler))
             : BindHandler(customHandler)) || DATA;
       else if (
-        task.name === "Don't-Update-Handler" ||
-        task === "Don't-Update-Handler"
+        task.name === DONT_UPDATE_DATA_HANDLER ||
+        task === DONT_UPDATE_DATA_HANDLER
       )
         return DATA;
       else
@@ -280,7 +297,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
                     [_updateDataReducerKey[l] || type]: _commonHandler(
                       Data,
                       state,
-                      type,
+                      _updateDataReducerKey[l] || type,
                     ),
                   }),
                 );
@@ -292,7 +309,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
                   [_updateDataReducerKey || type]: _commonHandler(
                     Data,
                     state,
-                    type,
+                    _updateDataReducerKey || type,
                   ),
                 }),
               );
@@ -310,7 +327,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
                 [updateDataReducerKey[j] || type]: commonHandler(
                   Data,
                   state,
-                  type,
+                  updateDataReducerKey[j] || type,
                 ),
               }),
             );

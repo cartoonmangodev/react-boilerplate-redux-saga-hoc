@@ -13,7 +13,7 @@ const toggleData = (obj, keyArray) =>
   );
 
 const executeTask = (
-  { successData, toggleKey, id, key, updateCallback },
+  { successData, toggleKey, id, key, updateCallback, type, state },
   _Data,
 ) => {
   const _updatedData = !Array.isArray(_Data)
@@ -30,7 +30,7 @@ const executeTask = (
         _data[key] === id ? toggleData(_data, toggleKey) : _data,
       );
   return updateCallback
-    ? updateCallback(_updatedData, successData) || _Data
+    ? updateCallback(_updatedData, successData, type, state) || _Data
     : _updatedData;
 };
 
@@ -39,8 +39,18 @@ export const toggleKeyHandler = ({
   callback: { updateCallback } = {},
   successData = {},
   successDataStatusCode,
+  type,
+  state,
 }) => ({ data = {}, statusCode } = {}) => {
-  const commonData = { successData, toggleKey, id, key, updateCallback };
+  const commonData = {
+    successData,
+    toggleKey,
+    id,
+    key,
+    updateCallback,
+    type,
+    state,
+  };
   return {
     data:
       subKey.length > 0

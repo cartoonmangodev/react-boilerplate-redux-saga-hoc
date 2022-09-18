@@ -12,6 +12,8 @@ export const infiniteHandler = ({
   callback: { updateCallback } = {},
   successData = {},
   successDataStatusCode,
+  type,
+  state,
 }) => ({ data: oldData = {}, statusCode } = {}) => ({
   data: (() => {
     if (subKey.length > 0 && Array.isArray(getIn(oldData, subKey))) {
@@ -27,6 +29,8 @@ export const infiniteHandler = ({
           ? updateCallback(
               _oldData,
               Safe(successData, `.${subKey.join('.')}`, []),
+              type,
+              state,
             )
           : isAppendTop
           ? Safe(successData, `.${subKey.join('.')}`, []).concat(_oldData)
@@ -44,7 +48,9 @@ export const infiniteHandler = ({
       : Array.isArray(successData)
       ? appendData
       : successData;
-    return updateCallback ? updateCallback(oldData, successData) : newData;
+    return updateCallback
+      ? updateCallback(oldData, successData, type, state)
+      : newData;
   })(),
   error: false,
   lastUpdated: generateTimeStamp(),

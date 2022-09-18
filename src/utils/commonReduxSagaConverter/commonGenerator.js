@@ -24,7 +24,7 @@ import Axios from '../../config/axios';
 import { typeOf } from '../helpers';
 // import { headers } from '../../../utils/constants';
 import * as commonActions from './commonActions';
-import { ON_UNMOUNT } from './commonConstants';
+// import { ON_UNMOUNT } from './commonConstants';
 import CustomError from '../customError';
 const headers = '';
 function* loaderGenerator({ type, commonData }) {
@@ -400,7 +400,9 @@ export default function({
                 commonData.tasks = successCallbackResponse.tasks;
             } else if (
               typeOf(successCallbackResponse) === 'array' &&
-              successCallbackResponse.filter(e => e.task || e.filter).length > 0
+              successCallbackResponse.filter(
+                e => e.task || e.filter || e.updateDataReducerKey,
+              ).length > 0
             )
               commonData.tasks = successCallbackResponse;
           let loader = null;
@@ -437,7 +439,7 @@ export default function({
               method: constants.ON_CANCEL,
               axiosCancel: cancelTask,
             });
-          if (customMethod !== ON_UNMOUNT && !dontUpdateReducer)
+          if (customMethod !== constants.ON_UNMOUNT && !dontUpdateReducer)
             yield call(loaderGenerator, {
               type,
               commonData,
