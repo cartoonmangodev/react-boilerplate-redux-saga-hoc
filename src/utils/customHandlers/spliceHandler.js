@@ -2,8 +2,13 @@
 import { generateTimeStamp, updateIn, getIn, typeOf } from '../helpers';
 import Safe from '../nullCheck';
 export const spliceHandler = ({
-  task: { clearData, spliceKey = [], subKey = [] } = {},
-  callback: { updateCallback } = {},
+  callback: { updateCallback: __updateCallback } = {},
+  task: {
+    clearData,
+    spliceKey = [],
+    subKey = [],
+    updateCallback = __updateCallback,
+  } = {},
   successData = {},
   successDataStatusCode,
   type,

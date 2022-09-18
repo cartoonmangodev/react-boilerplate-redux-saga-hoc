@@ -43,8 +43,15 @@ const updateData = (
 };
 
 export const updateKeyHandler = ({
-  task: { key, id, subKey = [], values = {}, updateKey = [] } = {},
-  callback: { updateCallback } = {},
+  callback: { updateCallback: __updateCallback } = {},
+  task: {
+    key,
+    id,
+    subKey = [],
+    values = {},
+    updateKey = [],
+    updateCallback = __updateCallback,
+  } = {},
   successData = {},
   successDataStatusCode,
   type,

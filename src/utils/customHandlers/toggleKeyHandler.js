@@ -36,8 +36,14 @@ const executeTask = (
 };
 
 export const toggleKeyHandler = ({
-  task: { key, id, toggleKey = [], subKey = [] } = {},
-  callback: { updateCallback } = {},
+  callback: { updateCallback: __updateCallback } = {},
+  task: {
+    key,
+    id,
+    toggleKey = [],
+    subKey = [],
+    updateCallback = __updateCallback,
+  } = {},
   successData = {},
   successDataStatusCode,
   type,

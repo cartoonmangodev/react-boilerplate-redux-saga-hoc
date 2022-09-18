@@ -38,8 +38,14 @@ const executeTask = (
       );
 
 export const deleteKeyHandler = ({
-  task: { key, id, deleteKey = [], subKey = [] } = {},
-  callback: { updateCallback } = {},
+  callback: { updateCallback: __updateCallback } = {},
+  task: {
+    key,
+    id,
+    deleteKey = [],
+    subKey = [],
+    updateCallback = __updateCallback,
+  } = {},
   successData = {},
   successDataStatusCode,
   type,

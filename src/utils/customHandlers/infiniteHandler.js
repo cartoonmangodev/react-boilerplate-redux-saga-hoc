@@ -2,14 +2,15 @@
 import { generateTimeStamp, updateIn, getIn, typeOf } from '../helpers';
 import Safe from '../nullCheck';
 export const infiniteHandler = ({
+  callback: { updateCallback: __updateCallback } = {},
   task: {
     clearData,
     subKey = [],
     limit,
     isAppendTop = false,
     setInfiniteEnd,
+    updateCallback = __updateCallback,
   } = {},
-  callback: { updateCallback } = {},
   successData = {},
   successDataStatusCode,
   type,

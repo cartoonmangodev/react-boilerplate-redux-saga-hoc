@@ -26,14 +26,15 @@ const updateData = (
 };
 
 export const updateHandler = ({
+  callback: { updateCallback: __updateCallback } = {},
   task: {
     key,
     id,
     subKey = [],
     values = {},
     dontUpdateResponseData = false,
+    updateCallback = __updateCallback,
   } = {},
-  callback: { updateCallback } = {},
   successData = {},
   successDataStatusCode,
   type,
