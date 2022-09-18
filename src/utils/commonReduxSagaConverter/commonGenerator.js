@@ -531,7 +531,7 @@ export default function({
               response: postData,
               data: data && data.data && data.data.data,
             });
-            _cache[cacheId] = postData;
+            if (cacheControl) _cache[cacheId] = postData;
           }
         }
       } catch (error) {
