@@ -741,6 +741,21 @@ export const useQuery = (
   );
   return _selectorData.data;
 };
+/** example
+ * const actions = useActions('newActions', {
+ *   new: () => {
+ *       // redux-thunk
+ *       return dispatch => {
+ *         console.log(dispatch);
+ *         return {
+ *           type: 'fjjf',
+ *         };
+ *       };
+ *     },
+ * });
+ * actions.new();
+ * console.log(actions, 'actions');
+ */
 
 export const useActionsHook = (name = '', actions = {}) => {
   const dispatch = useDispatch();
@@ -878,18 +893,18 @@ export const toPromiseFunction = action => (config, isReject) => {
   );
 };
 
-/**
+/** example
  *  const execute = toPromiseAllFunction([DEMO_URL_CALL, DEMO_API_URL_CALL]);
  *  const asyncfunc = async () => {
-      try {
-        const data = await execute([],{ isReject: false });
-        console.log(data, '=============');
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    asyncfunc();
-*/
+ *      try {
+ *        const data = await execute([],{ isReject: false });
+ *        console.log(data, '=============');
+ *      } catch (err) {
+ *        console.log(err);
+ *      }
+ *    };
+ *    asyncfunc();
+ */
 export const toPromiseAllFunction = (actions = []) => (
   config = [],
   defaultConfig = {},
@@ -934,42 +949,42 @@ function stringify(val) {
 function hashArgs(...args) {
   return args.reduce((acc, arg) => `${stringify(arg)}:${acc}`, '');
 }
-/* Example => used for background refresh it won't trigger the loader everytime api starts
-  const pollingConfig = {
-    request: {
-      polling: true,
-      delay: 8000,
-    },
-  };
-  const [refresh, isUpdating] = useStaleRefresh(
-    VENDORS_GET_DASBOARD_API_CALL,
-    VENDORS_GET_DASBOARD_API,
-    pollingConfig,
-  );
-  const [refreshOrders, isUpdating] = useStaleRefresh(
-    VENDORS_GET_ORDERS_BY_DAY_API_CALL,
-    VENDORS_GET_ORDERS_BY_DAY_API,
-    pollingConfig,
-  );
-  useEffect(() => {
-    function pollingStart() {
-      /// refresh({loader, clearData, config}); optional parameters
-      refreshOrders();
-    }
-    function pollingEnd() {
-      VENDORS_GET_DASBOARD_API_CANCEL();
-      VENDORS_GET_ORDERS_BY_DAY_API_CANCEL();
-    }
-    pollingStart();
-    window.addEventListener('online', pollingStart);
-    window.addEventListener('offline', pollingEnd);
-    return () => {
-      window.removeEventListener('online', pollingStart);
-      window.removeEventListener('offline', pollingEnd);
-      VENDORS_GET_DASBOARD_API_CANCEL();
-      VENDORS_GET_ORDERS_BY_DAY_API_CANCEL();
-    };
-  }, []);
+/** example => used for background refresh it won't trigger the loader everytime api starts
+ * const pollingConfig = {
+ *   request: {
+ *     polling: true,
+ *     delay: 8000,
+ *   },
+ * };
+ * const [refresh, isUpdating] = useStaleRefresh(
+ *   VENDORS_GET_DASBOARD_API_CALL,
+ *   VENDORS_GET_DASBOARD_API,
+ *   pollingConfig,
+ * );
+ * const [refreshOrders, isUpdating] = useStaleRefresh(
+ *   VENDORS_GET_ORDERS_BY_DAY_API_CALL,
+ *   VENDORS_GET_ORDERS_BY_DAY_API,
+ *   pollingConfig,
+ * );
+ * useEffect(() => {
+ *   function pollingStart() {
+ *     /// refresh({loader, clearData, config}); optional parameters
+ *     refreshOrders();
+ *   }
+ *   function pollingEnd() {
+ *     VENDORS_GET_DASBOARD_API_CANCEL();
+ *     VENDORS_GET_ORDERS_BY_DAY_API_CANCEL();
+ *   }
+ *   pollingStart();
+ *   window.addEventListener('online', pollingStart);
+ *   window.addEventListener('offline', pollingEnd);
+ *   return () => {
+ *     window.removeEventListener('online', pollingStart);
+ *     window.removeEventListener('offline', pollingEnd);
+ *     VENDORS_GET_DASBOARD_API_CANCEL();
+ *     VENDORS_GET_ORDERS_BY_DAY_API_CANCEL();
+ *   };
+ * }, []);
  */
 export function useStaleRefresh(
   fn,
