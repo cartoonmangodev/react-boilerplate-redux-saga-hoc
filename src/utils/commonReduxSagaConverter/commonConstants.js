@@ -29,10 +29,10 @@ export const DELETE_DATA_KEY_HANDLER = 'Delete-Key-Handler';
 export const TOGGLE_DATA_KEY_HANDLER = 'Toggle-Key-Handler';
 export const SPLICE_DATA_HANDLER = 'Splice-Data-Handler';
 export const CALLBACK_HANDLER = 'Callback-Handler';
-export const RESET_DATA_HANDLER = 'Reset-Handler';
+export const RESET_HANDLER = 'Reset-Handler';
 export const TOAST_HANDLER = 'Toast-Handler';
 export const ERROR_HANDLER = 'Error-Handler';
-export const LOADING_HANDLER = 'Loading-Handler';
+export const LOADER_HANDLER = 'Loading-Handler';
 export const DONT_UPDATE_DATA_HANDLER = "Don't-Update-Data-Handler";
 export const CUSTOM_HANDLER = 'Custom-Handler';
 
@@ -56,10 +56,11 @@ export const commonConstants = {
   DELETE_DATA_KEY_HANDLER,
   TOGGLE_DATA_KEY_HANDLER,
   SPLICE_DATA_HANDLER,
+  RESET_HANDLER,
   CALLBACK_HANDLER,
   TOAST_HANDLER,
   ERROR_HANDLER,
-  LOADING_HANDLER,
+  LOADER_HANDLER,
   DONT_UPDATE_DATA_HANDLER,
   ON_CANCEL_ERROR,
   ON_ERROR,

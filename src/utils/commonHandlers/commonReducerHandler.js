@@ -20,10 +20,10 @@ import {
   TOGGLE_DATA_KEY_HANDLER,
   SPLICE_DATA_HANDLER,
   CALLBACK_HANDLER,
-  RESET_DATA_HANDLER,
+  RESET_HANDLER,
   TOAST_HANDLER,
   ERROR_HANDLER,
-  LOADING_HANDLER,
+  LOADER_HANDLER,
   DONT_UPDATE_DATA_HANDLER,
   CUSTOM_HANDLER,
   ERROR,
@@ -89,7 +89,7 @@ const HANDLERS = [
     handler: callbackHandler,
   },
   {
-    name: RESET_DATA_HANDLER,
+    name: RESET_HANDLER,
     handler: resetReducerHandler,
   },
   {
@@ -101,7 +101,7 @@ const HANDLERS = [
     handler: reducerErrorHandler,
   },
   {
-    name: LOADING_HANDLER,
+    name: LOADER_HANDLER,
     handler: reducerLoadingHandler,
   },
   {
