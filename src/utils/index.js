@@ -19,6 +19,7 @@ import {
   ON_LOADING,
   ON_TOAST,
   INFINITE_DATA_HANDLER,
+  REDUCER_BASE_PATH,
 } from './commonReduxSagaConverter/commonConstants';
 import { newObject, generateTimeStamp, typeOf } from './helpers';
 import {
@@ -394,7 +395,8 @@ export const useQuery = (
     (ee = {}, isString, _state) => {
       const state = _state || {};
       const _getDataFunc = e => {
-        const regex = `app\/containers\/${name}\/+.*?_CALL`;
+        // const regex = `app\/containers\/${name}\/+.*?_CALL`;
+        const regex = REDUCER_BASE_PATH.concat(name, '/+.*?_CALL');
         const isSearchMatched = ((isString ? array : e.key) || '').search(
           regex,
         );

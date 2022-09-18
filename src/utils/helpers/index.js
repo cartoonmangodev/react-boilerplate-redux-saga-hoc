@@ -21,8 +21,8 @@ const type = {
   '[object Object]': 'object',
   '[object Function]': 'function',
   '[object Error]': 'error',
-  // '[object Symbol]': 'symbol',
-  // '[object GeneratorFunction]': 'generatorFunction',
+  '[object Symbol]': 'symbol',
+  '[object GeneratorFunction]': 'generatorFunction',
 };
 
 export const typeOf = _obj =>

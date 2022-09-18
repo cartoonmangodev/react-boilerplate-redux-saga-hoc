@@ -1,5 +1,13 @@
 import { takeEvery } from 'redux-saga/effects';
-import { CALL, SUCCESS, ERROR, CANCEL, CUSTOM } from './commonConstants';
+import {
+  CALL,
+  SUCCESS,
+  ERROR,
+  CANCEL,
+  CUSTOM,
+  TAKE_EVERY,
+  REDUCER_BASE_PATH,
+} from './commonConstants';
 // import apiEndPoints from '../../config/apiEndPoints';
 import { actionsHandler } from './commonActions';
 import { newObject } from '../helpers';
@@ -10,11 +18,11 @@ export const convertData = apiEndPoints =>
       (acc, key) =>
         newObject(acc, {
           [key]: {
-            [CALL]: `app/containers/${curr}/${key}_${CALL}`,
-            [SUCCESS]: `app/containers/${curr}/${key}_${SUCCESS}`,
-            [CUSTOM]: `app/containers/${curr}/${key}_${CUSTOM}`,
-            [ERROR]: `app/containers/${curr}/${key}_${ERROR}`,
-            [CANCEL]: `app/containers/${curr}/${key}_${CANCEL}`,
+            [CALL]: `${REDUCER_BASE_PATH}${curr}/${key}_${CALL}`,
+            [SUCCESS]: `${REDUCER_BASE_PATH}${curr}/${key}_${SUCCESS}`,
+            [CUSTOM]: `${REDUCER_BASE_PATH}${curr}/${key}_${CUSTOM}`,
+            [ERROR]: `${REDUCER_BASE_PATH}${curr}/${key}_${ERROR}`,
+            [CANCEL]: `${REDUCER_BASE_PATH}${curr}/${key}_${CANCEL}`,
           },
         }),
       {},
@@ -39,7 +47,7 @@ export const convertData = apiEndPoints =>
             api: value,
             cancel: constants[key][CANCEL],
             actions: actions[key],
-            effect: value.effect === 'every' && takeEvery,
+            effect: value.effect === TAKE_EVERY && takeEvery,
           },
         }),
       {},

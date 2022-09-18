@@ -1,5 +1,9 @@
 export const API_LOADING_STATUS = 'app/API_LOADING_STATUS';
 
+export const TAKE_EVERY = 'every';
+
+export const REDUCER_BASE_PATH = 'app/containers/';
+
 export const ON_CANCEL_ERROR = 'API_CANCEL_ERROR';
 export const ON_ERROR = 'ERROR';
 export const ON_SUCCESS = 'SUCCESS';
@@ -32,6 +36,17 @@ export const LOADING_HANDLER = 'Loading-Handler';
 export const DONT_UPDATE_DATA_HANDLER = "Don't-Update-Data-Handler";
 export const CUSTOM_HANDLER = 'Custom-Handler';
 
+export const TYPE_NULL = 'null';
+export const TYPE_UNDEFINED = 'undefined';
+export const TYPE_STRING = 'string';
+export const TYPE_ARRAY = 'array';
+export const TYPE_BOOLEAN = 'boolean';
+export const TYPE_OBJECT = 'object';
+export const TYPE_FUNCTION = 'function';
+export const TYPE_ERROR = 'error';
+export const TYPE_SYMBOL = 'symbol';
+export const TYPE_GENERATOR_FUNCTION = 'generatorFunction';
+
 export const commonConstants = {
   INFINITE_DATA_HANDLER,
   DATA_HANDLER,
@@ -60,4 +75,14 @@ export const commonConstants = {
   CALL,
   CANCEL,
   CUSTOM,
+  TYPE_NULL,
+  TYPE_UNDEFINED,
+  TYPE_STRING,
+  TYPE_ARRAY,
+  TYPE_BOOLEAN,
+  TYPE_OBJECT,
+  TYPE_FUNCTION,
+  TYPE_ERROR,
+  TYPE_SYMBOL,
+  TYPE_GENERATOR_FUNCTION,
 };

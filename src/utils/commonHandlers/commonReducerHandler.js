@@ -26,6 +26,10 @@ import {
   LOADING_HANDLER,
   DONT_UPDATE_DATA_HANDLER,
   CUSTOM_HANDLER,
+  ERROR,
+  SUCCESS,
+  TYPE_OBJECT,
+  TYPE_FUNCTION,
 } from '../commonReduxSagaConverter/commonConstants';
 import {
   commonFilterHandler,
@@ -142,7 +146,7 @@ const COMMON_HANDLER = (payload, data, state, type) => {
       // const isMultiTask = Array.isArray(payload.tasks);
       // if (isMultiTask)
       if (task.response && !task.dontUpdateResponseData)
-        checkKey(task.response, 'task { response  : { data }}', 'object');
+        checkKey(task.response, 'task { response  : { data }}', TYPE_OBJECT);
       customTaskBindAction = Action =>
         Action({
           ...payload,
@@ -168,7 +172,7 @@ const COMMON_HANDLER = (payload, data, state, type) => {
         checkKey(
           _handler.handler,
           `${_handler.name} handler with key name handler`,
-          'function',
+          TYPE_FUNCTION,
         );
         DATA = isFilter
           ? BindHandler(commonFilterHandler(_handler.handler))
@@ -268,7 +272,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
       case ON_SUCCESS: {
         let updatedState;
         const _tasks = tasks
-          ? Array.isArray(tasks) && tasks.filter(e => typeOf(e) === 'object')
+          ? Array.isArray(tasks) && tasks.filter(e => typeOf(e) === TYPE_OBJECT)
           : null;
         if (_tasks && Array.isArray(_tasks) && _tasks.length > 0) {
           for (let k = 0; k < _tasks.length; k += 1) {
@@ -345,7 +349,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
           ? updateStateCallback({
               state: updatedState,
               data: successData,
-              type: 'SUCCESS',
+              type: SUCCESS,
               status: status || rest.statusCode,
             }) || updatedState
           : updatedState;
@@ -362,7 +366,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
             ? updateStateCallback({
                 state: updatedState,
                 data: successData,
-                type: 'ERROR',
+                type: ERROR,
                 error: errorData,
                 status: status || rest.statusCode,
                 statusCode: rest.statusCode,

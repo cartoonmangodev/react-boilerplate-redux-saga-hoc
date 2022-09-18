@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 export { HOC } from './containers';
 export { default as Safe } from './utils/nullCheck';
 // export { default as IndianStates } from './utils/indianStates';
