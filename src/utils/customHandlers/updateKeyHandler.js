@@ -3,7 +3,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 /* eslint-disable indent */
-import { updateIn, newObject, generateTimeStamp } from '../helpers';
+import { updateIn, newObject, generateTimeStamp, typeOf } from '../helpers';
 import Safe from '../nullCheck';
 const updateData = (
   data,
@@ -51,6 +51,7 @@ export const updateKeyHandler = ({
     values = {},
     updateKey = [],
     updateCallback = __updateCallback,
+    dontUpdateResponseData,
   } = {},
   successData = {},
   successDataStatusCode,
@@ -62,7 +63,9 @@ export const updateKeyHandler = ({
       ? updateIn(
           {
             ...data,
-            ...successData,
+            ...(typeOf(successData) === 'object' && !dontUpdateResponseData
+              ? successData
+              : {}),
             [subKey[0]]: data[subKey[0]],
           },
           subKey,

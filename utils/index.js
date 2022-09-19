@@ -28,13 +28,8 @@ var hoistNonReactStatics = _interopDefault(require('hoist-non-react-statics'));
 var _HOC_MAIN_CLIENT_SIDE, _HOC_MAIN_SERVER_SIDE;
 
 /* eslint-disable no-underscore-dangle */
-var timestamp;
-if (typeof Date === 'function') timestamp = new Date().getTime();else timestamp = Math.random();
-
-var _FOR_INTERNAL_USE_ONLY_ = "@@@__#".concat(timestamp, "#__@@@");
-
-var _USE_TYPE_ = "@@@__#".concat(timestamp, "__@#@__#").concat(timestamp, "__@@@");
-
+var _FOR_INTERNAL_USE_ONLY_ = "@@@__#_FOR_INTERNAL_PURPOSE_ONLY_#__@@@";
+var _USE_TYPE_ = "@@@__#_USE_TYPE___@#@__#_USE_TYPE___@@@";
 var GET_INITIAL_PROPS_DEFAULT = 'getInitialProps';
 var REDUCER_BASE_PATH = 'app/containers/';
 var ON_CANCEL_ERROR = 'API_CANCEL_ERROR';

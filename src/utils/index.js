@@ -726,11 +726,7 @@ export const useQuery = (
     [selectReducerKey, refreshKey],
   );
   const createdSelector = useMemo(
-    () =>
-      createSelector(
-        selectState,
-        executeSelector,
-      ),
+    () => createSelector(selectState, executeSelector),
     [executeSelector, selectState],
   );
   const _selectorData = useSelector(

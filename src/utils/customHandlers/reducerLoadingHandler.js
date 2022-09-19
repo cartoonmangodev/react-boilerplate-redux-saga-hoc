@@ -3,7 +3,7 @@
 import { newObject, generateTimeStamp } from '../helpers';
 
 export const reducerLoadingHandler = ({
-  task: { error: errorData, loader } = {},
+  task: { loader } = {},
   successData = {},
   successDataStatusCode,
 }) => ({

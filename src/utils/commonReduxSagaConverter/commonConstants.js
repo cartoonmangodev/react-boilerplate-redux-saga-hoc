@@ -128,8 +128,134 @@ export const HOC_INITIAL_CONFIG_KEY = {
   USE_HOOK,
   REDUCER_NAME,
 };
-
+const COMMON_TASKS = {
+  TASK_NAME: 'name',
+  SUB_KEYS_ARRAY: 'subKey',
+  IS_CLEAR_PREVIOUS_DATA_ON_SUCCESS: 'clearData',
+  IS_CLEAR_PREVIOUS_DATA_ON_API_START: 'clearDataOnStart',
+};
+const DONT_UPDATE_RESPONSE_DATA = 'dontUpdateResponseData';
+const UPDATE_CALLBACK = 'updateCallback';
+const ID_REFERENCE_KEY = 'key';
+const IDS = 'id';
+const API_TASK_CONFIG_KEYS = {
+  TASK: {
+    KEY: 'task',
+    INFINITE_DATA_HANDLER: {
+      ...COMMON_TASKS,
+      LIMIT: 'limit',
+      IS_APPEND_DATA_ON_TOP: 'isAppendTop',
+      SET_INFINITE_END_KEY_TRUE_OR_FALSE: 'setInfiniteEnd',
+      UPDATE_CALLBACK,
+    },
+    DATA_HANDLER: { ...COMMON_TASKS, UPDATE_CALLBACK },
+    DELETE_DATA_HANDLER: { ...COMMON_TASKS, ID_REFERENCE_KEY, IDS },
+    UPDATE_DATA_HANDLER: {
+      ...COMMON_TASKS,
+      ID_REFERENCE_KEY,
+      IDS,
+      UPDATE_CALLBACK,
+      DONT_UPDATE_RESPONSE_DATA,
+    },
+    UPDATE_DATA_KEY_HANDLER: {
+      ...COMMON_TASKS,
+      ID_REFERENCE_KEY,
+      IDS,
+      UPDATE_CALLBACK,
+      DONT_UPDATE_RESPONSE_DATA,
+    },
+    DELETE_DATA_KEY_HANDLER: {
+      ...COMMON_TASKS,
+      ID_REFERENCE_KEY,
+      IDS,
+      UPDATE_CALLBACK,
+      DELETE_KEYS_ARRAY: 'deleteKey',
+    },
+    TOGGLE_DATA_KEY_HANDLER: {
+      ...COMMON_TASKS,
+      ID_REFERENCE_KEY,
+      IDS,
+      UPDATE_CALLBACK,
+      TOGGLE_KEYS_ARRAY: 'toggleKey',
+    },
+    SPLICE_DATA_HANDLER: {
+      ...COMMON_TASKS,
+      UPDATE_CALLBACK,
+      SPLICE_VALUE_ARRAY: 'spliceKey',
+    },
+    RESET_HANDLER: { TASK_NAME: COMMON_TASKS.TASK_NAME },
+    CALLBACK_HANDLER: {
+      TASK_NAME: COMMON_TASKS.TASK_NAME,
+      CALLBACK_FUNCTION: 'callback',
+    },
+    TOAST_HANDLER: {
+      TASK_NAME: COMMON_TASKS.TASK_NAME,
+      TOAST_OBJECT: 'toast',
+    },
+    ERROR_HANDLER: {
+      TASK_NAME: COMMON_TASKS.TASK_NAME,
+      ERROR_OBJECT: 'error',
+      IS_ERROR: 'isError',
+    },
+    LOADER_HANDLER: {
+      TASK_NAME: COMMON_TASKS.TASK_NAME,
+      IS_LOADING: 'loader',
+    },
+    DONT_UPDATE_DATA_HANDLER: { ...COMMON_TASKS },
+  },
+  TASKS: 'tasks',
+  FILTER_ARRAY: 'filter',
+  DONT_UPDATE_REUCER: 'dontUpdateReducer',
+  EXECUTE_UPDATE_STATE_CALLBACK_ON_ERROR: 'excuteUpdateStateCallbackOnError',
+  UPDATE_STATE_DATA_REDUCER_KEYS: 'updateDataReducerKey',
+  REQUEST: {
+    KEY: 'request',
+    ASYNC_FUNCTION: 'asyncFunction',
+    ASYNC_FUNCTION_PARAMS_ARRAY: 'asyncFunctionParams',
+    PAYLOAD: 'payload',
+    PARAMS: 'params',
+    QUERY: 'query',
+    DELAY_FUNCTION: 'delayFunction',
+    DONT_UPDATE_REDUCER_ON_SUCCESS: 'dontUpdateReducerOnSucess',
+    DONT_UPDATE_REDUCER_ON_ERROR: 'dontUpdateReducerOnError',
+    AXIOS_INTERCEPTOR: 'axios',
+    PARAM_SERIALIZER: 'paramsSerializer',
+    API_CANCEL_KEY: 'cancelKey',
+    AXIOS_CONFIG: 'axiosConfig',
+    USE_CACHE: 'useCache',
+    IS_ERROR_DATA_HANDLING: 'errorDataHandling',
+    IS_CLEAR_DATA_ON_ERROR: 'clearDataOnError',
+    IS_POLLING: 'polling',
+    IS_ERROR_PARSER: 'errorParser',
+    DEFAULT_ERROR_PARSER_FUNCTION: 'defaultErrorParser',
+    POLLING_DELAY_COUNT_IN_MILLISECONDS: 'delay',
+    MAX_RETRY_COUNT: 'retry',
+    POLLING_MAX_COUNT: 'pollingCount',
+    START_POLLING_AFTER_DELAY: 'callAfterDelay',
+  },
+  CALLBACK: {
+    KEY: 'callback',
+    UPDATE_STATE_CALLBACK: 'updateStateCallback',
+    SUCCESS_CALLBACK: 'successCallback',
+    ERROR_CALLBACK: 'errorCallback',
+    CALLBACK_AFTER_500_MILLISECONDS: 'logoutCallback',
+    FINAL_CALLBACK: 'finalCallback',
+    POLLING_CALLBACK: 'pollingCallback',
+    CANCEL_CALLBACK: 'cancelCallback',
+    UPDATE_CALLBACK,
+  },
+};
+const USE_QUERY_CONFIG_KEYS = {
+  REDUCER_NAME: 'reducerName',
+  REDUCER_KEYS_ARRAY_OR_OBJECT: 'key',
+  REDUCER_KEYS_CONFIG: 'config',
+  CALLBACK_FUNCTION_RETURN_DATA: 'callback',
+  TRIGGER_AFTER_CALLBACK_NO_DATA_RETURN: 'callbackSuccess',
+  REFRESH_KEY: 'refreshKey',
+};
 export const commonConstants = {
+  USE_QUERY_CONFIG_KEYS,
+  API_TASK_CONFIG_KEYS,
   /* Don't Change any key */
   INFINITE_DATA_HANDLER,
   DATA_HANDLER,
