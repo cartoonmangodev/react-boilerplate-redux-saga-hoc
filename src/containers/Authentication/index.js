@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable indent */
 import React, { useRef, useState } from 'react';
@@ -18,9 +19,41 @@ import Reducer from './reducer';
 import Saga from './generator';
 import nullcheck from '../../utils/nullCheck';
 import { getData, mapDispatchToProps } from '../../utils';
-import { commonConstants } from '../../utils/commonReduxSagaConverter/commonConstants';
-const safe = nullcheck;
+import {
+  commonConstants,
+  FOR_INTERNAL_USE_ONLY,
+  HOC_INITIAL_CONFIG_KEY,
+  HOC_MAIN_CONFIG_KEY,
+  GET_INITIAL_PROPS_DEFAULT,
+} from '../../utils/commonReduxSagaConverter/commonConstants';
+const {
+  HANDLERS,
+  NEXT_JS,
+  CREATE_REDUCER,
+  USE_HOC_HOOK,
+  ALLOW_MAP_STATE_TO_PROPS,
+  GET_INITIAL_PROPS_KEY,
+  IS_DEVELOPMENT,
+  USE_TYPE,
+  USE_HOOK,
+  HOOK_WITH_HOC,
+} = HOC_MAIN_CONFIG_KEY;
 
+const {
+  API_END_POINTS,
+  INITIAL_STATE,
+  GET_DEFAULT_CONFIG,
+  DONT_RESET_REDUCER_KEYS,
+  IS_MOBILE,
+  SAGA,
+  SAGA_CONSTANT,
+  REDUCER_CONSTANT,
+  REDUCER,
+  AXIOS_INTERCEPTORS,
+  REDUCER_NAME,
+} = HOC_INITIAL_CONFIG_KEY;
+
+const safe = nullcheck;
 const checkKey = (key, name, dataType) => {
   const convertArray = Array.isArray(dataType) ? dataType : [dataType];
   invariant(
@@ -30,32 +63,39 @@ const checkKey = (key, name, dataType) => {
     )})`,
   );
 };
+const showDepricatedMessage = reducerName => {
+  const DEPRICATED_MESSAGE = `<======= "${reducerName} Reducer" (react-boilerplate-redux-saga-hoc) Sorry! This package is depricated.Please use some other package ====>`;
+  if (console.warn) console.warn(DEPRICATED_MESSAGE);
+  if (console.error) console.error(DEPRICATED_MESSAGE);
+  if (console.info) console.info(DEPRICATED_MESSAGE);
+};
 const isMounted = {};
-const GET_INITIAL_PROPS_KEY = 'getInitialProps';
+
 export default ({
-  handlers = [],
-  nextJS = false,
-  createReducer = null,
-  useHook = false,
-  useHocHook = false,
-  hookWithHoc = false,
-  mapStateToProps: _mapStateToProps = true,
-  getInitialPropsKey = GET_INITIAL_PROPS_KEY,
+  [HANDLERS]: handlers = [],
+  [NEXT_JS]: nextJS = false,
+  [CREATE_REDUCER]: createReducer = null,
+  [USE_HOOK]: useHook = false,
+  [USE_HOC_HOOK]: useHocHook = false,
+  [HOOK_WITH_HOC]: hookWithHoc = false,
+  [ALLOW_MAP_STATE_TO_PROPS]: _mapStateToProps = true,
+  [GET_INITIAL_PROPS_KEY]: getInitialPropsKey = GET_INITIAL_PROPS_DEFAULT,
+  [IS_DEVELOPMENT]: isDevelopment = false,
+  [USE_TYPE]: useType,
 }) => ({
-  apiEndPoints = {},
-  initialState = {},
-  getDefaultConfig = false,
-  dontReset: dontResetOnLogout = {},
-  isMobile = false,
-  saga: sagaFunction,
-  constantSaga = [],
-  constantReducer,
-  reducer: reducerFunction,
-  name: reducerName,
-  axiosInterceptors,
+  [API_END_POINTS]: apiEndPoints = {},
+  [INITIAL_STATE]: initialState = {},
+  [GET_DEFAULT_CONFIG]: getDefaultConfig = false,
+  [DONT_RESET_REDUCER_KEYS]: dontResetOnLogout = {},
+  [IS_MOBILE]: isMobile = false,
+  [SAGA]: sagaFunction,
+  [SAGA_CONSTANT]: constantSaga = [],
+  [REDUCER_CONSTANT]: constantReducer,
+  [REDUCER]: reducerFunction,
+  [REDUCER_NAME]: reducerName,
+  [AXIOS_INTERCEPTORS]: axiosInterceptors,
+  [USE_HOOK]: _useHook = false,
   // store: _store,
-  useHook: _useHook = false,
-  isDevelopment = false,
 } = {}) => {
   let nextStateProps = null;
   let stateProps = null;
@@ -139,7 +179,9 @@ export default ({
 
   const _useHocHook = (inject = false) => {
     const isInjected = useRef(false);
-    if (
+    if (useType !== FOR_INTERNAL_USE_ONLY) {
+      showDepricatedMessage(reducerName);
+    } else if (
       !isMounted[reducerName] ||
       isInjected.current ||
       inject ||
@@ -210,6 +252,10 @@ export default ({
       mapDispatchToProps(componentActions, componentData, reducerName),
     );
     if (nextJS) {
+      if (useType !== FOR_INTERNAL_USE_ONLY) {
+        showDepricatedMessage(reducerName);
+        return WithHoc;
+      }
       WithHoc[getInitialPropsKey] = async props => {
         const { res, req, store, ...rest } = props.ctx || props;
         let data = {
@@ -233,6 +279,10 @@ export default ({
       };
       return withConnect(WithHoc);
     }
+    if (useType !== FOR_INTERNAL_USE_ONLY) {
+      showDepricatedMessage(reducerName);
+      return WithHoc;
+    }
     return compose(
       withConnect,
       authenticationReducer,
@@ -250,7 +300,9 @@ export default ({
   // eslint-disable-next-line no-underscore-dangle
   const _useHocHookNextJs = (inject = false) => {
     const isInjected = useRef(false);
-    if (
+    if (useType !== FOR_INTERNAL_USE_ONLY) {
+      showDepricatedMessage(reducerName);
+    } else if (
       !isMounted[reducerName] ||
       isInjected.current ||
       inject ||

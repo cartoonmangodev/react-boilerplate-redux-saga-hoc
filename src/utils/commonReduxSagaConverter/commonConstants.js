@@ -1,3 +1,11 @@
+/* eslint-disable no-underscore-dangle */
+import { generateTimeStamp } from 'react-boilerplate-redux-saga-hoc';
+
+const _FOR_INTERNAL_USE_ONLY_ = `@@@__#${generateTimeStamp()}#__@@@`;
+const _USE_TYPE_ = `@@@__#${generateTimeStamp()}__@#@__#${generateTimeStamp()}__@@@`;
+
+export const GET_INITIAL_PROPS_DEFAULT = 'getInitialProps';
+
 export const API_LOADING_STATUS = 'app/API_LOADING_STATUS';
 
 export const TAKE_EVERY = 'every';
@@ -46,6 +54,82 @@ export const TYPE_FUNCTION = 'function';
 export const TYPE_ERROR = 'error';
 export const TYPE_SYMBOL = 'symbol';
 export const TYPE_GENERATOR_FUNCTION = 'generatorFunction';
+
+export const FOR_INTERNAL_USE_ONLY = _FOR_INTERNAL_USE_ONLY_;
+export const USE_TYPE = _USE_TYPE_;
+
+const HANDLERS = 'handlers';
+const NEXT_JS = 'nextJS';
+const CREATE_REDUCER = 'createReducer';
+const USE_HOOK = 'useHook';
+const USE_HOC_HOOK = 'useHocHook';
+const HOOK_WITH_HOC = 'hookWithHoc';
+const ALLOW_MAP_STATE_TO_PROPS = 'mapStateToProps';
+const GET_INITIAL_PROPS_KEY = 'getInitialPropsKey';
+const IS_DEVELOPMENT = 'isDevelopment';
+
+export const HOC_MAIN_CONFIG_KEY = {
+  HANDLERS,
+  NEXT_JS,
+  CREATE_REDUCER,
+  USE_HOOK,
+  USE_HOC_HOOK,
+  HOOK_WITH_HOC,
+  ALLOW_MAP_STATE_TO_PROPS,
+  GET_INITIAL_PROPS_KEY,
+  IS_DEVELOPMENT,
+  USE_TYPE,
+};
+
+export const HOC_MAIN_CLIENT_SIDE_CONFIG_DEFAULT = {
+  [HANDLERS]: [],
+  [NEXT_JS]: false,
+  [USE_HOOK]: false,
+  [USE_HOC_HOOK]: true,
+  [HOOK_WITH_HOC]: false,
+  [ALLOW_MAP_STATE_TO_PROPS]: false,
+  [GET_INITIAL_PROPS_KEY]: null,
+  [IS_DEVELOPMENT]: false,
+  [USE_TYPE]: FOR_INTERNAL_USE_ONLY,
+};
+export const HOC_MAIN_SERVER_SIDE_CONFIG_DEFAULT = {
+  [HANDLERS]: [],
+  [NEXT_JS]: true,
+  [USE_HOOK]: false,
+  [USE_HOC_HOOK]: false,
+  [HOOK_WITH_HOC]: false,
+  [ALLOW_MAP_STATE_TO_PROPS]: false,
+  [GET_INITIAL_PROPS_KEY]: GET_INITIAL_PROPS_DEFAULT,
+  [IS_DEVELOPMENT]: false,
+  [USE_TYPE]: FOR_INTERNAL_USE_ONLY,
+};
+
+const API_END_POINTS = 'apiEndPoints';
+const INITIAL_STATE = 'initialState';
+const GET_DEFAULT_CONFIG = 'getDefaultConfig';
+const DONT_RESET_REDUCER_KEYS = 'dontReset';
+const IS_MOBILE = 'isMobile';
+const SAGA = 'saga';
+const SAGA_CONSTANT = 'constantSaga';
+const REDUCER_CONSTANT = 'constantReducer';
+const REDUCER = 'reducer';
+const AXIOS_INTERCEPTORS = 'axiosInterceptors';
+const REDUCER_NAME = 'name';
+
+export const HOC_INITIAL_CONFIG_KEY = {
+  API_END_POINTS,
+  INITIAL_STATE,
+  GET_DEFAULT_CONFIG,
+  DONT_RESET_REDUCER_KEYS,
+  IS_MOBILE,
+  SAGA,
+  SAGA_CONSTANT,
+  REDUCER_CONSTANT,
+  REDUCER,
+  AXIOS_INTERCEPTORS,
+  USE_HOOK,
+  REDUCER_NAME,
+};
 
 export const commonConstants = {
   /* Don't Change any key */
