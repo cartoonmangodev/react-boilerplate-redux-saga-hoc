@@ -28,13 +28,12 @@ var hoistNonReactStatics = _interopDefault(require('hoist-non-react-statics'));
 var _HOC_MAIN_CLIENT_SIDE, _HOC_MAIN_SERVER_SIDE;
 
 /* eslint-disable no-underscore-dangle */
-var generateTimeStamp = function generateTimeStamp() {
-  return new Date().getTime();
-};
+var timestamp;
+if (typeof Date === 'function') timestamp = new Date().getTime();else timestamp = Math.random();
 
-var _FOR_INTERNAL_USE_ONLY_ = "@@@__#".concat(generateTimeStamp(), "#__@@@");
+var _FOR_INTERNAL_USE_ONLY_ = "@@@__#".concat(timestamp, "#__@@@");
 
-var _USE_TYPE_ = "@@@__#".concat(generateTimeStamp(), "__@#@__#").concat(generateTimeStamp(), "__@@@");
+var _USE_TYPE_ = "@@@__#".concat(timestamp, "__@#@__#").concat(timestamp, "__@@@");
 
 var GET_INITIAL_PROPS_DEFAULT = 'getInitialProps';
 var REDUCER_BASE_PATH = 'app/containers/';
@@ -909,7 +908,7 @@ function updateIn(obj) {
   return arr.length > 0 ? update() : obj;
 }
 
-var generateTimeStamp$1 = function generateTimeStamp() {
+var generateTimeStamp = function generateTimeStamp() {
   return new Date().getTime();
 };
 var toCapitalize = function toCapitalize(string) {
@@ -2336,7 +2335,7 @@ exports.UPDATE_DATA_KEY_HANDLER = UPDATE_DATA_KEY_HANDLER$1;
 exports.cloneObject = cloneObject;
 exports.commonConstants = commonConstants;
 exports.deleteIn = deleteIn;
-exports.generateTimeStamp = generateTimeStamp$1;
+exports.generateTimeStamp = generateTimeStamp;
 exports.getData = getData;
 exports.getIn = getIn;
 exports.injectSaga = injectSaga;
