@@ -398,13 +398,14 @@ export const useQuery = (
       const _getDataFunc = e => {
         // const regex = `app\/containers\/${name}\/+.*?_CALL`;
         const regex = REDUCER_BASE_PATH.concat(name, '/+.*?_CALL');
-        const isSearchMatched = ((isString ? array : e.key) || '').search(
-          regex,
-        );
+        const isSearchMatched =
+          ((isString ? array : e.key) || '').search(regex) > -1;
         return (typeof e.defaultDataFormat === 'boolean' ||
-        isSearchMatched ||
+        !isSearchMatched ||
         !(isString ? array : e.key)
-        ? !e.defaultDataFormat || isSearchMatched || !(isString ? array : e.key)
+        ? !e.defaultDataFormat ||
+          !isSearchMatched ||
+          !(isString ? array : e.key)
         : false)
           ? (isString
             ? array
@@ -816,7 +817,7 @@ export const useMutation = reducerName => {
     checkKey(type, 'key', 'string');
     // const regex = `app\/containers\/${reducerName}\/+.*?_CALL`;
     const regex = REDUCER_BASE_PATH.concat(reducerName, '/+.*?_CALL');
-    const isSearchMatched = (type || '').search(regex);
+    const isSearchMatched = (type || '').search(regex) > -1;
     if (
       type.includes('_CALL') &&
       type.slice(-5) === '_CALL' &&
@@ -1078,7 +1079,7 @@ export const useCancelAllRunningApiCalls = reducerName => {
     const state = store.getState()[reducerName];
     const actions = Object.entries(state).reduce((acc, [key, value]) => {
       const regex = REDUCER_BASE_PATH.concat(reducerName, '/+.*?_CALL');
-      const isSearchMatched = (key || '').search(regex);
+      const isSearchMatched = (key || '').search(regex) > -1;
       const _dontCancelKeys = Array.isArray(dontCancelKeys)
         ? dontCancelKeys
         : [];

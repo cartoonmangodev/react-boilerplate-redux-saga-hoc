@@ -238,9 +238,19 @@ var API_TASK_CONFIG_KEYS = {
     UPDATE_CALLBACK: UPDATE_CALLBACK
   }
 };
+var USE_QUERY_REDUCER_CONFIG_KEYS = {
+  PARENT_KEY: 'key',
+  REDUCER_KEY: 'key',
+  REQUIRED_DATA_KEY: 'requiredKey',
+  FILTER_ARRAY: 'filter',
+  QUERY_DATA_STRING_OR_ARRAY: 'initialLoaderqueryState',
+  INITIAL_LOADER_STATE: 'initialLoaderState',
+  GET_DEFAULT_DATA_FORMAT: 'defaultDataFormat',
+  DEFAULT_DATA_OR_FORMAT: 'default'
+};
 var USE_QUERY_CONFIG_KEYS = {
   REDUCER_NAME: 'reducerName',
-  REDUCER_KEYS_ARRAY_OR_OBJECT: 'key',
+  REDUCER_KEYS_ARRAY_OR_OBJECT_OR_STRING: USE_QUERY_REDUCER_CONFIG_KEYS,
   REDUCER_KEYS_CONFIG: 'config',
   CALLBACK_FUNCTION_RETURN_DATA: 'callback',
   TRIGGER_AFTER_CALLBACK_NO_DATA_RETURN: 'callbackSuccess',
@@ -1411,7 +1421,7 @@ var useQuery = function useQuery() {
 
   return _selectorData.data;
 };
-/** example
+/* example
  * const actions = useActions('newActions', {
  *   new: () => {
  *       // redux-thunk
@@ -1446,7 +1456,7 @@ var useActionsHook = function useActionsHook() {
   }, [isEqual(cacheActions[name], actions)]);
   return dispatchAction;
 };
-/** example
+/* example
  * const mutateState = useMutation(reducerName);
  * mutateState({
  *   key: DEMP_API,
@@ -1478,8 +1488,9 @@ var useMutation = function useMutation(reducerName) {
     if (type) invariant(_reducer_keys.includes(type), // type.includes('_CALL') && type.slice(-5) === '_CALL',
     "'key' is invalid.".concat(type, " not found in ").concat(reducerName, " reducer"));
     checkKey(filter, 'filter', 'array');
-    checkKey(type, 'key', 'string');
-    var regex = "app/containers/".concat(reducerName, "/+.*?_CALL");
+    checkKey(type, 'key', 'string'); // const regex = `app\/containers\/${reducerName}\/+.*?_CALL`;
+
+    var regex = REDUCER_BASE_PATH.concat(reducerName, '/+.*?_CALL');
     var isSearchMatched = (type || '').search(regex);
 
     if (type.includes('_CALL') && type.slice(-5) === '_CALL' && isSearchMatched && filter && Array.isArray(filter)) {
@@ -1508,7 +1519,7 @@ var useMutation = function useMutation(reducerName) {
 
   return _callback;
 };
-/** example
+/* example
  * async function() {
  *   const { data, status } = await toPromise(DEMP_API_CALL, { task: 'Data-Handler' });
  * }
@@ -1526,7 +1537,7 @@ var toPromise = function toPromise(action) {
     }));
   });
 };
-/** example
+/* example
  * const asyncFunction = toPromiseFunction(DEMP_API_CALL);
  * async function() {
  *   const { data, status } = await asyncFunction({ task: 'Data-Handler' });
@@ -1560,7 +1571,7 @@ function hashArgs() {
     return "".concat(stringify(arg), ":").concat(acc);
   }, '');
 }
-/** example => used for background refresh it won't trigger the loader everytime api starts
+/* example => used for background refresh it won't trigger the loader everytime api starts
  * const pollingConfig = {
  *   request: {
  *     polling: true,
@@ -1651,7 +1662,7 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
   });
   return [refresh, isUpdating];
 }
-/** example
+/* example
  * const mutateReducer = useMutateReducer(reducerName);
  * mutateReducer(state => state)
  */
@@ -1671,7 +1682,47 @@ var useMutateReducer = function useMutateReducer(reducerName) {
 
   return _callback;
 };
-/** example
+/* example
+ * const mutateReducer = useMutateReducer(reducerName);
+ * mutateReducer(state => state)
+ */
+
+var useCancelAllRunningApiCalls = function useCancelAllRunningApiCalls(reducerName) {
+  if (!reducerName) checkKeyWithMessage(reducerName, 'string', 'useCancelAllRunningApiCalls(`reducerkey`) : Expected a valid reducer key');
+  var store = reactRedux.useStore();
+  var dispatch = reactRedux.useDispatch();
+
+  var _callback = React.useCallback(function () {
+    var dontCancelKeys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var state = store.getState()[reducerName];
+    var actions = Object.entries(state).reduce(function (acc, _ref25) {
+      var _ref26 = _slicedToArray(_ref25, 2),
+          key = _ref26[0],
+          value = _ref26[1];
+
+      var regex = REDUCER_BASE_PATH.concat(reducerName, '/+.*?_CALL');
+      var isSearchMatched = (key || '').search(regex);
+
+      var _dontCancelKeys = Array.isArray(dontCancelKeys) ? dontCancelKeys : [];
+
+      if (key && key.includes('_CALL') && key.slice(-5) === '_CALL' && isSearchMatched && safe(value, '.loading.status', false) && !_dontCancelKeys.includes(key)) return acc.concat([{
+        type: key.replace('_CALL', '_CANCEL')
+      }]);
+      return acc;
+    }, []);
+
+    if (actions && actions.length > 0) {
+      reactRedux.batch(function () {
+        for (var i = 0; i < actions.length; i++) {
+          dispatch(actions[i]);
+        }
+      });
+    }
+  }, []);
+
+  return _callback;
+};
+/* example
  * const resetState = useResetState(reducerName);
  * const dontResetKeys = ['isLoggedIn'];
  * resetState(dontResetKeys); it will reset state to initial state except some dontResetKeys
@@ -1690,7 +1741,7 @@ var useResetState = function useResetState(reducerName) {
 
   return _callback;
 };
-/** example
+/* example
  * const resetState = useResetOnlyApiEndPointsState(reducerName);
  * const dontResetKeys = ['isLoggedIn'];
  * resetState(dontResetKeys); it will reset only endpoints to initial state except some dontResetKeys
@@ -2370,7 +2421,8 @@ var useInjectSaga = function useInjectSaga(_ref2) {
   }, []);
 };
 
-var API_TASK_CONFIG_KEYS$1 = commonConstants.API_TASK_CONFIG_KEYS,
+var USE_QUERY_CONFIG_KEYS$1 = commonConstants.USE_QUERY_CONFIG_KEYS,
+    API_TASK_CONFIG_KEYS$1 = commonConstants.API_TASK_CONFIG_KEYS,
     INFINITE_DATA_HANDLER$1 = commonConstants.INFINITE_DATA_HANDLER,
     DATA_HANDLER$1 = commonConstants.DATA_HANDLER,
     DELETE_DATA_HANDLER$1 = commonConstants.DELETE_DATA_HANDLER,
@@ -2458,6 +2510,7 @@ exports.TYPE_SYMBOL = TYPE_SYMBOL$1;
 exports.TYPE_UNDEFINED = TYPE_UNDEFINED$1;
 exports.UPDATE_DATA_HANDLER = UPDATE_DATA_HANDLER$1;
 exports.UPDATE_DATA_KEY_HANDLER = UPDATE_DATA_KEY_HANDLER$1;
+exports.USE_QUERY_CONFIG_KEYS = USE_QUERY_CONFIG_KEYS$1;
 exports.cloneObject = cloneObject;
 exports.commonConstants = commonConstants;
 exports.deleteIn = deleteIn;
@@ -2474,6 +2527,7 @@ exports.toPromiseFunction = toPromiseFunction;
 exports.typeOf = typeOf;
 exports.updateIn = updateIn;
 exports.useActions = useActionsHook;
+exports.useCancelAllRunningApiCalls = useCancelAllRunningApiCalls;
 exports.useInjectSaga = useInjectSaga;
 exports.useMutateReducer = useMutateReducer;
 exports.useMutation = useMutation;
