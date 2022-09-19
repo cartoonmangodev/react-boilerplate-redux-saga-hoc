@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { generateTimeStamp } from '../helpers';
+const generateTimeStamp = () => new Date().getTime();
 
 const _FOR_INTERNAL_USE_ONLY_ = `@@@__#${generateTimeStamp()}#__@@@`;
 const _USE_TYPE_ = `@@@__#${generateTimeStamp()}__@#@__#${generateTimeStamp()}__@@@`;
