@@ -245,14 +245,25 @@ const API_TASK_CONFIG_KEYS = {
     UPDATE_CALLBACK,
   },
 };
+const USE_QUERY_REDUCER_CONFIG_KEYS = {
+  PARENT_KEY: 'key',
+  REDUCER_KEY: 'key',
+  REQUIRED_DATA_KEY: 'requiredKey',
+  FILTER_ARRAY: 'filter',
+  QUERY_DATA_STRING_OR_ARRAY: 'initialLoaderqueryState',
+  INITIAL_LOADER_STATE: 'initialLoaderState',
+  GET_DEFAULT_DATA_FORMAT: 'defaultDataFormat',
+  DEFAULT_DATA_OR_FORMAT: 'default',
+};
 const USE_QUERY_CONFIG_KEYS = {
   REDUCER_NAME: 'reducerName',
-  REDUCER_KEYS_ARRAY_OR_OBJECT: 'key',
+  REDUCER_KEYS_ARRAY_OR_OBJECT_OR_STRING: USE_QUERY_REDUCER_CONFIG_KEYS,
   REDUCER_KEYS_CONFIG: 'config',
   CALLBACK_FUNCTION_RETURN_DATA: 'callback',
   TRIGGER_AFTER_CALLBACK_NO_DATA_RETURN: 'callbackSuccess',
   REFRESH_KEY: 'refreshKey',
 };
+
 export const commonConstants = {
   USE_QUERY_CONFIG_KEYS,
   API_TASK_CONFIG_KEYS,

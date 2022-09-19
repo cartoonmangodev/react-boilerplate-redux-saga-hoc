@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable no-useless-escape */
 /* eslint-disable indent */
 /* eslint-disable camelcase */
@@ -5,7 +6,7 @@
 /* eslint-disable no-nested-ternary */
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { bindActionCreators } from 'redux';
-import { useStore, useDispatch, useSelector } from 'react-redux';
+import { useStore, useDispatch, useSelector, batch } from 'react-redux';
 import isEqual from 'fast-deep-equal';
 import {
   createSelector,
@@ -737,7 +738,7 @@ export const useQuery = (
   );
   return _selectorData.data;
 };
-/** example
+/* example
  * const actions = useActions('newActions', {
  *   new: () => {
  *       // redux-thunk
@@ -767,7 +768,7 @@ export const useActionsHook = (name = '', actions = {}) => {
   }, [isEqual(cacheActions[name], actions)]);
   return dispatchAction;
 };
-/** example
+/* example
  * const mutateState = useMutation(reducerName);
  * mutateState({
  *   key: DEMP_API,
@@ -813,7 +814,8 @@ export const useMutation = reducerName => {
       );
     checkKey(filter, 'filter', 'array');
     checkKey(type, 'key', 'string');
-    const regex = `app\/containers\/${reducerName}\/+.*?_CALL`;
+    // const regex = `app\/containers\/${reducerName}\/+.*?_CALL`;
+    const regex = REDUCER_BASE_PATH.concat(reducerName, '/+.*?_CALL');
     const isSearchMatched = (type || '').search(regex);
     if (
       type.includes('_CALL') &&
@@ -855,7 +857,7 @@ export const useMutation = reducerName => {
   }, []);
   return _callback;
 };
-/** example
+/* example
  * async function() {
  *   const { data, status } = await toPromise(DEMP_API_CALL, { task: 'Data-Handler' });
  * }
@@ -871,7 +873,7 @@ export const toPromise = (action, config = {}, isReject) => {
     action({ ...config, resolve, reject, isReject }),
   );
 };
-/** example
+/* example
  * const asyncFunction = toPromiseFunction(DEMP_API_CALL);
  * async function() {
  *   const { data, status } = await asyncFunction({ task: 'Data-Handler' });
@@ -889,7 +891,7 @@ export const toPromiseFunction = action => (config, isReject) => {
   );
 };
 
-/** example
+/* example
  *  const execute = toPromiseAllFunction([DEMO_URL_CALL, DEMO_API_URL_CALL]);
  *  const asyncfunc = async () => {
  *      try {
@@ -945,7 +947,7 @@ function stringify(val) {
 function hashArgs(...args) {
   return args.reduce((acc, arg) => `${stringify(arg)}:${acc}`, '');
 }
-/** example => used for background refresh it won't trigger the loader everytime api starts
+/* example => used for background refresh it won't trigger the loader everytime api starts
  * const pollingConfig = {
  *   request: {
  *     polling: true,
@@ -1039,7 +1041,7 @@ export function useStaleRefresh(
 
   return [refresh, isUpdating];
 }
-/** example
+/* example
  * const mutateReducer = useMutateReducer(reducerName);
  * mutateReducer(state => state)
  */
@@ -1059,7 +1061,53 @@ export const useMutateReducer = reducerName => {
   }, []);
   return _callback;
 };
-/** example
+/* example
+ * const mutateReducer = useMutateReducer(reducerName);
+ * mutateReducer(state => state)
+ */
+export const useCancelAllRunningApiCalls = reducerName => {
+  if (!reducerName)
+    checkKeyWithMessage(
+      reducerName,
+      'string',
+      'useCancelAllRunningApiCalls(`reducerkey`) : Expected a valid reducer key',
+    );
+  const store = useStore();
+  const dispatch = useDispatch();
+  const _callback = useCallback((dontCancelKeys = []) => {
+    const state = store.getState()[reducerName];
+    const actions = Object.entries(state).reduce((acc, [key, value]) => {
+      const regex = REDUCER_BASE_PATH.concat(reducerName, '/+.*?_CALL');
+      const isSearchMatched = (key || '').search(regex);
+      const _dontCancelKeys = Array.isArray(dontCancelKeys)
+        ? dontCancelKeys
+        : [];
+      if (
+        key &&
+        key.includes('_CALL') &&
+        key.slice(-5) === '_CALL' &&
+        isSearchMatched &&
+        safe(value, '.loading.status', false) &&
+        !_dontCancelKeys.includes(key)
+      )
+        return acc.concat([
+          {
+            type: key.replace('_CALL', '_CANCEL'),
+          },
+        ]);
+      return acc;
+    }, []);
+    if (actions && actions.length > 0) {
+      batch(() => {
+        for (let i = 0; i < actions.length; i++) {
+          dispatch(actions[i]);
+        }
+      });
+    }
+  }, []);
+  return _callback;
+};
+/* example
  * const resetState = useResetState(reducerName);
  * const dontResetKeys = ['isLoggedIn'];
  * resetState(dontResetKeys); it will reset state to initial state except some dontResetKeys
@@ -1074,7 +1122,7 @@ export const useResetState = reducerName => {
   }, []);
   return _callback;
 };
-/** example
+/* example
  * const resetState = useResetOnlyApiEndPointsState(reducerName);
  * const dontResetKeys = ['isLoggedIn'];
  * resetState(dontResetKeys); it will reset only endpoints to initial state except some dontResetKeys

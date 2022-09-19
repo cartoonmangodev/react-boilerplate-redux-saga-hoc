@@ -23,6 +23,7 @@ export {
   useStaleRefresh,
   useMutateReducer,
   toPromiseFunction,
+  useCancelAllRunningApiCalls,
   useActionsHook as useActions,
   useResetOnlyApiEndPointsState,
 } from './utils';
@@ -39,6 +40,7 @@ export { default as CustomError } from './utils/customError';
 export { default as withRedux } from './utils/utils/next/withRedux';
 export { default as injectSaga, useInjectSaga } from './utils/utils/injectSaga';
 export const {
+  USE_QUERY_CONFIG_KEYS,
   API_TASK_CONFIG_KEYS,
   INFINITE_DATA_HANDLER,
   DATA_HANDLER,
