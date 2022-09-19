@@ -5,9 +5,9 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
+var _toConsumableArray = _interopDefault(require('@babel/runtime/helpers/toConsumableArray'));
 var _typeof = _interopDefault(require('@babel/runtime/helpers/typeof'));
 var _slicedToArray = _interopDefault(require('@babel/runtime/helpers/slicedToArray'));
-var _toConsumableArray = _interopDefault(require('@babel/runtime/helpers/toConsumableArray'));
 var _objectSpread = _interopDefault(require('@babel/runtime/helpers/objectSpread2'));
 var React = require('react');
 var React__default = _interopDefault(React);
@@ -25,219 +25,12 @@ var _createSuper = _interopDefault(require('@babel/runtime/helpers/createSuper')
 var _inherits = _interopDefault(require('@babel/runtime/helpers/inherits'));
 var hoistNonReactStatics = _interopDefault(require('hoist-non-react-statics'));
 
-var cloneObject = function cloneObject(oldState) {
-  var newState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  return Object.assign({}, oldState, newState);
-};
-var newObject = function newObject() {
-  var oldState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+var _HOC_MAIN_CLIENT_SIDE, _HOC_MAIN_SERVER_SIDE;
 
-  for (var _len = arguments.length, rest = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    rest[_key - 1] = arguments[_key];
-  }
-
-  return rest.reduce(function (acc, curr) {
-    return cloneObject(acc, typeof curr === 'function' && curr(oldState, acc) || curr);
-  }, cloneObject(oldState));
-};
-
-function deleteIn(obj, arr) {
-  var i = 0;
-  var o = obj;
-
-  function update() {
-    if (Array.isArray(o)) {
-      return function () {
-        var a = !(arr.length - 1 === i && +arr[i] >= o.slice().length) ? o.slice().map(function (data, ind) {
-          if (+arr[i] === ind) {
-            if (arr.length - 1 === i) {
-              if (Array.isArray(o)) o.splice(+arr[i], 1);else delete o[arr[i]];
-              return Array.isArray(o) ? null : o;
-            }
-
-            return function () {
-              o = data;
-              i += 1;
-              return update();
-            }();
-          }
-
-          return data;
-        }).filter(function (e) {
-          return e;
-        }) : function () {
-          if (arr.length - 1 === i) {
-            if (Array.isArray(o)) o.splice(+arr[i], 1);else delete o[arr[i]];
-            return o;
-          }
-
-          return o;
-        }();
-        return a;
-      }();
-    }
-
-    return function () {
-      if (arr.length - 1 === i) {
-        delete o[arr[i]];
-        return o;
-      }
-
-      return cloneObject(o, _defineProperty({}, arr[i], function () {
-        o = o[arr[i]];
-        i += 1;
-        return update();
-      }()));
-    }();
-  }
-
-  return update();
-}
-
-/* eslint-disable no-nested-ternary */
-
-/* eslint-disable indent */
-function getIn(obj, arr) {
-  var i = 0;
-  var o = obj;
-
-  function get() {
-    return arr.length > 0 && arr.length - 1 === i ? typeof o === 'undefined' || o === null ? o : o[arr[i]] : function () {
-      if (typeof o === 'undefined' || o === null) return o;
-      o = o[arr[i]];
-      i += 1;
-      return get();
-    }();
-  }
-
-  return arr.length > 0 ? get() : obj;
-}
-
-/* eslint-disable no-restricted-syntax */
-
-/* eslint-disable no-continue */
-function objectEquals(x, y) {
-  if (x === y) return true; // if both x and y are null or undefined and exactly the same
-
-  if (!(x instanceof Object) || !(y instanceof Object)) return false; // if they are not strictly equal, they both need to be Objects
-
-  if (x.constructor !== y.constructor) return false; // they must have the exact same prototype chain, the closest we can do is
-  // test there constructor.
-
-  for (var _i = 0, _Object$entries = Object.entries(x); _i < _Object$entries.length; _i++) {
-    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 1),
-        p = _Object$entries$_i[0];
-
-    if (!(p in x)) continue; // other properties were tested using x.constructor === y.constructor
-
-    if (!(p in y)) return false; // allows to compare x[ p ] and y[ p ] when set to undefined
-
-    if (x[p] === y[p]) continue; // if they have the same strict value or identity then they are equal
-
-    if (_typeof(x[p]) !== 'object') return false; // Numbers, Strings, Functions, Booleans must be strictly equal
-
-    if (!Object.equals(x[p], y[p])) return false; // Objects and Arrays must be tested recursively
-  }
-
-  for (var _i2 = 0, _Object$entries2 = Object.entries(y); _i2 < _Object$entries2.length; _i2++) {
-    var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i2], 1),
-        _p = _Object$entries2$_i[0];
-
-    if (_p in y && !(_p in x)) return false; // allows x[ p ] to be set to undefined
-  }
-
-  return true;
-}
-
-function setIn(obj, arr, value) {
-  var i = 0;
-  var o = obj;
-
-  function update() {
-    if (Array.isArray(o)) {
-      return function () {
-        var a = !(arr.length - 1 === i && +arr[i] >= o.slice().length) ? o.slice().map(function (data, ind) {
-          if (+arr[i] === ind) {
-            return arr.length - 1 === i ? value : function () {
-              o = data;
-              i += 1;
-              return update();
-            }();
-          }
-
-          return data;
-        }) : function () {
-          o[+arr[i]] = value;
-          return o;
-        }();
-        return a;
-      }();
-    }
-
-    return cloneObject(o, _defineProperty({}, arr[i], arr.length - 1 === i ? value : function () {
-      o = o[arr[i]] || {};
-      i += 1;
-      return update();
-    }()));
-  }
-
-  return update();
-}
-
-function updateIn(obj) {
-  var arr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-  var callback = arguments.length > 2 ? arguments[2] : undefined;
-  var i = 0;
-  var o = obj;
-
-  function update() {
-    if (Array.isArray(o)) {
-      return o.slice().map(function (data, ind) {
-        if (+arr[i] === ind) {
-          return arr.length - 1 === i ? callback(data) : function () {
-            o = data;
-            i += 1;
-            return update();
-          }();
-        }
-
-        return data;
-      });
-    }
-
-    return cloneObject(o, _defineProperty({}, arr && arr[i], arr.length - 1 === i ? callback(o[arr[i]]) : function () {
-      o = o[arr[i]] || {};
-      i += 1;
-      return update();
-    }()));
-  }
-
-  return arr.length > 0 ? update() : obj;
-}
-
+/* eslint-disable no-underscore-dangle */
 var generateTimeStamp = function generateTimeStamp() {
   return new Date().getTime();
 };
-var toCapitalize = function toCapitalize(string) {
-  return string && typeof string === 'string' ? string.charAt(0).toUpperCase() + string.slice(1) : null;
-};
-var type = {
-  '[object Null]': 'null',
-  '[object Undefined]': 'undefined',
-  '[object String]': 'string',
-  '[object Array]': 'array',
-  '[object Boolean]': 'boolean',
-  '[object Object]': 'object',
-  '[object Function]': 'function',
-  '[object Error]': 'error',
-  '[object Symbol]': 'symbol',
-  '[object GeneratorFunction]': 'generatorFunction'
-};
-var typeOf = function typeOf(_obj) {
-  return type[Object.prototype.toString.call(_obj)] || _typeof(_obj);
-};
-
-var _HOC_MAIN_CLIENT_SIDE, _HOC_MAIN_SERVER_SIDE;
 
 var _FOR_INTERNAL_USE_ONLY_ = "@@@__#".concat(generateTimeStamp(), "#__@@@");
 
@@ -925,6 +718,218 @@ function validateForm(validationData) {
 
   return error;
 }
+
+var cloneObject = function cloneObject(oldState) {
+  var newState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  return Object.assign({}, oldState, newState);
+};
+var newObject = function newObject() {
+  var oldState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+  for (var _len = arguments.length, rest = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    rest[_key - 1] = arguments[_key];
+  }
+
+  return rest.reduce(function (acc, curr) {
+    return cloneObject(acc, typeof curr === 'function' && curr(oldState, acc) || curr);
+  }, cloneObject(oldState));
+};
+
+function deleteIn(obj, arr) {
+  var i = 0;
+  var o = obj;
+
+  function update() {
+    if (Array.isArray(o)) {
+      return function () {
+        var a = !(arr.length - 1 === i && +arr[i] >= o.slice().length) ? o.slice().map(function (data, ind) {
+          if (+arr[i] === ind) {
+            if (arr.length - 1 === i) {
+              if (Array.isArray(o)) o.splice(+arr[i], 1);else delete o[arr[i]];
+              return Array.isArray(o) ? null : o;
+            }
+
+            return function () {
+              o = data;
+              i += 1;
+              return update();
+            }();
+          }
+
+          return data;
+        }).filter(function (e) {
+          return e;
+        }) : function () {
+          if (arr.length - 1 === i) {
+            if (Array.isArray(o)) o.splice(+arr[i], 1);else delete o[arr[i]];
+            return o;
+          }
+
+          return o;
+        }();
+        return a;
+      }();
+    }
+
+    return function () {
+      if (arr.length - 1 === i) {
+        delete o[arr[i]];
+        return o;
+      }
+
+      return cloneObject(o, _defineProperty({}, arr[i], function () {
+        o = o[arr[i]];
+        i += 1;
+        return update();
+      }()));
+    }();
+  }
+
+  return update();
+}
+
+/* eslint-disable no-nested-ternary */
+
+/* eslint-disable indent */
+function getIn(obj, arr) {
+  var i = 0;
+  var o = obj;
+
+  function get() {
+    return arr.length > 0 && arr.length - 1 === i ? typeof o === 'undefined' || o === null ? o : o[arr[i]] : function () {
+      if (typeof o === 'undefined' || o === null) return o;
+      o = o[arr[i]];
+      i += 1;
+      return get();
+    }();
+  }
+
+  return arr.length > 0 ? get() : obj;
+}
+
+/* eslint-disable no-restricted-syntax */
+
+/* eslint-disable no-continue */
+function objectEquals(x, y) {
+  if (x === y) return true; // if both x and y are null or undefined and exactly the same
+
+  if (!(x instanceof Object) || !(y instanceof Object)) return false; // if they are not strictly equal, they both need to be Objects
+
+  if (x.constructor !== y.constructor) return false; // they must have the exact same prototype chain, the closest we can do is
+  // test there constructor.
+
+  for (var _i = 0, _Object$entries = Object.entries(x); _i < _Object$entries.length; _i++) {
+    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 1),
+        p = _Object$entries$_i[0];
+
+    if (!(p in x)) continue; // other properties were tested using x.constructor === y.constructor
+
+    if (!(p in y)) return false; // allows to compare x[ p ] and y[ p ] when set to undefined
+
+    if (x[p] === y[p]) continue; // if they have the same strict value or identity then they are equal
+
+    if (_typeof(x[p]) !== 'object') return false; // Numbers, Strings, Functions, Booleans must be strictly equal
+
+    if (!Object.equals(x[p], y[p])) return false; // Objects and Arrays must be tested recursively
+  }
+
+  for (var _i2 = 0, _Object$entries2 = Object.entries(y); _i2 < _Object$entries2.length; _i2++) {
+    var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i2], 1),
+        _p = _Object$entries2$_i[0];
+
+    if (_p in y && !(_p in x)) return false; // allows x[ p ] to be set to undefined
+  }
+
+  return true;
+}
+
+function setIn(obj, arr, value) {
+  var i = 0;
+  var o = obj;
+
+  function update() {
+    if (Array.isArray(o)) {
+      return function () {
+        var a = !(arr.length - 1 === i && +arr[i] >= o.slice().length) ? o.slice().map(function (data, ind) {
+          if (+arr[i] === ind) {
+            return arr.length - 1 === i ? value : function () {
+              o = data;
+              i += 1;
+              return update();
+            }();
+          }
+
+          return data;
+        }) : function () {
+          o[+arr[i]] = value;
+          return o;
+        }();
+        return a;
+      }();
+    }
+
+    return cloneObject(o, _defineProperty({}, arr[i], arr.length - 1 === i ? value : function () {
+      o = o[arr[i]] || {};
+      i += 1;
+      return update();
+    }()));
+  }
+
+  return update();
+}
+
+function updateIn(obj) {
+  var arr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+  var callback = arguments.length > 2 ? arguments[2] : undefined;
+  var i = 0;
+  var o = obj;
+
+  function update() {
+    if (Array.isArray(o)) {
+      return o.slice().map(function (data, ind) {
+        if (+arr[i] === ind) {
+          return arr.length - 1 === i ? callback(data) : function () {
+            o = data;
+            i += 1;
+            return update();
+          }();
+        }
+
+        return data;
+      });
+    }
+
+    return cloneObject(o, _defineProperty({}, arr && arr[i], arr.length - 1 === i ? callback(o[arr[i]]) : function () {
+      o = o[arr[i]] || {};
+      i += 1;
+      return update();
+    }()));
+  }
+
+  return arr.length > 0 ? update() : obj;
+}
+
+var generateTimeStamp$1 = function generateTimeStamp() {
+  return new Date().getTime();
+};
+var toCapitalize = function toCapitalize(string) {
+  return string && typeof string === 'string' ? string.charAt(0).toUpperCase() + string.slice(1) : null;
+};
+var type = {
+  '[object Null]': TYPE_NULL,
+  '[object Undefined]': TYPE_UNDEFINED,
+  '[object String]': TYPE_STRING,
+  '[object Array]': TYPE_ARRAY,
+  '[object Boolean]': TYPE_BOOLEAN,
+  '[object Object]': TYPE_OBJECT,
+  '[object Function]': TYPE_FUNCTION,
+  '[object Error]': TYPE_ERROR,
+  '[object Symbol]': TYPE_SYMBOL,
+  '[object GeneratorFunction]': TYPE_GENERATOR_FUNCTION
+};
+var typeOf = function typeOf(_obj) {
+  return type[Object.prototype.toString.call(_obj)] || _typeof(_obj);
+};
 
 var cache = {};
 var cacheActions = {};
@@ -2331,7 +2336,7 @@ exports.UPDATE_DATA_KEY_HANDLER = UPDATE_DATA_KEY_HANDLER$1;
 exports.cloneObject = cloneObject;
 exports.commonConstants = commonConstants;
 exports.deleteIn = deleteIn;
-exports.generateTimeStamp = generateTimeStamp;
+exports.generateTimeStamp = generateTimeStamp$1;
 exports.getData = getData;
 exports.getIn = getIn;
 exports.injectSaga = injectSaga;

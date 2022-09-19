@@ -97,6 +97,9 @@ export default ({
   [USE_HOOK]: _useHook = false,
   // store: _store,
 } = {}) => {
+  if (isDevelopment) {
+    console.log({ USE_TYPE: useType, FOR_INTERNAL_USE_ONLY });
+  }
   let nextStateProps = null;
   let stateProps = null;
   invariant(

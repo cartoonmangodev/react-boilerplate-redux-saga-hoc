@@ -1,7 +1,7 @@
 {
   "name": "react-boilerplate-redux-saga-hoc",
-  "version": "1.6.1",
-  "description": "No worry about api calls.No need to create constants,reducer,saga,actions.Easy to make api call.Handles automatically all api request,cancel,errors etc",
+  "version": "1.6.0",
+  "description": "Easy ways to handle api calls,redux,saga...etc",
   "main": "./lib/index.js",
   "unpkg": "./lib/index.js",
   "module": "./lib/index.js",

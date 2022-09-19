@@ -1,8 +1,10 @@
 /* eslint-disable no-underscore-dangle */
-const generateTimeStamp = () => new Date().getTime();
+let timestamp;
+if (typeof Date === 'function') timestamp = new Date().getTime();
+else timestamp = Math.random();
 
-const _FOR_INTERNAL_USE_ONLY_ = `@@@__#${generateTimeStamp()}#__@@@`;
-const _USE_TYPE_ = `@@@__#${generateTimeStamp()}__@#@__#${generateTimeStamp()}__@@@`;
+const _FOR_INTERNAL_USE_ONLY_ = `@@@__#${timestamp}#__@@@`;
+const _USE_TYPE_ = `@@@__#${timestamp}__@#@__#${timestamp}__@@@`;
 
 export const GET_INITIAL_PROPS_DEFAULT = 'getInitialProps';
 
