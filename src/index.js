@@ -2,9 +2,7 @@
 export { HOC } from './containers';
 export { default as Safe } from './utils/nullCheck';
 // export { default as IndianStates } from './utils/indianStates';
-export {
-  regex as FormValidatorRegex,
-} from './utils/formValidation/ValidationRegex';
+export { regex as FormValidatorRegex } from './utils/formValidation/ValidationRegex';
 export { default as FormValidator } from './utils/formValidation';
 export {
   getData,
@@ -16,6 +14,7 @@ export {
   useMutateReducer,
   toPromiseFunction,
   toPromiseAllFunction,
+  useCancelAllRunningApiCalls,
   useActionsHook as useActions,
   useResetOnlyApiEndPointsState,
 } from './utils';
@@ -34,9 +33,7 @@ export {
   typeOf,
 } from './utils/helpers';
 export { default as store, nextStore } from './utils/configureStore';
-export {
-  commonConstants,
-} from './utils/commonReduxSagaConverter/commonConstants';
+export { commonConstants } from './utils/commonReduxSagaConverter/commonConstants';
 export {
   default as injectReducer,
   useInjectReducer,

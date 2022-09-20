@@ -40,6 +40,8 @@ export { default as CustomError } from './utils/customError';
 export { default as withRedux } from './utils/utils/next/withRedux';
 export { default as injectSaga, useInjectSaga } from './utils/utils/injectSaga';
 export const {
+  API_END_POINTS_CONFIG_DEFAULT_VALUE,
+  API_END_POINTS_CONFIG_KEYS,
   USE_QUERY_CONFIG_KEYS,
   API_TASK_CONFIG_KEYS,
   INFINITE_DATA_HANDLER,

@@ -6,7 +6,7 @@
 /* eslint-disable no-nested-ternary */
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { bindActionCreators } from 'redux';
-import { useStore, useDispatch, useSelector, batch } from 'react-redux';
+import { useStore, useDispatch, useSelector } from 'react-redux';
 import isEqual from 'fast-deep-equal';
 import {
   createSelector,
@@ -1099,11 +1099,11 @@ export const useCancelAllRunningApiCalls = reducerName => {
       return acc;
     }, []);
     if (actions && actions.length > 0) {
-      batch(() => {
-        for (let i = 0; i < actions.length; i++) {
-          dispatch(actions[i]);
-        }
-      });
+      // batch(() => {
+      for (let i = 0; i < actions.length; i++) {
+        dispatch(actions[i]);
+      }
+      // });
     }
   }, []);
   return _callback;
