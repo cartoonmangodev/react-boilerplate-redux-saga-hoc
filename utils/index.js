@@ -1157,8 +1157,8 @@ var useQuery = function useQuery() {
     var _getDataFunc = function _getDataFunc(e) {
       // const regex = `app\/containers\/${name}\/+.*?_CALL`;
       var regex = REDUCER_BASE_PATH.concat(name, '/+.*?_CALL');
-      var isSearchMatched = ((isString ? array : e.key) || '').search(regex);
-      return (typeof e.defaultDataFormat === 'boolean' || isSearchMatched || !(isString ? array : e.key) ? !e.defaultDataFormat || isSearchMatched || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(state, "[".concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : // : name
+      var isSearchMatched = ((isString ? array : e.key) || '').search(regex) > -1;
+      return (typeof e.defaultDataFormat === 'boolean' || !isSearchMatched || !(isString ? array : e.key) ? !e.defaultDataFormat || !isSearchMatched || !(isString ? array : e.key) : false) ? (isString ? array : e.key) ? safe(state, "[".concat(isString ? array : e.key, "]").concat(e.query ? e.query : ''), e.default) : // : name
       // ? safe(state, `${e.query ? e.query : ''}`, e.default)
       safe(state, "".concat(e.query ? e.query : ''), e.default) : safe(getData(safe(state, "[".concat(isString ? array : e.key, "]")), e.query ? undefined : e.default || undefined, e.initialLoaderState || false, _checkFilter(e), e.dataQuery), "".concat(e.query && typeOf(e.query) === 'string' ? e.query : ''), e.query ? e.default !== undefined ? e.default : undefined : undefined);
     };
@@ -1491,7 +1491,7 @@ var useMutation = function useMutation(reducerName) {
     checkKey(type, 'key', 'string'); // const regex = `app\/containers\/${reducerName}\/+.*?_CALL`;
 
     var regex = REDUCER_BASE_PATH.concat(reducerName, '/+.*?_CALL');
-    var isSearchMatched = (type || '').search(regex);
+    var isSearchMatched = (type || '').search(regex) > -1;
 
     if (type.includes('_CALL') && type.slice(-5) === '_CALL' && isSearchMatched && filter && Array.isArray(filter)) {
       // checkKey(value, 'value', 'object');
@@ -1701,7 +1701,7 @@ var useCancelAllRunningApiCalls = function useCancelAllRunningApiCalls(reducerNa
           value = _ref26[1];
 
       var regex = REDUCER_BASE_PATH.concat(reducerName, '/+.*?_CALL');
-      var isSearchMatched = (key || '').search(regex);
+      var isSearchMatched = (key || '').search(regex) > -1;
 
       var _dontCancelKeys = Array.isArray(dontCancelKeys) ? dontCancelKeys : [];
 
