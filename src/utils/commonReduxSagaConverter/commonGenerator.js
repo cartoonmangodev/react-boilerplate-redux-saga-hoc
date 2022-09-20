@@ -107,9 +107,6 @@ export default function({
         axiosInterceptors ||
         Axios;
       const { CancelToken } = AxiosDefault;
-      let controller;
-      if (typeof AbortController === 'function')
-        controller = new AbortController();
       const source = yield CancelToken.source();
       yield (action = {
         ...action,
@@ -155,7 +152,6 @@ export default function({
       let request = yield {
         ...(action.api || {}),
         cancelToken: source.token,
-        signal: (controller && controller.signal) || undefined,
         url: action.api.url || url,
         method: action.api.method || 'GET',
         data: payload,
@@ -428,16 +424,9 @@ export default function({
             setTimeout(() => logoutCallback(data), 500);
         } else if (
           cancelTask &&
-          ((source && typeof source.cancel === 'function') ||
-            rest.onCancelTask ||
-            (controller && typeof controller.abort === 'function'))
+          (typeof source.cancel === 'function' || rest.onCancelTask)
         ) {
-          const cancelResponse = yield (rest.onCancelTask ||
-            (source && source.cancel === 'function' && source.cancel) ||
-            (controller &&
-              typeof controller.abort === 'function' &&
-              controller.abort) ||
-            (() => {}))();
+          const cancelResponse = yield (rest.onCancelTask || source.cancel)();
           if (typeof cancelCallback === 'function')
             cancelCallback(cancelResponse);
           const { response: { method: customMethod } = {} } = cancelTask || {};
@@ -530,11 +519,7 @@ export default function({
         if (!polling && retry) loop = false;
 
         if (resolve && typeOf(resolve) === 'function') {
-          if (
-            cancelTask &&
-            ((source && source.cancel === 'function') ||
-              (controller && typeof controller.abort === 'function'))
-          ) {
+          if (cancelTask && typeof source.cancel === 'function') {
             resolve({
               status: 'CANCELLED',
               response: null,
@@ -781,11 +766,7 @@ export default function({
             cancelled: Cancelled,
           });
         if (Cancelled) {
-          // console.log(source.cancel);
-          if (source && typeof source.cancel === 'function')
-            yield source.cancel();
-          else if (controller && typeof controller.abort === 'function')
-            yield controller.abort();
+          if (typeof source.cancel === 'function') yield source.cancel();
           loop = false;
         }
       }
