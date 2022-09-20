@@ -256,7 +256,35 @@ var USE_QUERY_CONFIG_KEYS = {
   TRIGGER_AFTER_CALLBACK_NO_DATA_RETURN: 'callbackSuccess',
   REFRESH_KEY: 'refreshKey'
 };
+var API_END_POINTS_CONFIG_KEYS = {
+  API_URL: 'url',
+  AXIOS_INTERCEPTORS: 'axios',
+  API_METHOD: 'method',
+  API_RESPONSE_SUCCESS_STATUS_CODE_KEY: 'responseStatusCodeKey',
+  API_RESPONSE_SUCCESS_STATUS_CODES: 'responseStatusCode',
+  API_RESPONSE_SUCCESS_MESSAGE_KEY: 'responseMessageKey',
+  API_RESPONSE_SUCCESS_DATA_KEY: 'responseDataKey',
+  API_RESPONSE_ERROR_DATA_KEY: 'errorDataKey',
+  API_RESPONSE_ERROR_STATUS_CODE_KEY: 'errorStatusKey',
+  API_RESPONSE_ERROR_MESSAGE_KEY: 'errorMessageKey',
+  API_ERROR_HANDLER_STATUS_CODES: 'errorHandlerStatusCode'
+};
+var API_END_POINTS_CONFIG_DEFAULT_VALUE = {
+  API_URL: undefined,
+  AXIOS_INTERCEPTORS: undefined,
+  API_METHOD: 'GET',
+  API_RESPONSE_SUCCESS_STATUS_CODE_KEY: '',
+  API_RESPONSE_SUCCESS_STATUS_CODES: [],
+  API_RESPONSE_SUCCESS_MESSAGE_KEY: '',
+  API_RESPONSE_SUCCESS_DATA_KEY: '',
+  API_RESPONSE_ERROR_DATA_KEY: 'error',
+  API_RESPONSE_ERROR_STATUS_CODE_KEY: '',
+  API_RESPONSE_ERROR_MESSAGE_KEY: '',
+  API_ERROR_HANDLER_STATUS_CODES: []
+};
 var commonConstants = {
+  API_END_POINTS_CONFIG_DEFAULT_VALUE: API_END_POINTS_CONFIG_DEFAULT_VALUE,
+  API_END_POINTS_CONFIG_KEYS: API_END_POINTS_CONFIG_KEYS,
   USE_QUERY_CONFIG_KEYS: USE_QUERY_CONFIG_KEYS,
   API_TASK_CONFIG_KEYS: API_TASK_CONFIG_KEYS,
 
@@ -1712,11 +1740,11 @@ var useCancelAllRunningApiCalls = function useCancelAllRunningApiCalls(reducerNa
     }, []);
 
     if (actions && actions.length > 0) {
-      reactRedux.batch(function () {
-        for (var i = 0; i < actions.length; i++) {
-          dispatch(actions[i]);
-        }
-      });
+      // batch(() => {
+      for (var i = 0; i < actions.length; i++) {
+        dispatch(actions[i]);
+      } // });
+
     }
   }, []);
 
@@ -2421,7 +2449,9 @@ var useInjectSaga = function useInjectSaga(_ref2) {
   }, []);
 };
 
-var USE_QUERY_CONFIG_KEYS$1 = commonConstants.USE_QUERY_CONFIG_KEYS,
+var API_END_POINTS_CONFIG_DEFAULT_VALUE$1 = commonConstants.API_END_POINTS_CONFIG_DEFAULT_VALUE,
+    API_END_POINTS_CONFIG_KEYS$1 = commonConstants.API_END_POINTS_CONFIG_KEYS,
+    USE_QUERY_CONFIG_KEYS$1 = commonConstants.USE_QUERY_CONFIG_KEYS,
     API_TASK_CONFIG_KEYS$1 = commonConstants.API_TASK_CONFIG_KEYS,
     INFINITE_DATA_HANDLER$1 = commonConstants.INFINITE_DATA_HANDLER,
     DATA_HANDLER$1 = commonConstants.DATA_HANDLER,
@@ -2462,6 +2492,8 @@ var USE_QUERY_CONFIG_KEYS$1 = commonConstants.USE_QUERY_CONFIG_KEYS,
     TYPE_SYMBOL$1 = commonConstants.TYPE_SYMBOL,
     TYPE_GENERATOR_FUNCTION$1 = commonConstants.TYPE_GENERATOR_FUNCTION;
 
+exports.API_END_POINTS_CONFIG_DEFAULT_VALUE = API_END_POINTS_CONFIG_DEFAULT_VALUE$1;
+exports.API_END_POINTS_CONFIG_KEYS = API_END_POINTS_CONFIG_KEYS$1;
 exports.API_TASK_CONFIG_KEYS = API_TASK_CONFIG_KEYS$1;
 exports.CALL = CALL$1;
 exports.CALLBACK_HANDLER = CALLBACK_HANDLER$1;
