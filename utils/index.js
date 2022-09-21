@@ -17,12 +17,13 @@ var isEqual = _interopDefault(require('fast-deep-equal'));
 var reselect = require('reselect');
 var invariant = _interopDefault(require('invariant'));
 require('@babel/runtime/helpers/objectWithoutProperties');
-var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
 var _asyncToGenerator = _interopDefault(require('@babel/runtime/helpers/asyncToGenerator'));
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
-var _createSuper = _interopDefault(require('@babel/runtime/helpers/createSuper'));
 var _inherits = _interopDefault(require('@babel/runtime/helpers/inherits'));
+var _createSuper = _interopDefault(require('@babel/runtime/helpers/createSuper'));
+var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
+var reduxSaga = require('redux-saga');
 var hoistNonReactStatics = _interopDefault(require('hoist-non-react-statics'));
 
 var _HOC_MAIN_CLIENT_SIDE, _HOC_MAIN_SERVER_SIDE;
@@ -133,44 +134,44 @@ var IDS = 'id';
 var API_TASK_CONFIG_KEYS = {
   TASK: {
     KEY: 'task',
-    INFINITE_DATA_HANDLER: _objectSpread({}, COMMON_TASKS, {
+    INFINITE_DATA_HANDLER: _objectSpread(_objectSpread({}, COMMON_TASKS), {}, {
       LIMIT: 'limit',
       IS_APPEND_DATA_ON_TOP: 'isAppendTop',
       SET_INFINITE_END_KEY_TRUE_OR_FALSE: 'setInfiniteEnd',
       UPDATE_CALLBACK: UPDATE_CALLBACK
     }),
-    DATA_HANDLER: _objectSpread({}, COMMON_TASKS, {
+    DATA_HANDLER: _objectSpread(_objectSpread({}, COMMON_TASKS), {}, {
       UPDATE_CALLBACK: UPDATE_CALLBACK
     }),
-    DELETE_DATA_HANDLER: _objectSpread({}, COMMON_TASKS, {
+    DELETE_DATA_HANDLER: _objectSpread(_objectSpread({}, COMMON_TASKS), {}, {
       ID_REFERENCE_KEY: ID_REFERENCE_KEY,
       IDS: IDS
     }),
-    UPDATE_DATA_HANDLER: _objectSpread({}, COMMON_TASKS, {
+    UPDATE_DATA_HANDLER: _objectSpread(_objectSpread({}, COMMON_TASKS), {}, {
       ID_REFERENCE_KEY: ID_REFERENCE_KEY,
       IDS: IDS,
       UPDATE_CALLBACK: UPDATE_CALLBACK,
       DONT_UPDATE_RESPONSE_DATA: DONT_UPDATE_RESPONSE_DATA
     }),
-    UPDATE_DATA_KEY_HANDLER: _objectSpread({}, COMMON_TASKS, {
+    UPDATE_DATA_KEY_HANDLER: _objectSpread(_objectSpread({}, COMMON_TASKS), {}, {
       ID_REFERENCE_KEY: ID_REFERENCE_KEY,
       IDS: IDS,
       UPDATE_CALLBACK: UPDATE_CALLBACK,
       DONT_UPDATE_RESPONSE_DATA: DONT_UPDATE_RESPONSE_DATA
     }),
-    DELETE_DATA_KEY_HANDLER: _objectSpread({}, COMMON_TASKS, {
+    DELETE_DATA_KEY_HANDLER: _objectSpread(_objectSpread({}, COMMON_TASKS), {}, {
       ID_REFERENCE_KEY: ID_REFERENCE_KEY,
       IDS: IDS,
       UPDATE_CALLBACK: UPDATE_CALLBACK,
       DELETE_KEYS_ARRAY: 'deleteKey'
     }),
-    TOGGLE_DATA_KEY_HANDLER: _objectSpread({}, COMMON_TASKS, {
+    TOGGLE_DATA_KEY_HANDLER: _objectSpread(_objectSpread({}, COMMON_TASKS), {}, {
       ID_REFERENCE_KEY: ID_REFERENCE_KEY,
       IDS: IDS,
       UPDATE_CALLBACK: UPDATE_CALLBACK,
       TOGGLE_KEYS_ARRAY: 'toggleKey'
     }),
-    SPLICE_DATA_HANDLER: _objectSpread({}, COMMON_TASKS, {
+    SPLICE_DATA_HANDLER: _objectSpread(_objectSpread({}, COMMON_TASKS), {}, {
       UPDATE_CALLBACK: UPDATE_CALLBACK,
       SPLICE_VALUE_ARRAY: 'spliceKey'
     }),
@@ -1098,7 +1099,7 @@ var safe = nullcheck;
 var getData = function getData(data, def) {
   var loader = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
   var filter = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
-  return _objectSpread({}, safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.')), {}), {
+  return _objectSpread(_objectSpread({}, safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.')), {})), {}, {
     data: safe(data, ".data".concat(filter.length ? '.' : '').concat(filter.join('.')).concat(filter.length ? '.data' : ''), def),
     loader: safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.'), ".loading.status"), typeof loader !== 'boolean' ? false : loader),
     lastUpdated: safe(data, "".concat(filter.length ? '.data.' : '').concat(filter.join('.'), ".lastUpdated")),
@@ -1163,10 +1164,10 @@ var useQuery = function useQuery() {
   var exeuteRequiredData = React.useCallback(function (_data) {
     var e = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var initialData = (e.requiredKey || []).reduce(function (acc, _reqKey) {
-      return _objectSpread({}, acc, {}, _reqKey && typeOf(_reqKey.key || _reqKey) === 'string' ? typeOf(_reqKey) === 'string' ? _defineProperty({}, _reqKey, undefined) : _defineProperty({}, _reqKey.key, _reqKey.default) : {});
+      return _objectSpread(_objectSpread({}, acc), _reqKey && typeOf(_reqKey.key || _reqKey) === 'string' ? typeOf(_reqKey) === 'string' ? _defineProperty({}, _reqKey, undefined) : _defineProperty({}, _reqKey.key, _reqKey.default) : {});
     }, {});
     return e && e.requiredKey && Array.isArray(e.requiredKey) && e.requiredKey.length > 0 && typeOf(_data) === 'object' ? e.requiredKey.reduce(function (acc, _reqKey) {
-      return _objectSpread({}, acc, {}, _reqKey && typeOf(_reqKey.key || _reqKey) === 'string' ? _defineProperty({}, _reqKey.key || _reqKey, typeOf(_data[_reqKey.key || _reqKey]) !== undefined ? _data[_reqKey.key || _reqKey] : _reqKey.default) : {});
+      return _objectSpread(_objectSpread({}, acc), _reqKey && typeOf(_reqKey.key || _reqKey) === 'string' ? _defineProperty({}, _reqKey.key || _reqKey, typeOf(_data[_reqKey.key || _reqKey]) !== undefined ? _data[_reqKey.key || _reqKey] : _reqKey.default) : {});
     }, _objectSpread({}, initialData)) : e && e.requiredKey ? _data || _objectSpread({}, initialData) : _data;
   }, [refreshKey]);
 
@@ -1192,7 +1193,7 @@ var useQuery = function useQuery() {
     };
 
     return Array.isArray(ee.query) ? ee.query.reduce(function (acc, _query) {
-      return acc.concat([_getDataFunc(_objectSpread({}, ee, {
+      return acc.concat([_getDataFunc(_objectSpread(_objectSpread({}, ee), {}, {
         query: _query.key || _query,
         default: _query.default || undefined
       }))]);
@@ -1421,8 +1422,8 @@ var useQuery = function useQuery() {
       if (typeOf(array) === 'object' && !array.key && array.requiredKey) {
         if (Array.isArray(array.requiredKey) && array.requiredKey.length) return {
           data: array.requiredKey.reduce(function (acc, curr, i) {
-            if (typeOf(curr) === 'object') return _objectSpread({}, acc, _defineProperty({}, curr, rest[i] === undefined ? curr && curr.default : rest[i]));
-            return _objectSpread({}, acc, _defineProperty({}, curr, rest[i]));
+            if (typeOf(curr) === 'object') return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, curr, rest[i] === undefined ? curr && curr.default : rest[i]));
+            return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, curr, rest[i]));
           }, {})
         };
         return {
@@ -1431,7 +1432,7 @@ var useQuery = function useQuery() {
       }
 
       var _stateObj = selectReducerKey.reduce(function (acc, curr, i) {
-        return _objectSpread({}, acc, _defineProperty({}, curr, rest[i]));
+        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, curr, rest[i]));
       }, {});
 
       return execute(_stateObj);
@@ -1558,7 +1559,7 @@ var toPromise = function toPromise(action) {
   var isReject = arguments.length > 2 ? arguments[2] : undefined;
   if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined') checkKeyWithMessage(config, 'object', "toPromise() : Expected a config (second parameter) to be object");
   return new Promise(function (resolve, reject) {
-    return action(_objectSpread({}, config, {
+    return action(_objectSpread(_objectSpread({}, config), {}, {
       resolve: resolve,
       reject: reject,
       isReject: isReject
@@ -1576,7 +1577,7 @@ var toPromiseFunction = function toPromiseFunction(action) {
   return function (config, isReject) {
     if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined') checkKeyWithMessage(config, 'object', "toPromise() : Expected a config (first parameter) to be object");
     return new Promise(function (resolve, reject) {
-      return action(_objectSpread({}, config, {
+      return action(_objectSpread(_objectSpread({}, config), {}, {
         resolve: resolve,
         reject: reject,
         isReject: isReject
@@ -1638,10 +1639,10 @@ function hashArgs() {
  */
 
 
-function useStaleRefresh(fn, name) // initialLoadingstate = true,
-{
+function useStaleRefresh(fn, name) {
   var arg = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var initial = arguments.length > 3 ? arguments[3] : undefined;
+  var initial // initialLoadingstate = true,
+  = arguments.length > 3 ? arguments[3] : undefined;
   var prevArgs = React.useRef(null);
 
   var _useState5 = React.useState(null),
@@ -1663,7 +1664,7 @@ function useStaleRefresh(fn, name) // initialLoadingstate = true,
     toPromise(fn, Object.assign({}, args, CACHE[cacheID] && !loader ? {
       initialCallData: CACHE[cacheID]
     } : {}, clearData ? {
-      task: args.task ? _objectSpread({}, args.task, {
+      task: args.task ? _objectSpread(_objectSpread({}, args.task), {}, {
         clearDataOnStart: true
       }) : {
         clearDataOnStart: true
@@ -1789,13 +1790,6 @@ var useResetOnlyApiEndPointsState = function useResetOnlyApiEndPointsState(reduc
   return _callback;
 };
 
-var CHANNEL_END_TYPE = '@@redux-saga/CHANNEL_END';
-var END = {
-  type: CHANNEL_END_TYPE
-};
-
-if (process.env.NODE_ENV !== 'production') ;
-
 function withReduxSaga() {
   var BaseComponent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -1850,23 +1844,24 @@ function withReduxSaga() {
                     break;
                   }
 
-                  store.dispatch(END);
-
-                  if (!store.sagaTask.toPromise) {
-                    _context.next = 15;
+                  if (!(typeof store.sagaTask.toPromise === 'function')) {
+                    _context.next = 14;
                     break;
                   }
 
-                  _context.next = 13;
+                  _context.next = 12;
                   return store.sagaTask.toPromise();
 
-                case 13:
-                  _context.next = 17;
+                case 12:
+                  _context.next = 16;
                   break;
 
-                case 15:
-                  _context.next = 17;
+                case 14:
+                  _context.next = 16;
                   return store.sagaTask.done;
+
+                case 16:
+                  store.dispatch(reduxSaga.END);
 
                 case 17:
                   return _context.abrupt("return", pageProps);
@@ -2308,7 +2303,7 @@ function injectSagaFactory(store, isValid) {
     var args = arguments.length > 2 ? arguments[2] : undefined;
     if (!isValid) checkStore(store);
 
-    var newDescriptor = _objectSpread({}, descriptor, {
+    var newDescriptor = _objectSpread(_objectSpread({}, descriptor), {}, {
       mode: descriptor.mode || DAEMON
     });
 
@@ -2329,7 +2324,7 @@ function injectSagaFactory(store, isValid) {
 
     if (!hasSaga || hasSaga && mode !== DAEMON && mode !== ONCE_TILL_UNMOUNT) {
       /* eslint-disable no-param-reassign */
-      store.injectedSagas[key] = _objectSpread({}, newDescriptor, {
+      store.injectedSagas[key] = _objectSpread(_objectSpread({}, newDescriptor), {}, {
         task: store.runSaga(saga, args)
       });
       /* eslint-enable no-param-reassign */
