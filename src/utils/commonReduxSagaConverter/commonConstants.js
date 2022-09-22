@@ -298,6 +298,17 @@ const API_END_POINTS_CONFIG_DEFAULT_VALUE = {
   SAGA_EFFECT: 'latest',
 };
 
+export const API_METHODS = {
+  GET: 'get',
+  REQUEST: 'request',
+  DELETE: 'delete',
+  HEAD: 'head',
+  OPTIONS: 'options',
+  POST: 'post',
+  PUT: 'put',
+  PATCH: 'patch',
+};
+
 export const commonConstants = {
   API_END_POINTS_CONFIG_DEFAULT_VALUE,
   API_END_POINTS_CONFIG_KEYS,

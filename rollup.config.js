@@ -66,6 +66,27 @@ export default [
       }),
     ],
   },
+  {
+    input: 'src/constants.js',
+    output: { file: 'constants/index.js', format: 'cjs', indent: false },
+    external: makeExternalPredicate([
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {}),
+    ]),
+    plugins: [
+      nodeResolve({
+        extensions,
+      }),
+      // typescript({ useTsconfigDeclarationDir: true }),
+      babel({
+        extensions,
+        plugins: [
+          ['@babel/plugin-transform-runtime', { version: babelRuntimeVersion }],
+        ],
+        runtimeHelpers: true,
+      }),
+    ],
+  },
 
   // ES
   // {
