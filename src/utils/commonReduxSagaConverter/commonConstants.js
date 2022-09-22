@@ -10,6 +10,9 @@ export const TAKE_EVERY = 'every';
 
 export const REDUCER_BASE_PATH = 'app/containers/';
 
+export const IS_DEBOUNCE_API_CALL = 'is_debounce_api_call';
+export const DEBOUNCE_API_CALL_DELAY_IN_MS = 'debounce_api_call_delay';
+
 export const ON_CANCEL_ERROR = 'API_CANCEL_ERROR';
 export const ON_ERROR = 'ERROR';
 export const ON_SUCCESS = 'SUCCESS';
@@ -276,6 +279,9 @@ const API_END_POINTS_CONFIG_KEYS = {
   API_RESPONSE_ERROR_STATUS_CODE_KEY: 'errorStatusKey',
   API_RESPONSE_ERROR_MESSAGE_KEY: 'errorMessageKey',
   API_ERROR_HANDLER_STATUS_CODES: 'errorHandlerStatusCode',
+  DEBOUNCE_API_CALL_DELAY_IN_MS,
+  IS_DEBOUNCE_API_CALL,
+  SAGA_EFFECT: 'effect',
 };
 const API_END_POINTS_CONFIG_DEFAULT_VALUE = {
   API_URL: undefined,
@@ -289,6 +295,7 @@ const API_END_POINTS_CONFIG_DEFAULT_VALUE = {
   API_RESPONSE_ERROR_STATUS_CODE_KEY: '',
   API_RESPONSE_ERROR_MESSAGE_KEY: '',
   API_ERROR_HANDLER_STATUS_CODES: [],
+  SAGA_EFFECT: 'latest',
 };
 
 export const commonConstants = {

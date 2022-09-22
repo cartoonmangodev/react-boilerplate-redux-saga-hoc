@@ -13,6 +13,9 @@ import {
   race,
   take,
   takeLatest,
+  fork,
+  delay as sagaDelay,
+  // debounce,
 } from 'redux-saga/effects';
 // import isFunction from 'lodash/isFunction';
 // import isObject from 'lodash/isObject';
@@ -24,6 +27,10 @@ import Axios from '../../config/axios';
 import { typeOf } from '../helpers';
 // import { headers } from '../../../utils/constants';
 import * as commonActions from './commonActions';
+import {
+  DEBOUNCE_API_CALL_DELAY_IN_MS,
+  IS_DEBOUNCE_API_CALL,
+} from './commonConstants';
 // import { ON_UNMOUNT } from './commonConstants';
 import CustomError from '../customError';
 const headers = '';
@@ -36,8 +43,35 @@ function* loaderGenerator({ type, commonData }) {
     }),
   );
 }
-
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+const debounce = (ms, pattern, task, isEvery, ...args) =>
+  fork(function*() {
+    let taskID;
+    while (true) {
+      let action = yield take(pattern);
+
+      while (true) {
+        const { debounced, latestAction } = yield race({
+          debounced: sagaDelay(ms),
+          latestAction: take(pattern),
+        });
+
+        if (debounced) {
+          if (
+            taskID &&
+            typeof taskID.cancel === 'function' &&
+            !taskID.isCancelled() &&
+            !isEvery
+          )
+            taskID.cancel();
+          taskID = yield fork(task, ...args, action);
+          break;
+        }
+
+        action = latestAction;
+      }
+    }
+  });
 
 const checkKey = (key, name, dataType) => {
   invariant(
@@ -806,7 +840,17 @@ export default function({
   }
 
   const generatorPattern = Object.keys(actionType).map(pattern =>
-    (actionType[pattern].effect || takeLatest)(pattern, commonGenerator),
+    actionType[pattern].api &&
+    actionType[pattern].api[IS_DEBOUNCE_API_CALL] &&
+    actionType[pattern].api[DEBOUNCE_API_CALL_DELAY_IN_MS] > 0 &&
+    typeof debounce === 'function'
+      ? debounce(
+          actionType[pattern].api[DEBOUNCE_API_CALL_DELAY_IN_MS],
+          pattern,
+          commonGenerator,
+          !!actionType[pattern].effect,
+        )
+      : (actionType[pattern].effect || takeLatest)(pattern, commonGenerator),
   );
   return [generatorPattern, commonGenerator];
 }
