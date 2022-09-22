@@ -208,6 +208,7 @@ const API_TASK_CONFIG_KEYS = {
   DONT_UPDATE_REUCER: 'dontUpdateReducer',
   EXECUTE_UPDATE_STATE_CALLBACK_ON_ERROR: 'excuteUpdateStateCallbackOnError',
   UPDATE_STATE_DATA_REDUCER_KEYS: 'updateDataReducerKey',
+  SET_PROXY_FOR: 'proxyFor',
   REQUEST: {
     KEY: 'request',
     ASYNC_FUNCTION: 'asyncFunction',

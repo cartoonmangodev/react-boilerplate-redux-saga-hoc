@@ -211,7 +211,6 @@ export const COMMON_REDUCER_HANDLER = (action, handlers) => {
       error: { data: errorData = {} } = {},
     } = {},
   } = action;
-  // console.log(rest, 'common reducer handler');
   const filter = _CheckFilter(Filter);
   const commonHandler = COMMON_HANDLER.bind(null, {
     handlers,
@@ -257,12 +256,14 @@ export const DEFAULT_REDUCER_HANDLER = ({
         updateStateCallbackOnError,
         tasks,
         updateDataReducerKey,
+        proxyFor: _proxyType,
         _errortask,
       } = {},
       error: { data: errorData = {}, status } = {},
     } = {},
   } = action;
   let DATA = state;
+  const _ACTION_TYPE = _proxyType || type;
   const _method = (Array.isArray(method)
     ? method
     : [method, _errortask ? ON_SUCCESS : null]
@@ -295,28 +296,17 @@ export const DEFAULT_REDUCER_HANDLER = ({
               _updateDataReducerKey.length > 0
             ) {
               for (let l = 0; l < _updateDataReducerKey.length; l += 1) {
-                DATA = newObject(
-                  DATA,
-                  ({ [_updateDataReducerKey[l] || type]: Data }) => ({
-                    [_updateDataReducerKey[l] || type]: _commonHandler(
-                      Data,
-                      state,
-                      _updateDataReducerKey[l] || type,
-                    ),
-                  }),
-                );
+                const ACTION_TYPE =
+                  _updateDataReducerKey[l] || _proxyType || type;
+                DATA = newObject(DATA, ({ [ACTION_TYPE]: Data }) => ({
+                  [ACTION_TYPE]: _commonHandler(Data, state, ACTION_TYPE),
+                }));
               }
             } else {
-              DATA = newObject(
-                DATA,
-                ({ [_updateDataReducerKey || type]: Data }) => ({
-                  [_updateDataReducerKey || type]: _commonHandler(
-                    Data,
-                    state,
-                    _updateDataReducerKey || type,
-                  ),
-                }),
-              );
+              const ACTION_TYPE = _updateDataReducerKey || _proxyType || type;
+              DATA = newObject(DATA, ({ [ACTION_TYPE]: Data }) => ({
+                [ACTION_TYPE]: _commonHandler(Data, state, ACTION_TYPE),
+              }));
             }
           }
           updatedState = DATA;
@@ -325,32 +315,24 @@ export const DEFAULT_REDUCER_HANDLER = ({
           updateDataReducerKey.length > 0
         ) {
           for (let j = 0; j < updateDataReducerKey.length; j += 1) {
-            DATA = newObject(
-              DATA,
-              ({ [updateDataReducerKey[j] || type]: Data }) => ({
-                [updateDataReducerKey[j] || type]: commonHandler(
-                  Data,
-                  state,
-                  updateDataReducerKey[j] || type,
-                ),
-              }),
-            );
+            const ACTION_TYPE = updateDataReducerKey[j] || _proxyType || type;
+            DATA = newObject(DATA, ({ [ACTION_TYPE]: Data }) => ({
+              [ACTION_TYPE]: commonHandler(Data, state, ACTION_TYPE),
+            }));
           }
           updatedState = DATA;
         } else {
-          updatedState = newObject(
-            DATA,
-            ({ [updateDataReducerKey || type]: Data }) => ({
-              [updateDataReducerKey || type]: commonHandler(Data, state, type),
-            }),
-          );
+          const ACTION_TYPE = updateDataReducerKey || _proxyType || type;
+          updatedState = newObject(DATA, ({ [ACTION_TYPE]: Data }) => ({
+            [ACTION_TYPE]: commonHandler(Data, state, ACTION_TYPE),
+          }));
         }
         DATA = updateStateCallback
           ? updateStateCallback({
               state: updatedState,
               data: successData,
               type: SUCCESS,
-              key: type,
+              reducerkey: _ACTION_TYPE,
               status: status || rest.statusCode,
               statusCode: rest.statusCode,
             }) || updatedState
@@ -358,8 +340,9 @@ export const DEFAULT_REDUCER_HANDLER = ({
         break;
       }
       case ON_ERROR: {
-        const updatedState = newObject(DATA, ({ [type]: Data }) => ({
-          [type]: newObject(Data, commmonErrorHandler()),
+        const ACTION_TYPE = _proxyType || type;
+        const updatedState = newObject(DATA, ({ [ACTION_TYPE]: Data }) => ({
+          [ACTION_TYPE]: newObject(Data, commmonErrorHandler()),
         }));
         DATA =
           updateStateCallback &&
@@ -369,7 +352,7 @@ export const DEFAULT_REDUCER_HANDLER = ({
                 state: updatedState,
                 data: successData,
                 type: ERROR,
-                key: type,
+                reducerkey: _ACTION_TYPE,
                 error: errorData,
                 status: status || rest.statusCode,
                 statusCode: rest.statusCode,

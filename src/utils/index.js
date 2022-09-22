@@ -69,6 +69,7 @@ export const commmonStateHandler = ({
     payload: {
       task: { clearDataOnStart: clearData } = {},
       initialCallData: initialData,
+      proxyFor: _proxyFor,
     } = {},
   } = action;
   /** This action for after api gets success or failure  */
@@ -80,12 +81,15 @@ export const commmonStateHandler = ({
       status,
       customTask,
       payload: {
+        proxyFor: __proxyFor,
         filter: responseFilter,
         loader: customLoader,
         toast: customToast,
       } = {},
     } = {},
   } = action;
+  const ACTION_TYPE = _proxyFor || __proxyFor || type || action.type;
+  const ACTION_PROXY_TYPE = _proxyFor || __proxyFor || type;
   const loader = Object.keys(constants).includes(action.type);
   let State = newObject(state);
   if (
@@ -98,8 +102,8 @@ export const commmonStateHandler = ({
       (Array.isArray(method) ? method : [method]).includes(ON_LOADING))
   ) {
     if ((status || loader) && filter && filter.length > 0)
-      State = newState(({ [type || action.type]: obj }) => ({
-        [type || action.type]: newObject(
+      State = newState(({ [ACTION_TYPE]: obj }) => ({
+        [ACTION_TYPE]: newObject(
           obj,
           filterArrayToastEmptyHandler({
             isInfinite: task.name === INFINITE_DATA_HANDLER,
@@ -108,8 +112,8 @@ export const commmonStateHandler = ({
         ),
       }));
     else if (status || loader)
-      State = newState(({ [type || action.type]: obj }) => ({
-        [type || action.type]: newObject(obj, ({ toast = {} }) => ({
+      State = newState(({ [ACTION_TYPE]: obj }) => ({
+        [ACTION_TYPE]: newObject(obj, ({ toast = {} }) => ({
           toast: newObject(toast, {
             message: '',
             status: '',
@@ -126,8 +130,8 @@ export const commmonStateHandler = ({
         customLoader !== undefined &&
         (filter || responseFilter || []).length > 0)
     )
-      State = newObject(State, ({ [type || action.type]: obj }) => ({
-        [type || action.type]: newObject(
+      State = newObject(State, ({ [ACTION_TYPE]: obj }) => ({
+        [ACTION_TYPE]: newObject(
           obj,
           filterArrayloadingHandler({
             filter: (Array.isArray(filter || responseFilter) &&
@@ -146,8 +150,8 @@ export const commmonStateHandler = ({
         ),
       }));
     else
-      State = newObject(State, ({ [type || action.type]: obj }) => ({
-        [type || action.type]: newObject(obj, ({ data: _data }) => ({
+      State = newObject(State, ({ [ACTION_TYPE]: obj }) => ({
+        [ACTION_TYPE]: newObject(obj, ({ data: _data }) => ({
           loading: {
             status:
               customTask && customLoader !== undefined
@@ -171,15 +175,15 @@ export const commmonStateHandler = ({
   if (
     ([ON_SUCCESS, ON_ERROR].includes(method) &&
       // [200, 201, 400, 403, 404, 409, 500].includes(statusCode) &&
-      Object.keys(constants).includes(type) &&
+      Object.keys(constants).includes(ACTION_PROXY_TYPE) &&
       !customTask) ||
     (customToast &&
       customTask &&
       (Array.isArray(method) ? method : [method]).includes(ON_TOAST))
   ) {
     if (responseFilter && responseFilter.length > 0)
-      State = newObject(State, ({ [type]: obj }) => ({
-        [type]: newObject(
+      State = newObject(State, ({ [ACTION_PROXY_TYPE]: obj }) => ({
+        [ACTION_PROXY_TYPE]: newObject(
           obj,
           filterArrayToastHandler({
             statusCode,
@@ -187,7 +191,7 @@ export const commmonStateHandler = ({
               responseFilter,
             ],
             message,
-            type,
+            type: ACTION_PROXY_TYPE,
             ...(customToast &&
             customTask &&
             (Array.isArray(method) ? method : [method]).includes(ON_TOAST)
@@ -197,13 +201,13 @@ export const commmonStateHandler = ({
         ),
       }));
     else
-      State = newObject(State, ({ [type]: obj }) => ({
-        [type]: newObject(obj, {
+      State = newObject(State, ({ [ACTION_PROXY_TYPE]: obj }) => ({
+        [ACTION_PROXY_TYPE]: newObject(obj, {
           toast: {
             isError: ![200, 201].includes(statusCode),
             status: statusCode,
             message,
-            key: type,
+            key: ACTION_PROXY_TYPE,
             lastUpdated: generateTimeStamp(),
             ...(customToast &&
             customTask &&
