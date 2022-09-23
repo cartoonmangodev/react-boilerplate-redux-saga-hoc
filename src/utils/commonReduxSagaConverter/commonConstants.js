@@ -142,6 +142,7 @@ const UPDATE_CALLBACK = 'updateCallback';
 const ID_REFERENCE_KEY = 'key';
 const IDS = 'id';
 const API_TASK_CONFIG_KEYS = {
+  TASKS: 'tasks',
   TASK: {
     KEY: 'task',
     INFINITE_DATA_HANDLER: {
@@ -206,7 +207,6 @@ const API_TASK_CONFIG_KEYS = {
     },
     DONT_UPDATE_DATA_HANDLER: { ...COMMON_TASKS },
   },
-  TASKS: 'tasks',
   FILTER_ARRAY: 'filter',
   DONT_UPDATE_REUCER: 'dontUpdateReducer',
   EXECUTE_UPDATE_STATE_CALLBACK_ON_ERROR: 'excuteUpdateStateCallbackOnError',
@@ -309,11 +309,17 @@ export const API_METHODS = {
   PATCH: 'patch',
 };
 
+export const ENV = {
+  DEVELOPMENT: 'development',
+  PRODUCTION: 'production',
+};
+
 export const commonConstants = {
   API_END_POINTS_CONFIG_DEFAULT_VALUE,
   API_END_POINTS_CONFIG_KEYS,
   USE_QUERY_CONFIG_KEYS,
   API_TASK_CONFIG_KEYS,
+  ENVIRONMENT_TYPE: ENV,
   /* Don't Change any key */
   INFINITE_DATA_HANDLER,
   DATA_HANDLER,
