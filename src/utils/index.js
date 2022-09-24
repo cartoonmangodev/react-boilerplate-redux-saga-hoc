@@ -867,7 +867,7 @@ export const useMutation = reducerName => {
  *   const { data, status } = await toPromise(DEMP_API_CALL, { task: 'Data-Handler' });
  * }
  */
-export const toPromise = (action, config = {}, isReject) => {
+export const toPromise = (action, config = {}, isReject, dispatch) => {
   if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined')
     checkKeyWithMessage(
       config,
@@ -875,7 +875,9 @@ export const toPromise = (action, config = {}, isReject) => {
       `toPromise() : Expected a config (second parameter) to be object`,
     );
   return new Promise((resolve, reject) =>
-    action({ ...config, resolve, reject, isReject }),
+    typeof dispatch === 'function'
+      ? dispatch(action({ ...config, resolve, reject, isReject }))
+      : action({ ...config, resolve, reject, isReject }),
   );
 };
 /* example
@@ -884,7 +886,7 @@ export const toPromise = (action, config = {}, isReject) => {
  *   const { data, status } = await asyncFunction({ task: 'Data-Handler' });
  * }
  */
-export const toPromiseFunction = action => (config, isReject) => {
+export const toPromiseFunction = (action, dispatch) => (config, isReject) => {
   if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined')
     checkKeyWithMessage(
       config,
@@ -892,7 +894,9 @@ export const toPromiseFunction = action => (config, isReject) => {
       `toPromise() : Expected a config (first parameter) to be object`,
     );
   return new Promise((resolve, reject) =>
-    action({ ...config, resolve, reject, isReject }),
+    typeof dispatch === 'function'
+      ? dispatch(action({ ...config, resolve, reject, isReject }))
+      : action({ ...config, resolve, reject, isReject }),
   );
 };
 
@@ -908,7 +912,7 @@ export const toPromiseFunction = action => (config, isReject) => {
  *    };
  *    asyncfunc();
  */
-export const toPromiseAllFunction = (actions = []) => (
+export const toPromiseAllFunction = (actions = [], dispatch) => (
   config = [],
   defaultConfig = {},
 ) => {
@@ -925,8 +929,8 @@ export const toPromiseAllFunction = (actions = []) => (
   return Promise.all(
     actions.map(
       (action, i) =>
-        new Promise((resolve, reject) =>
-          action({
+        new Promise((resolve, reject) => {
+          const CONFIG = {
             ...((typeOf(config) === 'object'
               ? config
               : config[i] && config[i].config) ||
@@ -937,8 +941,11 @@ export const toPromiseAllFunction = (actions = []) => (
             isReject: !!(typeOf(config) === 'object'
               ? config.isReject || defaultConfig.isReject
               : (config[i] && config[i].isReject) || defaultConfig.isReject),
-          }),
-        ),
+          };
+          return typeof dispatch === 'function'
+            ? dispatch(action(CONFIG))
+            : action(CONFIG);
+        }),
     ),
   );
 };

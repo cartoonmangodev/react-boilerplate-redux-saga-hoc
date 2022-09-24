@@ -72,10 +72,12 @@ export default function configureStore(
   return store;
 }
 
-const nextStore = ({ saga, reducer }) => (
-  initialState = {},
-  { isServer, req = null } = {},
-) => {
+const nextStore = ({
+  saga,
+  reducer,
+  middlewares: _middlewares = [],
+  enhancers: _enhancers = [],
+}) => (initialState = {}, { isServer, req = null } = {}) => {
   let composeEnhancers = compose;
   const monitor = null;
   // if (typeof window !== "undefined")
@@ -105,9 +107,12 @@ const nextStore = ({ saga, reducer }) => (
   // Create the store with two middlewares
   // 1. sagaMiddleware: Makes redux-sagas work
   // 2. routerMiddleware: Syncs the location/URL path to the state
-  const middlewares = [sagaMiddleware];
+  const middlewares = [sagaMiddleware].concat(
+    _middlewares,
+    // isWeb ? [routerMiddleware(History)] : [],
+  );
 
-  const enhancers = [applyMiddleware(...middlewares)];
+  const enhancers = [applyMiddleware(...middlewares), ..._enhancers];
 
   const store = createStore(
     combineReducers(

@@ -215,6 +215,7 @@ export default ({
 
   if (useHocHook && !nextJS && !hookWithHoc) return _useHocHook;
   const hoc = WrapperComponent => {
+    if (!isMounted[reducerName]) isMounted[reducerName] = true;
     function WithHoc(props) {
       return <WrapperComponent {...commonProps} {...props} />;
     }
