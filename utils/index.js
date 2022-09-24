@@ -97,7 +97,7 @@ var HOC_MAIN_CONFIG_KEY = {
   USE_TYPE: USE_TYPE
 };
 var HOC_MAIN_CLIENT_SIDE_CONFIG_DEFAULT = (_HOC_MAIN_CLIENT_SIDE = {}, _defineProperty(_HOC_MAIN_CLIENT_SIDE, HANDLERS, []), _defineProperty(_HOC_MAIN_CLIENT_SIDE, NEXT_JS, false), _defineProperty(_HOC_MAIN_CLIENT_SIDE, USE_HOOK, false), _defineProperty(_HOC_MAIN_CLIENT_SIDE, USE_HOC_HOOK, true), _defineProperty(_HOC_MAIN_CLIENT_SIDE, HOOK_WITH_HOC, false), _defineProperty(_HOC_MAIN_CLIENT_SIDE, ALLOW_MAP_STATE_TO_PROPS, false), _defineProperty(_HOC_MAIN_CLIENT_SIDE, GET_INITIAL_PROPS_KEY, null), _defineProperty(_HOC_MAIN_CLIENT_SIDE, IS_DEVELOPMENT, false), _defineProperty(_HOC_MAIN_CLIENT_SIDE, USE_TYPE, FOR_INTERNAL_USE_ONLY), _HOC_MAIN_CLIENT_SIDE);
-var HOC_MAIN_SERVER_SIDE_CONFIG_DEFAULT = (_HOC_MAIN_SERVER_SIDE = {}, _defineProperty(_HOC_MAIN_SERVER_SIDE, HANDLERS, []), _defineProperty(_HOC_MAIN_SERVER_SIDE, NEXT_JS, true), _defineProperty(_HOC_MAIN_SERVER_SIDE, USE_HOOK, false), _defineProperty(_HOC_MAIN_SERVER_SIDE, USE_HOC_HOOK, false), _defineProperty(_HOC_MAIN_SERVER_SIDE, HOOK_WITH_HOC, false), _defineProperty(_HOC_MAIN_SERVER_SIDE, ALLOW_MAP_STATE_TO_PROPS, false), _defineProperty(_HOC_MAIN_SERVER_SIDE, GET_INITIAL_PROPS_KEY, GET_INITIAL_PROPS_DEFAULT), _defineProperty(_HOC_MAIN_SERVER_SIDE, IS_DEVELOPMENT, false), _defineProperty(_HOC_MAIN_SERVER_SIDE, USE_TYPE, FOR_INTERNAL_USE_ONLY), _HOC_MAIN_SERVER_SIDE);
+var HOC_MAIN_SERVER_SIDE_CONFIG_DEFAULT = (_HOC_MAIN_SERVER_SIDE = {}, _defineProperty(_HOC_MAIN_SERVER_SIDE, HANDLERS, []), _defineProperty(_HOC_MAIN_SERVER_SIDE, NEXT_JS, true), _defineProperty(_HOC_MAIN_SERVER_SIDE, USE_HOOK, false), _defineProperty(_HOC_MAIN_SERVER_SIDE, USE_HOC_HOOK, false), _defineProperty(_HOC_MAIN_SERVER_SIDE, HOOK_WITH_HOC, false), _defineProperty(_HOC_MAIN_SERVER_SIDE, ALLOW_MAP_STATE_TO_PROPS, false), _defineProperty(_HOC_MAIN_SERVER_SIDE, GET_INITIAL_PROPS_KEY, GET_INITIAL_PROPS_DEFAULT), _defineProperty(_HOC_MAIN_SERVER_SIDE, IS_DEVELOPMENT, false), _defineProperty(_HOC_MAIN_SERVER_SIDE, USE_TYPE, FOR_INTERNAL_USE_ONLY), _defineProperty(_HOC_MAIN_SERVER_SIDE, GET_DEFAULT_CONFIG, true), _HOC_MAIN_SERVER_SIDE);
 var API_END_POINTS = 'apiEndPoints';
 var INITIAL_STATE = 'initialState';
 var GET_DEFAULT_CONFIG = 'getDefaultConfig';
@@ -1569,9 +1569,14 @@ var useMutation = function useMutation(reducerName) {
 var toPromise = function toPromise(action) {
   var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var isReject = arguments.length > 2 ? arguments[2] : undefined;
+  var dispatch = arguments.length > 3 ? arguments[3] : undefined;
   if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined') checkKeyWithMessage(config, 'object', "toPromise() : Expected a config (second parameter) to be object");
   return new Promise(function (resolve, reject) {
-    return action(_objectSpread(_objectSpread({}, config), {}, {
+    return typeof dispatch === 'function' ? dispatch(action(_objectSpread(_objectSpread({}, config), {}, {
+      resolve: resolve,
+      reject: reject,
+      isReject: isReject
+    }))) : action(_objectSpread(_objectSpread({}, config), {}, {
       resolve: resolve,
       reject: reject,
       isReject: isReject
@@ -1585,11 +1590,15 @@ var toPromise = function toPromise(action) {
  * }
  */
 
-var toPromiseFunction = function toPromiseFunction(action) {
+var toPromiseFunction = function toPromiseFunction(action, dispatch) {
   return function (config, isReject) {
     if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined') checkKeyWithMessage(config, 'object', "toPromise() : Expected a config (first parameter) to be object");
     return new Promise(function (resolve, reject) {
-      return action(_objectSpread(_objectSpread({}, config), {}, {
+      return typeof dispatch === 'function' ? dispatch(action(_objectSpread(_objectSpread({}, config), {}, {
+        resolve: resolve,
+        reject: reject,
+        isReject: isReject
+      }))) : action(_objectSpread(_objectSpread({}, config), {}, {
         resolve: resolve,
         reject: reject,
         isReject: isReject
