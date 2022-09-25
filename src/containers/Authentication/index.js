@@ -183,7 +183,10 @@ export default ({
     const isInjected = useRef(false);
     if (useType !== FOR_INTERNAL_USE_ONLY) {
       showDepricatedMessage(reducerName);
-    } else if (!isMounted[reducerName] || isInjected.current || inject) {
+    } else if (
+      (!isMounted[reducerName] || isInjected.current || inject) &&
+      !nextJS
+    ) {
       if (!isMounted[reducerName] && isDevelopment)
         showInjectedMessage(reducerName);
       if (!isInjected.current && !inject) isInjected.current = true;
@@ -207,10 +210,6 @@ export default ({
 
   if (useHocHook && !nextJS && !hookWithHoc) return _useHocHook;
   const hoc = WrapperComponent => {
-    if (!isMounted[reducerName]) {
-      isMounted[reducerName] = true;
-      if (isDevelopment) showInjectedMessage(reducerName);
-    }
     function WithHoc(props) {
       return <WrapperComponent {...commonProps} {...props} />;
     }
@@ -235,14 +234,18 @@ export default ({
             [`${reducerName}_data`]: MakeSelectAuthenticationState(),
           });
 
-    const authenticationReducer = injectReducer(
-      {
-        key: reducerName,
-        reducer,
-      },
-      createReducer,
-    );
-    const authenticationSaga = injectSaga({ key: reducerName, saga });
+    const authenticationReducer = !isMounted[reducerName]
+      ? injectReducer(
+          {
+            key: reducerName,
+            reducer,
+          },
+          createReducer,
+        )
+      : undefined;
+    const authenticationSaga = !isMounted[reducerName]
+      ? injectSaga({ key: reducerName, saga })
+      : undefined;
     const withConnect = connect(
       useHook || !_mapStateToProps ? null : mapStateToProps,
       mapDispatchToProps(componentActions, componentData, reducerName),
@@ -279,11 +282,16 @@ export default ({
       showDepricatedMessage(reducerName);
       return WithHoc;
     }
-    return compose(
-      withConnect,
-      authenticationReducer,
-      authenticationSaga,
-    )(WithHoc);
+    if (!isMounted[reducerName]) {
+      isMounted[reducerName] = true;
+      if (isDevelopment) showInjectedMessage(reducerName);
+      return compose(
+        withConnect,
+        authenticationReducer,
+        authenticationSaga,
+      )(WithHoc);
+    }
+    return withConnect(WithHoc);
   };
   if (!nextJS && hookWithHoc && getDefaultConfig)
     return {
