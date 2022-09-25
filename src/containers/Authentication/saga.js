@@ -69,16 +69,6 @@ export const requestResponseHandler = ({ constants, sagaFunction }) =>
           requestParams,
         ),
       );
-      // return sagaFunction(
-      //   newObject(
-      //     {
-      //       type,
-      //       constants,
-      //       DEFAULT_SAGA_HANDLER,
-      //     },
-      //     requestParams,
-      //   ),
-      // );
     }
     switch (method) {
       case ON_REQUEST:
@@ -92,11 +82,11 @@ export const requestResponseHandler = ({ constants, sagaFunction }) =>
     //       case ON_SUCCESS: {
     //         if ([200].includes(successStatus))
     //           yield put(action.success({ data: payload }));
-    //         else return true; /** @param return true for stopping loader */
+    //         else return true; /* @param return true for stopping loader */
     //         break;
     //       }
     //       case ON_ERROR: {
-    //         return true; /** @param return true for stopping loader */
+    //         return true; /* @param return true for stopping loader */
     //       }
     //       case ON_FINALLY:
     //         break;
@@ -109,11 +99,11 @@ export const requestResponseHandler = ({ constants, sagaFunction }) =>
     //       case ON_SUCCESS: {
     //         if ([200].includes(successStatus))
     //           yield put(action.success({ data: payload }));
-    //         else return true; /** @param return true for stopping loader */
+    //         else return true; /* @param return true for stopping loader */
     //         break;
     //       }
     //       case ON_ERROR: {
-    //         return true; /** @param return true for stopping loader */
+    //         return true; /* @param return true for stopping loader */
     //       }
     //       case ON_FINALLY:
     //         break;
@@ -126,7 +116,7 @@ export const requestResponseHandler = ({ constants, sagaFunction }) =>
     //       case ON_SUCCESS:
     //         if ([200].includes(successStatus))
     //           yield put(action.success({ data: successData }));
-    //         else return true;
+    //         else return true; /* @param return true for stopping loader */
     //         break;
     //       default:
     //         return yield call(DEFAULT_SAGA_HANDLER);
@@ -137,7 +127,7 @@ export const requestResponseHandler = ({ constants, sagaFunction }) =>
     //     case ON_SUCCESS:
     //       if ([200].includes(successStatus))
     //         yield put(action.success({ data: { is_onboarded: true } }));
-    //       else return true;
+    //       else return true;  /* @param return true for stopping loader */
     //       break;
     //     default:
     //       return yield call(DEFAULT_SAGA_HANDLER);
@@ -179,7 +169,7 @@ export const requestResponseHandler = ({ constants, sagaFunction }) =>
     //   switch (method) {
     //     case ON_SUCCESS:
     //       if ([200].includes(successStatus)) yield put(action.success());
-    //       else return true;
+    //       else return true; /* @param return true for stopping loader */
     //       break;
     //     default:
     //       return yield call(DEFAULT_SAGA_HANDLER);
@@ -190,7 +180,7 @@ export const requestResponseHandler = ({ constants, sagaFunction }) =>
     //     case ON_SUCCESS:
     //       if ([200].includes(successStatus))
     //         yield put(action.success({ data: successData }));
-    //       else return true;
+    //       else return true; /* @param return true for stopping loader */
     //       break;
     //     default:
     //       return yield call(DEFAULT_SAGA_HANDLER);

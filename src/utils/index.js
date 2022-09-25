@@ -313,7 +313,232 @@ const initialRender = new Map();
 const previousCallbackData = new Map();
 const previousDependencyArrayData = new Map();
 const isPreviousDependencyArrayCheckPassed = new Map();
-// const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
+
+const exeuteRequiredData = (_data, e = {}) => {
+  const initialData = (e.requiredKey || []).reduce(
+    (acc, _reqKey) => ({
+      ...acc,
+      ...(_reqKey && typeOf(_reqKey.key || _reqKey) === 'string'
+        ? typeOf(_reqKey) === 'string'
+          ? { [_reqKey]: undefined }
+          : { [_reqKey.key]: _reqKey.default }
+        : {}),
+    }),
+    {},
+  );
+
+  return e &&
+    e.requiredKey &&
+    Array.isArray(e.requiredKey) &&
+    e.requiredKey.length > 0 &&
+    typeOf(_data) === 'object'
+    ? e.requiredKey.reduce(
+        (acc, _reqKey) => ({
+          ...acc,
+          ...(_reqKey && typeOf(_reqKey.key || _reqKey) === 'string'
+            ? {
+                [_reqKey.key || _reqKey]:
+                  typeOf(_data[_reqKey.key || _reqKey]) !== undefined
+                    ? _data[_reqKey.key || _reqKey]
+                    : _reqKey.default,
+              }
+            : {}),
+        }),
+        { ...initialData },
+      )
+    : e && e.requiredKey
+    ? _data || { ...initialData }
+    : _data;
+};
+const _checkFilter = e =>
+  e && e.filter
+    ? Array.isArray(e.filter)
+      ? e.filter
+      : typeof e.filter === 'string'
+      ? [e.filter]
+      : undefined
+    : undefined;
+
+const _getData = (ee = {}, isString, _state, name, array) => {
+  const state = _state || {};
+  const _getDataFunc = e => {
+    // const regex = `app\/containers\/${name}\/+.*?_CALL`;
+    const regex = REDUCER_BASE_PATH.concat(name, '/+.*?_CALL');
+    const isSearchMatched =
+      ((isString ? array : e.key) || '').search(regex) > -1;
+    return (typeof e.defaultDataFormat === 'boolean' ||
+    !isSearchMatched ||
+    !(isString ? array : e.key)
+    ? !e.defaultDataFormat || !isSearchMatched || !(isString ? array : e.key)
+    : false)
+      ? (isString
+        ? array
+        : e.key)
+        ? safe(
+            state,
+            `[${isString ? array : e.key}]${e.query ? e.query : ''}`,
+            e.default,
+          )
+        : // : name
+          // ? safe(state, `${e.query ? e.query : ''}`, e.default)
+          safe(state, `${e.query ? e.query : ''}`, e.default)
+      : safe(
+          getData(
+            safe(state, `[${isString ? array : e.key}]`),
+            e.query ? undefined : e.default || undefined,
+            e.initialLoaderState || false,
+            _checkFilter(e),
+            e.dataQuery,
+          ),
+          `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
+          e.query
+            ? e.default !== undefined
+              ? e.default
+              : undefined
+            : undefined,
+        );
+  };
+  return Array.isArray(ee.query)
+    ? ee.query.reduce(
+        (acc, _query) =>
+          acc.concat([
+            _getDataFunc({
+              ...ee,
+              query: _query.key || _query,
+              default: _query.default || undefined,
+            }),
+          ]),
+        [],
+      )
+    : _getDataFunc(ee);
+};
+const _GetData = (_state, name, array, config) => {
+  const state = _state || {};
+  let _data = {};
+  if (
+    name &&
+    ((Array.isArray(array) && array.length > 0) ||
+      (typeOf(array) === 'object' && Object.keys(array).length > 0))
+  ) {
+    // eslint-disable-next-line consistent-return
+    // eslint-disable-next-line no-underscore-dangle
+    _data = (typeOf(array) === 'object' ? [array] : array).reduce(
+      (acc, e) => {
+        if (typeOf(e) === 'object') {
+          if (typeOf(array) === 'object')
+            return exeuteRequiredData(
+              _getData(e, undefined, state, name, array),
+              e,
+            );
+          const _arr = acc.slice();
+          _arr.push(
+            exeuteRequiredData(_getData(e, undefined, state, name, array), e),
+          );
+          return _arr;
+        }
+        // Below condition ( one config for all the keys )
+        if (typeOf(e) === 'string' && typeOf(config) === 'object') {
+          const _config = { key: e, ...config };
+          if (typeOf(array) === 'object')
+            return exeuteRequiredData(
+              _getData(_config, undefined, state, name, array),
+              _config,
+            );
+          const _arr = acc.slice();
+          _arr.push(
+            exeuteRequiredData(
+              _getData(_config, undefined, state, name, array),
+              _config,
+            ),
+          );
+          return _arr;
+        }
+        if (typeOf(array) === 'object') return safe(state, `[${e.key}]`);
+        const _arr = acc.slice();
+        _arr.push(safe(state, `[${e}]`));
+        return _arr;
+      },
+      typeOf(array) === 'object' ? {} : [],
+    );
+    // if()
+  } else if (typeof array === 'string' && config && typeOf(config) === 'array')
+    _data = config.reduce(
+      (acc, _config) => [
+        ...acc,
+        exeuteRequiredData(
+          _getData(_config, true, state, name, array),
+          _config,
+        ),
+      ],
+      [],
+    );
+  else if (typeof array === 'string')
+    _data = exeuteRequiredData(
+      _getData(config, true, state, name, array),
+      config,
+    );
+  else if (name) _data = state;
+  else _data = state || {};
+  return _data;
+};
+const _execute = (state, name, array, config, _key, callback) => {
+  let _queryData = previousData.get(_key);
+  const isPassed = isPreviousDependencyArrayCheckPassed.get(_key);
+  if (
+    (name,
+    config &&
+      config.dependencyArray &&
+      !Array.isArray(config.dependencyArray)) &&
+    !isPassed
+  ) {
+    invariant(
+      false,
+      `dependencyArray expected an array but got ${typeOf(
+        config.dependencyArray,
+      )}`,
+    );
+  } else if (
+    isPassed ||
+    (config && config.dependencyArray && Array.isArray(config.dependencyArray))
+  ) {
+    if (
+      !isPassed &&
+      config.dependencyArray.filter(e => typeof e !== 'string')[0]
+    )
+      invariant(false, 'dependencyArray must be array of string');
+    else {
+      if (!isPassed) isPreviousDependencyArrayCheckPassed.set(_key, true);
+      const _next = config.dependencyArray.map(_e => safe(state, _e));
+      const _previous = previousDependencyArrayData.get(_key);
+      previousDependencyArrayData.set(_key, _next);
+      if (isEqual(_previous, _next)) {
+        return {
+          isEqualCheck: true,
+          data: previousCallbackData.get(_key) || _queryData,
+        };
+      }
+    }
+  }
+  const _data = _GetData(state, name, array, config);
+  const _isEqual = isEqual(_data, _queryData);
+  if (!_isEqual) {
+    let callbackData;
+    previousData.set(_key, _data);
+    if (callback && typeof callback === 'function')
+      callbackData = callback(_data);
+    if (callbackData) {
+      _queryData = callbackData;
+      previousCallbackData.set(_key, callbackData);
+    } else {
+      previousCallbackData.set(_key, null);
+      _queryData = _data;
+    }
+  } else _queryData = previousCallbackData.get(_key) || _queryData;
+  previousData.set(_key, _data);
+  return {
+    data: _queryData,
+  };
+};
 export const useQuery = (
   _name = null,
   _array = [],
@@ -344,297 +569,10 @@ export const useQuery = (
   // const store = useStore();
   const [_key] = useState({});
 
-  const exeuteRequiredData = useCallback(
-    (_data, e = {}) => {
-      const initialData = (e.requiredKey || []).reduce(
-        (acc, _reqKey) => ({
-          ...acc,
-          ...(_reqKey && typeOf(_reqKey.key || _reqKey) === 'string'
-            ? typeOf(_reqKey) === 'string'
-              ? { [_reqKey]: undefined }
-              : { [_reqKey.key]: _reqKey.default }
-            : {}),
-        }),
-        {},
-      );
-
-      return e &&
-        e.requiredKey &&
-        Array.isArray(e.requiredKey) &&
-        e.requiredKey.length > 0 &&
-        typeOf(_data) === 'object'
-        ? e.requiredKey.reduce(
-            (acc, _reqKey) => ({
-              ...acc,
-              ...(_reqKey && typeOf(_reqKey.key || _reqKey) === 'string'
-                ? {
-                    [_reqKey.key || _reqKey]:
-                      typeOf(_data[_reqKey.key || _reqKey]) !== undefined
-                        ? _data[_reqKey.key || _reqKey]
-                        : _reqKey.default,
-                  }
-                : {}),
-            }),
-            { ...initialData },
-          )
-        : e && e.requiredKey
-        ? _data || { ...initialData }
-        : _data;
-    },
-    [refreshKey],
-  );
-
-  const _checkFilter = useCallback(
-    e =>
-      e && e.filter
-        ? Array.isArray(e.filter)
-          ? e.filter
-          : typeof e.filter === 'string'
-          ? [e.filter]
-          : undefined
-        : undefined,
-    [],
-  );
-
-  const _getData = useCallback(
-    (ee = {}, isString, _state) => {
-      const state = _state || {};
-      const _getDataFunc = e => {
-        // const regex = `app\/containers\/${name}\/+.*?_CALL`;
-        const regex = REDUCER_BASE_PATH.concat(name, '/+.*?_CALL');
-        const isSearchMatched =
-          ((isString ? array : e.key) || '').search(regex) > -1;
-        return (typeof e.defaultDataFormat === 'boolean' ||
-        !isSearchMatched ||
-        !(isString ? array : e.key)
-        ? !e.defaultDataFormat ||
-          !isSearchMatched ||
-          !(isString ? array : e.key)
-        : false)
-          ? (isString
-            ? array
-            : e.key)
-            ? safe(
-                state,
-                `[${isString ? array : e.key}]${e.query ? e.query : ''}`,
-                e.default,
-              )
-            : // : name
-              // ? safe(state, `${e.query ? e.query : ''}`, e.default)
-              safe(state, `${e.query ? e.query : ''}`, e.default)
-          : safe(
-              getData(
-                safe(state, `[${isString ? array : e.key}]`),
-                e.query ? undefined : e.default || undefined,
-                e.initialLoaderState || false,
-                _checkFilter(e),
-                e.dataQuery,
-              ),
-              `${e.query && typeOf(e.query) === 'string' ? e.query : ''}`,
-              e.query
-                ? e.default !== undefined
-                  ? e.default
-                  : undefined
-                : undefined,
-            );
-      };
-      return Array.isArray(ee.query)
-        ? ee.query.reduce(
-            (acc, _query) =>
-              acc.concat([
-                _getDataFunc({
-                  ...ee,
-                  query: _query.key || _query,
-                  default: _query.default || undefined,
-                }),
-              ]),
-            [],
-          )
-        : _getDataFunc(ee);
-    },
-    [refreshKey],
-  );
-
-  const _GetData = useCallback(
-    _state => {
-      const state = _state || {};
-      let _data = {};
-      if (
-        name &&
-        ((Array.isArray(array) && array.length > 0) ||
-          (typeOf(array) === 'object' && Object.keys(array).length > 0))
-      ) {
-        // eslint-disable-next-line consistent-return
-        // eslint-disable-next-line no-underscore-dangle
-        _data = (typeOf(array) === 'object' ? [array] : array).reduce(
-          (acc, e) => {
-            if (typeOf(e) === 'object') {
-              if (typeOf(array) === 'object')
-                return exeuteRequiredData(_getData(e, undefined, state), e);
-              const _arr = acc.slice();
-              _arr.push(exeuteRequiredData(_getData(e, undefined, state), e));
-              return _arr;
-            }
-            // Below condition ( one config for all the keys )
-            if (typeOf(e) === 'string' && typeOf(config) === 'object') {
-              const _config = { key: e, ...config };
-              if (typeOf(array) === 'object')
-                return exeuteRequiredData(
-                  _getData(_config, undefined, state),
-                  _config,
-                );
-              const _arr = acc.slice();
-              _arr.push(
-                exeuteRequiredData(
-                  _getData(_config, undefined, state),
-                  _config,
-                ),
-              );
-              return _arr;
-            }
-            if (typeOf(array) === 'object') return safe(state, `[${e.key}]`);
-            const _arr = acc.slice();
-            _arr.push(safe(state, `[${e}]`));
-            return _arr;
-          },
-          typeOf(array) === 'object' ? {} : [],
-        );
-        // if()
-      } else if (
-        typeof array === 'string' &&
-        config &&
-        typeOf(config) === 'array'
-      )
-        _data = config.reduce(
-          (acc, _config) => [
-            ...acc,
-            exeuteRequiredData(_getData(_config, true, state), _config),
-          ],
-          [],
-        );
-      else if (typeof array === 'string')
-        _data = exeuteRequiredData(_getData(config, true, state), config);
-      else if (name) _data = state;
-      else _data = state || {};
-      return _data;
-    },
-    [refreshKey],
-  );
-
-  const execute = useCallback(
-    state => {
-      let _queryData = previousData.get(_key);
-      const isPassed = isPreviousDependencyArrayCheckPassed.get(_key);
-      if (
-        (name,
-        config &&
-          config.dependencyArray &&
-          !Array.isArray(config.dependencyArray)) &&
-        !isPassed
-      ) {
-        invariant(
-          false,
-          `dependencyArray expected an array but got ${typeOf(
-            config.dependencyArray,
-          )}`,
-        );
-      } else if (
-        isPassed ||
-        (config &&
-          config.dependencyArray &&
-          Array.isArray(config.dependencyArray))
-      ) {
-        if (
-          !isPassed &&
-          config.dependencyArray.filter(e => typeof e !== 'string')[0]
-        )
-          invariant(false, 'dependencyArray must be array of string');
-        else {
-          if (!isPassed) isPreviousDependencyArrayCheckPassed.set(_key, true);
-          const _next = config.dependencyArray.map(_e => safe(state, _e));
-          const _previous = previousDependencyArrayData.get(_key);
-          previousDependencyArrayData.set(_key, _next);
-          if (isEqual(_previous, _next)) {
-            return {
-              isEqualCheck: true,
-              data: previousCallbackData.get(_key) || _queryData,
-            };
-          }
-        }
-      }
-      // const state = safe(store, `.getState()`);
-      // eslint-disable-next-line no-underscore-dangle
-      const _data = _GetData(state);
-      const _isEqual = isEqual(_data, _queryData);
-      if (!_isEqual) {
-        // previousData[`${key || name}_${_key}`] = _data;
-        let callbackData;
-        previousData.set(
-          _key,
-          _data,
-          // _data && typeof _data === 'object'
-          //   ? JSON.parse(JSON.stringify(_data))
-          //   : _data,
-        );
-        if (callback && typeof callback === 'function')
-          callbackData = callback(_data);
-        if (callbackData) {
-          _queryData = callbackData;
-          previousCallbackData.set(_key, callbackData);
-        } else {
-          previousCallbackData.set(_key, null);
-          _queryData = _data;
-        }
-      } else _queryData = previousCallbackData.get(_key) || _queryData;
-      previousData.set(_key, _data);
-      return {
-        data: _queryData,
-        // previousData: previousCallbackData.get(_key) || previousData.get(_key),
-      };
-    },
-    [refreshKey],
-  );
-  // const [executedData, setData] = useState(() => execute(store.getState()));
-  // useEffect(() => {
-  //   const unSubscribe = store.subscribe(execute);
-  //   return () => {
-  //     delete previousData.delete(_key);
-  //     unSubscribe();
-  //   };
-  // }, []);
-  // useEffect(() => {
-  //   previousData.set(_key, {});
-  //   if (
-  //     !isEqual(previousConfig.get(_key), {
-  //       array,
-  //       config,
-  //     })
-  //   ) {
-  //     previousConfig.set(_key, {
-  //       array,
-  //       config,
-  //     });
-  //     execute();
-  //   }
-  // }, [config, array]);
   useEffect(() => {
     previousData.set(_key, {});
     initialRender.set(_key, true);
-    // const unSubscribe = store.subscribe(() => {
-    //   const _data2 = execute(store.getState());
-    //   if (
-    //     (!_data2.isEqualCheck || initialRender.get(_key)) &&
-    //     typeof callbackSuccess === 'function'
-    //   ) {
-    //     initialRender.set(_key, false);
-    //     callbackSuccess(_data2.data, _data2.previousData);
-    //   }
-    //   if (!_data2.isEqualCheck) {
-    //     setData(_data2);
-    //   }
-    // });
     return () => {
-      // unSubscribe();
       previousData.delete(_key);
       previousCallbackData.delete(_key);
       initialRender.delete(_key);
@@ -646,7 +584,6 @@ export const useQuery = (
       typeof e.isEqualCheck === 'undefined'
         ? isEqual(e.data, f.data)
         : e.isEqualCheck;
-    // const _isEqual = e.isEqualCheck ? true : isEqual(e.data, f.data);
     if (
       (!_isEqual || initialRender.get(_key)) &&
       typeof callbackSuccess === 'function'
@@ -725,9 +662,9 @@ export const useQuery = (
           (acc, curr, i) => ({ ...acc, [curr]: rest[i] }),
           {},
         );
-        return execute(_stateObj);
+        return _execute(_stateObj, name, array, config, _key, callback);
       }
-      return execute(rest[0]);
+      return _execute(rest[0], name, array, config, _key, callback);
     },
     [selectReducerKey, refreshKey],
   );
@@ -736,9 +673,9 @@ export const useQuery = (
     [executeSelector, selectState],
   );
   const _selectorData = useSelector(
-    // execute,
-    // createSelector(state => (!name ? state : state[name]), execute),
-    !name || !array ? execute : createdSelector,
+    !name || !array
+      ? state => _execute(state, name, array, config, _key, callback)
+      : createdSelector,
     !name || !array ? undefined : equalityCheckFunction,
   );
   return _selectorData.data;

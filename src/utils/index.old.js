@@ -1,18 +1,26 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable no-useless-escape */
 /* eslint-disable indent */
 /* eslint-disable camelcase */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { bindActionCreators } from 'redux';
-import { useStore, useDispatch, useSelector } from 'react-redux';
+import { useStore, useDispatch, useSelector, batch } from 'react-redux';
 import isEqual from 'fast-deep-equal';
-import { createSelector } from 'reselect';
+import {
+  createSelector,
+  // createSelectorCreator,
+  // defaultMemoize,
+} from 'reselect';
 import invariant from 'invariant';
 import {
   ON_ERROR,
   ON_SUCCESS,
   ON_LOADING,
   ON_TOAST,
+  INFINITE_DATA_HANDLER,
+  REDUCER_BASE_PATH,
 } from './commonReduxSagaConverter/commonConstants';
 import { newObject, generateTimeStamp, typeOf } from './helpers';
 import {
@@ -61,6 +69,7 @@ export const commmonStateHandler = ({
     payload: {
       task: { clearDataOnStart: clearData } = {},
       initialCallData: initialData,
+      proxyFor: _proxyFor,
     } = {},
   } = action;
   /** This action for after api gets success or failure  */
@@ -72,12 +81,15 @@ export const commmonStateHandler = ({
       status,
       customTask,
       payload: {
+        proxyFor: __proxyFor,
         filter: responseFilter,
         loader: customLoader,
         toast: customToast,
       } = {},
     } = {},
   } = action;
+  const ACTION_TYPE = _proxyFor || __proxyFor || type || action.type;
+  const ACTION_PROXY_TYPE = _proxyFor || __proxyFor || type;
   const loader = Object.keys(constants).includes(action.type);
   let State = newObject(state);
   if (
@@ -90,18 +102,18 @@ export const commmonStateHandler = ({
       (Array.isArray(method) ? method : [method]).includes(ON_LOADING))
   ) {
     if ((status || loader) && filter && filter.length > 0)
-      State = newState(({ [type || action.type]: obj }) => ({
-        [type || action.type]: newObject(
+      State = newState(({ [ACTION_TYPE]: obj }) => ({
+        [ACTION_TYPE]: newObject(
           obj,
           filterArrayToastEmptyHandler({
-            isInfinite: task.name === 'Infinite-Handler',
+            isInfinite: task.name === INFINITE_DATA_HANDLER,
             filter: (Array.isArray(filter) && filter) || [filter],
           })(obj),
         ),
       }));
     else if (status || loader)
-      State = newState(({ [type || action.type]: obj }) => ({
-        [type || action.type]: newObject(obj, ({ toast = {} }) => ({
+      State = newState(({ [ACTION_TYPE]: obj }) => ({
+        [ACTION_TYPE]: newObject(obj, ({ toast = {} }) => ({
           toast: newObject(toast, {
             message: '',
             status: '',
@@ -118,8 +130,8 @@ export const commmonStateHandler = ({
         customLoader !== undefined &&
         (filter || responseFilter || []).length > 0)
     )
-      State = newObject(State, ({ [type || action.type]: obj }) => ({
-        [type || action.type]: newObject(
+      State = newObject(State, ({ [ACTION_TYPE]: obj }) => ({
+        [ACTION_TYPE]: newObject(
           obj,
           filterArrayloadingHandler({
             filter: (Array.isArray(filter || responseFilter) &&
@@ -138,8 +150,8 @@ export const commmonStateHandler = ({
         ),
       }));
     else
-      State = newObject(State, ({ [type || action.type]: obj }) => ({
-        [type || action.type]: newObject(obj, ({ data: _data }) => ({
+      State = newObject(State, ({ [ACTION_TYPE]: obj }) => ({
+        [ACTION_TYPE]: newObject(obj, ({ data: _data }) => ({
           loading: {
             status:
               customTask && customLoader !== undefined
@@ -163,15 +175,15 @@ export const commmonStateHandler = ({
   if (
     ([ON_SUCCESS, ON_ERROR].includes(method) &&
       // [200, 201, 400, 403, 404, 409, 500].includes(statusCode) &&
-      Object.keys(constants).includes(type) &&
+      Object.keys(constants).includes(ACTION_PROXY_TYPE) &&
       !customTask) ||
     (customToast &&
       customTask &&
       (Array.isArray(method) ? method : [method]).includes(ON_TOAST))
   ) {
     if (responseFilter && responseFilter.length > 0)
-      State = newObject(State, ({ [type]: obj }) => ({
-        [type]: newObject(
+      State = newObject(State, ({ [ACTION_PROXY_TYPE]: obj }) => ({
+        [ACTION_PROXY_TYPE]: newObject(
           obj,
           filterArrayToastHandler({
             statusCode,
@@ -179,7 +191,7 @@ export const commmonStateHandler = ({
               responseFilter,
             ],
             message,
-            type,
+            type: ACTION_PROXY_TYPE,
             ...(customToast &&
             customTask &&
             (Array.isArray(method) ? method : [method]).includes(ON_TOAST)
@@ -189,13 +201,13 @@ export const commmonStateHandler = ({
         ),
       }));
     else
-      State = newObject(State, ({ [type]: obj }) => ({
-        [type]: newObject(obj, {
+      State = newObject(State, ({ [ACTION_PROXY_TYPE]: obj }) => ({
+        [ACTION_PROXY_TYPE]: newObject(obj, {
           toast: {
             isError: ![200, 201].includes(statusCode),
             status: statusCode,
             message,
-            key: type,
+            key: ACTION_PROXY_TYPE,
             lastUpdated: generateTimeStamp(),
             ...(customToast &&
             customTask &&
@@ -301,6 +313,7 @@ const initialRender = new Map();
 const previousCallbackData = new Map();
 const previousDependencyArrayData = new Map();
 const isPreviousDependencyArrayCheckPassed = new Map();
+// const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
 export const useQuery = (
   _name = null,
   _array = [],
@@ -386,9 +399,17 @@ export const useQuery = (
   const _getData = useCallback(
     (ee = {}, isString, _state) => {
       const state = _state || {};
-      const _getDataFunc = e =>
-        (typeof e.defaultDataFormat === 'boolean' || !(isString ? array : e.key)
-        ? !e.defaultDataFormat || !(isString ? array : e.key)
+      const _getDataFunc = e => {
+        // const regex = `app\/containers\/${name}\/+.*?_CALL`;
+        const regex = REDUCER_BASE_PATH.concat(name, '/+.*?_CALL');
+        const isSearchMatched =
+          ((isString ? array : e.key) || '').search(regex) > -1;
+        return (typeof e.defaultDataFormat === 'boolean' ||
+        !isSearchMatched ||
+        !(isString ? array : e.key)
+        ? !e.defaultDataFormat ||
+          !isSearchMatched ||
+          !(isString ? array : e.key)
         : false)
           ? (isString
             ? array
@@ -416,6 +437,7 @@ export const useQuery = (
                   : undefined
                 : undefined,
             );
+      };
       return Array.isArray(ee.query)
         ? ee.query.reduce(
             (acc, _query) =>
@@ -449,7 +471,7 @@ export const useQuery = (
             if (typeOf(e) === 'object') {
               if (typeOf(array) === 'object')
                 return exeuteRequiredData(_getData(e, undefined, state), e);
-              const _arr = [...acc];
+              const _arr = acc.slice();
               _arr.push(exeuteRequiredData(_getData(e, undefined, state), e));
               return _arr;
             }
@@ -461,7 +483,7 @@ export const useQuery = (
                   _getData(_config, undefined, state),
                   _config,
                 );
-              const _arr = [...acc];
+              const _arr = acc.slice();
               _arr.push(
                 exeuteRequiredData(
                   _getData(_config, undefined, state),
@@ -471,7 +493,7 @@ export const useQuery = (
               return _arr;
             }
             if (typeOf(array) === 'object') return safe(state, `[${e.key}]`);
-            const _arr = [...acc];
+            const _arr = acc.slice();
             _arr.push(safe(state, `[${e}]`));
             return _arr;
           },
@@ -634,16 +656,108 @@ export const useQuery = (
     }
     return _isEqual;
   }, []);
-  const selectState = useCallback(state => (name ? state[name] : state), [
-    name,
-  ]);
-  const createdSelector = useMemo(() => createSelector(selectState, execute), [
-    execute,
-    selectState,
-  ]);
-  const _selectorData = useSelector(createdSelector, equalityCheckFunction);
+  const selectReducerKey = useMemo(() => {
+    const _arr = [];
+    const executeRequiredKey = _requiredKey =>
+      _requiredKey.forEach(e => {
+        if (typeof e === 'string') _arr.push(e);
+        else if (typeOf(e) === 'object' && e.key) _arr.push(e.key);
+      });
+    if (typeof array === 'string' && array) _arr.push(array);
+    else if (Array.isArray(array) || typeOf(array) === 'object')
+      (Array.isArray(array) ? array : [array]).forEach(arr => {
+        if (typeof arr === 'string') _arr.push(arr);
+        else if (typeOf(arr) === 'object') {
+          if (arr.key) {
+            _arr.push(arr.key);
+          } else if (
+            Array.isArray(arr.requiredKey) &&
+            arr.requiredKey.length > 0
+          ) {
+            executeRequiredKey(arr.requiredKey);
+          } else if (arr.query) {
+            const getKey = _query =>
+              _query[0] === '.' ? _query.split('.')[1] : _query.split('.')[0];
+            if (typeof arr === 'string') _arr.push(getKey(arr));
+            else if (Array.isArray(arr.query) && arr.query.length > 0)
+              arr.query.forEach(e => {
+                if (typeof e === 'string') _arr.push(getKey(e));
+                else if (typeOf(e) === 'object' && e.key)
+                  _arr.push(getKey(e.key));
+              });
+          }
+        }
+      });
+    return _arr;
+  }, [refreshKey]);
+  const selectState = useMemo(() => {
+    if (selectReducerKey && selectReducerKey.length) {
+      const _arr = [];
+      selectReducerKey.forEach(_k =>
+        _arr.push(state => state[name] && state[name][_k]),
+      );
+      if (_arr.length > 0) return _arr;
+    }
+    return [state => state[name]];
+  }, [selectReducerKey]);
+  const executeSelector = useCallback(
+    (...rest) => {
+      if (
+        selectReducerKey.length > 0 ||
+        (typeOf(array) === 'object' && !array.key && array.requiredKey)
+      ) {
+        if (typeOf(array) === 'object' && !array.key && array.requiredKey) {
+          if (Array.isArray(array.requiredKey) && array.requiredKey.length)
+            return {
+              data: array.requiredKey.reduce((acc, curr, i) => {
+                if (typeOf(curr) === 'object')
+                  return {
+                    ...acc,
+                    [curr]:
+                      rest[i] === undefined ? curr && curr.default : rest[i],
+                  };
+                return { ...acc, [curr]: rest[i] };
+              }, {}),
+            };
+          return { data: {} };
+        }
+        const _stateObj = selectReducerKey.reduce(
+          (acc, curr, i) => ({ ...acc, [curr]: rest[i] }),
+          {},
+        );
+        return execute(_stateObj);
+      }
+      return execute(rest[0]);
+    },
+    [selectReducerKey, refreshKey],
+  );
+  const createdSelector = useMemo(
+    () => createSelector(selectState, executeSelector),
+    [executeSelector, selectState],
+  );
+  const _selectorData = useSelector(
+    // execute,
+    // createSelector(state => (!name ? state : state[name]), execute),
+    !name || !array ? execute : createdSelector,
+    !name || !array ? undefined : equalityCheckFunction,
+  );
   return _selectorData.data;
 };
+/* example
+ * const actions = useActions('newActions', {
+ *   new: () => {
+ *       // redux-thunk
+ *       return dispatch => {
+ *         console.log(dispatch);
+ *         return {
+ *           type: 'fjjf',
+ *         };
+ *       };
+ *     },
+ * });
+ * actions.new();
+ * console.log(actions, 'actions');
+ */
 
 export const useActionsHook = (name = '', actions = {}) => {
   const dispatch = useDispatch();
@@ -659,7 +773,7 @@ export const useActionsHook = (name = '', actions = {}) => {
   }, [isEqual(cacheActions[name], actions)]);
   return dispatchAction;
 };
-/** example
+/* example
  * const mutateState = useMutation(reducerName);
  * mutateState({
  *   key: DEMP_API,
@@ -705,9 +819,13 @@ export const useMutation = reducerName => {
       );
     checkKey(filter, 'filter', 'array');
     checkKey(type, 'key', 'string');
+    // const regex = `app\/containers\/${reducerName}\/+.*?_CALL`;
+    const regex = REDUCER_BASE_PATH.concat(reducerName, '/+.*?_CALL');
+    const isSearchMatched = (type || '').search(regex) > -1;
     if (
       type.includes('_CALL') &&
       type.slice(-5) === '_CALL' &&
+      isSearchMatched &&
       filter &&
       Array.isArray(filter)
     ) {
@@ -744,12 +862,12 @@ export const useMutation = reducerName => {
   }, []);
   return _callback;
 };
-/** example
+/* example
  * async function() {
  *   const { data, status } = await toPromise(DEMP_API_CALL, { task: 'Data-Handler' });
  * }
  */
-export const toPromise = (action, config = {}, isReject) => {
+export const toPromise = (action, config = {}, isReject, dispatch) => {
   if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined')
     checkKeyWithMessage(
       config,
@@ -757,16 +875,18 @@ export const toPromise = (action, config = {}, isReject) => {
       `toPromise() : Expected a config (second parameter) to be object`,
     );
   return new Promise((resolve, reject) =>
-    action({ ...config, resolve, reject, isReject }),
+    typeof dispatch === 'function'
+      ? dispatch(action({ ...config, resolve, reject, isReject }))
+      : action({ ...config, resolve, reject, isReject }),
   );
 };
-/** example
+/* example
  * const asyncFunction = toPromiseFunction(DEMP_API_CALL);
  * async function() {
  *   const { data, status } = await asyncFunction({ task: 'Data-Handler' });
  * }
  */
-export const toPromiseFunction = action => (config, isReject) => {
+export const toPromiseFunction = (action, dispatch) => (config, isReject) => {
   if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined')
     checkKeyWithMessage(
       config,
@@ -774,23 +894,25 @@ export const toPromiseFunction = action => (config, isReject) => {
       `toPromise() : Expected a config (first parameter) to be object`,
     );
   return new Promise((resolve, reject) =>
-    action({ ...config, resolve, reject, isReject }),
+    typeof dispatch === 'function'
+      ? dispatch(action({ ...config, resolve, reject, isReject }))
+      : action({ ...config, resolve, reject, isReject }),
   );
 };
 
-/**
+/* example
  *  const execute = toPromiseAllFunction([DEMO_URL_CALL, DEMO_API_URL_CALL]);
  *  const asyncfunc = async () => {
-      try {
-        const data = await execute([],{ isReject: false });
-        console.log(data, '=============');
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    asyncfunc();
-*/
-export const toPromiseAllFunction = (actions = []) => (
+ *      try {
+ *        const data = await execute([],{ isReject: false });
+ *        console.log(data, '=============');
+ *      } catch (err) {
+ *        console.log(err);
+ *      }
+ *    };
+ *    asyncfunc();
+ */
+export const toPromiseAllFunction = (actions = [], dispatch) => (
   config = [],
   defaultConfig = {},
 ) => {
@@ -807,8 +929,8 @@ export const toPromiseAllFunction = (actions = []) => (
   return Promise.all(
     actions.map(
       (action, i) =>
-        new Promise((resolve, reject) =>
-          action({
+        new Promise((resolve, reject) => {
+          const CONFIG = {
             ...((typeOf(config) === 'object'
               ? config
               : config[i] && config[i].config) ||
@@ -819,8 +941,11 @@ export const toPromiseAllFunction = (actions = []) => (
             isReject: !!(typeOf(config) === 'object'
               ? config.isReject || defaultConfig.isReject
               : (config[i] && config[i].isReject) || defaultConfig.isReject),
-          }),
-        ),
+          };
+          return typeof dispatch === 'function'
+            ? dispatch(action(CONFIG))
+            : action(CONFIG);
+        }),
     ),
   );
 };
@@ -834,42 +959,42 @@ function stringify(val) {
 function hashArgs(...args) {
   return args.reduce((acc, arg) => `${stringify(arg)}:${acc}`, '');
 }
-/* Example => used for background refresh it won't trigger the loader everytime api starts
-  const pollingConfig = {
-    request: {
-      polling: true,
-      delay: 8000,
-    },
-  };
-  const [refresh, isUpdating] = useStaleRefresh(
-    VENDORS_GET_DASBOARD_API_CALL,
-    VENDORS_GET_DASBOARD_API,
-    pollingConfig,
-  );
-  const [refreshOrders, isUpdating] = useStaleRefresh(
-    VENDORS_GET_ORDERS_BY_DAY_API_CALL,
-    VENDORS_GET_ORDERS_BY_DAY_API,
-    pollingConfig,
-  );
-  useEffect(() => {
-    function pollingStart() {
-      /// refresh({loader, clearData, config}); optional parameters
-      refreshOrders();
-    }
-    function pollingEnd() {
-      VENDORS_GET_DASBOARD_API_CANCEL();
-      VENDORS_GET_ORDERS_BY_DAY_API_CANCEL();
-    }
-    pollingStart();
-    window.addEventListener('online', pollingStart);
-    window.addEventListener('offline', pollingEnd);
-    return () => {
-      window.removeEventListener('online', pollingStart);
-      window.removeEventListener('offline', pollingEnd);
-      VENDORS_GET_DASBOARD_API_CANCEL();
-      VENDORS_GET_ORDERS_BY_DAY_API_CANCEL();
-    };
-  }, []);
+/* example => used for background refresh it won't trigger the loader everytime api starts
+ * const pollingConfig = {
+ *   request: {
+ *     polling: true,
+ *     delay: 8000,
+ *   },
+ * };
+ * const [refresh, isUpdating] = useStaleRefresh(
+ *   VENDORS_GET_DASBOARD_API_CALL,
+ *   VENDORS_GET_DASBOARD_API,
+ *   pollingConfig,
+ * );
+ * const [refreshOrders, isUpdating] = useStaleRefresh(
+ *   VENDORS_GET_ORDERS_BY_DAY_API_CALL,
+ *   VENDORS_GET_ORDERS_BY_DAY_API,
+ *   pollingConfig,
+ * );
+ * useEffect(() => {
+ *   function pollingStart() {
+ *     /// refresh({loader, clearData, config}); optional parameters
+ *     refreshOrders();
+ *   }
+ *   function pollingEnd() {
+ *     VENDORS_GET_DASBOARD_API_CANCEL();
+ *     VENDORS_GET_ORDERS_BY_DAY_API_CANCEL();
+ *   }
+ *   pollingStart();
+ *   window.addEventListener('online', pollingStart);
+ *   window.addEventListener('offline', pollingEnd);
+ *   return () => {
+ *     window.removeEventListener('online', pollingStart);
+ *     window.removeEventListener('offline', pollingEnd);
+ *     VENDORS_GET_DASBOARD_API_CANCEL();
+ *     VENDORS_GET_ORDERS_BY_DAY_API_CANCEL();
+ *   };
+ * }, []);
  */
 export function useStaleRefresh(
   fn,
@@ -928,7 +1053,7 @@ export function useStaleRefresh(
 
   return [refresh, isUpdating];
 }
-/** example
+/* example
  * const mutateReducer = useMutateReducer(reducerName);
  * mutateReducer(state => state)
  */
@@ -948,7 +1073,53 @@ export const useMutateReducer = reducerName => {
   }, []);
   return _callback;
 };
-/** example
+/* example
+ * const mutateReducer = useMutateReducer(reducerName);
+ * mutateReducer(state => state)
+ */
+export const useCancelAllRunningApiCalls = reducerName => {
+  if (!reducerName)
+    checkKeyWithMessage(
+      reducerName,
+      'string',
+      'useCancelAllRunningApiCalls(`reducerkey`) : Expected a valid reducer key',
+    );
+  const store = useStore();
+  const dispatch = useDispatch();
+  const _callback = useCallback((dontCancelKeys = []) => {
+    const state = store.getState()[reducerName];
+    const actions = Object.entries(state).reduce((acc, [key, value]) => {
+      const regex = REDUCER_BASE_PATH.concat(reducerName, '/+.*?_CALL');
+      const isSearchMatched = (key || '').search(regex) > -1;
+      const _dontCancelKeys = Array.isArray(dontCancelKeys)
+        ? dontCancelKeys
+        : [];
+      if (
+        key &&
+        key.includes('_CALL') &&
+        key.slice(-5) === '_CALL' &&
+        isSearchMatched &&
+        safe(value, '.loading.status', false) &&
+        !_dontCancelKeys.includes(key)
+      )
+        return acc.concat([
+          {
+            type: key.replace('_CALL', '_CANCEL'),
+          },
+        ]);
+      return acc;
+    }, []);
+    if (actions && actions.length > 0) {
+      batch(() => {
+        for (let i = 0; i < actions.length; i++) {
+          dispatch(actions[i]);
+        }
+      });
+    }
+  }, []);
+  return _callback;
+};
+/* example
  * const resetState = useResetState(reducerName);
  * const dontResetKeys = ['isLoggedIn'];
  * resetState(dontResetKeys); it will reset state to initial state except some dontResetKeys
@@ -963,7 +1134,7 @@ export const useResetState = reducerName => {
   }, []);
   return _callback;
 };
-/** example
+/* example
  * const resetState = useResetOnlyApiEndPointsState(reducerName);
  * const dontResetKeys = ['isLoggedIn'];
  * resetState(dontResetKeys); it will reset only endpoints to initial state except some dontResetKeys

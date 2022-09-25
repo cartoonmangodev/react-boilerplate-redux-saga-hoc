@@ -6,27 +6,14 @@ import {
   CALL,
 } from '../../utils/commonReduxSagaConverter/commonConstants';
 import { commmonStateHandler } from '../../utils';
-import { newObject, generateTimeStamp } from '../../utils/helpers';
-// import {
-//   constants as authenticationConstants,
-//   initialState as InitialState,
-// } from './constants';
+import { newObject } from '../../utils/helpers';
 import {
   COMMON_REDUCER_HANDLER,
   DEFAULT_REDUCER_HANDLER,
 } from '../../utils/commonHandlers/commonReducerHandler';
 
-const componentState = {
-  // profile: {},
-  // isLoggedIn: false,
-  // authorization: true,
-  // language: 'EN',
-};
-const PROFILE_UPDATE = 'PROFILE_UPDATE';
+const componentState = {};
 const otherReducerConstants = [];
-
-const LANGUAGE_CONSTANTS = 'LANGUAGE';
-
 const updateState = ({
   authenticationConstants,
   ResetState,
@@ -234,7 +221,11 @@ export default ({
   const initialState = newObject(InitialState, componentState);
   return (state = initialState, action) => {
     const {
-      payload: { dontUpdateReducer, dontUpdateReducerOnCall } = {},
+      payload: {
+        dontUpdateReducer,
+        dontUpdateReducerOnCall,
+        proxyFor: _proxyFor,
+      } = {},
     } = action;
     if (dontUpdateReducer || dontUpdateReducerOnCall) return state;
     switch (action.type) {
@@ -264,6 +255,7 @@ export default ({
           const returnData = constantReducer({
             state: reducerState,
             type: type || action.type,
+            proxyFor: _proxyFor,
             action,
             constants: authenticationConstants,
             isMobile: isMobileApp,

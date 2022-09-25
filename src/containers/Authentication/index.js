@@ -63,8 +63,11 @@ const checkKey = (key, name, dataType) => {
     )})`,
   );
 };
+const showInjectedMessage = reducerName => {
+  console.log(`===== Successfully Injected Reducer - ${reducerName} =====`);
+};
 const showDepricatedMessage = reducerName => {
-  const DEPRICATED_MESSAGE = `<======= "${reducerName} Reducer" (react-boilerplate-redux-saga-hoc) Sorry! This package is depricated.Please use some other package ====>`;
+  const DEPRICATED_MESSAGE = `<======= "${reducerName} Reducer" (react-boilerplate-redux-saga-hoc) Sorry! This package is depricated.This version is no longer supported, and will not receive security updates.====>`;
   if (console.warn) console.warn(DEPRICATED_MESSAGE);
   if (console.error) console.error(DEPRICATED_MESSAGE);
   if (console.info) console.info(DEPRICATED_MESSAGE);
@@ -97,7 +100,6 @@ export default ({
   [USE_HOOK]: _useHook = false,
   // store: _store,
 } = {}) => {
-  let nextStateProps = null;
   let stateProps = null;
   invariant(
     !!reducerName && typeOf(reducerName) === 'string',
@@ -151,6 +153,7 @@ export default ({
     handlers,
     reducerName,
   });
+
   const componentData = {
     [`${reducerName}_hoc`]: {
       reducerConstants: Object.entries(constants).reduce(
@@ -175,22 +178,14 @@ export default ({
     key: reducerName,
     reducer,
   };
-  // eslint-disable-next-line no-underscore-dangle
 
   const _useHocHook = (inject = false) => {
     const isInjected = useRef(false);
     if (useType !== FOR_INTERNAL_USE_ONLY) {
       showDepricatedMessage(reducerName);
-    } else if (
-      !isMounted[reducerName] ||
-      isInjected.current ||
-      inject ||
-      isDevelopment
-    ) {
+    } else if (!isMounted[reducerName] || isInjected.current || inject) {
       if (!isMounted[reducerName] && isDevelopment)
-        console.log(
-          `===== Successfully Injected Reducer - ${reducerName} =====`,
-        );
+        showInjectedMessage(reducerName);
       if (!isInjected.current && !inject) isInjected.current = true;
       isMounted[reducerName] = true;
       // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -199,23 +194,23 @@ export default ({
       useInjectReducer(injectReducerConfig, createReducer);
     }
     const dispatch = useDispatch();
-    if (!stateProps || isDevelopment)
-      stateProps = dispatch
-        ? {
-            ...componentData[`${reducerName}_hoc`],
-            actions: bindActionCreators(componentActions, dispatch),
-            dispatch,
-          }
-        : null;
+    if ((!stateProps || isDevelopment) && dispatch) {
+      stateProps = {
+        ...componentData[`${reducerName}_hoc`],
+        actions: bindActionCreators(componentActions, dispatch),
+        dispatch,
+      };
+    }
     const [state] = useState(stateProps);
-
     return state;
   };
-  // eslint-disable-next-line no-underscore-dangle
 
   if (useHocHook && !nextJS && !hookWithHoc) return _useHocHook;
   const hoc = WrapperComponent => {
-    if (!isMounted[reducerName]) isMounted[reducerName] = true;
+    if (!isMounted[reducerName]) {
+      isMounted[reducerName] = true;
+      if (isDevelopment) showInjectedMessage(reducerName);
+    }
     function WithHoc(props) {
       return <WrapperComponent {...commonProps} {...props} />;
     }
@@ -298,39 +293,11 @@ export default ({
       ...componentData[`${reducerName}_hoc`],
     };
   if (!nextJS && hookWithHoc) return { hook: _useHocHook, hoc };
-  // eslint-disable-next-line no-underscore-dangle
-  const _useHocHookNextJs = (inject = false) => {
-    const isInjected = useRef(false);
-    if (useType !== FOR_INTERNAL_USE_ONLY) {
-      showDepricatedMessage(reducerName);
-    } else if (
-      !isMounted[reducerName] ||
-      isInjected.current ||
-      inject ||
-      isDevelopment
-    ) {
-      if (!isInjected.current && !inject) isInjected.current = true;
-      isMounted[reducerName] = true;
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      useInjectSaga(injectSagaConfig);
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      useInjectReducer(injectReducerConfig, createReducer);
-    }
-    const dispatch = useDispatch();
-    if ((!nextStateProps || isDevelopment) && dispatch)
-      nextStateProps = {
-        ...componentData[`${reducerName}_hoc`],
-        actions: bindActionCreators(componentActions, dispatch),
-        dispatch,
-      };
-    const [state] = useState(nextStateProps);
-    return state;
-  };
   if (nextJS && getDefaultConfig)
     return {
       hoc,
       saga,
-      hook: _useHocHookNextJs,
+      hook: _useHocHook,
       reducer: { name: reducerName, reducer },
       actions: { ...componentActions },
       ...componentData[`${reducerName}_hoc`],
@@ -339,7 +306,7 @@ export default ({
     return {
       hoc,
       saga,
-      hook: _useHocHookNextJs,
+      hook: _useHocHook,
       reducer: { name: reducerName, reducer },
     };
   if (getDefaultConfig) {
