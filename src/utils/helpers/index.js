@@ -39,4 +39,6 @@ const type = {
 };
 
 export const typeOf = _obj =>
-  type[Object.prototype.toString.call(_obj)] || typeof _obj;
+  typeof _obj === 'undefined'
+    ? typeof _obj
+    : type[Object.prototype.toString.call(_obj)] || typeof _obj;

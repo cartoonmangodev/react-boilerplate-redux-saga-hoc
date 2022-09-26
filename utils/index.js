@@ -2406,6 +2406,8 @@ var useInjectSaga = function useInjectSaga(_ref2) {
       saga = _ref2.saga,
       mode = _ref2.mode;
   var inject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+  var eject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+  var callback = arguments.length > 3 ? arguments[3] : undefined;
   var context = React__default.useContext(reactRedux.ReactReduxContext);
   React__default.useEffect(function () {
     var injectors = getInjectors(context.store);
@@ -2415,10 +2417,11 @@ var useInjectSaga = function useInjectSaga(_ref2) {
         saga: saga,
         mode: mode
       });
+      if (typeof callback === 'function') callback();
     }
 
     return function () {
-      if (inject) injectors.ejectSaga(key);
+      if (eject) injectors.ejectSaga(key);
     };
   }, []);
 };
