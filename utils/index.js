@@ -1102,7 +1102,7 @@ var type = {
   '[object GeneratorFunction]': TYPE_GENERATOR_FUNCTION
 };
 var typeOf = function typeOf(_obj) {
-  return type[Object.prototype.toString.call(_obj)] || _typeof(_obj);
+  return typeof _obj === 'undefined' ? _typeof(_obj) : type[Object.prototype.toString.call(_obj)] || _typeof(_obj);
 };
 
 var cache = {};

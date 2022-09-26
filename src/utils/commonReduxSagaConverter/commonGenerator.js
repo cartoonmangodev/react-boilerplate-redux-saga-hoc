@@ -1,8 +1,6 @@
-/* eslint-disable no-undef */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable indent */
-/* eslint-disable no-console */
 /* eslint-disable func-names */
 import Qs from 'query-string';
 import {
@@ -14,8 +12,7 @@ import {
   take,
   takeLatest,
   fork,
-  delay as sagaDelay,
-  // debounce,
+  delay as sagaDelayFn,
 } from 'redux-saga/effects';
 // import isFunction from 'lodash/isFunction';
 // import isObject from 'lodash/isObject';
@@ -25,13 +22,11 @@ import * as constants from './commonConstants';
 import { responseErrorParser } from '../index';
 import Axios from '../../config/axios';
 import { typeOf } from '../helpers';
-// import { headers } from '../../../utils/constants';
 import * as commonActions from './commonActions';
 import {
   DEBOUNCE_API_CALL_DELAY_IN_MS,
   IS_DEBOUNCE_API_CALL,
 } from './commonConstants';
-// import { ON_UNMOUNT } from './commonConstants';
 import CustomError from '../customError';
 const headers = '';
 function* loaderGenerator({ type, commonData }) {
@@ -44,6 +39,7 @@ function* loaderGenerator({ type, commonData }) {
   );
 }
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 const debounce = (ms, pattern, task, isEvery, ...args) =>
   fork(function*() {
     let taskID;
@@ -52,7 +48,7 @@ const debounce = (ms, pattern, task, isEvery, ...args) =>
 
       while (true) {
         const { debounced, latestAction } = yield race({
-          debounced: sagaDelay(ms),
+          debounced: sagaDelayFn(ms),
           latestAction: take(pattern),
         });
 
@@ -67,7 +63,6 @@ const debounce = (ms, pattern, task, isEvery, ...args) =>
           taskID = yield fork(task, ...args, action);
           break;
         }
-
         action = latestAction;
       }
     }
@@ -103,6 +98,7 @@ export default function({
         axios: requestAxios,
         paramsSerializer = { arrayFormat: 'brackets' },
         cancelKey,
+        onCancelTask,
         axiosConfig = {},
         useCache: cacheControl = false,
         errorDataHandling = true,
@@ -136,18 +132,18 @@ export default function({
     while (loop) {
       let action = yield actionType[type];
       const axios =
-        (action.api && action.api.axios) ||
         requestAxios ||
+        (action.api && action.api.axios) ||
         axiosInterceptors ||
         Axios;
       const { CancelToken } = AxiosDefault;
       const source = yield CancelToken.source();
-      yield (action = {
+      action = {
         ...action,
         error: action.error || action.actions[constants.ERROR],
         success: action.success || action.actions[constants.SUCCESS],
         customTask: action.custom || action.actions[constants.CUSTOM],
-      });
+      };
       let url = '';
       if (action.api && ['string', 'function'].includes(typeof action.api)) {
         url = action.api;
@@ -174,16 +170,10 @@ export default function({
       const actionBind = (_action, _method) =>
         _action.bind({}, type, _method, commonData);
       if (typeof action.error === 'function')
-        yield (action.error = yield actionBind(
-          action.error,
-          constants.ON_ERROR,
-        ));
+        action.error = actionBind(action.error, constants.ON_ERROR);
       if (typeof action.success === 'function')
-        yield (action.success = yield actionBind(
-          action.success,
-          constants.ON_SUCCESS,
-        ));
-      let request = yield {
+        action.success = actionBind(action.success, constants.ON_SUCCESS);
+      let request = {
         ...(action.api || {}),
         cancelToken: source.token,
         url: action.api.url || url,
@@ -191,16 +181,13 @@ export default function({
         data: payload,
         headers,
       };
-      if (action.effect) yield delete action.effect;
-      if (action.actions) yield delete action.actions;
+      if (action.effect) delete action.effect;
+      if (action.actions) delete action.actions;
       if (
         ((pollingRequestConfig && pollingRequestConfig.params) || params) &&
         typeof request.url === 'function'
       ) {
         checkKey(params, '{request: { params }}', 'object');
-        // throw new Error(
-        //   `key 'params' should be object not a ${typeOf(params)}`,
-        // );
         request.url = yield request.url(
           (pollingRequestConfig && pollingRequestConfig.params) || params,
         );
@@ -220,23 +207,16 @@ export default function({
       if (pollingRequestConfig && pollingRequestConfig.payload) {
         request.data =
           (pollingRequestConfig && pollingRequestConfig.payload) || payload;
-        // eslint-disable-next-line no-loop-func
-        // request.paramsSerializer = function(param) {
-        //   return Qs.stringify(
-        //     param,
-        //     (pollingRequestConfig && pollingRequestConfig.paramsSerializer) ||
-        //       paramsSerializer,
-        //   );
-        // };
       }
       const _query =
         (pollingRequestConfig && pollingRequestConfig.query) || query;
-      const _url = `${request.url}${
-        Object.keys(_query || {}).length > 0
-          ? `?${request.paramsSerializer(_query)}`
-          : ''
-      }`;
-
+      let _url;
+      if (cacheControl)
+        _url = `${request.url}${
+          Object.keys(_query || {}).length > 0
+            ? `?${request.paramsSerializer(_query)}`
+            : ''
+        }`;
       if (process.env.NODE_ENV !== 'test' || !action.test)
         yield delete request.headers;
       let requestData = null;
@@ -249,9 +229,9 @@ export default function({
           actionData: rest,
           method: constants.ON_REQUEST,
         });
-      yield (request = requestData || request);
+      request = requestData || request;
       if (!['POST', 'PATCH', 'PUT', 'DELETE'].includes(request.method))
-        yield delete request.data;
+        delete request.data;
       if (request.effect) delete request.effect;
       let postData = '';
       let cancelTask = '';
@@ -270,7 +250,6 @@ export default function({
         cancelTask = _cancelTask;
         if (cancelTask) {
           loop = false;
-          // const { response: { method: customMethod } = {} } = cancelTask || {};
           if (!dontUpdateReducer)
             yield call(requestResponseHandler, {
               type,
@@ -284,7 +263,8 @@ export default function({
         }
       }
       try {
-        const cacheId = `${_url || ''}_${JSON.stringify(request)}`;
+        let cacheId;
+        if (cacheControl) cacheId = `${_url || ''}_${JSON.stringify(request)}`;
         if (
           cacheControl &&
           request.method === 'GET' &&
@@ -383,11 +363,11 @@ export default function({
               message: successMessage = '',
             } = {},
           } = data || {};
-          yield (action.success = action.success.bind(
+          action.success = action.success.bind(
             {},
             successStatus,
             successMessage,
-          ));
+          );
           let successCallbackResponse = null;
           if (typeof successCallback === 'function') {
             const {
@@ -406,14 +386,6 @@ export default function({
             });
             if (CancelPolling) loop = false;
             successCallbackResponse = _successCallbackResponse;
-            // successCallbackResponse = yield call(successCallback, {
-            //   response: postData,
-            //   posts: data,
-            //   data: data.data,
-            //   res: data && data.data && data.data.data,
-            //   message: successMessage,
-            //   status: successStatus,
-            // });
           }
           if (successCallbackResponse)
             if (typeOf(successCallbackResponse) === 'object') {
@@ -455,12 +427,12 @@ export default function({
               commonData,
             });
           if (typeof logoutCallback === 'function')
-            setTimeout(() => logoutCallback(data), 500);
+            setTimeout(() => logoutCallback(data), 100);
         } else if (
           cancelTask &&
-          (typeof source.cancel === 'function' || rest.onCancelTask)
+          (typeof source.cancel === 'function' || onCancelTask)
         ) {
-          const cancelResponse = yield (rest.onCancelTask || source.cancel)();
+          const cancelResponse = yield (onCancelTask || source.cancel)();
           if (typeof cancelCallback === 'function')
             cancelCallback(cancelResponse);
           const { response: { method: customMethod } = {} } = cancelTask || {};
@@ -486,11 +458,6 @@ export default function({
             successCallback({
               response: postData,
               status: postData && postData.status,
-              // isError: true
-              // error: postData,
-              // response: postData,
-              // isError: true,
-              // isNetworkError: postData && postData.message === 'Network Error',
             });
           }
           if (!dontUpdateReducer)
@@ -530,24 +497,6 @@ export default function({
                   : []
                 : pollingRequestConfig || request,
           };
-
-          // const { cancel: CancelPolling, pollingRes } = yield race({
-          //   pollingRes: call(pollingCallback, {
-          //     response: data,
-          //     data: data && data.data,
-          //     message: successMessage,
-          //     status: successStatus,
-          //     count,
-          //   }),
-          //   cancel: take(action.cancel),
-          // });
-          // if (CancelPolling) loop = false;
-
-          // else if (typeof pollingRes === 'boolean') loop = pollingRes;
-          // else if (
-          //   Object.prototype.toString.call(pollingRes) === '[object Object]'
-          // )
-          //   pollingRequestConfig = pollingRes;
         }
         // cancel looping on success if retry is true
         if (!polling && retry) loop = false;
@@ -587,6 +536,7 @@ export default function({
                 error: error || 'NETWORK ERROR',
                 respone: error && error.response,
               });
+            // eslint-disable-next-line no-console
             if (process.env.NODE_ENV === 'test') console.log(error);
             const {
               response: {
@@ -653,35 +603,6 @@ export default function({
                 });
                 if (CancelPolling) loop = false;
                 errorCallbackResponse = _errorCallbackResponse;
-                // errorCallbackResponse = yield call(errorCallback, {
-                //   error,
-                //   errorData: isResponseErrorParser
-                //     ? errorData &&
-                //       typeof responseErrorParser(errorData) === 'object' &&
-                //       Object.keys(responseErrorParser(errorData) || {}).length >
-                //         0
-                //       ? responseErrorParser(errorData)
-                //       : errorData
-                //     : errorData,
-                //   ...(typeof errorParser === 'function'
-                //     ? {
-                //         errorParser: errorParser({
-                //           error,
-                //           errorData,
-                //           status: errorStatus,
-                //           response: error && error.response,
-                //           message: errorMessage,
-                //         }),
-                //       }
-                //     : {}),
-                //   isNetworkError:
-                //     error && error.request && error.message === 'Network Error',
-                //   errorMessage: error && error.message,
-                //   message: errorMessage,
-                //   status: errorStatus,
-                //   response: error && error.response,
-                //   errors: errorData,
-                // });
               }
               if (errorCallbackResponse) {
                 if (
@@ -721,11 +642,7 @@ export default function({
                 } else commonData._errortask = false;
               }
             }
-            yield (action.error = action.error.bind(
-              {},
-              errorStatus,
-              errorMessage,
-            ));
+            action.error = action.error.bind({}, errorStatus, errorMessage);
             if (
               AxiosDefault.isCancel(error) &&
               action.cancel &&
@@ -783,12 +700,6 @@ export default function({
             cancel: take(action.cancel),
           });
           if (CancelPolling) loop = false;
-          // yield call(finalCallback, {
-          //   type,
-          //   action,
-          //   payload: commonData,
-          //   Cancelled,
-          // });
         }
         if (!dontUpdateReducer)
           yield call(requestResponseHandler, {

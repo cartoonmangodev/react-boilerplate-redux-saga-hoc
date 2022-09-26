@@ -158,16 +158,16 @@ export default ({
     handlers,
     reducerName,
   });
-
+  const _constants = Object.entries(constants).reduce(
+    (acc, [key, value]) => ({
+      ...acc,
+      [key]: value[commonConstants.CALL],
+    }),
+    {},
+  );
   const componentData = {
     [reducer_name_hoc_key]: {
-      reducerConstants: Object.entries(constants).reduce(
-        (acc, [key, value]) => ({
-          ...acc,
-          [key]: value[commonConstants.CALL],
-        }),
-        {},
-      ),
+      reducerConstants: _constants,
       constants,
       initialState,
       constantActions: componentActions,
