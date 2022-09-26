@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable camelcase */
 /* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable indent */
@@ -66,6 +68,8 @@ const checkKey = (key, name, dataType) => {
 const showInjectedMessage = reducerName => {
   console.log(`===== Successfully Injected Reducer - ${reducerName} =====`);
 };
+const reducerNameErrorMessage =
+  '(react-boilerplate-redux-saga-hoc)  Expected `name` to be a non empty string';
 const showDepricatedMessage = reducerName => {
   const DEPRICATED_MESSAGE = `<======= "${reducerName} Reducer" (react-boilerplate-redux-saga-hoc) Sorry! This package is depricated.This version is no longer supported, and will not receive security updates.====>`;
   if (console.warn) console.warn(DEPRICATED_MESSAGE);
@@ -100,10 +104,11 @@ export default ({
   [USE_HOOK]: _useHook = false,
   // store: _store,
 } = {}) => {
+  const reducer_name_hoc_key = `${reducerName}_hoc`;
   let stateProps = null;
   invariant(
     !!reducerName && typeOf(reducerName) === 'string',
-    '(react-boilerplate-redux-saga-hoc)  Expected `name` to be a non empty string',
+    reducerNameErrorMessage,
   );
   checkKey(apiEndPoints, 'apiEndPoints', 'object');
   checkKey(initialState, 'initialState', 'object');
@@ -155,7 +160,7 @@ export default ({
   });
 
   const componentData = {
-    [`${reducerName}_hoc`]: {
+    [reducer_name_hoc_key]: {
       reducerConstants: Object.entries(constants).reduce(
         (acc, [key, value]) => ({
           ...acc,
@@ -178,36 +183,31 @@ export default ({
     key: reducerName,
     reducer,
   };
-
-  const _useHocHook = (inject = false) => {
-    const isInjected = useRef(false);
+  const _useHocHook = () => {
+    const isInjected = useRef(isMounted[reducerName]);
     if (useType !== FOR_INTERNAL_USE_ONLY) {
       showDepricatedMessage(reducerName);
-    } else if (
-      (!isMounted[reducerName] || isInjected.current || inject) &&
-      !nextJS
-    ) {
-      if (!isMounted[reducerName] && isDevelopment)
-        showInjectedMessage(reducerName);
-      if (!isInjected.current && !inject) isInjected.current = true;
-      isMounted[reducerName] = true;
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      useInjectSaga(injectSagaConfig);
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      useInjectReducer(injectReducerConfig, createReducer);
+    } else if (!isInjected.current && !nextJS) {
+      useInjectSaga(injectSagaConfig, !isMounted[reducerName], false, () => {
+        if (isDevelopment) showInjectedMessage(reducerName);
+      });
+      useInjectReducer(
+        injectReducerConfig,
+        createReducer,
+        !isMounted[reducerName],
+      );
+      if (!isMounted[reducerName]) isMounted[reducerName] = true;
     }
     const dispatch = useDispatch();
     if ((!stateProps || isDevelopment) && dispatch) {
       stateProps = {
-        ...componentData[`${reducerName}_hoc`],
+        ...componentData[reducer_name_hoc_key],
         actions: bindActionCreators(componentActions, dispatch),
         dispatch,
       };
     }
-    const [state] = useState(stateProps);
-    return state;
+    return useState(stateProps)[0];
   };
-
   if (useHocHook && !nextJS && !hookWithHoc) return _useHocHook;
   const hoc = WrapperComponent => {
     function WithHoc(props) {
@@ -298,7 +298,7 @@ export default ({
       hook: _useHocHook,
       hoc,
       actions: { ...componentActions },
-      ...componentData[`${reducerName}_hoc`],
+      ...componentData[reducer_name_hoc_key],
     };
   if (!nextJS && hookWithHoc) return { hook: _useHocHook, hoc };
   if (nextJS && getDefaultConfig)
@@ -308,7 +308,7 @@ export default ({
       hook: _useHocHook,
       reducer: { name: reducerName, reducer },
       actions: { ...componentActions },
-      ...componentData[`${reducerName}_hoc`],
+      ...componentData[reducer_name_hoc_key],
     };
   if (nextJS)
     return {
@@ -321,7 +321,7 @@ export default ({
     return {
       hoc,
       actions: { ...componentActions },
-      ...componentData[`${reducerName}_hoc`],
+      ...componentData[reducer_name_hoc_key],
     };
   }
   return hoc;
