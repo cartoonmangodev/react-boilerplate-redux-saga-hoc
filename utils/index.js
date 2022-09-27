@@ -17,13 +17,10 @@ var isEqual = _interopDefault(require('fast-deep-equal'));
 var reselect = require('reselect');
 var invariant = _interopDefault(require('invariant'));
 require('@babel/runtime/helpers/objectWithoutProperties');
-var _asyncToGenerator = _interopDefault(require('@babel/runtime/helpers/asyncToGenerator'));
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
 var _inherits = _interopDefault(require('@babel/runtime/helpers/inherits'));
 var _createSuper = _interopDefault(require('@babel/runtime/helpers/createSuper'));
-var _regeneratorRuntime = _interopDefault(require('@babel/runtime/regenerator'));
-var reduxSaga = require('redux-saga');
 var hoistNonReactStatics = _interopDefault(require('hoist-non-react-statics'));
 
 var _HOC_MAIN_CLIENT_SIDE, _HOC_MAIN_SERVER_SIDE;
@@ -556,116 +553,6 @@ var nullCheck = function nullCheck(Error) {
 
 var nullcheck = nullCheck.bind(null, Error);
 
-var indianStates = [{
-  label: 'Andaman and Nicobar Islands',
-  value: 'Andaman and Nicobar Islands'
-}, {
-  label: 'Andhra Pradesh',
-  value: 'Andhra Pradesh'
-}, {
-  label: 'Arunachal Pradesh',
-  value: 'Arunachal Pradesh'
-}, {
-  label: 'Assam',
-  value: 'Assam'
-}, {
-  label: 'Bihar',
-  value: 'Bihar'
-}, {
-  label: 'Chandigarh',
-  value: 'Chandigarh'
-}, {
-  label: 'Chhattisgarh',
-  value: 'Chhattisgarh'
-}, {
-  label: 'Dadra and Nagar Haveli',
-  value: 'Dadra and Nagar Haveli'
-}, {
-  label: 'Daman and Diu',
-  value: 'Daman and Diu'
-}, {
-  label: 'Delhi',
-  value: 'Delhi'
-}, {
-  label: 'Goa',
-  value: 'Goa'
-}, {
-  label: 'Gujarat',
-  value: 'Gujarat'
-}, {
-  label: 'Haryana',
-  value: 'Haryana'
-}, {
-  label: 'Himachal Pradesh',
-  value: 'Himachal Pradesh'
-}, {
-  label: 'Jammu and Kashmir',
-  value: 'Jammu and Kashmir'
-}, {
-  label: 'Jharkhand',
-  value: 'Jharkhand'
-}, {
-  label: 'Karnataka',
-  value: 'Karnataka'
-}, {
-  label: 'Kerala',
-  value: 'Kerala'
-}, {
-  label: 'Lakshadweep',
-  value: 'Lakshadweep'
-}, {
-  label: 'Madhya Pradesh',
-  value: 'Madhya Pradesh'
-}, {
-  label: 'Maharashtra',
-  value: 'Maharashtra'
-}, {
-  label: 'Manipur',
-  value: 'Manipur'
-}, {
-  label: 'Meghalaya',
-  value: 'Meghalaya'
-}, {
-  label: 'Mizoram',
-  value: 'Mizoram'
-}, {
-  label: 'Nagaland',
-  value: 'Nagaland'
-}, {
-  label: 'Odisha',
-  value: 'Odisha'
-}, {
-  label: 'Puducherry',
-  value: 'Puducherry'
-}, {
-  label: 'Punjab',
-  value: 'Punjab'
-}, {
-  label: 'Rajasthan',
-  value: 'Rajasthan'
-}, {
-  label: 'Sikkim',
-  value: 'Sikkim'
-}, {
-  label: 'Tamil Nadu',
-  value: 'Tamil Nadu'
-}, {
-  label: 'Telangana',
-  value: 'Telangana'
-}, {
-  label: 'Tripura',
-  value: 'Tripura'
-}, {
-  label: 'Uttar Pradesh',
-  value: 'Uttar Pradesh'
-}, {
-  label: 'Uttarakhand',
-  value: 'Uttarakhand'
-}, {
-  label: 'West Bengal',
-  value: 'West Bengal'
-}];
-
 var passwordReg = new RegExp(/^.{6,16}$/);
 var emailReg = new RegExp('^([\\w\\.\\+\\-]+\\@[a-zA-Z0-9\\.\\-]+\\.[a-zA-z0-9]{2,4})$');
 var mobileReg = new RegExp(/^\d{10,10}$/);
@@ -894,6 +781,34 @@ function validateForm(validationData) {
   }
 
   return error;
+}
+
+function CustomError(err) {
+  var message = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  var fileName = arguments.length > 2 ? arguments[2] : undefined;
+  var lineNumber = arguments.length > 3 ? arguments[3] : undefined;
+  var instance = new Error(message, fileName, lineNumber);
+  instance = err;
+  Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
+
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(instance, CustomError);
+  }
+
+  return instance;
+}
+
+CustomError.prototype = Object.create(Error.prototype, {
+  constructor: {
+    value: Error,
+    enumerable: false,
+    writable: true,
+    configurable: true
+  }
+});
+
+if (Object.setPrototypeOf) {
+  Object.setPrototypeOf(CustomError, Error);
 }
 
 var cloneObject = function cloneObject(oldState) {
@@ -1988,471 +1903,6 @@ var useApiQuery = function useApiQuery(reducerkey, isQueryData, isMutation) {
   });
 };
 
-function withReduxSaga() {
-  var BaseComponent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-  var WrappedComponent = /*#__PURE__*/function (_Component) {
-    _inherits(WrappedComponent, _Component);
-
-    var _super = _createSuper(WrappedComponent);
-
-    function WrappedComponent() {
-      _classCallCheck(this, WrappedComponent);
-
-      return _super.apply(this, arguments);
-    }
-
-    _createClass(WrappedComponent, [{
-      key: "render",
-      value: function render() {
-        return /*#__PURE__*/React__default.createElement(BaseComponent, this.props);
-      }
-    }], [{
-      key: "getInitialProps",
-      value: function () {
-        var _getInitialProps = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee() {
-          var props,
-              isServer,
-              store,
-              pageProps,
-              _args = arguments;
-          return _regeneratorRuntime.wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  props = _args.length > 0 && _args[0] !== undefined ? _args[0] : {};
-                  isServer = props.ctx ? props.ctx.isServer : props.isServer;
-                  store = props.ctx ? props.ctx.store : props.store;
-                  pageProps = {};
-
-                  if (!BaseComponent.getInitialProps) {
-                    _context.next = 8;
-                    break;
-                  }
-
-                  _context.next = 7;
-                  return BaseComponent.getInitialProps(props);
-
-                case 7:
-                  pageProps = _context.sent;
-
-                case 8:
-                  if (!isServer) {
-                    _context.next = 17;
-                    break;
-                  }
-
-                  if (!(typeof store.sagaTask.toPromise === 'function')) {
-                    _context.next = 14;
-                    break;
-                  }
-
-                  _context.next = 12;
-                  return store.sagaTask.toPromise();
-
-                case 12:
-                  _context.next = 16;
-                  break;
-
-                case 14:
-                  _context.next = 16;
-                  return store.sagaTask.done;
-
-                case 16:
-                  store.dispatch(reduxSaga.END);
-
-                case 17:
-                  return _context.abrupt("return", pageProps);
-
-                case 18:
-                case "end":
-                  return _context.stop();
-              }
-            }
-          }, _callee);
-        }));
-
-        function getInitialProps() {
-          return _getInitialProps.apply(this, arguments);
-        }
-
-        return getInitialProps;
-      }()
-    }]);
-
-    return WrappedComponent;
-  }(React.Component);
-
-  _defineProperty(WrappedComponent, "displayName", "withReduxSaga(".concat(BaseComponent.displayName || BaseComponent.name || 'BaseComponent', ")"));
-
-  return WrappedComponent;
-}
-
-function CustomError(err) {
-  var message = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-  var fileName = arguments.length > 2 ? arguments[2] : undefined;
-  var lineNumber = arguments.length > 3 ? arguments[3] : undefined;
-  var instance = new Error(message, fileName, lineNumber);
-  instance = err;
-  Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
-
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(instance, CustomError);
-  }
-
-  return instance;
-}
-
-CustomError.prototype = Object.create(Error.prototype, {
-  constructor: {
-    value: Error,
-    enumerable: false,
-    writable: true,
-    configurable: true
-  }
-});
-
-if (Object.setPrototypeOf) {
-  Object.setPrototypeOf(CustomError, Error);
-}
-
-/* eslint-disable */
-
-function _instanceof(left, right) {
-  if (right != null && typeof Symbol !== 'undefined' && right[Symbol.hasInstance]) {
-    return !!right[Symbol.hasInstance](left);
-  } else {
-    return left instanceof right;
-  }
-}
-
-var __extends =  function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || _instanceof({
-      __proto__: []
-    }, Array) && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
-    };
-
-    return _extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    _extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-
-var __assign =  function () {
-  __assign = Object.assign || function (t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-      s = arguments[i];
-
-      for (var p in s) {
-        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-      }
-    }
-
-    return t;
-  };
-
-  return __assign.apply(this, arguments);
-};
-
-var __awaiter =  function (thisArg, _arguments, P, generator) {
-  function adopt(value) {
-    return _instanceof(value, P) ? value : new P(function (resolve) {
-      resolve(value);
-    });
-  }
-
-  return new (P || (P = Promise))(function (resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function rejected(value) {
-      try {
-        step(generator['throw'](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-
-var __generator =  function (thisArg, body) {
-  var _ = {
-    label: 0,
-    sent: function sent() {
-      if (t[0] & 1) throw t[1];
-      return t[1];
-    },
-    trys: [],
-    ops: []
-  },
-      f,
-      y,
-      t,
-      g;
-  return g = {
-    next: verb(0),
-    throw: verb(1),
-    return: verb(2)
-  }, typeof Symbol === 'function' && (g[Symbol.iterator] = function () {
-    return this;
-  }), g;
-
-  function verb(n) {
-    return function (v) {
-      return step([n, v]);
-    };
-  }
-
-  function step(op) {
-    if (f) throw new TypeError('Generator is already executing.');
-
-    while (_) {
-      try {
-        if (f = 1, y && (t = op[0] & 2 ? y['return'] : op[0] ? y['throw'] || ((t = y['return']) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-        if (y = 0, t) op = [op[0] & 2, t.value];
-
-        switch (op[0]) {
-          case 0:
-          case 1:
-            t = op;
-            break;
-
-          case 4:
-            _.label++;
-            return {
-              value: op[1],
-              done: false
-            };
-
-          case 5:
-            _.label++;
-            y = op[1];
-            op = [0];
-            continue;
-
-          case 7:
-            op = _.ops.pop();
-
-            _.trys.pop();
-
-            continue;
-
-          default:
-            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-              _ = 0;
-              continue;
-            }
-
-            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-              _.label = op[1];
-              break;
-            }
-
-            if (op[0] === 6 && _.label < t[1]) {
-              _.label = t[1];
-              t = op;
-              break;
-            }
-
-            if (t && _.label < t[2]) {
-              _.label = t[2];
-
-              _.ops.push(op);
-
-              break;
-            }
-
-            if (t[2]) _.ops.pop();
-
-            _.trys.pop();
-
-            continue;
-        }
-
-        op = body.call(thisArg, _);
-      } catch (e) {
-        op = [6, e];
-        y = 0;
-      } finally {
-        f = t = 0;
-      }
-    }
-
-    if (op[0] & 5) throw op[1];
-    return {
-      value: op[0] ? op[1] : void 0,
-      done: true
-    };
-  }
-};
-
-var __rest =  function (s, e) {
-  var t = {};
-
-  for (var p in s) {
-    if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
-  }
-
-  if (s != null && typeof Object.getOwnPropertySymbols === 'function') for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
-  }
-  return t;
-};
-
-var __importStar =  function (mod) {
-  if (mod && mod.__esModule) return mod;
-  var result = {};
-  if (mod != null) for (var k in mod) {
-    if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-  }
-  result['default'] = mod;
-  return result;
-};
-
-Object.defineProperty(typeof exports !== 'undefined' ? exports : {}, '__esModule', {
-  value: true
-});
-
-var react_1 = __importStar(require('react'));
-
-var defaultConfig = {
-  storeKey: '__NEXT_REDUX_STORE__',
-  debug: false,
-  serializeState: function serializeState(state) {
-    return state;
-  },
-  deserializeState: function deserializeState(state) {
-    return state;
-  }
-};
-function withRedux (makeStore, config) {
-  config = __assign(__assign({}, defaultConfig), config);
-  var isServer = typeof window === 'undefined';
-
-  var initStore = function initStore(_a) {
-    var initialState = _a.initialState,
-        ctx = _a.ctx;
-    var storeKey = config.storeKey;
-
-    var createStore = function createStore() {
-      return makeStore(config.deserializeState(initialState), __assign(__assign(__assign({}, ctx), config), {
-        isServer: isServer
-      }));
-    };
-
-    if (isServer) return createStore(); // Memoize store if client
-
-    if (!(storeKey in window)) {
-      window[storeKey] = createStore();
-    }
-
-    return window[storeKey];
-  };
-
-  return function (App) {
-    var _a;
-
-    return _a =
-    /** @class */
-    function (_super) {
-      __extends(WrappedApp, _super);
-
-      function WrappedApp(props, context) {
-        var _this = _super.call(this, props, context) || this;
-
-        var initialState = props.initialState;
-        if (config.debug) console.log('4. WrappedApp.render created new store with initialState', initialState);
-        _this.store = initStore({
-          initialState: initialState
-        });
-        return _this;
-      }
-
-      WrappedApp.prototype.render = function () {
-        var _a = this.props,
-            initialProps = _a.initialProps,
-            initialState = _a.initialState,
-            props = __rest(_a, ['initialProps', 'initialState']); // Cmp render must return something like <Provider><Component/></Provider>
-
-
-        return react_1.default.createElement(App, __assign({}, props, initialProps, {
-          store: this.store
-        }));
-      };
-
-      return WrappedApp;
-    }(react_1.Component),
-    /* istanbul ignore next */
-    _a.displayName = 'withRedux(' + (App.displayName || App.name || 'App') + ')', _a.getInitialProps = function (appCtx) {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var store, initialProps;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              /* istanbul ignore next */
-              if (!appCtx) throw new Error('No app context');
-              /* istanbul ignore next */
-
-              if (!appCtx.ctx) throw new Error('No page context');
-              store = initStore({
-                ctx: appCtx.ctx
-              });
-              if (config.debug) console.log('1. WrappedApp.getInitialProps wrapper got the store with state', store.getState());
-              appCtx.ctx.store = store;
-              appCtx.ctx.isServer = isServer;
-              initialProps = {};
-              if (!('getInitialProps' in App)) return [3,
-              /*break*/
-              2];
-              return [4,
-              /*yield*/
-              App.getInitialProps.call(App, appCtx)];
-
-            case 1:
-              initialProps = _a.sent();
-              _a.label = 2;
-
-            case 2:
-              if (config.debug) console.log('3. WrappedApp.getInitialProps has store state', store.getState());
-              return [2,
-              /*return*/
-              {
-                isServer: isServer,
-                initialState: isServer ? config.serializeState(store.getState()) : store.getState(),
-                initialProps: initialProps
-              }];
-          }
-        });
-      });
-    }, _a;
-  };
-}
-
 // import isFunction from 'lodash/isFunction';
 /**
  * Validate the shape of redux store
@@ -2476,6 +1926,97 @@ function withRedux (makeStore, config) {
 function checkStore(store) {
   invariant(typeOf(store) === 'object' && typeOf(store.dispatch) === 'function' && typeOf(store.subscribe) === 'function' && typeOf(store.getState) === 'function' && typeOf(store.replaceReducer) === 'function' && typeOf(store.runSaga) === 'function' && typeOf(store.injectedReducers) === 'object' && typeOf(store.injectedSagas) === 'object', '(app/utils...) injectors: Expected a valid redux store');
 }
+
+/* eslint-disable no-underscore-dangle */
+/**
+ * Merges the main reducer with the router state and dynamically injected reducers
+ */
+
+function createReducer() {
+  var injectedReducers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var reducer = Object.keys(injectedReducers).length > 0 ? injectedReducers : {
+    global: function global() {
+      return {};
+    }
+  };
+  var rootReducer = redux.combineReducers(reducer);
+  return rootReducer;
+}
+
+function injectReducerFactory(store, isValid) {
+  return function injectReducer(key, reducer, customCreateReducer) {
+    if (!isValid) checkStore(store);
+    invariant(typeOf(key) === 'string' && key && typeOf(reducer) === 'function', '(app/utils...) injectReducer: Expected `reducer` to be a reducer function'); // Check `store.injectedReducers[key] === reducer` for hot reloading when a key is the same but a reducer is different
+
+    if (Reflect.has(store.injectedReducers, key) && store.injectedReducers[key] === reducer) return;
+    store.injectedReducers[key] = reducer; // eslint-disable-line no-param-reassign
+
+    store.replaceReducer((customCreateReducer || createReducer)(store.injectedReducers));
+  };
+}
+function getInjectors(store) {
+  checkStore(store);
+  return {
+    injectReducer: injectReducerFactory(store, true)
+  };
+}
+
+/**
+ * Dynamically injects a reducer
+ *
+ * @param {string} key A key of the reducer
+ * @param {function} reducer A reducer that will be injected
+ *
+ */
+
+var injectReducer = (function (_ref, createReducer) {
+  var key = _ref.key,
+      reducer = _ref.reducer;
+  return function (WrappedComponent) {
+    var ReducerInjector = /*#__PURE__*/function (_React$Component) {
+      _inherits(ReducerInjector, _React$Component);
+
+      var _super = _createSuper(ReducerInjector);
+
+      function ReducerInjector(props, context) {
+        var _this;
+
+        _classCallCheck(this, ReducerInjector);
+
+        _this = _super.call(this, props, context);
+        getInjectors(context.store).injectReducer(key, reducer, createReducer);
+        return _this;
+      }
+
+      _createClass(ReducerInjector, [{
+        key: "render",
+        value: function render() {
+          return /*#__PURE__*/React__default.createElement(WrappedComponent, this.props);
+        }
+      }]);
+
+      return ReducerInjector;
+    }(React__default.Component);
+
+    _defineProperty(ReducerInjector, "WrappedComponent", WrappedComponent);
+
+    _defineProperty(ReducerInjector, "contextType", reactRedux.ReactReduxContext);
+
+    _defineProperty(ReducerInjector, "displayName", "withReducer(".concat(WrappedComponent.displayName || WrappedComponent.name || 'Component', ")"));
+
+    return hoistNonReactStatics(ReducerInjector, WrappedComponent);
+  };
+});
+
+var useInjectReducer = function useInjectReducer(_ref2, createReducer) {
+  var key = _ref2.key,
+      reducer = _ref2.reducer;
+  var inject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+  var context = React__default.useContext(reactRedux.ReactReduxContext);
+  React__default.useEffect(function () {
+    if (inject) getInjectors(context.store).injectReducer(key, reducer, createReducer);
+  }, []);
+};
 
 var RESTART_ON_REMOUNT = '@@saga-injector/restart-on-remount';
 var DAEMON = '@@saga-injector/daemon';
@@ -2548,7 +2089,7 @@ function ejectSagaFactory(store, isValid) {
     }
   };
 }
-function getInjectors(store) {
+function getInjectors$1(store) {
   checkStore(store);
   return {
     injectSaga: injectSagaFactory(store, true),
@@ -2585,7 +2126,7 @@ var injectSaga = (function (_ref) {
         _classCallCheck(this, InjectSaga);
 
         _this = _super.call(this, props, context);
-        _this.injectors = getInjectors(context.store);
+        _this.injectors = getInjectors$1(context.store);
 
         _this.injectors.injectSaga(key, {
           saga: saga,
@@ -2629,7 +2170,7 @@ var useInjectSaga = function useInjectSaga(_ref2) {
   var callback = arguments.length > 3 ? arguments[3] : undefined;
   var context = React__default.useContext(reactRedux.ReactReduxContext);
   React__default.useEffect(function () {
-    var injectors = getInjectors(context.store);
+    var injectors = getInjectors$1(context.store);
 
     if (inject) {
       injectors.injectSaga(key, {
@@ -2709,7 +2250,6 @@ exports.HOC_MAIN_CLIENT_SIDE_CONFIG_DEFAULT = HOC_MAIN_CLIENT_SIDE_CONFIG_DEFAUL
 exports.HOC_MAIN_CONFIG_KEY = HOC_MAIN_CONFIG_KEY;
 exports.HOC_MAIN_SERVER_SIDE_CONFIG_DEFAULT = HOC_MAIN_SERVER_SIDE_CONFIG_DEFAULT;
 exports.INFINITE_DATA_HANDLER = INFINITE_DATA_HANDLER$1;
-exports.IndianStates = indianStates;
 exports.LOADER_HANDLER = LOADER_HANDLER$1;
 exports.ON_CANCEL = ON_CANCEL$1;
 exports.ON_CANCEL_ERROR = ON_CANCEL_ERROR$1;
@@ -2745,6 +2285,7 @@ exports.deleteIn = deleteIn;
 exports.generateTimeStamp = generateTimeStamp;
 exports.getData = getData;
 exports.getIn = getIn;
+exports.injectReducer = injectReducer;
 exports.injectSaga = injectSaga;
 exports.newObject = newObject;
 exports.objectEquals = objectEquals;
@@ -2758,6 +2299,7 @@ exports.updateIn = updateIn;
 exports.useActions = useActionsHook;
 exports.useApiQuery = useApiQuery;
 exports.useCancelAllRunningApiCalls = useCancelAllRunningApiCalls;
+exports.useInjectReducer = useInjectReducer;
 exports.useInjectSaga = useInjectSaga;
 exports.useMutateReducer = useMutateReducer;
 exports.useMutation = useMutation;
@@ -2766,5 +2308,3 @@ exports.useRefetchCachedApi = useRefetchCachedApi;
 exports.useResetOnlyApiEndPointsState = useResetOnlyApiEndPointsState;
 exports.useResetState = useResetState;
 exports.useStaleRefresh = useStaleRefresh;
-exports.withRedux = withRedux;
-exports.withReduxSaga = withReduxSaga;
