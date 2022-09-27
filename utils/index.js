@@ -32,6 +32,7 @@ var _HOC_MAIN_CLIENT_SIDE, _HOC_MAIN_SERVER_SIDE;
 var _FOR_INTERNAL_USE_ONLY_ = "@@@__#_FOR_INTERNAL_PURPOSE_ONLY_#__@@@";
 var _USE_TYPE_ = "@@@__#_USE_TYPE___@#@__#_USE_TYPE___@@@";
 var GET_INITIAL_PROPS_DEFAULT = 'getInitialProps';
+var REFETCH_API_QUERY = 'REFETCH_API_QUERY';
 var REDUCER_BASE_PATH = 'app/containers/';
 var IS_DEBOUNCE_API_CALL = 'is_debounce_api_call';
 var DEBOUNCE_API_CALL_DELAY_IN_MS = 'debounce_api_call_delay';
@@ -1565,6 +1566,39 @@ var toPromiseFunction = function toPromiseFunction(action, dispatch) {
     });
   };
 };
+/* example
+ *  const execute = toPromiseAllFunction([DEMO_URL_CALL, DEMO_API_URL_CALL]);
+ *  const asyncfunc = async () => {
+ *      try {
+ *        const data = await execute([],{ isReject: false });
+ *        console.log(data, '=============');
+ *      } catch (err) {
+ *        console.log(err);
+ *      }
+ *    };
+ *    asyncfunc();
+ */
+
+var toPromiseAllFunction = function toPromiseAllFunction() {
+  var actions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  var dispatch = arguments.length > 1 ? arguments[1] : undefined;
+  return function () {
+    var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var defaultConfig = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    if (typeOf(config) !== 'null' && typeOf(config) !== 'undefined' && typeOf(config) !== 'array') checkKeyWithMessage(config, 'object', "toPromise() : Expected a (first parameter) to be an Array or Object");
+    return Promise.all(actions.map(function (action, i) {
+      return new Promise(function (resolve, reject) {
+        var CONFIG = _objectSpread(_objectSpread({}, (typeOf(config) === 'object' ? config : config[i] && config[i].config) || defaultConfig.config || {}), {}, {
+          resolve: resolve,
+          reject: reject,
+          isReject: !!(typeOf(config) === 'object' ? config.isReject || defaultConfig.isReject : config[i] && config[i].isReject || defaultConfig.isReject)
+        });
+
+        return typeof dispatch === 'function' ? dispatch(action(CONFIG)) : action(CONFIG);
+      });
+    }));
+  };
+};
 var CACHE = {};
 
 function stringify(val) {
@@ -1764,6 +1798,32 @@ var useResetOnlyApiEndPointsState = function useResetOnlyApiEndPointsState(reduc
     dispatch({
       type: reducerName ? "".concat(reducerName, "_RESET_API") : 'RESET_API',
       payload: dontResetKeys
+    });
+  }, []);
+
+  return _callback;
+};
+/* example
+ * const { reducerConstants: { DEMO_API } } = useDemoApi;
+ * const refetchApi = useRefetchCachedApi(DEMO_API);
+ * refetchApi();
+ */
+
+var useRefetchCachedApi = function useRefetchCachedApi(reducerkey) {
+  if (!reducerkey) checkKeyWithMessage(reducerkey, 'string', 'useRefetchApi(`reducerkey`) : Expected a valid reducer key');
+  var dispatch = reactRedux.useDispatch();
+
+  var _callback = React.useCallback(function (key) {
+    var regex = REDUCER_BASE_PATH.concat('+.*?_CALL');
+    var isSearchMatched = reducerkey.search(regex) > -1;
+    if (isSearchMatched) dispatch({
+      type: reducerkey,
+      payload: {
+        actionCallType: REFETCH_API_QUERY,
+        request: {
+          key: key
+        }
+      }
     });
   }, []);
 
@@ -2533,6 +2593,7 @@ exports.objectEquals = objectEquals;
 exports.setIn = setIn;
 exports.toCapitalize = toCapitalize;
 exports.toPromise = toPromise;
+exports.toPromiseAllFunction = toPromiseAllFunction;
 exports.toPromiseFunction = toPromiseFunction;
 exports.typeOf = typeOf;
 exports.updateIn = updateIn;
@@ -2542,6 +2603,7 @@ exports.useInjectSaga = useInjectSaga;
 exports.useMutateReducer = useMutateReducer;
 exports.useMutation = useMutation;
 exports.useQuery = useQuery;
+exports.useRefetchCachedApi = useRefetchCachedApi;
 exports.useResetOnlyApiEndPointsState = useResetOnlyApiEndPointsState;
 exports.useResetState = useResetState;
 exports.useStaleRefresh = useStaleRefresh;
