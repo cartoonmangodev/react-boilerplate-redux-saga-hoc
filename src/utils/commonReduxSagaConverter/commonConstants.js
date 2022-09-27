@@ -7,6 +7,7 @@ export const GET_INITIAL_PROPS_DEFAULT = 'getInitialProps';
 export const API_LOADING_STATUS = 'app/API_LOADING_STATUS';
 
 export const TAKE_EVERY = 'every';
+export const REFETCH_API_QUERY = 'REFETCH_API_QUERY';
 
 export const REDUCER_BASE_PATH = 'app/containers/';
 

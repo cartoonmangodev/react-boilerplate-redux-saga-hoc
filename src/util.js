@@ -23,6 +23,8 @@ export {
   useStaleRefresh,
   useMutateReducer,
   toPromiseFunction,
+  useRefetchCachedApi,
+  toPromiseAllFunction,
   useCancelAllRunningApiCalls,
   useActionsHook as useActions,
   useResetOnlyApiEndPointsState,

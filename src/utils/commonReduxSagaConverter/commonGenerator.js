@@ -26,6 +26,7 @@ import * as commonActions from './commonActions';
 import {
   DEBOUNCE_API_CALL_DELAY_IN_MS,
   IS_DEBOUNCE_API_CALL,
+  REFETCH_API_QUERY,
 } from './commonConstants';
 import CustomError from '../customError';
 const headers = '';
@@ -75,13 +76,43 @@ const checkKey = (key, name, dataType) => {
   );
 };
 const _cache = {};
+const _cacheApiConfig = {};
 export default function({
   actionType = {},
   requestResponseHandler,
   axiosInterceptors,
 }) {
-  function* commonGenerator({
-    payload: {
+  function* commonGenerator({ type, payload: _payload }) {
+    /* below code is used for refetching cached api - start */
+    let apiCacheFilter;
+    if (_payload.request) {
+      _cacheApiConfig[type] = _cacheApiConfig[type] || {};
+      if (_payload.request.key) {
+        if (
+          Array.isArray(_payload.request.key) &&
+          _payload.request.key.length > 0
+        )
+          apiCacheFilter = _payload.request.key.join('@_@-@_@');
+        else apiCacheFilter = _payload.request.key;
+
+        if (!(_payload.actionCallType === REFETCH_API_QUERY))
+          _cacheApiConfig[type][apiCacheFilter] = _payload;
+      } else _cacheApiConfig[type] = _payload;
+    }
+    const __payload =
+      _payload.actionCallType === REFETCH_API_QUERY
+        ? apiCacheFilter
+          ? _cacheApiConfig[type][apiCacheFilter]
+          : _cacheApiConfig[type]
+        : _payload;
+    if (!__payload) {
+      yield call(loaderGenerator, {
+        type,
+      });
+      return;
+    }
+    /* above code is used for refetching cached api - end */
+    const {
       resolve,
       reject,
       isReject,
@@ -122,9 +153,8 @@ export default function({
         ...restCallback
       } = {},
       ...restPayload
-    } = {},
-    type,
-  }) {
+    } = __payload;
+
     let loop = true;
     let count = 1;
     let pollingRequestConfig = {};

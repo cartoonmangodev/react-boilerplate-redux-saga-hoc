@@ -21,6 +21,7 @@ import {
   ON_TOAST,
   INFINITE_DATA_HANDLER,
   REDUCER_BASE_PATH,
+  REFETCH_API_QUERY,
 } from './commonReduxSagaConverter/commonConstants';
 import { newObject, generateTimeStamp, typeOf } from './helpers';
 import {
@@ -1083,6 +1084,35 @@ export const useResetOnlyApiEndPointsState = reducerName => {
       type: reducerName ? `${reducerName}_RESET_API` : 'RESET_API',
       payload: dontResetKeys,
     });
+  }, []);
+  return _callback;
+};
+/* example
+ * const { reducerConstants: { DEMO_API } } = useDemoApi;
+ * const refetchApi = useRefetchCachedApi(DEMO_API);
+ * refetchApi();
+ */
+export const useRefetchCachedApi = reducerkey => {
+  if (!reducerkey)
+    checkKeyWithMessage(
+      reducerkey,
+      'string',
+      'useRefetchApi(`reducerkey`) : Expected a valid reducer key',
+    );
+  const dispatch = useDispatch();
+  const _callback = useCallback(key => {
+    const regex = REDUCER_BASE_PATH.concat('+.*?_CALL');
+    const isSearchMatched = reducerkey.search(regex) > -1;
+    if (isSearchMatched)
+      dispatch({
+        type: reducerkey,
+        payload: {
+          actionCallType: REFETCH_API_QUERY,
+          request: {
+            key,
+          },
+        },
+      });
   }, []);
   return _callback;
 };
