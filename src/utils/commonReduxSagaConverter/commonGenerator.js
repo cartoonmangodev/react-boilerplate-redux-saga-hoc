@@ -108,6 +108,9 @@ export default function({
     if (!__payload) {
       yield call(loaderGenerator, {
         type,
+        commonData: {
+          status: 'request query not found.Unable to fetch api.',
+        },
       });
       return;
     }
