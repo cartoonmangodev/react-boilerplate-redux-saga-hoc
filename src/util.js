@@ -1,7 +1,7 @@
 import { commonConstants } from './utils/commonReduxSagaConverter/commonConstants';
 export { default as Safe } from './utils/nullCheck';
-export { default as IndianStates } from './utils/indianStates';
 export { default as FormValidator } from './utils/formValidation';
+export { default as CustomError } from './utils/customError';
 export {
   cloneObject,
   newObject,
@@ -38,9 +38,10 @@ export {
   HOC_MAIN_CONFIG_KEY,
   FOR_INTERNAL_USE_ONLY,
 } from './utils/commonReduxSagaConverter/commonConstants';
-export { default as withReduxSaga } from './utils/utils/next/withReduxSaga';
-export { default as CustomError } from './utils/customError';
-export { default as withRedux } from './utils/utils/next/withRedux';
+export {
+  default as injectReducer,
+  useInjectReducer,
+} from './utils/utils/injectReducer';
 export { default as injectSaga, useInjectSaga } from './utils/utils/injectSaga';
 export const {
   API_END_POINTS_CONFIG_DEFAULT_VALUE,
