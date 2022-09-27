@@ -23,6 +23,7 @@ import {
   REDUCER_BASE_PATH,
   REFETCH_API_QUERY,
 } from './commonReduxSagaConverter/commonConstants';
+import { actionsHandler } from './commonReduxSagaConverter/commonActions';
 import { newObject, generateTimeStamp, typeOf } from './helpers';
 import {
   filterArrayToastEmptyHandler,
@@ -768,6 +769,7 @@ export const useMutation = reducerName => {
       Array.isArray(filter)
     ) {
       // checkKey(value, 'value', 'object');
+      console.log(store.getState()[reducerName][type]);
       dispatch({
         type: type.slice(0, -4).concat('CUSTOM_TASK'),
         response: {
@@ -779,7 +781,13 @@ export const useMutation = reducerName => {
           data: {
             data:
               typeof value === 'function'
-                ? value(store.getState()[reducerName][type])
+                ? value(
+                    safe(
+                      store.getState()[reducerName][type],
+                      `.data${filter.length ? '.' : ''}${filter.join('.')}`,
+                    ),
+                    type,
+                  )
                 : value,
           },
           payload: {
@@ -904,20 +912,22 @@ function hashArgs(...args) {
  *     delay: 8000,
  *   },
  * };
+ * const CALL_ON_MOUNT = true
  * const [refresh, isUpdating] = useStaleRefresh(
  *   VENDORS_GET_DASBOARD_API_CALL,
  *   VENDORS_GET_DASBOARD_API,
  *   pollingConfig,
+ *   CALL_ON_MOUNT // calls api once mounted
  * );
- * const [refreshOrders, isUpdating] = useStaleRefresh(
+ * const [fetchOrders, isUpdating] = useStaleRefresh(
  *   VENDORS_GET_ORDERS_BY_DAY_API_CALL,
  *   VENDORS_GET_ORDERS_BY_DAY_API,
  *   pollingConfig,
  * );
  * useEffect(() => {
  *   function pollingStart() {
- *     /// refresh({loader, clearData, config}); optional parameters
- *     refreshOrders();
+ *     /// fetchOrders({loader, clearData, config}); optional parameters
+ *     fetchOrders();
  *   }
  *   function pollingEnd() {
  *     VENDORS_GET_DASBOARD_API_CANCEL();
@@ -1115,4 +1125,63 @@ export const useRefetchCachedApi = reducerkey => {
       });
   }, []);
   return _callback;
+};
+/* example
+ * const IS_QUERY_DATA = true;
+ * const IS_MUTATION = true;
+ * const { reducerConstants: { DEMO_API } } = useDemoApi;
+ * const {action: {call,cancel},mutate,data } = useApiQuery(DEMO_API,IS_QUERY_DATA,IS_MUTATION);
+ * call();
+ * mutate({value: data => data, filter: ['list']})
+ */
+export const useApiQuery = (reducerkey, isQueryData, isMutation) => {
+  if (!reducerkey)
+    checkKeyWithMessage(
+      reducerkey,
+      'string',
+      'useRefetchApi(`reducerkey`) : Expected a valid reducer key',
+    );
+  let data;
+  let mutation;
+  const reducerName = reducerkey.split('/')[2];
+  const ref = useRef({ isQueryData, isMutation });
+  const dispatch = useDispatch();
+  if (ref.current.isMutation) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    mutation = useMutation(reducerName);
+  }
+  if (ref.current.isQueryData) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    data = useQuery(reducerName, { key: reducerkey, default: {} });
+  }
+  const _action = useMemo(() => {
+    const regex = REDUCER_BASE_PATH.concat('+.*?_CALL');
+    const isSearchMatched = reducerkey.search(regex) > -1;
+    if (isSearchMatched)
+      return {
+        action: {
+          call: (...rest) => dispatch(actionsHandler.call(reducerkey)(...rest)),
+          cancel: (...rest) =>
+            dispatch(actionsHandler.cancel(reducerkey)(...rest)),
+          custom: (...rest) =>
+            dispatch(actionsHandler.custom(reducerkey)(...rest)),
+        },
+        mutate: mutation
+          ? ({ value: _value, filter: _filter }) => {
+              mutation({
+                key: reducerkey,
+                value: _value,
+                filter: _filter,
+              });
+            }
+          : undefined,
+      };
+    checkKeyWithMessage(
+      null,
+      'string',
+      `useApiQuery(${reducerkey}) : Expected a valid reducer key`,
+    );
+    return {};
+  }, []);
+  return { ..._action, data, type: reducerkey };
 };

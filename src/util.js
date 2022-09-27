@@ -18,6 +18,7 @@ export {
   getData,
   useQuery,
   toPromise,
+  useApiQuery,
   useMutation,
   useResetState,
   useStaleRefresh,
