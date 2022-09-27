@@ -1108,6 +1108,93 @@ var typeOf = function typeOf(_obj) {
   return typeof _obj === 'undefined' ? _typeof(_obj) : type[Object.prototype.toString.call(_obj)] || _typeof(_obj);
 };
 
+// <============================ common actions ==============================>
+
+var successAction = function successAction(actionType) {
+  return function (type, method, payload, statusCode, message) {
+    var data = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : {};
+    return {
+      type: actionType,
+      response: {
+        type: type,
+        data: data,
+        payload: payload,
+        statusCode: statusCode,
+        message: message,
+        method: method
+      }
+    };
+  };
+};
+
+var errorAction = function errorAction(actionType) {
+  return function (type, method, payload, statusCode, message) {
+    var error = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : {};
+    return {
+      type: actionType,
+      response: {
+        type: type,
+        error: error,
+        payload: payload,
+        statusCode: statusCode,
+        message: message,
+        method: method
+      }
+    };
+  };
+};
+
+var callAction = function callAction(actionType) {
+  return function () {
+    var payload = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    return {
+      type: actionType,
+      payload: payload
+    };
+  };
+};
+
+var cancelAction = function cancelAction(actionType) {
+  return function (type, method, filter, cancelKey) {
+    return {
+      type: cancelKey && typeOf(cancelKey) === 'string' && cancelKey.length ? "".concat(actionType, "_[").concat(cancelKey, "]") : actionType,
+      response: {
+        type: type,
+        method: method,
+        payload: {
+          filter: filter
+        }
+      }
+    };
+  };
+};
+
+var customAction = function customAction(actionType) {
+  return function (type, method, payload) {
+    var data = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+    var statusCode = arguments.length > 4 ? arguments[4] : undefined;
+    return {
+      type: actionType,
+      response: {
+        type: type,
+        method: method,
+        data: data,
+        statusCode: statusCode || method === ON_SUCCESS ? 200 : null,
+        customTask: true,
+        payload: payload
+      }
+    };
+  };
+};
+
+var actionsHandler = {
+  success: successAction,
+  error: errorAction,
+  call: callAction,
+  cancel: cancelAction,
+  custom: customAction
+};
+
 var cache = {};
 var cacheActions = {};
 var safe = nullcheck;
@@ -1497,6 +1584,7 @@ var useMutation = function useMutation(reducerName) {
 
     if (type.includes('_CALL') && type.slice(-5) === '_CALL' && isSearchMatched && filter && Array.isArray(filter)) {
       // checkKey(value, 'value', 'object');
+      console.log(store.getState()[reducerName][type]);
       dispatch({
         type: type.slice(0, -4).concat('CUSTOM_TASK'),
         response: {
@@ -1506,7 +1594,7 @@ var useMutation = function useMutation(reducerName) {
           mutation: true,
           customTask: true,
           data: {
-            data: typeof value === 'function' ? value(store.getState()[reducerName][type]) : value
+            data: typeof value === 'function' ? value(safe(store.getState()[reducerName][type], ".data".concat(filter.length ? '.' : '').concat(filter.join('.'))), type) : value
           },
           payload: {
             filter: filter
@@ -1622,20 +1710,22 @@ function hashArgs() {
  *     delay: 8000,
  *   },
  * };
+ * const CALL_ON_MOUNT = true
  * const [refresh, isUpdating] = useStaleRefresh(
  *   VENDORS_GET_DASBOARD_API_CALL,
  *   VENDORS_GET_DASBOARD_API,
  *   pollingConfig,
+ *   CALL_ON_MOUNT // calls api once mounted
  * );
- * const [refreshOrders, isUpdating] = useStaleRefresh(
+ * const [fetchOrders, isUpdating] = useStaleRefresh(
  *   VENDORS_GET_ORDERS_BY_DAY_API_CALL,
  *   VENDORS_GET_ORDERS_BY_DAY_API,
  *   pollingConfig,
  * );
  * useEffect(() => {
  *   function pollingStart() {
- *     /// refresh({loader, clearData, config}); optional parameters
- *     refreshOrders();
+ *     /// fetchOrders({loader, clearData, config}); optional parameters
+ *     fetchOrders();
  *   }
  *   function pollingEnd() {
  *     VENDORS_GET_DASBOARD_API_CANCEL();
@@ -1829,6 +1919,73 @@ var useRefetchCachedApi = function useRefetchCachedApi(reducerkey) {
   }, []);
 
   return _callback;
+};
+/* example
+ * const IS_QUERY_DATA = true;
+ * const IS_MUTATION = true;
+ * const { reducerConstants: { DEMO_API } } = useDemoApi;
+ * const {action: {call,cancel},mutate,data } = useApiQuery(DEMO_API,IS_QUERY_DATA,IS_MUTATION);
+ * call();
+ * mutate({value: data => data, filter: ['list']})
+ */
+
+var useApiQuery = function useApiQuery(reducerkey, isQueryData, isMutation) {
+  if (!reducerkey) checkKeyWithMessage(reducerkey, 'string', 'useRefetchApi(`reducerkey`) : Expected a valid reducer key');
+  var data;
+  var mutation;
+  var reducerName = reducerkey.split('/')[2];
+  var ref = React.useRef({
+    isQueryData: isQueryData,
+    isMutation: isMutation
+  });
+  var dispatch = reactRedux.useDispatch();
+
+  if (ref.current.isMutation) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    mutation = useMutation(reducerName);
+  }
+
+  if (ref.current.isQueryData) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    data = useQuery(reducerName, {
+      key: reducerkey,
+      default: {}
+    });
+  }
+
+  var _action = React.useMemo(function () {
+    var regex = REDUCER_BASE_PATH.concat('+.*?_CALL');
+    var isSearchMatched = reducerkey.search(regex) > -1;
+    if (isSearchMatched) return {
+      action: {
+        call: function call() {
+          return dispatch(actionsHandler.call(reducerkey).apply(void 0, arguments));
+        },
+        cancel: function cancel() {
+          return dispatch(actionsHandler.cancel(reducerkey).apply(void 0, arguments));
+        },
+        custom: function custom() {
+          return dispatch(actionsHandler.custom(reducerkey).apply(void 0, arguments));
+        }
+      },
+      mutate: mutation ? function (_ref27) {
+        var _value = _ref27.value,
+            _filter = _ref27.filter;
+        mutation({
+          key: reducerkey,
+          value: _value,
+          filter: _filter
+        });
+      } : undefined
+    };
+    checkKeyWithMessage(null, 'string', "useApiQuery(".concat(reducerkey, ") : Expected a valid reducer key"));
+    return {};
+  }, []);
+
+  return _objectSpread(_objectSpread({}, _action), {}, {
+    data: data,
+    type: reducerkey
+  });
 };
 
 function withReduxSaga() {
@@ -2599,6 +2756,7 @@ exports.toPromiseFunction = toPromiseFunction;
 exports.typeOf = typeOf;
 exports.updateIn = updateIn;
 exports.useActions = useActionsHook;
+exports.useApiQuery = useApiQuery;
 exports.useCancelAllRunningApiCalls = useCancelAllRunningApiCalls;
 exports.useInjectSaga = useInjectSaga;
 exports.useMutateReducer = useMutateReducer;
