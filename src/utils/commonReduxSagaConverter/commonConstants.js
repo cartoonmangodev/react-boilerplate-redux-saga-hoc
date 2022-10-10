@@ -304,19 +304,30 @@ const API_END_POINTS_CONFIG_DEFAULT_VALUE = {
 };
 
 export const API_METHODS = {
-  GET: 'get',
-  REQUEST: 'request',
-  DELETE: 'delete',
-  HEAD: 'head',
-  OPTIONS: 'options',
-  POST: 'post',
-  PUT: 'put',
-  PATCH: 'patch',
+  GET: 'GET',
+  REQUEST: 'REQUEST',
+  DELETE: 'DELETE',
+  HEAD: 'HEAD',
+  OPTIONS: 'OPTIONS',
+  POST: 'POST',
+  PUT: 'PUT',
+  PATCH: 'PATCH',
 };
 
 export const ENV = {
   DEVELOPMENT: 'development',
   PRODUCTION: 'production',
+};
+
+export const hocConstants = {
+  HOC_MAIN_CLIENT_SIDE_CONFIG_DEFAULT,
+  HOC_MAIN_SERVER_SIDE_CONFIG_DEFAULT,
+  HOC_INITIAL_CONFIG_KEY,
+  HOC_MAIN_CONFIG_KEY,
+  FOR_INTERNAL_USE_ONLY,
+  USE_TYPE,
+  API_METHODS,
+  ENV,
 };
 
 export const commonConstants = {

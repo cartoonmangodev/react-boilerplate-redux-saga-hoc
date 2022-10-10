@@ -85,7 +85,7 @@ export default function({
   function* commonGenerator({ type, payload: _payload }) {
     /* below code is used for refetching cached api - start */
     let apiCacheFilter;
-    if (_payload.request) {
+    if (_payload.request && _payload.actionCallType === REFETCH_API_QUERY) {
       _cacheApiConfig[type] = _cacheApiConfig[type] || {};
       if (_payload.request.key) {
         if (
@@ -263,7 +263,18 @@ export default function({
           method: constants.ON_REQUEST,
         });
       request = requestData || request;
-      if (!['POST', 'PATCH', 'PUT', 'DELETE'].includes(request.method))
+      if (
+        ![
+          'POST',
+          'PATCH',
+          'PUT',
+          'DELETE',
+          'post',
+          'patch',
+          'put',
+          'delete',
+        ].includes(request.method)
+      )
         delete request.data;
       if (request.effect) delete request.effect;
       let postData = '';

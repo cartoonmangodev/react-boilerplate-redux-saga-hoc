@@ -1,5 +1,6 @@
 import { commonConstants } from './utils/commonReduxSagaConverter/commonConstants';
 export {
+  hocConstants,
   commonConstants,
   HOC_MAIN_CLIENT_SIDE_CONFIG_DEFAULT,
   HOC_MAIN_SERVER_SIDE_CONFIG_DEFAULT,
