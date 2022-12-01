@@ -87,7 +87,7 @@ export default function({
     let apiCacheFilter;
     if (_payload && _payload.actionCallType !== REFETCH_API_QUERY) {
       _cacheApiConfig[type] = _cacheApiConfig[type] || {};
-      if (_payload.request.key) {
+      if (_payload.request && _payload.request.key) {
         if (
           Array.isArray(_payload.request.key) &&
           _payload.request.key.length > 0
