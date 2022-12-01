@@ -85,7 +85,7 @@ export default function({
   function* commonGenerator({ type, payload: _payload }) {
     /* below code is used for refetching cached api - start */
     let apiCacheFilter;
-    if (_payload.request && _payload.actionCallType === REFETCH_API_QUERY) {
+    if (_payload && _payload.actionCallType !== REFETCH_API_QUERY) {
       _cacheApiConfig[type] = _cacheApiConfig[type] || {};
       if (_payload.request.key) {
         if (
@@ -95,7 +95,7 @@ export default function({
           apiCacheFilter = _payload.request.key.join('@_@-@_@');
         else apiCacheFilter = _payload.request.key;
 
-        if (!(_payload.actionCallType === REFETCH_API_QUERY))
+        if (_payload.actionCallType !== REFETCH_API_QUERY)
           _cacheApiConfig[type][apiCacheFilter] = _payload;
       } else _cacheApiConfig[type] = _payload;
     }
