@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { globals as GlobalEmitter } from './globals';
+import GlobalEmitter from './globals';
 
 export default function useGlobalValueHook(key, initialValue) {
   const valueRef = useRef({ initial: true });
