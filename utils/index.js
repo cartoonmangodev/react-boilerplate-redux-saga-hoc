@@ -1997,7 +1997,7 @@ function useGlobalValueHook(key, initialValue) {
 
   valueRef.current.value = values;
   React.useEffect(function () {
-    globals.subscribe(function (_value) {
+    if (key !== null) globals.subscribe(function (_value) {
       if (key ? _value[key] !== valueRef.current.value[key] : _value !== valueRef.current.value) {
         setValues(_value);
       }
