@@ -73,4 +73,4 @@ class Global extends EventEmitter {
   }
 }
 
-module.exports = Global;
+export default Global;

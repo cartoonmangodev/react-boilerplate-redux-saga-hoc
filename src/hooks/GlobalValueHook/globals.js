@@ -1,3 +1,3 @@
-const GlobalEmitter = require('./GlobalEmitter');
+import GlobalEmitter from './GlobalEmitter';
 const globals = new GlobalEmitter({});
-module.exports = globals;
+export default globals;
