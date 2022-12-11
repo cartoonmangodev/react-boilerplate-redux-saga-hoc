@@ -11,10 +11,11 @@ export default function useGlobalValueHook(key, initialValue) {
     GlobalEmitter.resetValue(initialValue);
   }
   valueRef.current.initial = false;
+  valueRef.current.key = key;
   const [values, setValues] = useState(initialValue || GlobalEmitter.value);
   valueRef.current.value = values;
   useEffect(() => {
-    if (key !== null)
+    if (valueRef.current.key !== null)
       GlobalEmitter.subscribe(_value => {
         if (
           key
@@ -24,7 +25,7 @@ export default function useGlobalValueHook(key, initialValue) {
           setValues(_value);
         }
       });
-  });
+  }, []);
   return {
     value: key ? values[key] : values,
     dispatch: GlobalEmitter.dispatch.bind(GlobalEmitter),
