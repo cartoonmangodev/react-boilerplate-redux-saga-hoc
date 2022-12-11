@@ -30,6 +30,9 @@ export {
   useActionsHook as useActions,
   useResetOnlyApiEndPointsState,
 } from './utils';
+export { default as useGlobalStateHook } from './hooks/GlobalValueHook/useGlobalValueHook';
+export { default as globalState } from './hooks/GlobalValueHook/globals';
+export { default as GlobalEventEmitter } from './hooks/GlobalValueHook/GlobalEmitter';
 export {
   default as injectReducer,
   useInjectReducer,
