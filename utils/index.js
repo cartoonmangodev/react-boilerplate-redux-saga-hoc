@@ -13,7 +13,7 @@ var React = require('react');
 var React__default = _interopDefault(React);
 var redux = require('redux');
 var reactRedux = require('react-redux');
-var isEqual = _interopDefault(require('fast-deep-equal'));
+var isEqual$1 = _interopDefault(require('fast-deep-equal'));
 var reselect = require('reselect');
 var invariant = _interopDefault(require('invariant'));
 require('@babel/runtime/helpers/objectWithoutProperties');
@@ -1215,7 +1215,7 @@ var _execute = function _execute(state, name, array, config, _key, callback) {
 
       previousDependencyArrayData.set(_key, _next);
 
-      if (isEqual(_previous, _next)) {
+      if (isEqual$1(_previous, _next)) {
         return {
           isEqualCheck: true,
           data: previousCallbackData.get(_key) || _queryData
@@ -1226,7 +1226,7 @@ var _execute = function _execute(state, name, array, config, _key, callback) {
 
   var _data = _GetData(state, name, array, config);
 
-  var _isEqual = isEqual(_data, _queryData);
+  var _isEqual = isEqual$1(_data, _queryData);
 
   if (!_isEqual) {
     var callbackData;
@@ -1295,7 +1295,7 @@ var useQuery = function useQuery() {
     };
   }, []);
   var equalityCheckFunction = React.useCallback(function (e, f) {
-    var _isEqual = typeof e.isEqualCheck === 'undefined' ? isEqual(e.data, f.data) : e.isEqualCheck;
+    var _isEqual = typeof e.isEqualCheck === 'undefined' ? isEqual$1(e.data, f.data) : e.isEqualCheck;
 
     if ((!_isEqual || initialRender.get(_key)) && typeof callbackSuccess === 'function') {
       initialRender.set(_key, false);
@@ -1415,12 +1415,12 @@ var useActionsHook = function useActionsHook() {
       setDispatchAction = _useState4[1];
 
   React.useEffect(function () {
-    if (!isEqual(cacheActions[name], actions)) {
+    if (!isEqual$1(cacheActions[name], actions)) {
       cacheActions[name] = actions;
       cache[name] = redux.bindActionCreators(actions, dispatch);
       setDispatchAction(cache[name]);
     } else setDispatchAction(cache[name]);
-  }, [isEqual(cacheActions[name], actions)]);
+  }, [isEqual$1(cacheActions[name], actions)]);
   return dispatchAction;
 };
 /* example
@@ -1663,7 +1663,7 @@ function useStaleRefresh(fn, name) {
   }, [arg, initial]);
   React.useEffect(function () {
     // args is an object so deep compare to rule out false changes
-    if (isEqual(arg, prevArgs.current)) {
+    if (isEqual$1(arg, prevArgs.current)) {
       return;
     }
 
@@ -1865,6 +1865,154 @@ var useApiQuery = function useApiQuery(reducerkey, isQueryData, isMutation) {
     type: reducerkey
   });
 };
+
+/* eslint-disable no-underscore-dangle */
+var EventEmitter = require('events');
+
+var isEqual = require('lodash.isequal');
+
+var valueSymbol = Symbol('valueSymbol');
+var previousValueSymbol = Symbol('previousValueSymbol');
+var globalKeySymbol = Symbol('globalKeySymbol');
+var GLOBAL_KEY = '@@GLOBAL_LISTENER@@';
+var GLOBAL_RESET = '@@GLOBAL_RESET@@';
+
+var Global = /*#__PURE__*/function (_EventEmitter) {
+  _inherits(Global, _EventEmitter);
+
+  var _super = _createSuper(Global);
+
+  function Global() {
+    var _this;
+
+    var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, Global);
+
+    _this = _super.call(this);
+    _this[globalKeySymbol] = GLOBAL_KEY;
+    _this[valueSymbol] = value;
+    _this[previousValueSymbol] = value;
+    return _this;
+  }
+
+  _createClass(Global, [{
+    key: "emitGlobal",
+    value: function emitGlobal(_key, _val) {
+      this.emit(this[globalKeySymbol], this[valueSymbol], {
+        key: _key,
+        value: _val
+      });
+    }
+  }, {
+    key: "emitIndividual",
+    value: function emitIndividual(_key, _val) {
+      this.emit(_key, this[valueSymbol], {
+        key: _key,
+        value: _val
+      });
+    }
+  }, {
+    key: "resetValue",
+    value: function resetValue(_val) {
+      this[previousValueSymbol] = this[valueSymbol];
+      this[valueSymbol] = _val;
+      this.emitGlobal(GLOBAL_RESET, this[valueSymbol]);
+    }
+  }, {
+    key: "clearValue",
+    value: function clearValue() {
+      this[valueSymbol] = {};
+      this.emitGlobal(GLOBAL_RESET, this[valueSymbol]);
+    }
+  }, {
+    key: "getValue",
+    value: function getValue(_key) {
+      return this[valueSymbol][_key];
+    }
+  }, {
+    key: "setValue",
+    value: function setValue(_key, _val) {
+      this[previousValueSymbol] = this[valueSymbol];
+
+      var _value = _objectSpread({}, this[valueSymbol]);
+
+      _value[_key] = _val;
+      this[valueSymbol] = _value;
+      this.emitGlobal(_key, _val);
+    }
+  }, {
+    key: "value",
+    get: function get() {
+      return this[valueSymbol];
+    }
+  }, {
+    key: "GLOBAL_KEY",
+    get: function get() {
+      return this[globalKeySymbol];
+    }
+  }, {
+    key: "dispatch",
+    value: function dispatch(_key, _val) {
+      this[previousValueSymbol] = this[valueSymbol];
+
+      var _value = _objectSpread({}, this[valueSymbol]);
+
+      _value[_key] = _val;
+      this[valueSymbol] = _value;
+      this.emitIndividual(_key, _val);
+      this.emitGlobal(_key, _val);
+    }
+  }, {
+    key: "subscribe",
+    value: function subscribe(callback) {
+      var _this2 = this;
+
+      this.on(this[globalKeySymbol], function (value, obj) {
+        if (!isEqual(_this2[previousValueSymbol], _this2[valueSymbol])) callback(value, obj);
+      });
+    }
+  }]);
+
+  return Global;
+}(EventEmitter);
+
+var globals = new Global({});
+
+function useGlobalValueHook(key, initialValue) {
+  var valueRef = React.useRef({
+    initial: true
+  });
+
+  if (initialValue && _typeof(initialValue) === 'object' && valueRef.current.initial) {
+    globals.resetValue(initialValue);
+  }
+
+  valueRef.current.initial = false;
+
+  var _useState = React.useState(initialValue || globals.value),
+      _useState2 = _slicedToArray(_useState, 2),
+      values = _useState2[0],
+      setValues = _useState2[1];
+
+  valueRef.current.value = values;
+  React.useEffect(function () {
+    globals.subscribe(function (_value) {
+      if (key ? _value[key] !== valueRef.current.value[key] : _value !== valueRef.current.value) {
+        setValues(_value);
+      }
+    });
+  });
+  return {
+    value: key ? values[key] : values,
+    dispatch: globals.dispatch.bind(globals),
+    resetValue: globals.resetValue.bind(globals),
+    clearValue: globals.clearValue.bind(globals),
+    getValue: globals.getValue.bind(globals),
+    setValue: globals.setValue.bind(globals),
+    GlobalEmitter: globals
+  };
+}
 
 // import isFunction from 'lodash/isFunction';
 /**
@@ -2151,6 +2299,7 @@ var useInjectSaga = function useInjectSaga(_ref2) {
 
 exports.CustomError = CustomError;
 exports.FormValidator = validateForm;
+exports.GlobalEventEmitter = Global;
 exports.Safe = nullcheck;
 exports.cloneObject = cloneObject;
 exports.commonConstants = commonConstants;
@@ -2158,6 +2307,7 @@ exports.deleteIn = deleteIn;
 exports.generateTimeStamp = generateTimeStamp;
 exports.getData = getData;
 exports.getIn = getIn;
+exports.globalState = globals;
 exports.injectReducer = injectReducer;
 exports.injectSaga = injectSaga;
 exports.newObject = newObject;
@@ -2172,6 +2322,7 @@ exports.updateIn = updateIn;
 exports.useActions = useActionsHook;
 exports.useApiQuery = useApiQuery;
 exports.useCancelAllRunningApiCalls = useCancelAllRunningApiCalls;
+exports.useGlobalStateHook = useGlobalValueHook;
 exports.useInjectReducer = useInjectReducer;
 exports.useInjectSaga = useInjectSaga;
 exports.useMutateReducer = useMutateReducer;

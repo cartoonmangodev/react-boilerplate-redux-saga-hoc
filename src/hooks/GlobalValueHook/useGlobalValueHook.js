@@ -14,15 +14,16 @@ export default function useGlobalValueHook(key, initialValue) {
   const [values, setValues] = useState(initialValue || GlobalEmitter.value);
   valueRef.current.value = values;
   useEffect(() => {
-    GlobalEmitter.subscribe(_value => {
-      if (
-        key
-          ? _value[key] !== valueRef.current.value[key]
-          : _value !== valueRef.current.value
-      ) {
-        setValues(_value);
-      }
-    });
+    if (key !== null)
+      GlobalEmitter.subscribe(_value => {
+        if (
+          key
+            ? _value[key] !== valueRef.current.value[key]
+            : _value !== valueRef.current.value
+        ) {
+          setValues(_value);
+        }
+      });
   });
   return {
     value: key ? values[key] : values,
