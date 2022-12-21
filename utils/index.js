@@ -1989,6 +1989,7 @@ function useGlobalValueHook(key, initialValue) {
   }
 
   valueRef.current.initial = false;
+  valueRef.current.key = key;
 
   var _useState = React.useState(initialValue || globals.value),
       _useState2 = _slicedToArray(_useState, 2),
@@ -1997,12 +1998,12 @@ function useGlobalValueHook(key, initialValue) {
 
   valueRef.current.value = values;
   React.useEffect(function () {
-    if (key !== null) globals.subscribe(function (_value) {
+    if (valueRef.current.key !== null) globals.subscribe(function (_value) {
       if (key ? _value[key] !== valueRef.current.value[key] : _value !== valueRef.current.value) {
         setValues(_value);
       }
     });
-  });
+  }, []);
   return {
     value: key ? values[key] : values,
     dispatch: globals.dispatch.bind(globals),

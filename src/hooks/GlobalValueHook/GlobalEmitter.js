@@ -37,7 +37,7 @@ class Global extends EventEmitter {
   }
 
   getValue(_key) {
-    return this[valueSymbol][_key];
+    return _key ? this[valueSymbol][_key] : this[valueSymbol];
   }
 
   setValue(_key, _val) {

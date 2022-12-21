@@ -1,6 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
 import GlobalEmitter from './globals';
 
+/** example
+ * const {
+ *  value,
+ *  dispatch,
+ *  clearValue,
+ *  resetValue,
+ *  getValue,
+ *  setValue,
+ * } = useGlobalValueHook(key<optional>,initialState<optional>);
+ * console.log(value);
+ * dispatch(key,value);
+ * clearValue();
+ * resetValue(val<optional>);
+ * getValue(key<optional>);
+ * setValue(key,value)
+ */
+
 export default function useGlobalValueHook(key, initialValue) {
   const valueRef = useRef({ initial: true });
   if (
