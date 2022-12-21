@@ -50,6 +50,7 @@ export default function useGlobalValueHook(key, initialValue) {
     clearValue: GlobalEmitter.clearValue.bind(GlobalEmitter),
     getValue: GlobalEmitter.getValue.bind(GlobalEmitter),
     setValue: GlobalEmitter.setValue.bind(GlobalEmitter),
+    subscribe: GlobalEmitter.subscribe.bind(GlobalEmitter),
     GlobalEmitter,
   };
 }
