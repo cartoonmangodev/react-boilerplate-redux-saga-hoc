@@ -13,7 +13,7 @@ var React = require('react');
 var React__default = _interopDefault(React);
 var redux = require('redux');
 var reactRedux = require('react-redux');
-var isEqual$1 = _interopDefault(require('fast-deep-equal'));
+var isEqual = _interopDefault(require('fast-deep-equal'));
 var reselect = require('reselect');
 var invariant = _interopDefault(require('invariant'));
 require('@babel/runtime/helpers/objectWithoutProperties');
@@ -1215,7 +1215,7 @@ var _execute = function _execute(state, name, array, config, _key, callback) {
 
       previousDependencyArrayData.set(_key, _next);
 
-      if (isEqual$1(_previous, _next)) {
+      if (isEqual(_previous, _next)) {
         return {
           isEqualCheck: true,
           data: previousCallbackData.get(_key) || _queryData
@@ -1226,7 +1226,7 @@ var _execute = function _execute(state, name, array, config, _key, callback) {
 
   var _data = _GetData(state, name, array, config);
 
-  var _isEqual = isEqual$1(_data, _queryData);
+  var _isEqual = isEqual(_data, _queryData);
 
   if (!_isEqual) {
     var callbackData;
@@ -1295,7 +1295,7 @@ var useQuery = function useQuery() {
     };
   }, []);
   var equalityCheckFunction = React.useCallback(function (e, f) {
-    var _isEqual = typeof e.isEqualCheck === 'undefined' ? isEqual$1(e.data, f.data) : e.isEqualCheck;
+    var _isEqual = typeof e.isEqualCheck === 'undefined' ? isEqual(e.data, f.data) : e.isEqualCheck;
 
     if ((!_isEqual || initialRender.get(_key)) && typeof callbackSuccess === 'function') {
       initialRender.set(_key, false);
@@ -1415,12 +1415,12 @@ var useActionsHook = function useActionsHook() {
       setDispatchAction = _useState4[1];
 
   React.useEffect(function () {
-    if (!isEqual$1(cacheActions[name], actions)) {
+    if (!isEqual(cacheActions[name], actions)) {
       cacheActions[name] = actions;
       cache[name] = redux.bindActionCreators(actions, dispatch);
       setDispatchAction(cache[name]);
     } else setDispatchAction(cache[name]);
-  }, [isEqual$1(cacheActions[name], actions)]);
+  }, [isEqual(cacheActions[name], actions)]);
   return dispatchAction;
 };
 /* example
@@ -1663,7 +1663,7 @@ function useStaleRefresh(fn, name) {
   }, [arg, initial]);
   React.useEffect(function () {
     // args is an object so deep compare to rule out false changes
-    if (isEqual$1(arg, prevArgs.current)) {
+    if (isEqual(arg, prevArgs.current)) {
       return;
     }
 
@@ -1866,10 +1866,7 @@ var useApiQuery = function useApiQuery(reducerkey, isQueryData, isMutation) {
   });
 };
 
-/* eslint-disable no-underscore-dangle */
 var EventEmitter = require('events');
-
-var isEqual = require('lodash.isequal');
 
 var valueSymbol = Symbol('valueSymbol');
 var previousValueSymbol = Symbol('previousValueSymbol');
