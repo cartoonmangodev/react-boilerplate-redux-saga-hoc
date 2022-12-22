@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
+import isEqual from 'fast-deep-equal';
 const EventEmitter = require('events');
-const isEqual = require('lodash.isequal');
 const valueSymbol = Symbol('valueSymbol');
 const previousValueSymbol = Symbol('previousValueSymbol');
 const globalKeySymbol = Symbol('globalKeySymbol');

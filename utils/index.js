@@ -1928,7 +1928,7 @@ var Global = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "getValue",
     value: function getValue(_key) {
-      return this[valueSymbol][_key];
+      return _key ? this[valueSymbol][_key] : this[valueSymbol];
     }
   }, {
     key: "setValue",
@@ -1979,6 +1979,23 @@ var Global = /*#__PURE__*/function (_EventEmitter) {
 
 var globals = new Global({});
 
+/** example
+ * const {
+ *  value,
+ *  dispatch,
+ *  clearValue,
+ *  resetValue,
+ *  getValue,
+ *  setValue,
+ * } = useGlobalValueHook(key<optional>,initialState<optional>);
+ * console.log(value);
+ * dispatch(key,value);
+ * clearValue();
+ * resetValue(val<optional>);
+ * getValue(key<optional>);
+ * setValue(key,value)
+ */
+
 function useGlobalValueHook(key, initialValue) {
   var valueRef = React.useRef({
     initial: true
@@ -2011,6 +2028,7 @@ function useGlobalValueHook(key, initialValue) {
     clearValue: globals.clearValue.bind(globals),
     getValue: globals.getValue.bind(globals),
     setValue: globals.setValue.bind(globals),
+    subscribe: globals.subscribe.bind(globals),
     GlobalEmitter: globals
   };
 }
