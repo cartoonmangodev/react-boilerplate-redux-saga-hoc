@@ -1,4 +1,6 @@
-import { validateEmail } from '../../../utils/utilFunctions';
+export function validateEmail(email) {
+  return emailRegex.test(String(email).toLowerCase());
+}
 
 function validate(
   value,
