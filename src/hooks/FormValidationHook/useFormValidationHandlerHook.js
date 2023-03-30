@@ -5,15 +5,10 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-underscore-dangle */
 import { useState, useCallback, useRef } from 'react';
-import {
-  newObject,
-  generateTimeStamp,
-  typeOf,
-} from 'react-boilerplate-redux-saga-hoc/utils';
-import { TYPE_OBJECT } from 'react-boilerplate-redux-saga-hoc/constants';
-// import isEqual from 'lodash/isEqual';
+import { newObject, generateTimeStamp, typeOf } from '../../utils/helpers';
+import { TYPE_OBJECT } from '../../constants';
 import { ON_CHANGE, ON_BLUR, VALUE, ERROR } from './constants';
-import { trimStrings } from '../../../utils/utilFunctions';
+import { trimStrings } from '../../utils/helpers';
 import Validator from './validator';
 const getPlatformBasedFieldValue = e =>
   e &&
