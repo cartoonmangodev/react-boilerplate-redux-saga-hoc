@@ -21,6 +21,7 @@ var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallC
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
 var _inherits = _interopDefault(require('@babel/runtime/helpers/inherits'));
 var _createSuper = _interopDefault(require('@babel/runtime/helpers/createSuper'));
+var cloneDeep = _interopDefault(require('lodash/cloneDeep'));
 var hoistNonReactStatics = _interopDefault(require('hoist-non-react-statics'));
 
 var _HOC_MAIN_CLIENT_SIDE, _HOC_MAIN_SERVER_SIDE;
@@ -984,6 +985,17 @@ var type = {
 };
 var typeOf = function typeOf(_obj) {
   return typeof _obj === 'undefined' ? _typeof(_obj) : type[Object.prototype.toString.call(_obj)] || _typeof(_obj);
+};
+var trimStrings = function trimStrings() {
+  var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var isNumber = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+  if (value && String(value)) {
+    var trimedString = String(value).trim();
+    return isNumber ? Number(trimedString) : trimedString;
+  }
+
+  return value;
 };
 
 // <============================ common actions ==============================>
@@ -2030,6 +2042,840 @@ function useGlobalValueHook(key, initialValue) {
   };
 }
 
+var TYPE_OBJECT$1 = commonConstants.TYPE_OBJECT;
+
+var ON_CHANGE = 'onChangeText';
+var ON_BLUR = 'onBlur';
+var VALUE = 'value';
+var ERROR$1 = 'error';
+
+function validateEmail(email) {
+  return emailRegex.test(String(email).toLowerCase());
+}
+
+function validate(value, fieldName) {
+  var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+      isOptional = _ref.optional,
+      minLength = _ref.minLength,
+      isRequired = _ref.isRequired,
+      _ref$message = _ref.message,
+      message = _ref$message === void 0 ? {} : _ref$message,
+      length = _ref.length,
+      regex = _ref.regex,
+      key = _ref.key;
+
+  if ((isOptional || !isRequired) && !value) return '';
+  if (value && minLength && value.length < minLength) return message && typeof message.minLength !== 'undefined' ? message.minLength : "Minimum ".concat(minLength, " characters is required");
+  if (value && length && value.length !== length) return message && message && typeof message.length !== 'undefined' ? message.length : "Number should be ".concat(length, " digits long");
+
+  switch (fieldName) {
+    case 'password':
+      {
+        if (!value) {
+          return message && typeof message.required !== 'undefined' ? message.required : 'This field is required';
+        }
+
+        return '';
+      }
+
+    case 'email':
+      {
+        if (!value) return message && typeof message.required !== 'undefined' ? message.required : 'Please enter your email';
+        if (value && !validateEmail(value)) return message && typeof message.invalid !== 'undefined' ? message.invalid : 'Invalid email address';
+        return '';
+      }
+
+    case 'name':
+      {
+        if (!value) return message && typeof message.required !== 'undefined' ? message.required : 'Please enter your name'; // if (value && !validateEmail(value)) return 'Invalid email address';
+
+        return '';
+      }
+
+    case 'mobileNumber':
+      {
+        if (!value) return message && typeof message.required !== 'undefined' ? message.required : 'Please enter 10 digit mobile number';
+        return '';
+      }
+
+    case 'about':
+      {
+        if (!value) return message && typeof message.required !== 'undefined' ? message.required : 'This field is required'; // if (value && !validateEmail(value)) return 'Invalid email address';
+
+        return '';
+      }
+
+    default:
+      if (!value) {
+        return message && typeof message.required !== 'undefined' ? message.required : 'This field is required';
+      }
+
+      if (regex) {
+        if (Object.prototype.toString.call(regex) === '[object RegExp]') {
+          if (regex.test(value)) return '';
+          return message && typeof message.regex !== 'undefined' ? message.regex : "".concat(key, " is invalid ");
+        }
+
+        console.error("".concat(key, " is invalid "));
+      }
+
+      return '';
+  }
+}
+
+var getPlatformBasedFieldValue = function getPlatformBasedFieldValue(e) {
+  return e && _typeof(e) === 'object' && e.target && typeof e.preventDefault === 'function' ? e.target.value : e;
+};
+
+var getPlatformBasedFieldName = function getPlatformBasedFieldName(e) {
+  return e && _typeof(e) === 'object' && e.target && typeof e.preventDefault === 'function' ? e.target.name : '';
+};
+
+var _setInitialValues = function _setInitialValues(_ref) {
+  var formConfig = _ref.formConfig,
+      initialValues = _ref.initialValues;
+  return Object.entries(formConfig || {}).reduce(function (acc, _ref2) {
+    var _ref3 = _slicedToArray(_ref2, 2),
+        key = _ref3[0],
+        _ref3$ = _ref3[1],
+        val = _ref3$ === void 0 ? {} : _ref3$;
+
+    return newObject(acc, _defineProperty({}, key, typeof initialValues[key] !== 'undefined' && (typeof initialValues[key] === 'function' ? initialValues[key]() : initialValues[key]) || (typeof val.default !== 'undefined' ? val.default : '')));
+  }, {});
+};
+
+var checkType = function checkType(val, oldVal) {
+  return newObject(typeof val === 'function' ? val(oldVal) : val);
+};
+
+var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
+  var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      _ON_CHANGE_KEY = _ref4.ON_CHANGE_KEY,
+      _ON_BLUR_KEY = _ref4.ON_BLUR_KEY,
+      _VALUE_KEY = _ref4.VALUE_KEY,
+      _ERROR_KEY = _ref4.ERROR_KEY;
+
+  return function () {
+    var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref5$VALIDATOR = _ref5.VALIDATOR,
+        Validate = _ref5$VALIDATOR === void 0 ? validate : _ref5$VALIDATOR,
+        _ref5$initialValues = _ref5.initialValues,
+        initialValues = _ref5$initialValues === void 0 ? {} : _ref5$initialValues,
+        _ref5$FORM_CONFIG = _ref5.FORM_CONFIG,
+        FORM_CONFIG = _ref5$FORM_CONFIG === void 0 ? {} : _ref5$FORM_CONFIG,
+        _ref5$ON_CHANGE_KEY = _ref5.ON_CHANGE_KEY,
+        ON_CHANGE_KEY = _ref5$ON_CHANGE_KEY === void 0 ? _ON_CHANGE_KEY || ON_CHANGE : _ref5$ON_CHANGE_KEY,
+        _ref5$ON_BLUR_KEY = _ref5.ON_BLUR_KEY,
+        ON_BLUR_KEY = _ref5$ON_BLUR_KEY === void 0 ? _ON_BLUR_KEY || ON_BLUR : _ref5$ON_BLUR_KEY,
+        _ref5$VALUE_KEY = _ref5.VALUE_KEY,
+        VALUE_KEY = _ref5$VALUE_KEY === void 0 ? _VALUE_KEY || VALUE : _ref5$VALUE_KEY,
+        _ref5$ERROR_KEY = _ref5.ERROR_KEY,
+        ERROR_KEY = _ref5$ERROR_KEY === void 0 ? _ERROR_KEY || ERROR$1 : _ref5$ERROR_KEY;
+
+    var formRef = React.useRef({});
+
+    var _useState = React.useState(FORM_CONFIG),
+        _useState2 = _slicedToArray(_useState, 2),
+        formConfig = _useState2[0],
+        _setFormConfig = _useState2[1];
+
+    var _useState3 = React.useState({}),
+        _useState4 = _slicedToArray(_useState3, 2),
+        errors = _useState4[0],
+        _setErrors = _useState4[1];
+
+    var _useState5 = React.useState(function () {
+      return _setInitialValues({
+        formConfig: formConfig,
+        initialValues: initialValues
+      });
+    }),
+        _useState6 = _slicedToArray(_useState5, 2),
+        values = _useState6[0],
+        _setValues = _useState6[1];
+
+    var setFormConfig = React.useCallback(function (_formConfig) {
+      formRef.current.formConfig = checkType(_formConfig, formRef.current.formConfig);
+
+      _setFormConfig(formRef.current.formConfig);
+    }, []);
+    var setValues = React.useCallback(function (_values) {
+      formRef.current.values = checkType(_values, formRef.current.values);
+
+      _setValues(formRef.current.values);
+    }, []);
+    var setErrors = React.useCallback(function (_errors) {
+      formRef.current.errors = checkType(_errors, formRef.current.errors);
+
+      _setErrors(formRef.current.errors);
+    }, []);
+    formRef.current.values = values;
+    formRef.current.errors = errors;
+    formRef.current.formConfig = formConfig;
+    formRef.current.setFormConfig = setFormConfig;
+    var validateValue = React.useCallback(function (__value, key, isSetValue, isSetError, _config) {
+      var isTrim = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : false;
+      formRef.current.lastUpdated = generateTimeStamp();
+      var config = _config || formRef.current.formConfig[key] || {}; // eslint-disable-next-line prefer-const
+
+      var _ref6 = config && config.validator ? config.validator(__value, formRef.current) : {
+        value: __value
+      },
+          value = _ref6.value,
+          validatorError = _ref6.error;
+
+      var error = null;
+      var maxError = null;
+
+      if (config.maxLength && (__value || '').length > config.maxLength) {
+        maxError = typeof (config.message && config.message.maxLength) !== 'undefined' ? config.message.maxLength : "maximum ".concat(config.maxLength, " characters are allowed");
+        value = value.slice(0, config.maxLength); // return;
+      }
+
+      if (typeof config.trim !== 'undefined' ? config.trim : config.trim || isTrim) value = trimStrings(value, config.isNumber);
+
+      if (config) {
+        error = validatorError || Validate(value, config.type, _objectSpread({
+          key: key,
+          optional: config.optional,
+          minLength: config.minLength,
+          message: config.message,
+          maxLength: config.maxLength,
+          length: config.length
+        }, config)) || maxError;
+        if (value && config.match && typeof config.match === 'string' && formRef.current.values[config.match]) error = formRef.current.values[config.match] !== value ? typeof (config.message && config.message.match) !== 'undefined' ? config.message.match : "".concat(key, " not matching with ").concat(config.match) : maxError;
+      }
+
+      if (key && isSetValue) if (value !== '' && !Number.isNaN(+value) && !(config.allowValidNumber ? !!+value : true)) error = typeof (config.message && config.message.allowValidNumber) !== 'undefined' ? config.message && config.message.allowValidNumber : 'Please enter valid number';else if (config.allowOnlyNumber) {
+        if (!Number.isNaN(+value)) {
+          setValues(_objectSpread(_objectSpread({}, formRef.current.values), {}, _defineProperty({}, key, value)));
+        } else error = typeof (config.message && config.message.allowOnlyNumber) !== 'undefined' ? config.message && config.message.allowOnlyNumber : 'Only numbers are allowed';
+      } else {
+        setValues(_objectSpread(_objectSpread({}, formRef.current.values), {}, _defineProperty({}, key, value)));
+      }
+
+      if (typeof config.callback === 'function') {
+        var response = config.callback({
+          error: error,
+          value: value,
+          key: key,
+          formRef: formRef.current
+        });
+
+        if (typeOf(response) === TYPE_OBJECT$1) {
+          setValues(_objectSpread(_objectSpread({}, formRef.current.values), {}, _defineProperty({}, key, response.value)));
+          error = response.error;
+        }
+      }
+
+      if (!isSetError) return {
+        error: error,
+        value: value,
+        key: key
+      };
+
+      if (key) {
+        setErrors(_objectSpread(_objectSpread({}, formRef.current.errors), {}, _defineProperty({}, key, error || null)));
+      }
+
+      return {
+        error: error,
+        value: value,
+        key: key
+      };
+    }, []);
+    var onChangeValues = React.useCallback(function () {
+      var e = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var key = arguments.length > 1 ? arguments[1] : undefined;
+
+      var _ref7 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+          _value = _ref7.value,
+          isStopPropagation = _ref7.isStopPropagation,
+          isValidateOnly = _ref7.isValidateOnly,
+          config = _ref7.config,
+          _ref7$isSetError = _ref7.isSetError,
+          isSetError = _ref7$isSetError === void 0 ? true : _ref7$isSetError,
+          trim = _ref7.trim;
+
+      // formRef.current.isFormChanged = true;
+      // formRef.current.lastUpdated = generateTimeStamp();
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      if (e && isStopPropagation && typeof e.stopPropagation === 'function') e.stopPropagation();
+      var value = typeof _value !== 'undefined' ? _value : getPlatformBasedFieldValue(e);
+
+      var _key = getPlatformBasedFieldName(e);
+
+      var KEY = key || _key;
+      if (isValidateOnly || !KEY) return validateValue(value, KEY, null, null, config, trim);
+      validateValue(value, KEY, true, isSetError === undefined ? true : isSetError, undefined, trim);
+    }, []);
+    var onValidateValues = React.useCallback(function (_ref8) {
+      var value = _ref8.value,
+          isValue = _ref8.isValue,
+          key = _ref8.key,
+          isValidateOnly = _ref8.isValidateOnly,
+          config = _ref8.config,
+          trim = _ref8.trim;
+      return onChangeValues(value, key, {
+        value: isValue ? value : undefined,
+        isValidateOnly: isValidateOnly,
+        config: config,
+        trim: trim
+      });
+    }, []);
+    var onBlurValues = React.useCallback(function (e, key) {
+      var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      var _key = getPlatformBasedFieldName(e);
+
+      var KEY = key || _key;
+      var value = formRef.current.values[KEY];
+      if (config.isValidateOnBlur === undefined ? true : config.isValidateOnBlur) validateValue(value, KEY, false, true);
+    }, []);
+    var validateForm = React.useCallback(function () {
+      var _ref9 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          isSetError = _ref9.isSetError,
+          _ref9$formConfig = _ref9.formConfig,
+          __FORM_CONFIG = _ref9$formConfig === void 0 ? {} : _ref9$formConfig,
+          _ref9$values = _ref9.values,
+          __values = _ref9$values === void 0 ? {} : _ref9$values,
+          _ref9$errors = _ref9.errors,
+          __errors = _ref9$errors === void 0 ? {} : _ref9$errors,
+          isNewFormConfig = _ref9.isNewFormConfig,
+          isResetValue = _ref9.isResetValue,
+          isResetError = _ref9.isResetError;
+
+      var IS_RESET_VALUE = isResetValue && {};
+      var IS_RESET_ERROR = isResetError && {};
+
+      var _FORM_CONFIG = isNewFormConfig ? __FORM_CONFIG : newObject(formRef.current.formConfig, __FORM_CONFIG);
+
+      var _values = newObject(IS_RESET_VALUE || formRef.current.values, __values);
+
+      var _errors = newObject(IS_RESET_ERROR || formRef.current.errors, __errors);
+
+      var isError = [];
+
+      for (var _i = 0, _Object$keys = Object.keys(_FORM_CONFIG); _i < _Object$keys.length; _i++) {
+        var key = _Object$keys[_i];
+
+        var _validateValue = validateValue(_values[key], key, false, false, _FORM_CONFIG[key], true),
+            _error = _validateValue.error;
+
+        _errors[key] = _error;
+        if (_error) isError.push(null);
+      }
+
+      if (isSetError) {
+        formRef.current.lastUpdated = generateTimeStamp();
+        setErrors(_errors);
+      }
+
+      return {
+        values: _values,
+        error: _errors,
+        totalErrorCount: isError.length,
+        errorCount: isError.length,
+        isError: isError.length > 0,
+        isValidatePassed: isError.length === 0
+      };
+    }, []);
+    var validateCustomForm = React.useCallback(function (_ref10) {
+      var isSetError = _ref10.isSetError,
+          _ref10$formConfig = _ref10.formConfig,
+          form_config = _ref10$formConfig === void 0 ? {} : _ref10$formConfig,
+          _ref10$values = _ref10.values,
+          __values = _ref10$values === void 0 ? {} : _ref10$values,
+          _ref10$errors = _ref10.errors,
+          __errors = _ref10$errors === void 0 ? {} : _ref10$errors;
+
+      formRef.current.lastUpdated = generateTimeStamp();
+      var _FORM_CONFIG = form_config;
+      var _values = __values;
+      var _errors = __errors;
+      var isError = [];
+
+      for (var _i2 = 0, _Object$keys2 = Object.keys(_FORM_CONFIG); _i2 < _Object$keys2.length; _i2++) {
+        var key = _Object$keys2[_i2];
+
+        var _validateValue2 = validateValue(_values[key], key, false, false, _FORM_CONFIG[key]),
+            _error = _validateValue2.error;
+
+        _errors[key] = _error;
+        if (_error) isError.push(null);
+      }
+
+      if (isSetError) setErrors(_errors);
+      return {
+        values: _values,
+        errors: _errors,
+        totalErrorCount: isError.length,
+        errorCount: isError.length,
+        isError: isError.length > 0,
+        isValidatePassed: isError.length === 0
+      };
+    }, []);
+    var onValidateCustomObject = React.useCallback(function (value, config) {
+      return validateForm({
+        isSetError: false,
+        values: value,
+        formConfig: config
+      });
+    }, []);
+    var onAddFormConfig = React.useCallback(function (config, isReset) {
+      var _values = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      formRef.current.lastUpdated = generateTimeStamp();
+      setFormConfig(newObject(isReset ? {} : formRef.current.formConfig, config));
+      var newVal = Object.entries(config || {}).reduce(function (acc, _ref11) {
+        var _ref12 = _slicedToArray(_ref11, 2),
+            key = _ref12[0],
+            _ref12$ = _ref12[1],
+            _config = _ref12$ === void 0 ? {} : _ref12$;
+
+        return newObject(acc, _defineProperty({}, key, _values[key] || typeof initialValues[key] !== 'undefined' && (typeof initialValues[key] === 'function' ? initialValues[key]() : initialValues[key]) || (!isReset ? formRef.current.values[key] || '' : typeof _config.default !== 'undefined' ? _config.default : '')));
+      }, {});
+
+      if (isReset) {
+        setValues(newVal);
+        setErrors({});
+      } else {
+        setValues(newObject(formRef.current.values, newVal));
+      }
+    }, []);
+    var commonInputProps = React.useCallback(function (key) {
+      var _objectSpread6;
+
+      var _ref13 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+          config = _ref13.config,
+          _ref13$propKeyMap = _ref13.propKeyMap;
+
+      _ref13$propKeyMap = _ref13$propKeyMap === void 0 ? {} : _ref13$propKeyMap;
+      var _ref13$propKeyMap$onC = _ref13$propKeyMap.onChange,
+          onChange = _ref13$propKeyMap$onC === void 0 ? ON_CHANGE_KEY : _ref13$propKeyMap$onC,
+          _ref13$propKeyMap$onB = _ref13$propKeyMap.onBlur,
+          onBlur = _ref13$propKeyMap$onB === void 0 ? ON_BLUR_KEY : _ref13$propKeyMap$onB,
+          _ref13$propKeyMap$val = _ref13$propKeyMap.value,
+          value = _ref13$propKeyMap$val === void 0 ? VALUE_KEY : _ref13$propKeyMap$val,
+          _ref13$propKeyMap$err = _ref13$propKeyMap.error,
+          error = _ref13$propKeyMap$err === void 0 ? ERROR_KEY : _ref13$propKeyMap$err;
+      return _objectSpread((_objectSpread6 = {}, _defineProperty(_objectSpread6, onChange, function (e) {
+        onChangeValues(e, key, config);
+
+        var _validateFieldsOnChange = config && config.validateFieldsOnChange || formRef.current.formConfig[key] && formRef.current.formConfig[key].validateFieldsOnChange;
+
+        if (_validateFieldsOnChange && _validateFieldsOnChange.length > 0) {
+          _validateFieldsOnChange.forEach(function (_key) {
+            if (formRef.current.values[_key]) {
+              onChangeValues(formRef.current.values[_key], _key);
+            }
+          });
+        }
+      }), _defineProperty(_objectSpread6, onBlur, function (e) {
+        return onBlurValues(e, key, config);
+      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), formRef.current.formConfig[key] && formRef.current.formConfig[key].inputProps || {});
+    }, []);
+    var setInitialFormData = React.useCallback(function (data) {
+      formRef.current.lastUpdated = generateTimeStamp();
+
+      var _values = Object.keys(formRef.current.formConfig).reduce(function (acc, key) {
+        return newObject(acc, _defineProperty({}, key, typeof data[key] !== 'undefined' ? data[key] || '' : formRef.current.values[key]));
+      }, {});
+
+      setValues(_values);
+    }, []);
+    var resetForm = React.useCallback(function () {
+      var _values = Object.entries(formConfig || {}).reduce(function (acc, _ref14) {
+        var _ref15 = _slicedToArray(_ref14, 2),
+            key = _ref15[0],
+            _ref15$ = _ref15[1],
+            val = _ref15$ === void 0 ? {} : _ref15$;
+
+        return newObject(acc, _defineProperty({}, key, typeof initialValues[key] !== 'undefined' && (typeof initialValues[key] === 'function' ? initialValues[key]() : initialValues[key]) || (typeof val.default !== 'undefined' ? val.default : '')));
+      }, {});
+
+      setValues(_values);
+      setErrors({});
+    }, []); // const isFormChanged = useCallback(
+    //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
+    //   [],
+    // );
+
+    formRef.current.commonInputProps = commonInputProps;
+    formRef.current.setInitialFormData = setInitialFormData; // formRef.current.validateForm = validateForm;
+
+    formRef.current.onBlurValues = onBlurValues;
+    formRef.current.onChangeValues = onChangeValues;
+    formRef.current.onValidateValues = onValidateValues;
+    formRef.current.validateForm = validateForm;
+    formRef.current.validateObject = onValidateCustomObject;
+    formRef.current.addFormConfig = onAddFormConfig;
+    formRef.current.modifyFormConfig = onAddFormConfig;
+    formRef.current.validateCustomForm = validateCustomForm; // formRef.current.lastUpdated = generateTimeStamp();
+
+    formRef.current.setErrors = setErrors;
+    formRef.current.resetForm = resetForm;
+    formRef.current.setValues = setValues; // formRef.current.isFormChanged = isFormChanged;
+
+    return _objectSpread(_objectSpread({}, formRef.current), {}, {
+      validateCustomObject: onValidateCustomObject,
+      getPlatformBasedFieldValue: getPlatformBasedFieldValue,
+      formRef: formRef.current,
+      setInitialFormData: setInitialFormData,
+      commonInputProps: commonInputProps,
+      onValidateValues: onValidateValues,
+      onChangeValues: onChangeValues,
+      onAddFormConfig: onAddFormConfig,
+      setFormConfig: setFormConfig,
+      validateValue: validateValue,
+      onBlurValues: onBlurValues,
+      validateForm: validateForm,
+      resetForm: resetForm,
+      setValues: setValues,
+      setErrors: setErrors,
+      errors: errors,
+      values: values
+    });
+  };
+};
+/* example
+  FORM_CONFIG = {
+    name: {
+      type: 'string',
+      optional: true,
+      minLength: 4,
+      maxLength: 1,
+      extraConfig: {
+        isNumber: true
+      }
+    },
+  };
+*/
+
+/**
+ * @Available props <useFormValidationHandlerHook>
+ * setInitialFormData
+ * commonInputProps
+ * onChangeValues
+ * onBlurValues
+ * validateForm
+ * setValues
+ * setErrors
+ * formRef
+ * errors
+ * values
+ */
+
+/**
+  const { formRef } = useFormValidationHandlerHook({
+    VALIDATOR: validator // custom validator <optional>
+    FORM_CONFIG: FORM_DATA_CONFIG.cab_once,
+    initialValues: {
+      entry_date: () => new Date(),
+      entry_time: () => new Date(),
+    },
+  });
+
+  formRef.values.<key>
+  formRef.errors.<key>
+  <input {...commonInputProps(<key>)} />
+  const onChange = () => {
+    formRef.onChangeValues(<value>, <key>);
+  }
+  const onBlur = () => {
+    formRef.onBlurValues(<value>, <key>);
+  }
+  onClick={() => {
+    formRef.modifyFormConfig(
+      FORM_DATA_CONFIG.cab_once,
+      true, // Reset and set value
+      {
+        entry_time: new Date(),
+        entry_date: new Date(),
+        repeat_days: '',
+      }, // INITIAL_VALUE
+    );
+  }}
+  const { values: _values, isError } = formRef.validateForm({
+      isSetError: true,
+      formConfig: __FORM_CONFIG = {}, // optional
+      values: __values = {}, // optional
+      errors: __errors = {}, // optional
+      isNewFormConfig, // optional <Boolean>
+  });
+*/
+
+var checkType$1 = function checkType(val, oldVal) {
+  return newObject(typeof val === 'function' ? val(oldVal) : val);
+};
+
+var useMultipleOptionsHook = function useMultipleOptionsHook() {
+  var initialValue = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+  var _useState = React.useState(initialValue),
+      _useState2 = _slicedToArray(_useState, 2),
+      options = _useState2[0],
+      _setOptions = _useState2[1];
+
+  var ref = React.useRef({});
+  ref.current.options = options;
+  var setOptions = React.useCallback(function (_values) {
+    ref.current.options = checkType$1(_values, ref.current.options);
+
+    _setOptions(ref.current.options);
+  }, []);
+  var onChangeOptions = React.useCallback(function (key, index, value, error) {
+    if (typeOf(key) === 'object') {
+      var _key = key.key,
+          _index = key.index,
+          _value = key.value,
+          _error = key.error;
+      setOptions(function (_val) {
+        var ___val = _objectSpread({}, _val);
+
+        var __val = ___val[_key].slice();
+
+        __val[_index].value = _value;
+        __val[_index].error = _error;
+        ___val[_key] = __val;
+        return ___val;
+      });
+    } else setOptions(function (_val) {
+      var ___val = _objectSpread({}, _val);
+
+      var __val = ___val[key].slice();
+
+      __val[index].value = value;
+      __val[index].error = error;
+      ___val[key] = __val;
+      return ___val;
+    });
+  }, []);
+  var onDeleteOptions = React.useCallback(function (key, i) {
+    var count = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+    setOptions(function (_val) {
+      var ___val = _objectSpread({}, _val);
+
+      var __val = ___val[key].slice();
+
+      if (__val.length > 1) __val.splice(i, count);
+      ___val[key] = __val;
+      return ___val;
+    });
+  }, []);
+  var onDeleteMultipleOptions = React.useCallback(function (key) {
+    var indexes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+    setOptions(function (_val) {
+      var ___val = _objectSpread({}, _val);
+
+      var __val = ___val[key].slice();
+
+      __val[key] = __val.filter(function (_, i) {
+        return !indexes.includes(i);
+      });
+      ___val[key] = __val;
+      return __val;
+    });
+  }, []);
+  var onGetValues = React.useCallback(function (key) {
+    return ref.current.options[key].map(function (e) {
+      return e.value;
+    });
+  }, []);
+  var findRecursiveError = React.useCallback(function (obj) {
+    return Object.values(obj).some(function (e) {
+      return typeOf(e) === 'object' ? findRecursiveError(e) : e;
+    });
+  }, []);
+  var onValidateValues = React.useCallback(function (key, callback, isSetError) {
+    if (Array.isArray(key)) {
+      var _val2 = cloneDeep(ref.current.options);
+
+      var isError = false;
+      var returnObj = key.map(function (_key, index) {
+        if (Array.isArray(_val2[_key])) {
+          var _validatedValue = _val2[_key].map(function (e, i) {
+            return callback(e.value, i, _key);
+          });
+
+          var _error2 = _validatedValue.map(function (e) {
+            return e.error;
+          });
+
+          var _value2 = _validatedValue.map(function (e) {
+            return e.value;
+          });
+
+          _val2[_key] = _validatedValue;
+
+          if (isSetError && index === key.length - 1) {
+            setOptions(_val2);
+          }
+
+          var _errorLength = _error2.filter(function (e) {
+            return typeOf(e) === 'object' ? findRecursiveError(e) : e;
+          }).length;
+
+          if (_errorLength > 0) isError = true;
+          return {
+            key: _key,
+            error: _error2,
+            value: _value2,
+            isError: isError
+          };
+        }
+
+        return {
+          key: key
+        };
+      });
+      return {
+        isError: isError,
+        formArray: returnObj,
+        formObj: returnObj.reduce(function (acc, curr) {
+          return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, curr.key, curr));
+        }, {})
+      };
+    }
+
+    var ___val = _objectSpread({}, ref.current.options);
+
+    var validatedValue = ___val[key].map(function (e, i) {
+      return callback(e.value, i);
+    });
+
+    var error = validatedValue.map(function (e) {
+      return e.error;
+    });
+    var value = validatedValue.map(function (e) {
+      return e.value;
+    });
+
+    if (isSetError) {
+      ___val[key] = validatedValue;
+      setOptions(___val);
+    }
+
+    var errorLength = error.filter(function (e) {
+      return typeOf(e) === 'object' ? findRecursiveError(e) : e;
+    }).length;
+    return {
+      error: error,
+      value: value,
+      isError: errorLength > 0,
+      errorCount: errorLength
+    };
+  }, []);
+  var onAddOptions = React.useCallback(function (key, value, index) {
+    var count = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1;
+    setOptions(function (_val) {
+      var ___val = _objectSpread({}, _val);
+
+      var __val = ___val[key].slice();
+
+      if (typeof index === 'number') {
+        var _val3;
+
+        (_val3 = __val).splice.apply(_val3, [index, 0].concat(_toConsumableArray(Array(count).fill(null).map(function () {
+          return value || {};
+        }))));
+      } else if (count > 1) __val = __val.concat(Array(count).fill(null).map(function () {
+        return value || {};
+      }));else __val.push(value || {});
+
+      ___val[key] = __val;
+      return ___val;
+    });
+  }, []);
+  var onChangeOrderForm = React.useCallback(function (key, currentIndex, index) {
+    setOptions(function (_val) {
+      var ___val = _objectSpread({}, _val);
+
+      var __val = ___val[key].slice();
+
+      var __value = __val[currentIndex];
+
+      if (typeof index === 'number' && typeof currentIndex === 'number') {
+        __val.splice(currentIndex, 1);
+
+        __val.splice(index, 0, __value);
+
+        ___val[key] = __val;
+      }
+
+      return ___val;
+    });
+  }, []);
+  var onResetForm = React.useCallback(function (resetValue) {
+    if (resetValue) setOptions(function () {
+      return newObject({}, resetValue);
+    });
+  }, []);
+  var onResetValue = React.useCallback(function (resetValue) {
+    if (resetValue) setOptions(function (_options) {
+      return newObject(_options, resetValue);
+    });else setOptions(initialValue);
+  }, []);
+  var onAddForm = React.useCallback(function (value) {
+    if (value) setOptions(function (_options) {
+      return newObject(_options, value);
+    });
+  }, []);
+  var onDeleteMultipleForm = React.useCallback(function () {
+    var deleteKey = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    if (deleteKey.length > 0) setOptions(function (_options) {
+      var __options = _objectSpread({}, _options);
+
+      deleteKey.forEach(function (key) {
+        delete __options[key];
+      });
+      return __options;
+    });
+  }, []);
+  var onDeleteForm = React.useCallback(function () {
+    var deleteKey = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+    setOptions(function (_options) {
+      var __options = _objectSpread({}, _options);
+
+      delete __options[deleteKey];
+      return __options;
+    });
+  }, []);
+  ref.current.changeValue = onChangeOptions;
+  ref.current.delete = onDeleteOptions;
+  ref.current.getValues = onGetValues;
+  ref.current.add = onAddOptions;
+  ref.current.value = options;
+  ref.current.formValue = options;
+  ref.current.validate = onValidateValues;
+  ref.current.setValue = setOptions;
+  ref.current.deleteMultiple = onDeleteMultipleOptions;
+  ref.current.deleteMultipleForm = onDeleteMultipleForm;
+  ref.current.resetValue = onResetValue;
+  ref.current.resetForm = onResetForm;
+  ref.current.addForm = onAddForm;
+  ref.current.deleteForm = onDeleteForm;
+  ref.current.changeOrder = onChangeOrderForm;
+  return {
+    deleteMultipleForm: onDeleteMultipleForm,
+    deleteMultiple: onDeleteMultipleOptions,
+    delete: onDeleteOptions,
+    changeValue: onChangeOptions,
+    add: onAddOptions,
+    value: options,
+    formValue: options,
+    setValue: setOptions,
+    getValues: onGetValues,
+    validate: onValidateValues,
+    resetForm: onResetForm,
+    formRef: ref.current,
+    resetValue: onResetValue,
+    addForm: onAddForm,
+    deleteForm: onDeleteForm,
+    changeOrder: onChangeOrderForm
+  };
+};
+
 // import isFunction from 'lodash/isFunction';
 /**
  * Validate the shape of redux store
@@ -2338,9 +3184,11 @@ exports.updateIn = updateIn;
 exports.useActions = useActionsHook;
 exports.useApiQuery = useApiQuery;
 exports.useCancelAllRunningApiCalls = useCancelAllRunningApiCalls;
+exports.useFormValidationHandlerHook = useFormValidationHandlerHook;
 exports.useGlobalStateHook = useGlobalValueHook;
 exports.useInjectReducer = useInjectReducer;
 exports.useInjectSaga = useInjectSaga;
+exports.useMultipleOptionsHook = useMultipleOptionsHook;
 exports.useMutateReducer = useMutateReducer;
 exports.useMutation = useMutation;
 exports.useQuery = useQuery;
