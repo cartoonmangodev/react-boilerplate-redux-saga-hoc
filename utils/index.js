@@ -2154,12 +2154,13 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       _ON_CHANGE_KEY = _ref4.ON_CHANGE_KEY,
       _ON_BLUR_KEY = _ref4.ON_BLUR_KEY,
       _VALUE_KEY = _ref4.VALUE_KEY,
-      _ERROR_KEY = _ref4.ERROR_KEY;
+      _ERROR_KEY = _ref4.ERROR_KEY,
+      _VALIDATOR = _ref4.VALIDATOR;
 
   return function () {
     var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref5$VALIDATOR = _ref5.VALIDATOR,
-        Validate = _ref5$VALIDATOR === void 0 ? validate : _ref5$VALIDATOR,
+        Validate = _ref5$VALIDATOR === void 0 ? _VALIDATOR || validate : _ref5$VALIDATOR,
         _ref5$initialValues = _ref5.initialValues,
         initialValues = _ref5$initialValues === void 0 ? {} : _ref5$initialValues,
         _ref5$FORM_CONFIG = _ref5.FORM_CONFIG,
