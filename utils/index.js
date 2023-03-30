@@ -2049,6 +2049,7 @@ var ON_BLUR = 'onBlur';
 var VALUE = 'value';
 var ERROR$1 = 'error';
 
+var emailRegex = /^([\w.+-]+@[a-zA-Z0-9.-]+\.[a-zA-z0-9]{2,4})$/;
 function validateEmail(email) {
   return emailRegex.test(String(email).toLowerCase());
 }

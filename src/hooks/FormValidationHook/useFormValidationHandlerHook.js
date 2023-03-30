@@ -46,8 +46,9 @@ const useFormValidationHandlerHook = ({
   ON_BLUR_KEY: _ON_BLUR_KEY,
   VALUE_KEY: _VALUE_KEY,
   ERROR_KEY: _ERROR_KEY,
+  VALIDATOR: _VALIDATOR,
 } = {}) => ({
-  VALIDATOR: Validate = Validator,
+  VALIDATOR: Validate = _VALIDATOR || Validator,
   initialValues = {},
   FORM_CONFIG = {},
   ON_CHANGE_KEY = _ON_CHANGE_KEY || ON_CHANGE,
