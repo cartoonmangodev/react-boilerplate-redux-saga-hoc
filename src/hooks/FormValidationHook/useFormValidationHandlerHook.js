@@ -392,7 +392,7 @@ const useFormValidationHandlerHook = ({
       keyName: key,
       ...((formRef.current.formConfig[key] &&
         (typeof formRef.current.formConfig[key].inputProps === 'function'
-          ? formRef.current.formConfig[key].inputProps(formRef)
+          ? formRef.current.formConfig[key].inputProps(formRef.current)
           : formRef.current.formConfig[key].inputProps)) ||
         {}),
     }),
