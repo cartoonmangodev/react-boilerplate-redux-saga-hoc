@@ -2475,7 +2475,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         }
       }), _defineProperty(_objectSpread6, onBlur, function (e) {
         return onBlurValues(e, key, config);
-      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), formRef.current.formConfig[key] && (typeof formRef.current.formConfig[key].inputProps === 'function' ? formRef.current.formConfig[key].inputProps(formRef) : formRef.current.formConfig[key].inputProps) || {});
+      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), formRef.current.formConfig[key] && (typeof formRef.current.formConfig[key].inputProps === 'function' ? formRef.current.formConfig[key].inputProps(formRef.current) : formRef.current.formConfig[key].inputProps) || {});
     }, []);
     var setInitialFormData = React.useCallback(function (data) {
       formRef.current.lastUpdated = generateTimeStamp();

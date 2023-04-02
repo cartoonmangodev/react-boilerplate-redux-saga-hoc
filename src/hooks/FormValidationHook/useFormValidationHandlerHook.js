@@ -329,7 +329,14 @@ const useFormValidationHandlerHook = ({
   );
   const onValidateCustomObject = useCallback(
     (value, config) =>
-      validateForm({ isSetError: false, values: value, formConfig: config }),
+      validateForm({
+        isSetError: false,
+        values: value,
+        formConfig: config,
+        isNewFormConfig: true,
+        isResetValue: true,
+        isResetError: true,
+      }),
     [],
   );
   const onAddFormConfig = useCallback((config, isReset, _values = {}) => {
