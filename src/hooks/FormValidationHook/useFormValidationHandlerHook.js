@@ -391,7 +391,9 @@ const useFormValidationHandlerHook = ({
       [error]: formRef.current.errors[key],
       keyName: key,
       ...((formRef.current.formConfig[key] &&
-        formRef.current.formConfig[key].inputProps) ||
+        (typeof formRef.current.formConfig[key].inputProps === 'function'
+          ? formRef.current.formConfig[key].inputProps(formRef)
+          : formRef.current.formConfig[key].inputProps)) ||
         {}),
     }),
     [],

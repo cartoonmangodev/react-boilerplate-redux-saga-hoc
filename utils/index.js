@@ -2044,7 +2044,7 @@ function useGlobalValueHook(key, initialValue) {
 
 var TYPE_OBJECT$1 = commonConstants.TYPE_OBJECT;
 
-var ON_CHANGE = 'onChangeText';
+var ON_CHANGE = 'onChange';
 var ON_BLUR = 'onBlur';
 var VALUE = 'value';
 var ERROR$1 = 'error';
