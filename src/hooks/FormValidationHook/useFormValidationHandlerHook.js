@@ -30,11 +30,13 @@ const _setInitialValues = ({ formConfig, initialValues }) =>
     (acc, [key, val = {}]) =>
       newObject(acc, {
         [key]:
-          (typeof initialValues[key] !== 'undefined' &&
-            (typeof initialValues[key] === 'function'
+          typeof initialValues[key] !== 'undefined'
+            ? typeof initialValues[key] === 'function'
               ? initialValues[key]()
-              : initialValues[key])) ||
-          (typeof val.default !== 'undefined' ? val.default : ''),
+              : initialValues[key]
+            : typeof val.default !== 'undefined'
+            ? val.default
+            : '',
       }),
     {},
   );

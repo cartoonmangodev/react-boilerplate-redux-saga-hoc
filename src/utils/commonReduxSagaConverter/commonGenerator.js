@@ -275,7 +275,8 @@ export default function({
           'put',
           'delete',
           'get',
-        ].includes(request.method)
+        ].includes(request.method) ||
+        !request.data
       )
         delete request.data;
       if (request.effect) delete request.effect;
