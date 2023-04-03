@@ -2890,6 +2890,30 @@ var useMultipleOptionsHook = function useMultipleOptionsHook() {
   };
 };
 
+var FormContext = /*#__PURE__*/React.createContext(null);
+
+var form = (function (_ref) {
+  var children = _ref.children,
+      inputProps = _ref.inputProps,
+      idKey = _ref.idKey;
+  return /*#__PURE__*/React__default.createElement(FormContext.Provider, {
+    value: {
+      inputProps: inputProps,
+      idKey: idKey
+    }
+  }, children);
+});
+
+var ID_KEY = 'id';
+var hook = (function (props) {
+  var _ref = React.useContext(FormContext) || {},
+      _ref$inputProps = _ref.inputProps,
+      inputProps = _ref$inputProps === void 0 ? {} : _ref$inputProps,
+      idKey = _ref.idKey;
+
+  return _objectSpread(_objectSpread({}, inputProps[props[idKey || ID_KEY]] || {}), props);
+});
+
 // import isFunction from 'lodash/isFunction';
 /**
  * Validate the shape of redux store
@@ -3174,6 +3198,8 @@ var useInjectSaga = function useInjectSaga(_ref2) {
 };
 
 exports.CustomError = CustomError;
+exports.Form = form;
+exports.FormContext = FormContext;
 exports.FormValidator = validateForm;
 exports.GlobalEventEmitter = Global;
 exports.Safe = nullcheck;
@@ -3205,6 +3231,7 @@ exports.useInjectSaga = useInjectSaga;
 exports.useMultipleOptionsHook = useMultipleOptionsHook;
 exports.useMutateReducer = useMutateReducer;
 exports.useMutation = useMutation;
+exports.useProps = hook;
 exports.useQuery = useQuery;
 exports.useRefetchCachedApi = useRefetchCachedApi;
 exports.useResetOnlyApiEndPointsState = useResetOnlyApiEndPointsState;
