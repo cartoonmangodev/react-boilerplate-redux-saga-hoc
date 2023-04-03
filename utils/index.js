@@ -16,7 +16,7 @@ var reactRedux = require('react-redux');
 var isEqual = _interopDefault(require('fast-deep-equal'));
 var reselect = require('reselect');
 var invariant = _interopDefault(require('invariant'));
-require('@babel/runtime/helpers/objectWithoutProperties');
+var _objectWithoutProperties = _interopDefault(require('@babel/runtime/helpers/objectWithoutProperties'));
 var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
 var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
 var _inherits = _interopDefault(require('@babel/runtime/helpers/inherits'));
@@ -2124,6 +2124,8 @@ function validate(value, fieldName) {
   }
 }
 
+var _excluded = ["index", "config", "propKeyMap"];
+
 var getPlatformBasedFieldValue = function getPlatformBasedFieldValue(e) {
   return e && _typeof(e) === 'object' && e.target && typeof e.preventDefault === 'function' ? e.target.value : e;
 };
@@ -2457,6 +2459,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           _ref13$propKeyMap = _ref13.propKeyMap;
 
       _ref13$propKeyMap = _ref13$propKeyMap === void 0 ? {} : _ref13$propKeyMap;
+
       var _ref13$propKeyMap$onC = _ref13$propKeyMap.onChange,
           onChange = _ref13$propKeyMap$onC === void 0 ? ON_CHANGE_KEY : _ref13$propKeyMap$onC,
           _ref13$propKeyMap$onB = _ref13$propKeyMap.onBlur,
@@ -2464,7 +2467,9 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           _ref13$propKeyMap$val = _ref13$propKeyMap.value,
           value = _ref13$propKeyMap$val === void 0 ? VALUE_KEY : _ref13$propKeyMap$val,
           _ref13$propKeyMap$err = _ref13$propKeyMap.error,
-          error = _ref13$propKeyMap$err === void 0 ? ERROR_KEY : _ref13$propKeyMap$err;
+          error = _ref13$propKeyMap$err === void 0 ? ERROR_KEY : _ref13$propKeyMap$err,
+          rest = _objectWithoutProperties(_ref13, _excluded);
+
       return _objectSpread((_objectSpread6 = {}, _defineProperty(_objectSpread6, onChange, function (e) {
         onChangeValues(e, key, config);
 
@@ -2479,10 +2484,10 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         }
       }), _defineProperty(_objectSpread6, onBlur, function (e) {
         return onBlurValues(e, key, config);
-      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), formRef.current.formConfig[key] && (typeof formRef.current.formConfig[key].inputProps === 'function' ? formRef.current.formConfig[key].inputProps(formRef.current, {
+      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), formRef.current.formConfig[key] && (typeof formRef.current.formConfig[key].inputProps === 'function' ? formRef.current.formConfig[key].inputProps(formRef.current, _objectSpread({
         index: index,
         config: config
-      }) : formRef.current.formConfig[key].inputProps) || {});
+      }, rest)) : formRef.current.formConfig[key].inputProps) || {});
     }, []);
     var setInitialFormData = React.useCallback(function (data) {
       formRef.current.lastUpdated = generateTimeStamp();

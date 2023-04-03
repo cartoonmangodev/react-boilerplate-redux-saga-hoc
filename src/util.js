@@ -32,6 +32,7 @@ export {
 } from './utils';
 export { default as useGlobalStateHook } from './hooks/GlobalValueHook/useGlobalValueHook';
 export * from './hooks/FormValidationHook';
+export * from './hooks/Form';
 export { default as globalState } from './hooks/GlobalValueHook/globals';
 export { default as GlobalEventEmitter } from './hooks/GlobalValueHook/GlobalEmitter';
 export {
