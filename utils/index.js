@@ -2452,6 +2452,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       var _objectSpread6;
 
       var _ref13 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+          index = _ref13.index,
           config = _ref13.config,
           _ref13$propKeyMap = _ref13.propKeyMap;
 
@@ -2478,7 +2479,10 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         }
       }), _defineProperty(_objectSpread6, onBlur, function (e) {
         return onBlurValues(e, key, config);
-      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), formRef.current.formConfig[key] && (typeof formRef.current.formConfig[key].inputProps === 'function' ? formRef.current.formConfig[key].inputProps(formRef.current) : formRef.current.formConfig[key].inputProps) || {});
+      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), formRef.current.formConfig[key] && (typeof formRef.current.formConfig[key].inputProps === 'function' ? formRef.current.formConfig[key].inputProps(formRef.current, {
+        index: index,
+        config: config
+      }) : formRef.current.formConfig[key].inputProps) || {});
     }, []);
     var setInitialFormData = React.useCallback(function (data) {
       formRef.current.lastUpdated = generateTimeStamp();

@@ -380,6 +380,7 @@ const useFormValidationHandlerHook = ({
           value = VALUE_KEY,
           error = ERROR_KEY,
         } = {},
+        ...rest
       } = {},
     ) => ({
       [onChange]: e => {
@@ -405,6 +406,7 @@ const useFormValidationHandlerHook = ({
           ? formRef.current.formConfig[key].inputProps(formRef.current, {
               index,
               config,
+              ...rest,
             })
           : formRef.current.formConfig[key].inputProps)) ||
         {}),
