@@ -265,6 +265,7 @@ export default function({
       request = requestData || request;
       if (
         ![
+          'GET',
           'POST',
           'PATCH',
           'PUT',
@@ -273,6 +274,7 @@ export default function({
           'patch',
           'put',
           'delete',
+          'get',
         ].includes(request.method)
       )
         delete request.data;

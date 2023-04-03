@@ -2421,7 +2421,10 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       return validateForm({
         isSetError: false,
         values: value,
-        formConfig: config
+        formConfig: config,
+        isNewFormConfig: true,
+        isResetValue: true,
+        isResetError: true
       });
     }, []);
     var onAddFormConfig = React.useCallback(function (config, isReset) {
