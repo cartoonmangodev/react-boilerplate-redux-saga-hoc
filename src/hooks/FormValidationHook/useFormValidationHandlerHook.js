@@ -372,6 +372,7 @@ const useFormValidationHandlerHook = ({
     (
       key,
       {
+        index,
         config,
         propKeyMap: {
           onChange = ON_CHANGE_KEY,
@@ -401,7 +402,10 @@ const useFormValidationHandlerHook = ({
       keyName: key,
       ...((formRef.current.formConfig[key] &&
         (typeof formRef.current.formConfig[key].inputProps === 'function'
-          ? formRef.current.formConfig[key].inputProps(formRef.current)
+          ? formRef.current.formConfig[key].inputProps(formRef.current, {
+              index,
+              config,
+            })
           : formRef.current.formConfig[key].inputProps)) ||
         {}),
     }),
