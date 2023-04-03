@@ -265,7 +265,6 @@ export default function({
       request = requestData || request;
       if (
         ![
-          'GET',
           'POST',
           'PATCH',
           'PUT',
@@ -274,9 +273,7 @@ export default function({
           'patch',
           'put',
           'delete',
-          'get',
-        ].includes(request.method) ||
-        !request.data
+        ].includes(request.method)
       )
         delete request.data;
       if (request.effect) delete request.effect;

@@ -2141,7 +2141,7 @@ var _setInitialValues = function _setInitialValues(_ref) {
         _ref3$ = _ref3[1],
         val = _ref3$ === void 0 ? {} : _ref3$;
 
-    return newObject(acc, _defineProperty({}, key, typeof initialValues[key] !== 'undefined' && (typeof initialValues[key] === 'function' ? initialValues[key]() : initialValues[key]) || (typeof val.default !== 'undefined' ? val.default : '')));
+    return newObject(acc, _defineProperty({}, key, typeof initialValues[key] !== 'undefined' ? typeof initialValues[key] === 'function' ? initialValues[key]() : initialValues[key] : typeof val.default !== 'undefined' ? val.default : ''));
   }, {});
 };
 
