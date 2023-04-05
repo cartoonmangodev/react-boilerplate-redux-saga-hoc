@@ -2895,23 +2895,30 @@ var FormContext = /*#__PURE__*/React.createContext(null);
 var form = (function (_ref) {
   var children = _ref.children,
       inputProps = _ref.inputProps,
-      idKey = _ref.idKey;
+      idKey = _ref.idKey,
+      onSubmit = _ref.onSubmit;
   return /*#__PURE__*/React__default.createElement(FormContext.Provider, {
     value: {
       inputProps: inputProps,
-      idKey: idKey
+      idKey: idKey,
+      onSubmit: onSubmit
     }
   }, children);
 });
 
 var ID_KEY = 'id';
-var hook = (function (props) {
+var hook = (function () {
+  var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
   var _ref = React.useContext(FormContext) || {},
       _ref$inputProps = _ref.inputProps,
       inputProps = _ref$inputProps === void 0 ? {} : _ref$inputProps,
-      idKey = _ref.idKey;
+      idKey = _ref.idKey,
+      onSubmit = _ref.onSubmit;
 
-  return _objectSpread(_objectSpread({}, inputProps[props[idKey || ID_KEY]] || {}), props);
+  return _objectSpread(_objectSpread(_objectSpread({}, onSubmit ? {
+    onSubmit: onSubmit
+  } : {}), inputProps[props[idKey || ID_KEY]] || {}), props);
 });
 
 // import isFunction from 'lodash/isFunction';

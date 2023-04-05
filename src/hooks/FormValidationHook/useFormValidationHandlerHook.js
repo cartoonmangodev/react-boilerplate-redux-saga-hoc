@@ -443,10 +443,24 @@ const useFormValidationHandlerHook = ({
     setValues(_values);
     setErrors({});
   }, []);
+
+  const getKeyValues = useCallback(
+    () =>
+      Object.entries(formRef.current.formConfig).reduce(
+        (acc, [_key, _value = {}]) => ({
+          ...acc,
+          [_value.key || _key]: formRef.current.values[_key],
+        }),
+        {},
+      ),
+    [],
+  );
+
   // const isFormChanged = useCallback(
   //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
   //   [],
   // );
+
   formRef.current.commonInputProps = commonInputProps;
   formRef.current.setInitialFormData = setInitialFormData;
   // formRef.current.validateForm = validateForm;
@@ -458,6 +472,7 @@ const useFormValidationHandlerHook = ({
   formRef.current.addFormConfig = onAddFormConfig;
   formRef.current.modifyFormConfig = onAddFormConfig;
   formRef.current.validateCustomForm = validateCustomForm;
+  formRef.current.getKeyValues = getKeyValues;
   // formRef.current.lastUpdated = generateTimeStamp();
   formRef.current.setErrors = setErrors;
   formRef.current.resetForm = resetForm;
@@ -477,6 +492,7 @@ const useFormValidationHandlerHook = ({
     validateValue,
     onBlurValues,
     validateForm,
+    getKeyValues,
     resetForm,
     setValues,
     setErrors,
