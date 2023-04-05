@@ -2510,6 +2510,16 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
 
       setValues(_values);
       setErrors({});
+    }, []);
+    var getKeyValues = React.useCallback(function () {
+      return Object.entries(formRef.current.formConfig).reduce(function (acc, _ref16) {
+        var _ref17 = _slicedToArray(_ref16, 2),
+            _key = _ref17[0],
+            _ref17$ = _ref17[1],
+            _value = _ref17$ === void 0 ? {} : _ref17$;
+
+        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _value.key || _key, formRef.current.values[_key]));
+      }, {});
     }, []); // const isFormChanged = useCallback(
     //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
     //   [],
@@ -2525,7 +2535,8 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
     formRef.current.validateObject = onValidateCustomObject;
     formRef.current.addFormConfig = onAddFormConfig;
     formRef.current.modifyFormConfig = onAddFormConfig;
-    formRef.current.validateCustomForm = validateCustomForm; // formRef.current.lastUpdated = generateTimeStamp();
+    formRef.current.validateCustomForm = validateCustomForm;
+    formRef.current.getKeyValues = getKeyValues; // formRef.current.lastUpdated = generateTimeStamp();
 
     formRef.current.setErrors = setErrors;
     formRef.current.resetForm = resetForm;
@@ -2544,6 +2555,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       validateValue: validateValue,
       onBlurValues: onBlurValues,
       validateForm: validateForm,
+      getKeyValues: getKeyValues,
       resetForm: resetForm,
       setValues: setValues,
       setErrors: setErrors,

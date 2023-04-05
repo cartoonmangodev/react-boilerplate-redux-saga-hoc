@@ -472,7 +472,7 @@ const useFormValidationHandlerHook = ({
   formRef.current.addFormConfig = onAddFormConfig;
   formRef.current.modifyFormConfig = onAddFormConfig;
   formRef.current.validateCustomForm = validateCustomForm;
-  formRef.current.getKeyValues = getKeyValues;
+  formRef.current.getValues = getKeyValues;
   // formRef.current.lastUpdated = generateTimeStamp();
   formRef.current.setErrors = setErrors;
   formRef.current.resetForm = resetForm;
@@ -492,7 +492,7 @@ const useFormValidationHandlerHook = ({
     validateValue,
     onBlurValues,
     validateForm,
-    getKeyValues,
+    getValues,
     resetForm,
     setValues,
     setErrors,
