@@ -2536,7 +2536,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
     formRef.current.addFormConfig = onAddFormConfig;
     formRef.current.modifyFormConfig = onAddFormConfig;
     formRef.current.validateCustomForm = validateCustomForm;
-    formRef.current.getKeyValues = getKeyValues; // formRef.current.lastUpdated = generateTimeStamp();
+    formRef.current.getValues = getKeyValues; // formRef.current.lastUpdated = generateTimeStamp();
 
     formRef.current.setErrors = setErrors;
     formRef.current.resetForm = resetForm;
@@ -2555,7 +2555,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       validateValue: validateValue,
       onBlurValues: onBlurValues,
       validateForm: validateForm,
-      getKeyValues: getKeyValues,
+      getValues: getValues,
       resetForm: resetForm,
       setValues: setValues,
       setErrors: setErrors,

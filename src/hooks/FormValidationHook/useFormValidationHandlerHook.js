@@ -444,17 +444,39 @@ const useFormValidationHandlerHook = ({
     setErrors({});
   }, []);
 
-  const getKeyValues = useCallback(
+  const getPayloadValues = useCallback(
     () =>
       Object.entries(formRef.current.formConfig).reduce(
-        (acc, [_key, _value = {}]) => ({
+        (acc, [_key, _config = {}]) => ({
           ...acc,
-          [_value.key || _key]: formRef.current.values[_key],
+          [_config.key || _key]: formRef.current.values[_key],
         }),
         {},
       ),
     [],
   );
+
+  const setResponseErrors = useCallback(_errors => {
+    const _keyErrors = Object.entries(formRef.current.formConfig).reduce(
+      (acc, [_key, _config = {}]) => ({
+        ...acc,
+        [_key]: _config.key ? _errors[_config.key] : _errors[_key],
+      }),
+      {},
+    );
+    setErrors(_keyErrors);
+  }, []);
+
+  const setResponseValues = useCallback(_values => {
+    const _keyErrors = Object.entries(formRef.current.formConfig).reduce(
+      (acc, [_key, _config = {}]) => ({
+        ...acc,
+        [_key]: _config.key ? _values[_config.key] : _values[_key],
+      }),
+      {},
+    );
+    setErrors(_keyErrors);
+  }, []);
 
   // const isFormChanged = useCallback(
   //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
@@ -472,7 +494,9 @@ const useFormValidationHandlerHook = ({
   formRef.current.addFormConfig = onAddFormConfig;
   formRef.current.modifyFormConfig = onAddFormConfig;
   formRef.current.validateCustomForm = validateCustomForm;
-  formRef.current.getValues = getKeyValues;
+  formRef.current.getKeyValues = getPayloadValues;
+  formRef.current.setKeyErrors = setResponseErrors;
+  formRef.current.setKeyValues = setResponseValues;
   // formRef.current.lastUpdated = generateTimeStamp();
   formRef.current.setErrors = setErrors;
   formRef.current.resetForm = resetForm;
@@ -492,7 +516,6 @@ const useFormValidationHandlerHook = ({
     validateValue,
     onBlurValues,
     validateForm,
-    getValues,
     resetForm,
     setValues,
     setErrors,
