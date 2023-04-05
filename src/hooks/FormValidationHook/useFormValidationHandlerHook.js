@@ -406,6 +406,7 @@ const useFormValidationHandlerHook = ({
           ? formRef.current.formConfig[key].inputProps(formRef.current, {
               index,
               config,
+              key,
               ...rest,
             })
           : formRef.current.formConfig[key].inputProps)) ||
@@ -427,6 +428,7 @@ const useFormValidationHandlerHook = ({
     );
     setValues(_values);
   }, []);
+
   const resetForm = useCallback(() => {
     const _values = Object.entries(formConfig || {}).reduce(
       (acc, [key, val = {}]) =>

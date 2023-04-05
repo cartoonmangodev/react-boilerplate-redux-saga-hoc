@@ -2511,15 +2511,39 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       setValues(_values);
       setErrors({});
     }, []);
-    var getKeyValues = React.useCallback(function () {
+    var getPayloadValues = React.useCallback(function () {
       return Object.entries(formRef.current.formConfig).reduce(function (acc, _ref16) {
         var _ref17 = _slicedToArray(_ref16, 2),
             _key = _ref17[0],
             _ref17$ = _ref17[1],
-            _value = _ref17$ === void 0 ? {} : _ref17$;
+            _config = _ref17$ === void 0 ? {} : _ref17$;
 
-        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _value.key || _key, formRef.current.values[_key]));
+        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _config.key || _key, formRef.current.values[_key]));
       }, {});
+    }, []);
+    var setResponseErrors = React.useCallback(function (_errors) {
+      var _keyErrors = Object.entries(formRef.current.formConfig).reduce(function (acc, _ref18) {
+        var _ref19 = _slicedToArray(_ref18, 2),
+            _key = _ref19[0],
+            _ref19$ = _ref19[1],
+            _config = _ref19$ === void 0 ? {} : _ref19$;
+
+        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _key, _config.key ? _errors[_config.key] : _errors[_key]));
+      }, {});
+
+      setErrors(_keyErrors);
+    }, []);
+    var setResponseValues = React.useCallback(function (_values) {
+      var _keyErrors = Object.entries(formRef.current.formConfig).reduce(function (acc, _ref20) {
+        var _ref21 = _slicedToArray(_ref20, 2),
+            _key = _ref21[0],
+            _ref21$ = _ref21[1],
+            _config = _ref21$ === void 0 ? {} : _ref21$;
+
+        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _key, _config.key ? _values[_config.key] : _values[_key]));
+      }, {});
+
+      setErrors(_keyErrors);
     }, []); // const isFormChanged = useCallback(
     //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
     //   [],
@@ -2536,7 +2560,9 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
     formRef.current.addFormConfig = onAddFormConfig;
     formRef.current.modifyFormConfig = onAddFormConfig;
     formRef.current.validateCustomForm = validateCustomForm;
-    formRef.current.getValues = getKeyValues; // formRef.current.lastUpdated = generateTimeStamp();
+    formRef.current.getKeyValues = getPayloadValues;
+    formRef.current.setKeyErrors = setResponseErrors;
+    formRef.current.setKeyValues = setResponseValues; // formRef.current.lastUpdated = generateTimeStamp();
 
     formRef.current.setErrors = setErrors;
     formRef.current.resetForm = resetForm;
@@ -2555,7 +2581,6 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       validateValue: validateValue,
       onBlurValues: onBlurValues,
       validateForm: validateForm,
-      getValues: getValues,
       resetForm: resetForm,
       setValues: setValues,
       setErrors: setErrors,
