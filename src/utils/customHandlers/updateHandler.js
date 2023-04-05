@@ -59,7 +59,7 @@ export const updateHandler = ({
               if (!Array.isArray(_Data))
                 return updateData(
                   _Data,
-                  Safe(successData, `.${subKey.join('.')}`),
+                  Safe(successData, `.${subKey.join('.')}`) || successData,
                   updateCallback,
                   type,
                   state,
@@ -73,7 +73,9 @@ export const updateHandler = ({
                           return acc.concat([
                             updateData(
                               curr,
-                              values[_values ? index : curr[key]] || curr,
+                              values[_values ? index : curr[key]] ||
+                                successData ||
+                                curr,
                               updateCallback,
                               type,
                               state,
@@ -94,7 +96,9 @@ export const updateHandler = ({
                         index += 1;
                         return updateData(
                           _data,
-                          values[_values ? index : _data[key]] || _data,
+                          values[_values ? index : _data[key]] ||
+                            successData ||
+                            _data,
                           updateCallback,
                           type,
                           state,
