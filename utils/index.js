@@ -2472,7 +2472,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           rest = _objectWithoutProperties(_ref13, _excluded);
 
       var INITIAL_FORM_CONFIG = formRef.current.formConfig[key];
-      INITIAL_FORM_CONFIG._config = _objectSpread({
+      if (INITIAL_FORM_CONFIG) INITIAL_FORM_CONFIG._config = _objectSpread({
         index: index,
         config: config,
         key: key
