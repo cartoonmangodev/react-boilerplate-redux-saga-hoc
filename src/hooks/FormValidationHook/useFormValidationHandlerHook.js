@@ -93,7 +93,11 @@ const useFormValidationHandlerHook = ({
       // eslint-disable-next-line prefer-const
       let { value, error: validatorError } =
         config && config.validator
-          ? config.validator(__value, formRef.current)
+          ? config.validator(
+              __value,
+              formRef.current,
+              formRef.current.formConfig[key]._config,
+            )
           : { value: __value };
       let error = null;
       let maxError = null;
@@ -165,12 +169,15 @@ const useFormValidationHandlerHook = ({
           });
         }
       if (typeof config.callback === 'function') {
-        const response = config.callback({
-          error,
-          value,
-          key,
-          formRef: formRef.current,
-        });
+        const response = config.callback(
+          {
+            error,
+            value,
+            key,
+            formRef: formRef.current,
+          },
+          formRef.current.formConfig[key]._config,
+        );
         if (typeOf(response) === TYPE_OBJECT) {
           setValues({
             ...formRef.current.values,
@@ -382,36 +389,44 @@ const useFormValidationHandlerHook = ({
         } = {},
         ...rest
       } = {},
-    ) => ({
-      [onChange]: e => {
-        onChangeValues(e, key, config);
-        const _validateFieldsOnChange =
-          (config && config.validateFieldsOnChange) ||
-          (formRef.current.formConfig[key] &&
-            formRef.current.formConfig[key].validateFieldsOnChange);
-        if (_validateFieldsOnChange && _validateFieldsOnChange.length > 0) {
-          _validateFieldsOnChange.forEach(_key => {
-            if (formRef.current.values[_key]) {
-              onChangeValues(formRef.current.values[_key], _key);
-            }
-          });
-        }
-      },
-      [onBlur]: e => onBlurValues(e, key, config),
-      [value]: formRef.current.values[key],
-      [error]: formRef.current.errors[key],
-      keyName: key,
-      ...((formRef.current.formConfig[key] &&
-        (typeof formRef.current.formConfig[key].inputProps === 'function'
-          ? formRef.current.formConfig[key].inputProps(formRef.current, {
-              index,
-              config,
-              key,
-              ...rest,
-            })
-          : formRef.current.formConfig[key].inputProps)) ||
-        {}),
-    }),
+    ) => {
+      const INITIAL_FORM_CONFIG = formRef.current.formConfig[key];
+      INITIAL_FORM_CONFIG._config = {
+        index,
+        config,
+        key,
+        ...rest,
+      };
+      return {
+        [onChange]: e => {
+          onChangeValues(e, key, config);
+          const _validateFieldsOnChange =
+            (config && config.validateFieldsOnChange) ||
+            (INITIAL_FORM_CONFIG && INITIAL_FORM_CONFIG.validateFieldsOnChange);
+          if (_validateFieldsOnChange && _validateFieldsOnChange.length > 0) {
+            _validateFieldsOnChange.forEach(_key => {
+              if (formRef.current.values[_key]) {
+                onChangeValues(formRef.current.values[_key], _key);
+              }
+            });
+          }
+        },
+        [onBlur]: e => onBlurValues(e, key, config),
+        [value]: formRef.current.values[key],
+        [error]: formRef.current.errors[key],
+        keyName: key,
+        ...((INITIAL_FORM_CONFIG &&
+          (typeof INITIAL_FORM_CONFIG.inputProps === 'function'
+            ? INITIAL_FORM_CONFIG.inputProps(formRef.current, {
+                index,
+                config,
+                key,
+                ...rest,
+              })
+            : INITIAL_FORM_CONFIG.inputProps)) ||
+          {}),
+      };
+    },
     [],
   );
   const setInitialFormData = useCallback(data => {
