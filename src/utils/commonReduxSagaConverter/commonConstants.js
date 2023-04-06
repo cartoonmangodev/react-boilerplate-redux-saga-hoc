@@ -148,6 +148,7 @@ const API_TASK_CONFIG_KEYS = {
   TASKS: 'tasks',
   TASK: {
     KEY: 'task',
+    COMMON_TASK_KEYS: COMMON_TASKS,
     INFINITE_DATA_HANDLER: {
       ...COMMON_TASKS,
       LIMIT: 'limit',
