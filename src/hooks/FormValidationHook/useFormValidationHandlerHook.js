@@ -109,7 +109,9 @@ const useFormValidationHandlerHook = ({
         value = value.slice(0, config.maxLength);
         // return;
       }
-      if (typeof config.trim !== 'undefined' ? config.trim : config.trim)
+      if (
+        typeof config.trim !== 'undefined' ? config.trim : config.trim || isTrim
+      )
         value = trimStrings(value, config.isNumber);
       if (config) {
         error =

@@ -44,7 +44,7 @@ export const typeOf = _obj =>
     : type[Object.prototype.toString.call(_obj)] || typeof _obj;
 
 export const trimStrings = (value = '', isNumber = false) => {
-  if (value && String(value)) {
+  if (value && typeof value === 'string' && String(value)) {
     const trimedString = String(value).trim();
     return isNumber ? Number(trimedString) : trimedString;
   }

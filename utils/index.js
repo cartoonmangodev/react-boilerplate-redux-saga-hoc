@@ -2219,7 +2219,6 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
     formRef.current.formConfig = formConfig;
     formRef.current.setFormConfig = setFormConfig;
     var validateValue = React.useCallback(function (__value, key, isSetValue, isSetError, _config) {
-      var isTrim = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : false;
       formRef.current.lastUpdated = generateTimeStamp();
       var config = _config || formRef.current.formConfig[key] || {}; // eslint-disable-next-line prefer-const
 
@@ -2237,7 +2236,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         value = value.slice(0, config.maxLength); // return;
       }
 
-      if (typeof config.trim !== 'undefined' ? config.trim : config.trim || isTrim) value = trimStrings(value, config.isNumber);
+      if (typeof config.trim !== 'undefined' ? config.trim : config.trim) value = trimStrings(value, config.isNumber);
 
       if (config) {
         error = validatorError || Validate(value, config.type, _objectSpread({
