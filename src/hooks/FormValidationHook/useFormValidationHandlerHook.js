@@ -391,12 +391,13 @@ const useFormValidationHandlerHook = ({
       } = {},
     ) => {
       const INITIAL_FORM_CONFIG = formRef.current.formConfig[key];
-      INITIAL_FORM_CONFIG._config = {
-        index,
-        config,
-        key,
-        ...rest,
-      };
+      if (INITIAL_FORM_CONFIG)
+        INITIAL_FORM_CONFIG._config = {
+          index,
+          config,
+          key,
+          ...rest,
+        };
       return {
         [onChange]: e => {
           onChangeValues(e, key, config);

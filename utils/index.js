@@ -2223,7 +2223,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       formRef.current.lastUpdated = generateTimeStamp();
       var config = _config || formRef.current.formConfig[key] || {}; // eslint-disable-next-line prefer-const
 
-      var _ref6 = config && config.validator ? config.validator(__value, formRef.current) : {
+      var _ref6 = config && config.validator ? config.validator(__value, formRef.current, formRef.current.formConfig[key]._config) : {
         value: __value
       },
           value = _ref6.value,
@@ -2265,7 +2265,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           value: value,
           key: key,
           formRef: formRef.current
-        });
+        }, formRef.current.formConfig[key]._config);
 
         if (typeOf(response) === TYPE_OBJECT$1) {
           setValues(_objectSpread(_objectSpread({}, formRef.current.values), {}, _defineProperty({}, key, response.value)));
@@ -2471,10 +2471,16 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           error = _ref13$propKeyMap$err === void 0 ? ERROR_KEY : _ref13$propKeyMap$err,
           rest = _objectWithoutProperties(_ref13, _excluded);
 
+      var INITIAL_FORM_CONFIG = formRef.current.formConfig[key];
+      INITIAL_FORM_CONFIG._config = _objectSpread({
+        index: index,
+        config: config,
+        key: key
+      }, rest);
       return _objectSpread((_objectSpread6 = {}, _defineProperty(_objectSpread6, onChange, function (e) {
         onChangeValues(e, key, config);
 
-        var _validateFieldsOnChange = config && config.validateFieldsOnChange || formRef.current.formConfig[key] && formRef.current.formConfig[key].validateFieldsOnChange;
+        var _validateFieldsOnChange = config && config.validateFieldsOnChange || INITIAL_FORM_CONFIG && INITIAL_FORM_CONFIG.validateFieldsOnChange;
 
         if (_validateFieldsOnChange && _validateFieldsOnChange.length > 0) {
           _validateFieldsOnChange.forEach(function (_key) {
@@ -2485,11 +2491,11 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         }
       }), _defineProperty(_objectSpread6, onBlur, function (e) {
         return onBlurValues(e, key, config);
-      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), formRef.current.formConfig[key] && (typeof formRef.current.formConfig[key].inputProps === 'function' ? formRef.current.formConfig[key].inputProps(formRef.current, _objectSpread({
+      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), INITIAL_FORM_CONFIG && (typeof INITIAL_FORM_CONFIG.inputProps === 'function' ? INITIAL_FORM_CONFIG.inputProps(formRef.current, _objectSpread({
         index: index,
         config: config,
         key: key
-      }, rest)) : formRef.current.formConfig[key].inputProps) || {});
+      }, rest)) : INITIAL_FORM_CONFIG.inputProps) || {});
     }, []);
     var setInitialFormData = React.useCallback(function (data) {
       formRef.current.lastUpdated = generateTimeStamp();
