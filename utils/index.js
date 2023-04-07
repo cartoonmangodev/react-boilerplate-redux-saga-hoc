@@ -991,7 +991,7 @@ var trimStrings = function trimStrings() {
   var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
   var isNumber = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-  if (value && String(value)) {
+  if (value && typeof value === 'string' && String(value)) {
     var trimedString = String(value).trim();
     return isNumber ? Number(trimedString) : trimedString;
   }
@@ -2219,6 +2219,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
     formRef.current.formConfig = formConfig;
     formRef.current.setFormConfig = setFormConfig;
     var validateValue = React.useCallback(function (__value, key, isSetValue, isSetError, _config) {
+      var isTrim = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : false;
       formRef.current.lastUpdated = generateTimeStamp();
       var config = _config || formRef.current.formConfig[key] || {}; // eslint-disable-next-line prefer-const
 
@@ -2236,7 +2237,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         value = value.slice(0, config.maxLength); // return;
       }
 
-      if (typeof config.trim !== 'undefined' ? config.trim : config.trim) value = trimStrings(value, config.isNumber);
+      if (typeof config.trim !== 'undefined' ? config.trim : config.trim || isTrim) value = trimStrings(value, config.isNumber);
 
       if (config) {
         error = validatorError || Validate(value, config.type, _objectSpread({
