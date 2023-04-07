@@ -141,6 +141,7 @@ const COMMON_TASKS = {
   IS_CLEAR_PREVIOUS_DATA_ON_API_START: 'clearDataOnStart',
 };
 const DONT_UPDATE_RESPONSE_DATA = 'dontUpdateResponseData';
+const DONT_UPDATE_SUCCESS_DATA = 'dontUpdateSuccessData';
 const UPDATE_CALLBACK = 'updateCallback';
 const ID_REFERENCE_KEY = 'key';
 const IDS = 'id';
@@ -164,6 +165,7 @@ const API_TASK_CONFIG_KEYS = {
       IDS,
       UPDATE_CALLBACK,
       DONT_UPDATE_RESPONSE_DATA,
+      DONT_UPDATE_SUCCESS_DATA,
     },
     UPDATE_DATA_KEY_HANDLER: {
       ...COMMON_TASKS,
@@ -171,6 +173,7 @@ const API_TASK_CONFIG_KEYS = {
       IDS,
       UPDATE_CALLBACK,
       DONT_UPDATE_RESPONSE_DATA,
+      DONT_UPDATE_SUCCESS_DATA,
     },
     DELETE_DATA_KEY_HANDLER: {
       ...COMMON_TASKS,

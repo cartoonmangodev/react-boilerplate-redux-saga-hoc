@@ -52,6 +52,7 @@ export const updateKeyHandler = ({
     updateKey = [],
     updateCallback = __updateCallback,
     dontUpdateResponseData,
+    dontUpdateSuccessData,
   } = {},
   successData = {},
   successDataStatusCode,
@@ -63,7 +64,8 @@ export const updateKeyHandler = ({
       ? updateIn(
           {
             ...data,
-            ...(typeOf(successData) === 'object' && !dontUpdateResponseData
+            ...(typeOf(successData) === 'object' &&
+            !(dontUpdateResponseData || dontUpdateSuccessData)
               ? successData
               : {}),
             [subKey[0]]: data[subKey[0]],
