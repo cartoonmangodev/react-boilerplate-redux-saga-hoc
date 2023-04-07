@@ -496,6 +496,18 @@ const useFormValidationHandlerHook = ({
     setErrors(_keyErrors);
   }, []);
 
+  const getInputProps = useCallback(
+    (extraProps = {}) =>
+      Object.keys(formRef.current.formConfig).reduce(
+        (prev, key) => ({
+          ...prev,
+          [key]: commonInputProps(key, extraProps),
+        }),
+        {},
+      ),
+    [],
+  );
+
   // const isFormChanged = useCallback(
   //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
   //   [],
@@ -515,6 +527,7 @@ const useFormValidationHandlerHook = ({
   formRef.current.getKeyValues = getPayloadValues;
   formRef.current.setKeyErrors = setResponseErrors;
   formRef.current.setKeyValues = setResponseValues;
+  formRef.current.getInputProps = getInputProps;
   // formRef.current.lastUpdated = generateTimeStamp();
   formRef.current.setErrors = setErrors;
   formRef.current.resetForm = resetForm;
