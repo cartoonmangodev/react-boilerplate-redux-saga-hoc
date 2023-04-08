@@ -2272,7 +2272,8 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           error: error,
           value: value,
           key: key,
-          formRef: formRef.current
+          formRef: formRef.current,
+          isValidateField: !config._noValidate
         }, formRef.current.formConfig[key]._config, formRef.current.formConfig[key]._commonInputProps);
 
         if (typeOf(response) === TYPE_OBJECT$1) {

@@ -58,7 +58,7 @@ const useFormValidationHandlerHook = ({
   VALUE_KEY = _VALUE_KEY || VALUE,
   ERROR_KEY = _ERROR_KEY || ERROR,
 } = {}) => {
-  const formRef = useRef({ is_validate_form: false });
+  const formRef = useRef({ is_validate_form_triggered: false });
   const [formConfig, _setFormConfig] = useState(FORM_CONFIG);
   const [errors, _setErrors] = useState({});
   const [values, _setValues] = useState(() =>
@@ -181,7 +181,7 @@ const useFormValidationHandlerHook = ({
             value,
             key,
             formRef: formRef.current,
-            isValidateField: !config._noValidate,
+            is_validation_allowed: !config._noValidate,
           },
           formRef.current.formConfig[key]._config,
           formRef.current.formConfig[key]._commonInputProps,
@@ -269,7 +269,7 @@ const useFormValidationHandlerHook = ({
       isResetValue,
       isResetError,
     } = {}) => {
-      formRef.current.is_validate_form = true;
+      formRef.current.is_validate_form_triggered = true;
       const IS_RESET_VALUE = isResetValue && {};
       const IS_RESET_ERROR = isResetError && {};
       const _FORM_CONFIG = isNewFormConfig
@@ -300,7 +300,7 @@ const useFormValidationHandlerHook = ({
         formRef.current.lastUpdated = generateTimeStamp();
         setErrors(_errors);
       }
-      formRef.current.is_validate_form = false;
+      formRef.current.is_validate_form_triggered = false;
       return {
         values: _values,
         error: _errors,
