@@ -2238,31 +2238,33 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       var error = null;
       var maxError = null;
 
-      if (config.maxLength && (__value || '').length > config.maxLength) {
-        maxError = typeof (config.message && config.message.maxLength) !== 'undefined' ? config.message.maxLength : "maximum ".concat(config.maxLength, " characters are allowed");
-        value = value.slice(0, config.maxLength); // return;
-      }
+      if (!config._noValidate) {
+        if (config.maxLength && (__value || '').length > config.maxLength) {
+          maxError = typeof (config.message && config.message.maxLength) !== 'undefined' ? config.message.maxLength : "maximum ".concat(config.maxLength, " characters are allowed");
+          value = value.slice(0, config.maxLength); // return;
+        }
 
-      if (typeof config.trim !== 'undefined' ? config.trim : config.trim || isTrim) value = trimStrings(value, config.isNumber);
+        if (typeof config.trim !== 'undefined' ? config.trim : config.trim || isTrim) value = trimStrings(value, config.isNumber);
 
-      if (config) {
-        error = validatorError || Validate(value, config.type, _objectSpread({
-          key: key,
-          optional: config.optional,
-          minLength: config.minLength,
-          message: config.message,
-          maxLength: config.maxLength,
-          length: config.length
-        }, config)) || maxError;
-        if (value && config.match && typeof config.match === 'string' && formRef.current.values[config.match]) error = formRef.current.values[config.match] !== value ? typeof (config.message && config.message.match) !== 'undefined' ? config.message.match : "".concat(key, " not matching with ").concat(config.match) : maxError;
-      }
+        if (config) {
+          error = validatorError || Validate(value, config.type, _objectSpread({
+            key: key,
+            optional: config.optional,
+            minLength: config.minLength,
+            message: config.message,
+            maxLength: config.maxLength,
+            length: config.length
+          }, config)) || maxError;
+          if (value && config.match && typeof config.match === 'string' && formRef.current.values[config.match]) error = formRef.current.values[config.match] !== value ? typeof (config.message && config.message.match) !== 'undefined' ? config.message.match : "".concat(key, " not matching with ").concat(config.match) : maxError;
+        }
 
-      if (key && isSetValue) if (value !== '' && !Number.isNaN(+value) && !(config.allowValidNumber ? !!+value : true)) error = typeof (config.message && config.message.allowValidNumber) !== 'undefined' ? config.message && config.message.allowValidNumber : 'Please enter valid number';else if (config.allowOnlyNumber) {
-        if (!Number.isNaN(+value)) {
+        if (key && isSetValue) if (value !== '' && !Number.isNaN(+value) && !(config.allowValidNumber ? !!+value : true)) error = typeof (config.message && config.message.allowValidNumber) !== 'undefined' ? config.message && config.message.allowValidNumber : 'Please enter valid number';else if (config.allowOnlyNumber) {
+          if (!Number.isNaN(+value)) {
+            setValues(_objectSpread(_objectSpread({}, formRef.current.values), {}, _defineProperty({}, key, value)));
+          } else error = typeof (config.message && config.message.allowOnlyNumber) !== 'undefined' ? config.message && config.message.allowOnlyNumber : 'Only numbers are allowed';
+        } else {
           setValues(_objectSpread(_objectSpread({}, formRef.current.values), {}, _defineProperty({}, key, value)));
-        } else error = typeof (config.message && config.message.allowOnlyNumber) !== 'undefined' ? config.message && config.message.allowOnlyNumber : 'Only numbers are allowed';
-      } else {
-        setValues(_objectSpread(_objectSpread({}, formRef.current.values), {}, _defineProperty({}, key, value)));
+        }
       }
 
       if (typeof config.callback === 'function') {
@@ -2572,6 +2574,24 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       return Object.keys(formRef.current.formConfig).reduce(function (prev, key) {
         return _objectSpread(_objectSpread({}, prev), {}, _defineProperty({}, key, commonInputProps(key, extraProps)));
       }, {});
+    }, []);
+    var setValidate = React.useCallback(function () {
+      var _config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      var __config = _objectSpread({}, formRef.current.formConfig);
+
+      var __errors = _objectSpread({}, formRef.current.errors);
+
+      Object.entries(_config).forEach(function (_ref22) {
+        var _ref23 = _slicedToArray(_ref22, 2),
+            _key = _ref23[0],
+            _value = _ref23[1];
+
+        __config[_key]._noValidate = !_value;
+        if (!_value) __errors[_key] = '';
+      });
+      setFormConfig(__config);
+      setErrors(__errors);
     }, []); // const isFormChanged = useCallback(
     //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
     //   [],
@@ -2593,6 +2613,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
     formRef.current.setKeyValues = setResponseValues;
     formRef.current.getInputProps = getInputProps; // formRef.current.lastUpdated = generateTimeStamp();
 
+    formRef.current.setValidate = setValidate;
     formRef.current.setErrors = setErrors;
     formRef.current.resetForm = resetForm;
     formRef.current.setValues = setValues; // formRef.current.isFormChanged = isFormChanged;

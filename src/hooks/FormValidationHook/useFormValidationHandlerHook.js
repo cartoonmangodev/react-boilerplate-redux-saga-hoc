@@ -402,7 +402,7 @@ const useFormValidationHandlerHook = ({
     ) => {
       const INITIAL_FORM_CONFIG = formRef.current.formConfig[key];
       if (INITIAL_FORM_CONFIG)
-        INITIAL_FORM_CONFIG._config = {
+        INITIAL_FORM_CONFIG.__proto__.config = {
           index,
           config,
           key,
@@ -444,7 +444,9 @@ const useFormValidationHandlerHook = ({
           {}),
       };
       if (INITIAL_FORM_CONFIG) {
-        INITIAL_FORM_CONFIG._commonInputProps = { ..._commonInputProps };
+        INITIAL_FORM_CONFIG.__proto__._commonInputProps = {
+          ..._commonInputProps,
+        };
       }
       return _commonInputProps;
     },
