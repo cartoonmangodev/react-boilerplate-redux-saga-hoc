@@ -58,7 +58,7 @@ const useFormValidationHandlerHook = ({
   VALUE_KEY = _VALUE_KEY || VALUE,
   ERROR_KEY = _ERROR_KEY || ERROR,
 } = {}) => {
-  const formRef = useRef({});
+  const formRef = useRef({ is_validate_form: false });
   const [formConfig, _setFormConfig] = useState(FORM_CONFIG);
   const [errors, _setErrors] = useState({});
   const [values, _setValues] = useState(() =>
@@ -417,7 +417,6 @@ const useFormValidationHandlerHook = ({
                   formRef.current.values[_key],
                   _key,
                   INITIAL_FORM_CONFIG._config,
-                  INITIAL_FORM_CONFIG._temp,
                 );
               }
             });
@@ -432,6 +431,7 @@ const useFormValidationHandlerHook = ({
             ? INITIAL_FORM_CONFIG.inputProps(
                 formRef.current,
                 INITIAL_FORM_CONFIG._config,
+                INITIAL_FORM_CONFIG._temp,
               )
             : INITIAL_FORM_CONFIG.inputProps)) ||
           {}),

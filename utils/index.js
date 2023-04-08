@@ -2070,13 +2070,14 @@ function validate(value, fieldName) {
       key = _ref.key;
 
   if ((isOptional || !isRequired) && !value) return '';
+  var IS_NO_VALUE = typeof value === 'number' || typeof value === 'boolean' ? false : !value;
   if (value && minLength && value.length < minLength) return message && typeof message.minLength !== 'undefined' ? message.minLength : "Minimum ".concat(minLength, " characters is required");
   if (value && length && value.length !== length) return message && message && typeof message.length !== 'undefined' ? message.length : "Number should be ".concat(length, " digits long");
 
   switch (fieldName) {
     case 'password':
       {
-        if (!value) {
+        if (IS_NO_VALUE) {
           return message && typeof message.required !== 'undefined' ? message.required : 'This field is required';
         }
 
@@ -2085,33 +2086,33 @@ function validate(value, fieldName) {
 
     case 'email':
       {
-        if (!value) return message && typeof message.required !== 'undefined' ? message.required : 'Please enter your email';
+        if (IS_NO_VALUE) return message && typeof message.required !== 'undefined' ? message.required : 'Please enter your email';
         if (value && !validateEmail(value)) return message && typeof message.invalid !== 'undefined' ? message.invalid : 'Invalid email address';
         return '';
       }
 
     case 'name':
       {
-        if (!value) return message && typeof message.required !== 'undefined' ? message.required : 'Please enter your name'; // if (value && !validateEmail(value)) return 'Invalid email address';
+        if (IS_NO_VALUE) return message && typeof message.required !== 'undefined' ? message.required : 'Please enter your name'; // if (value && !validateEmail(value)) return 'Invalid email address';
 
         return '';
       }
 
     case 'mobileNumber':
       {
-        if (!value) return message && typeof message.required !== 'undefined' ? message.required : 'Please enter 10 digit mobile number';
+        if (IS_NO_VALUE) return message && typeof message.required !== 'undefined' ? message.required : 'Please enter 10 digit mobile number';
         return '';
       }
 
     case 'about':
       {
-        if (!value) return message && typeof message.required !== 'undefined' ? message.required : 'This field is required'; // if (value && !validateEmail(value)) return 'Invalid email address';
+        if (IS_NO_VALUE) return message && typeof message.required !== 'undefined' ? message.required : 'This field is required'; // if (value && !validateEmail(value)) return 'Invalid email address';
 
         return '';
       }
 
     default:
-      if (!value) {
+      if (IS_NO_VALUE) {
         return message && typeof message.required !== 'undefined' ? message.required : 'This field is required';
       }
 
@@ -2483,6 +2484,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         config: config,
         key: key
       }, rest);
+      INITIAL_FORM_CONFIG._temp = {};
 
       var _commonInputProps = _objectSpread((_objectSpread6 = {}, _defineProperty(_objectSpread6, onChange, function (e) {
         onChangeValues(e, key, config);
@@ -2492,7 +2494,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         if (_validateFieldsOnChange && _validateFieldsOnChange.length > 0) {
           _validateFieldsOnChange.forEach(function (_key) {
             if (formRef.current.values[_key]) {
-              onChangeValues(formRef.current.values[_key], _key, INITIAL_FORM_CONFIG._config);
+              onChangeValues(formRef.current.values[_key], _key, INITIAL_FORM_CONFIG._config, INITIAL_FORM_CONFIG._temp);
             }
           });
         }
@@ -2500,7 +2502,11 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         return onBlurValues(e, key, INITIAL_FORM_CONFIG._config);
       }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), INITIAL_FORM_CONFIG && (typeof INITIAL_FORM_CONFIG.inputProps === 'function' ? INITIAL_FORM_CONFIG.inputProps(formRef.current, INITIAL_FORM_CONFIG._config) : INITIAL_FORM_CONFIG.inputProps) || {});
 
-      if (INITIAL_FORM_CONFIG) INITIAL_FORM_CONFIG._commonInputProps = _objectSpread({}, _commonInputProps);
+      if (INITIAL_FORM_CONFIG) {
+        INITIAL_FORM_CONFIG._commonInputProps = _objectSpread({}, _commonInputProps);
+        Object.assign(INITIAL_FORM_CONFIG._temp, _objectSpread({}, _commonInputProps));
+      }
+
       return _commonInputProps;
     }, []);
     var setInitialFormData = React.useCallback(function (data) {
