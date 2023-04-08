@@ -2229,7 +2229,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       formRef.current.lastUpdated = generateTimeStamp();
       var config = _config || formRef.current.formConfig[key] || {}; // eslint-disable-next-line prefer-const
 
-      var _ref6 = config && config.validator ? config.validator(__value, formRef.current, formRef.current.formConfig[key]._config, formRef.current.formConfig[key]._commonInputProps) : {
+      var _ref6 = config && config.validator ? config.validator(__value, formRef.current, formRef.current.formConfig[key].__proto__._config, formRef.current.formConfig[key].__proto__._commonInputProps) : {
         value: __value
       },
           value = _ref6.value,
@@ -2273,7 +2273,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           value: value,
           key: key,
           formRef: formRef.current
-        }, formRef.current.formConfig[key]._config, formRef.current.formConfig[key]._commonInputProps);
+        }, formRef.current.formConfig[key].__proto__._config, formRef.current.formConfig[key].__proto__._commonInputProps);
 
         if (typeOf(response) === TYPE_OBJECT$1) {
           setValues(_objectSpread(_objectSpread({}, formRef.current.values), {}, _defineProperty({}, key, response.value)));
@@ -2497,15 +2497,15 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         if (_validateFieldsOnChange && _validateFieldsOnChange.length > 0) {
           _validateFieldsOnChange.forEach(function (_key) {
             if (formRef.current.values[_key]) {
-              onChangeValues(formRef.current.values[_key], _key, INITIAL_FORM_CONFIG._config);
+              onChangeValues(formRef.current.values[_key], _key, INITIAL_FORM_CONFIG.__proto__._config);
             }
           });
         }
       }), _defineProperty(_commonInputProps2, onBlur, function (e) {
-        return onBlurValues(e, key, INITIAL_FORM_CONFIG._config);
+        return onBlurValues(e, key, INITIAL_FORM_CONFIG.__proto__._config);
       }), _defineProperty(_commonInputProps2, value, formRef.current.values[key]), _defineProperty(_commonInputProps2, error, formRef.current.errors[key]), _defineProperty(_commonInputProps2, "keyName", key), _commonInputProps2);
 
-      _commonInputProps = _objectSpread(_objectSpread({}, _commonInputProps), INITIAL_FORM_CONFIG && (typeof INITIAL_FORM_CONFIG.inputProps === 'function' ? INITIAL_FORM_CONFIG.inputProps(formRef.current, INITIAL_FORM_CONFIG._config, _objectSpread({}, _commonInputProps)) : INITIAL_FORM_CONFIG.inputProps) || {});
+      _commonInputProps = _objectSpread(_objectSpread({}, _commonInputProps), INITIAL_FORM_CONFIG && (typeof INITIAL_FORM_CONFIG.inputProps === 'function' ? INITIAL_FORM_CONFIG.inputProps(formRef.current, INITIAL_FORM_CONFIG.__proto__._config, _objectSpread({}, _commonInputProps)) : INITIAL_FORM_CONFIG.inputProps) || {});
 
       if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG.__proto__._commonInputProps = _objectSpread({}, _commonInputProps);
