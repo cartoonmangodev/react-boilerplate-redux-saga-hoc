@@ -403,6 +403,7 @@ const useFormValidationHandlerHook = ({
           key,
           ...rest,
         };
+      INITIAL_FORM_CONFIG._temp = {};
       const _commonInputProps = {
         [onChange]: e => {
           onChangeValues(e, key, config);
@@ -416,6 +417,7 @@ const useFormValidationHandlerHook = ({
                   formRef.current.values[_key],
                   _key,
                   INITIAL_FORM_CONFIG._config,
+                  INITIAL_FORM_CONFIG._temp,
                 );
               }
             });
@@ -434,8 +436,10 @@ const useFormValidationHandlerHook = ({
             : INITIAL_FORM_CONFIG.inputProps)) ||
           {}),
       };
-      if (INITIAL_FORM_CONFIG)
+      if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG._commonInputProps = { ..._commonInputProps };
+        Object.assign(INITIAL_FORM_CONFIG._temp, { ..._commonInputProps });
+      }
       return _commonInputProps;
     },
     [],

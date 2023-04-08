@@ -20,6 +20,8 @@ function validate(
   } = {},
 ) {
   if ((isOptional || !isRequired) && !value) return '';
+  const IS_NO_VALUE =
+    typeof value === 'number' || typeof value === 'boolean' ? false : !value;
   if (value && minLength && value.length < minLength)
     return message && typeof message.minLength !== 'undefined'
       ? message.minLength
@@ -30,7 +32,7 @@ function validate(
       : `Number should be ${length} digits long`;
   switch (fieldName) {
     case 'password': {
-      if (!value) {
+      if (IS_NO_VALUE) {
         return message && typeof message.required !== 'undefined'
           ? message.required
           : 'This field is required';
@@ -38,7 +40,7 @@ function validate(
       return '';
     }
     case 'email': {
-      if (!value)
+      if (IS_NO_VALUE)
         return message && typeof message.required !== 'undefined'
           ? message.required
           : 'Please enter your email';
@@ -49,7 +51,7 @@ function validate(
       return '';
     }
     case 'name': {
-      if (!value)
+      if (IS_NO_VALUE)
         return message && typeof message.required !== 'undefined'
           ? message.required
           : 'Please enter your name';
@@ -57,14 +59,14 @@ function validate(
       return '';
     }
     case 'mobileNumber': {
-      if (!value)
+      if (IS_NO_VALUE)
         return message && typeof message.required !== 'undefined'
           ? message.required
           : 'Please enter 10 digit mobile number';
       return '';
     }
     case 'about': {
-      if (!value)
+      if (IS_NO_VALUE)
         return message && typeof message.required !== 'undefined'
           ? message.required
           : 'This field is required';
@@ -72,7 +74,7 @@ function validate(
       return '';
     }
     default:
-      if (!value) {
+      if (IS_NO_VALUE) {
         return message && typeof message.required !== 'undefined'
           ? message.required
           : 'This field is required';
