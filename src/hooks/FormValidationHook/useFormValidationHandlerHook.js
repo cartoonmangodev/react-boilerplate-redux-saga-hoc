@@ -181,6 +181,7 @@ const useFormValidationHandlerHook = ({
             value,
             key,
             formRef: formRef.current,
+            isValidateField: !config._noValidate,
           },
           formRef.current.formConfig[key]._config,
           formRef.current.formConfig[key]._commonInputProps,
