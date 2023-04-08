@@ -402,7 +402,7 @@ const useFormValidationHandlerHook = ({
     ) => {
       const INITIAL_FORM_CONFIG = formRef.current.formConfig[key];
       if (INITIAL_FORM_CONFIG)
-        INITIAL_FORM_CONFIG.__proto__.config = {
+        INITIAL_FORM_CONFIG.__proto__._config = {
           index,
           config,
           key,

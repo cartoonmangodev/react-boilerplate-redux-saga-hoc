@@ -2483,7 +2483,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           rest = _objectWithoutProperties(_ref13, _excluded);
 
       var INITIAL_FORM_CONFIG = formRef.current.formConfig[key];
-      if (INITIAL_FORM_CONFIG) INITIAL_FORM_CONFIG._config = _objectSpread({
+      if (INITIAL_FORM_CONFIG) INITIAL_FORM_CONFIG.__proto__.config = _objectSpread({
         index: index,
         config: config,
         key: key
@@ -2508,7 +2508,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       _commonInputProps = _objectSpread(_objectSpread({}, _commonInputProps), INITIAL_FORM_CONFIG && (typeof INITIAL_FORM_CONFIG.inputProps === 'function' ? INITIAL_FORM_CONFIG.inputProps(formRef.current, INITIAL_FORM_CONFIG._config, _objectSpread({}, _commonInputProps)) : INITIAL_FORM_CONFIG.inputProps) || {});
 
       if (INITIAL_FORM_CONFIG) {
-        INITIAL_FORM_CONFIG._commonInputProps = _objectSpread({}, _commonInputProps);
+        INITIAL_FORM_CONFIG.__proto__._commonInputProps = _objectSpread({}, _commonInputProps);
       }
 
       return _commonInputProps;
