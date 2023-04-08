@@ -96,8 +96,8 @@ const useFormValidationHandlerHook = ({
           ? config.validator(
               __value,
               formRef.current,
-              formRef.current.formConfig[key]._config,
-              formRef.current.formConfig[key]._commonInputProps,
+              formRef.current.formConfig[key].__proto__._config,
+              formRef.current.formConfig[key].__proto__._commonInputProps,
             )
           : { value: __value };
       let error = null;
@@ -182,8 +182,8 @@ const useFormValidationHandlerHook = ({
             key,
             formRef: formRef.current,
           },
-          formRef.current.formConfig[key]._config,
-          formRef.current.formConfig[key]._commonInputProps,
+          formRef.current.formConfig[key].__proto__._config,
+          formRef.current.formConfig[key].__proto__._commonInputProps,
         );
         if (typeOf(response) === TYPE_OBJECT) {
           setValues({
@@ -420,13 +420,14 @@ const useFormValidationHandlerHook = ({
                 onChangeValues(
                   formRef.current.values[_key],
                   _key,
-                  INITIAL_FORM_CONFIG._config,
+                  INITIAL_FORM_CONFIG.__proto__._config,
                 );
               }
             });
           }
         },
-        [onBlur]: e => onBlurValues(e, key, INITIAL_FORM_CONFIG._config),
+        [onBlur]: e =>
+          onBlurValues(e, key, INITIAL_FORM_CONFIG.__proto__._config),
         [value]: formRef.current.values[key],
         [error]: formRef.current.errors[key],
         keyName: key,
@@ -437,7 +438,7 @@ const useFormValidationHandlerHook = ({
           (typeof INITIAL_FORM_CONFIG.inputProps === 'function'
             ? INITIAL_FORM_CONFIG.inputProps(
                 formRef.current,
-                INITIAL_FORM_CONFIG._config,
+                INITIAL_FORM_CONFIG.__proto__._config,
                 { ..._commonInputProps },
               )
             : INITIAL_FORM_CONFIG.inputProps)) ||
