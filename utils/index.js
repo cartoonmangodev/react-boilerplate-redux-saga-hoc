@@ -2461,7 +2461,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       }
     }, []);
     var commonInputProps = React.useCallback(function (key) {
-      var _objectSpread6;
+      var _commonInputProps2;
 
       var _ref13 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
           index = _ref13.index,
@@ -2486,9 +2486,8 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         config: config,
         key: key
       }, rest);
-      INITIAL_FORM_CONFIG._temp = {};
 
-      var _commonInputProps = _objectSpread((_objectSpread6 = {}, _defineProperty(_objectSpread6, onChange, function (e) {
+      var _commonInputProps = (_commonInputProps2 = {}, _defineProperty(_commonInputProps2, onChange, function (e) {
         onChangeValues(e, key, config);
 
         var _validateFieldsOnChange = config && config.validateFieldsOnChange || INITIAL_FORM_CONFIG && INITIAL_FORM_CONFIG.validateFieldsOnChange;
@@ -2500,13 +2499,14 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
             }
           });
         }
-      }), _defineProperty(_objectSpread6, onBlur, function (e) {
+      }), _defineProperty(_commonInputProps2, onBlur, function (e) {
         return onBlurValues(e, key, INITIAL_FORM_CONFIG._config);
-      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), INITIAL_FORM_CONFIG && (typeof INITIAL_FORM_CONFIG.inputProps === 'function' ? INITIAL_FORM_CONFIG.inputProps(formRef.current, INITIAL_FORM_CONFIG._config, INITIAL_FORM_CONFIG._temp) : INITIAL_FORM_CONFIG.inputProps) || {});
+      }), _defineProperty(_commonInputProps2, value, formRef.current.values[key]), _defineProperty(_commonInputProps2, error, formRef.current.errors[key]), _defineProperty(_commonInputProps2, "keyName", key), _commonInputProps2);
+
+      _commonInputProps = _objectSpread(_objectSpread({}, _commonInputProps), INITIAL_FORM_CONFIG && (typeof INITIAL_FORM_CONFIG.inputProps === 'function' ? INITIAL_FORM_CONFIG.inputProps(formRef.current, INITIAL_FORM_CONFIG._config, _objectSpread({}, _commonInputProps)) : INITIAL_FORM_CONFIG.inputProps) || {});
 
       if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG._commonInputProps = _objectSpread({}, _commonInputProps);
-        Object.assign(INITIAL_FORM_CONFIG._temp, _objectSpread({}, _commonInputProps));
       }
 
       return _commonInputProps;

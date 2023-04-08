@@ -102,73 +102,78 @@ const useFormValidationHandlerHook = ({
           : { value: __value };
       let error = null;
       let maxError = null;
-      if (config.maxLength && (__value || '').length > config.maxLength) {
-        maxError =
-          typeof (config.message && config.message.maxLength) !== 'undefined'
-            ? config.message.maxLength
-            : `maximum ${config.maxLength} characters are allowed`;
-        value = value.slice(0, config.maxLength);
-        // return;
-      }
-      if (
-        typeof config.trim !== 'undefined' ? config.trim : config.trim || isTrim
-      )
-        value = trimStrings(value, config.isNumber);
-      if (config) {
-        error =
-          validatorError ||
-          Validate(value, config.type, {
-            key,
-            optional: config.optional,
-            minLength: config.minLength,
-            message: config.message,
-            maxLength: config.maxLength,
-            length: config.length,
-            ...config,
-          }) ||
-          maxError;
+      if (!config._noValidate) {
+        if (config.maxLength && (__value || '').length > config.maxLength) {
+          maxError =
+            typeof (config.message && config.message.maxLength) !== 'undefined'
+              ? config.message.maxLength
+              : `maximum ${config.maxLength} characters are allowed`;
+          value = value.slice(0, config.maxLength);
+          // return;
+        }
         if (
-          value &&
-          config.match &&
-          typeof config.match === 'string' &&
-          formRef.current.values[config.match]
+          typeof config.trim !== 'undefined'
+            ? config.trim
+            : config.trim || isTrim
         )
+          value = trimStrings(value, config.isNumber);
+        if (config) {
           error =
-            formRef.current.values[config.match] !== value
-              ? typeof (config.message && config.message.match) !== 'undefined'
-                ? config.message.match
-                : `${key} not matching with ${config.match}`
-              : maxError;
-      }
-      if (key && isSetValue)
-        if (
-          value !== '' &&
-          !Number.isNaN(+value) &&
-          !(config.allowValidNumber ? !!+value : true)
-        )
-          error =
-            typeof (config.message && config.message.allowValidNumber) !==
-            'undefined'
-              ? config.message && config.message.allowValidNumber
-              : 'Please enter valid number';
-        else if (config.allowOnlyNumber)
-          if (!Number.isNaN(+value)) {
+            validatorError ||
+            Validate(value, config.type, {
+              key,
+              optional: config.optional,
+              minLength: config.minLength,
+              message: config.message,
+              maxLength: config.maxLength,
+              length: config.length,
+              ...config,
+            }) ||
+            maxError;
+          if (
+            value &&
+            config.match &&
+            typeof config.match === 'string' &&
+            formRef.current.values[config.match]
+          )
+            error =
+              formRef.current.values[config.match] !== value
+                ? typeof (config.message && config.message.match) !==
+                  'undefined'
+                  ? config.message.match
+                  : `${key} not matching with ${config.match}`
+                : maxError;
+        }
+        if (key && isSetValue)
+          if (
+            value !== '' &&
+            !Number.isNaN(+value) &&
+            !(config.allowValidNumber ? !!+value : true)
+          )
+            error =
+              typeof (config.message && config.message.allowValidNumber) !==
+              'undefined'
+                ? config.message && config.message.allowValidNumber
+                : 'Please enter valid number';
+          else if (config.allowOnlyNumber)
+            if (!Number.isNaN(+value)) {
+              setValues({
+                ...formRef.current.values,
+                [key]: value,
+              });
+            } else
+              error =
+                typeof (config.message && config.message.allowOnlyNumber) !==
+                'undefined'
+                  ? config.message && config.message.allowOnlyNumber
+                  : 'Only numbers are allowed';
+          else {
             setValues({
               ...formRef.current.values,
               [key]: value,
             });
-          } else
-            error =
-              typeof (config.message && config.message.allowOnlyNumber) !==
-              'undefined'
-                ? config.message && config.message.allowOnlyNumber
-                : 'Only numbers are allowed';
-        else {
-          setValues({
-            ...formRef.current.values,
-            [key]: value,
-          });
-        }
+          }
+      }
       if (typeof config.callback === 'function') {
         const response = config.callback(
           {
@@ -523,6 +528,17 @@ const useFormValidationHandlerHook = ({
     [],
   );
 
+  const setValidate = useCallback((_config = {}) => {
+    let __config = { ...formRef.current.formConfig };
+    let __errors = { ...formRef.current.errors };
+    Object.entries(_config).forEach(([_key, _value]) => {
+      __config[_key]._noValidate = !_value;
+      if (!_value) __errors[_key] = '';
+    });
+    setFormConfig(__config);
+    setErrors(__errors);
+  }, []);
+
   // const isFormChanged = useCallback(
   //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
   //   [],
@@ -544,6 +560,7 @@ const useFormValidationHandlerHook = ({
   formRef.current.setKeyValues = setResponseValues;
   formRef.current.getInputProps = getInputProps;
   // formRef.current.lastUpdated = generateTimeStamp();
+  formRef.current.setValidate = setValidate;
   formRef.current.setErrors = setErrors;
   formRef.current.resetForm = resetForm;
   formRef.current.setValues = setValues;
