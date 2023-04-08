@@ -2181,7 +2181,9 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         _ref5$ERROR_KEY = _ref5.ERROR_KEY,
         ERROR_KEY = _ref5$ERROR_KEY === void 0 ? _ERROR_KEY || ERROR$1 : _ref5$ERROR_KEY;
 
-    var formRef = React.useRef({});
+    var formRef = React.useRef({
+      is_validate_form: false
+    });
 
     var _useState = React.useState(FORM_CONFIG),
         _useState2 = _slicedToArray(_useState, 2),
@@ -2494,13 +2496,13 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         if (_validateFieldsOnChange && _validateFieldsOnChange.length > 0) {
           _validateFieldsOnChange.forEach(function (_key) {
             if (formRef.current.values[_key]) {
-              onChangeValues(formRef.current.values[_key], _key, INITIAL_FORM_CONFIG._config, INITIAL_FORM_CONFIG._temp);
+              onChangeValues(formRef.current.values[_key], _key, INITIAL_FORM_CONFIG._config);
             }
           });
         }
       }), _defineProperty(_objectSpread6, onBlur, function (e) {
         return onBlurValues(e, key, INITIAL_FORM_CONFIG._config);
-      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), INITIAL_FORM_CONFIG && (typeof INITIAL_FORM_CONFIG.inputProps === 'function' ? INITIAL_FORM_CONFIG.inputProps(formRef.current, INITIAL_FORM_CONFIG._config) : INITIAL_FORM_CONFIG.inputProps) || {});
+      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), INITIAL_FORM_CONFIG && (typeof INITIAL_FORM_CONFIG.inputProps === 'function' ? INITIAL_FORM_CONFIG.inputProps(formRef.current, INITIAL_FORM_CONFIG._config, INITIAL_FORM_CONFIG._temp) : INITIAL_FORM_CONFIG.inputProps) || {});
 
       if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG._commonInputProps = _objectSpread({}, _commonInputProps);

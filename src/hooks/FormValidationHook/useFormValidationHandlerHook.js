@@ -403,8 +403,7 @@ const useFormValidationHandlerHook = ({
           key,
           ...rest,
         };
-      INITIAL_FORM_CONFIG._temp = {};
-      const _commonInputProps = {
+      let _commonInputProps = {
         [onChange]: e => {
           onChangeValues(e, key, config);
           const _validateFieldsOnChange =
@@ -426,19 +425,21 @@ const useFormValidationHandlerHook = ({
         [value]: formRef.current.values[key],
         [error]: formRef.current.errors[key],
         keyName: key,
+      };
+      _commonInputProps = {
+        ..._commonInputProps,
         ...((INITIAL_FORM_CONFIG &&
           (typeof INITIAL_FORM_CONFIG.inputProps === 'function'
             ? INITIAL_FORM_CONFIG.inputProps(
                 formRef.current,
                 INITIAL_FORM_CONFIG._config,
-                INITIAL_FORM_CONFIG._temp,
+                { ..._commonInputProps },
               )
             : INITIAL_FORM_CONFIG.inputProps)) ||
           {}),
       };
       if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG._commonInputProps = { ..._commonInputProps };
-        Object.assign(INITIAL_FORM_CONFIG._temp, { ..._commonInputProps });
       }
       return _commonInputProps;
     },
