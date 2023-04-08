@@ -2226,7 +2226,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       formRef.current.lastUpdated = generateTimeStamp();
       var config = _config || formRef.current.formConfig[key] || {}; // eslint-disable-next-line prefer-const
 
-      var _ref6 = config && config.validator ? config.validator(__value, formRef.current, formRef.current.formConfig[key]._config) : {
+      var _ref6 = config && config.validator ? config.validator(__value, formRef.current, formRef.current.formConfig[key]._config, formRef.current.formConfig[key]._commonInputProps) : {
         value: __value
       },
           value = _ref6.value,
@@ -2268,7 +2268,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           value: value,
           key: key,
           formRef: formRef.current
-        }, formRef.current.formConfig[key]._config);
+        }, formRef.current.formConfig[key]._config, formRef.current.formConfig[key]._commonInputProps);
 
         if (typeOf(response) === TYPE_OBJECT$1) {
           setValues(_objectSpread(_objectSpread({}, formRef.current.values), {}, _defineProperty({}, key, response.value)));
@@ -2303,7 +2303,8 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           config = _ref7.config,
           _ref7$isSetError = _ref7.isSetError,
           isSetError = _ref7$isSetError === void 0 ? true : _ref7$isSetError,
-          trim = _ref7.trim;
+          trim = _ref7.trim,
+          onChangeValidateFieldsCallback = _ref7.onChangeValidateFieldsCallback;
 
       // formRef.current.isFormChanged = true;
       // formRef.current.lastUpdated = generateTimeStamp();
@@ -2353,6 +2354,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           isResetValue = _ref9.isResetValue,
           isResetError = _ref9.isResetError;
 
+      formRef.current.is_validate_form = true;
       var IS_RESET_VALUE = isResetValue && {};
       var IS_RESET_ERROR = isResetError && {};
 
@@ -2379,6 +2381,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         setErrors(_errors);
       }
 
+      formRef.current.is_validate_form = false;
       return {
         values: _values,
         error: _errors,
@@ -2480,7 +2483,8 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         config: config,
         key: key
       }, rest);
-      return _objectSpread((_objectSpread6 = {}, _defineProperty(_objectSpread6, onChange, function (e) {
+
+      var _commonInputProps = _objectSpread((_objectSpread6 = {}, _defineProperty(_objectSpread6, onChange, function (e) {
         onChangeValues(e, key, config);
 
         var _validateFieldsOnChange = config && config.validateFieldsOnChange || INITIAL_FORM_CONFIG && INITIAL_FORM_CONFIG.validateFieldsOnChange;
@@ -2488,17 +2492,16 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         if (_validateFieldsOnChange && _validateFieldsOnChange.length > 0) {
           _validateFieldsOnChange.forEach(function (_key) {
             if (formRef.current.values[_key]) {
-              onChangeValues(formRef.current.values[_key], _key);
+              onChangeValues(formRef.current.values[_key], _key, INITIAL_FORM_CONFIG._config);
             }
           });
         }
       }), _defineProperty(_objectSpread6, onBlur, function (e) {
-        return onBlurValues(e, key, config);
-      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), INITIAL_FORM_CONFIG && (typeof INITIAL_FORM_CONFIG.inputProps === 'function' ? INITIAL_FORM_CONFIG.inputProps(formRef.current, _objectSpread({
-        index: index,
-        config: config,
-        key: key
-      }, rest)) : INITIAL_FORM_CONFIG.inputProps) || {});
+        return onBlurValues(e, key, INITIAL_FORM_CONFIG._config);
+      }), _defineProperty(_objectSpread6, value, formRef.current.values[key]), _defineProperty(_objectSpread6, error, formRef.current.errors[key]), _defineProperty(_objectSpread6, "keyName", key), _objectSpread6), INITIAL_FORM_CONFIG && (typeof INITIAL_FORM_CONFIG.inputProps === 'function' ? INITIAL_FORM_CONFIG.inputProps(formRef.current, INITIAL_FORM_CONFIG._config) : INITIAL_FORM_CONFIG.inputProps) || {});
+
+      if (INITIAL_FORM_CONFIG) INITIAL_FORM_CONFIG._commonInputProps = _objectSpread({}, _commonInputProps);
+      return _commonInputProps;
     }, []);
     var setInitialFormData = React.useCallback(function (data) {
       formRef.current.lastUpdated = generateTimeStamp();
