@@ -2555,6 +2555,12 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       }, {});
 
       setErrors(_keyErrors);
+    }, []);
+    var getInputProps = React.useCallback(function () {
+      var extraProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return Object.keys(formRef.current.formConfig).reduce(function (prev, key) {
+        return _objectSpread(_objectSpread({}, prev), {}, _defineProperty({}, key, commonInputProps(key, extraProps)));
+      }, {});
     }, []); // const isFormChanged = useCallback(
     //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
     //   [],
@@ -2573,7 +2579,8 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
     formRef.current.validateCustomForm = validateCustomForm;
     formRef.current.getKeyValues = getPayloadValues;
     formRef.current.setKeyErrors = setResponseErrors;
-    formRef.current.setKeyValues = setResponseValues; // formRef.current.lastUpdated = generateTimeStamp();
+    formRef.current.setKeyValues = setResponseValues;
+    formRef.current.getInputProps = getInputProps; // formRef.current.lastUpdated = generateTimeStamp();
 
     formRef.current.setErrors = setErrors;
     formRef.current.resetForm = resetForm;

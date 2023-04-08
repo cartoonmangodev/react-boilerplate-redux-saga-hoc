@@ -97,6 +97,7 @@ const useFormValidationHandlerHook = ({
               __value,
               formRef.current,
               formRef.current.formConfig[key]._config,
+              formRef.current.formConfig[key]._commonInputProps,
             )
           : { value: __value };
       let error = null;
@@ -177,6 +178,7 @@ const useFormValidationHandlerHook = ({
             formRef: formRef.current,
           },
           formRef.current.formConfig[key]._config,
+          formRef.current.formConfig[key]._commonInputProps,
         );
         if (typeOf(response) === TYPE_OBJECT) {
           setValues({
@@ -209,6 +211,7 @@ const useFormValidationHandlerHook = ({
         config,
         isSetError = true,
         trim,
+        onChangeValidateFieldsCallback,
       } = {},
     ) => {
       // formRef.current.isFormChanged = true;
@@ -260,6 +263,7 @@ const useFormValidationHandlerHook = ({
       isResetValue,
       isResetError,
     } = {}) => {
+      formRef.current.is_validate_form = true;
       const IS_RESET_VALUE = isResetValue && {};
       const IS_RESET_ERROR = isResetError && {};
       const _FORM_CONFIG = isNewFormConfig
@@ -290,6 +294,7 @@ const useFormValidationHandlerHook = ({
         formRef.current.lastUpdated = generateTimeStamp();
         setErrors(_errors);
       }
+      formRef.current.is_validate_form = false;
       return {
         values: _values,
         error: _errors,
@@ -398,7 +403,7 @@ const useFormValidationHandlerHook = ({
           key,
           ...rest,
         };
-      return {
+      const _commonInputProps = {
         [onChange]: e => {
           onChangeValues(e, key, config);
           const _validateFieldsOnChange =
@@ -407,26 +412,31 @@ const useFormValidationHandlerHook = ({
           if (_validateFieldsOnChange && _validateFieldsOnChange.length > 0) {
             _validateFieldsOnChange.forEach(_key => {
               if (formRef.current.values[_key]) {
-                onChangeValues(formRef.current.values[_key], _key);
+                onChangeValues(
+                  formRef.current.values[_key],
+                  _key,
+                  INITIAL_FORM_CONFIG._config,
+                );
               }
             });
           }
         },
-        [onBlur]: e => onBlurValues(e, key, config),
+        [onBlur]: e => onBlurValues(e, key, INITIAL_FORM_CONFIG._config),
         [value]: formRef.current.values[key],
         [error]: formRef.current.errors[key],
         keyName: key,
         ...((INITIAL_FORM_CONFIG &&
           (typeof INITIAL_FORM_CONFIG.inputProps === 'function'
-            ? INITIAL_FORM_CONFIG.inputProps(formRef.current, {
-                index,
-                config,
-                key,
-                ...rest,
-              })
+            ? INITIAL_FORM_CONFIG.inputProps(
+                formRef.current,
+                INITIAL_FORM_CONFIG._config,
+              )
             : INITIAL_FORM_CONFIG.inputProps)) ||
           {}),
       };
+      if (INITIAL_FORM_CONFIG)
+        INITIAL_FORM_CONFIG._commonInputProps = { ..._commonInputProps };
+      return _commonInputProps;
     },
     [],
   );
