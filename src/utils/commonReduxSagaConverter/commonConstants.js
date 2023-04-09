@@ -335,6 +335,7 @@ export const hocConstants = {
 };
 
 export const commonConstants = {
+  TAKE_EVERY,
   API_END_POINTS_CONFIG_DEFAULT_VALUE,
   API_END_POINTS_CONFIG_KEYS,
   USE_QUERY_CONFIG_KEYS,

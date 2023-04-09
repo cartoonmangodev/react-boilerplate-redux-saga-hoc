@@ -54,4 +54,5 @@ export const {
   TYPE_ERROR,
   TYPE_SYMBOL,
   TYPE_GENERATOR_FUNCTION,
+  TAKE_EVERY,
 } = commonConstants;
