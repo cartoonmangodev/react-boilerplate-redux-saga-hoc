@@ -2182,7 +2182,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         ERROR_KEY = _ref5$ERROR_KEY === void 0 ? _ERROR_KEY || ERROR$1 : _ref5$ERROR_KEY;
 
     var formRef = React.useRef({
-      is_validate_form: false
+      is_validate_form_triggered: false
     });
 
     var _useState = React.useState(FORM_CONFIG),
@@ -2273,7 +2273,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           value: value,
           key: key,
           formRef: formRef.current,
-          isValidateField: !config._noValidate
+          is_validation_allowed: !config._noValidate
         }, formRef.current.formConfig[key]._config, formRef.current.formConfig[key]._commonInputProps);
 
         if (typeOf(response) === TYPE_OBJECT$1) {
@@ -2360,7 +2360,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           isResetValue = _ref9.isResetValue,
           isResetError = _ref9.isResetError;
 
-      formRef.current.is_validate_form = true;
+      formRef.current.is_validate_form_triggered = true;
       var IS_RESET_VALUE = isResetValue && {};
       var IS_RESET_ERROR = isResetError && {};
 
@@ -2387,7 +2387,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         setErrors(_errors);
       }
 
-      formRef.current.is_validate_form = false;
+      formRef.current.is_validate_form_triggered = false;
       return {
         values: _values,
         error: _errors,

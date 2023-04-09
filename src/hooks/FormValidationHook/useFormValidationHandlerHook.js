@@ -217,7 +217,6 @@ const useFormValidationHandlerHook = ({
         config,
         isSetError = true,
         trim,
-        onChangeValidateFieldsCallback,
       } = {},
     ) => {
       // formRef.current.isFormChanged = true;
@@ -439,7 +438,13 @@ const useFormValidationHandlerHook = ({
             ? INITIAL_FORM_CONFIG.inputProps(
                 formRef.current,
                 INITIAL_FORM_CONFIG._config,
-                { ..._commonInputProps },
+                {
+                  onChange: _commonInputProps[onChange],
+                  onBlur: _commonInputProps[onBlur],
+                  value: _commonInputProps[value],
+                  error: _commonInputProps[error],
+                  key,
+                },
               )
             : INITIAL_FORM_CONFIG.inputProps)) ||
           {}),
