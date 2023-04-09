@@ -157,7 +157,7 @@ export default function({
       } = {},
       ...restPayload
     } = __payload;
-
+    let isError = false;
     let loop = true;
     let count = 1;
     let pollingRequestConfig = {};
@@ -307,6 +307,7 @@ export default function({
         }
       }
       try {
+        isError = false;
         let cacheId;
         if (cacheControl) cacheId = `${_url || ''}_${JSON.stringify(request)}`;
         if (
@@ -562,6 +563,7 @@ export default function({
           }
         }
       } catch (error) {
+        isError = true;
         try {
           if (error && typeof error === 'object' && !error.isAxiosError)
             throw new Error(error);
@@ -740,6 +742,7 @@ export default function({
               action,
               payload: commonData,
               Cancelled,
+              isError,
             }),
             cancel: take(action.cancel),
           });

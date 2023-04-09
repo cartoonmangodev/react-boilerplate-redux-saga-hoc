@@ -2309,8 +2309,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           config = _ref7.config,
           _ref7$isSetError = _ref7.isSetError,
           isSetError = _ref7$isSetError === void 0 ? true : _ref7$isSetError,
-          trim = _ref7.trim,
-          onChangeValidateFieldsCallback = _ref7.onChangeValidateFieldsCallback;
+          trim = _ref7.trim;
 
       // formRef.current.isFormChanged = true;
       // formRef.current.lastUpdated = generateTimeStamp();
@@ -2506,7 +2505,13 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         return onBlurValues(e, key, INITIAL_FORM_CONFIG._config);
       }), _defineProperty(_commonInputProps2, value, formRef.current.values[key]), _defineProperty(_commonInputProps2, error, formRef.current.errors[key]), _defineProperty(_commonInputProps2, "keyName", key), _commonInputProps2);
 
-      _commonInputProps = _objectSpread(_objectSpread({}, _commonInputProps), INITIAL_FORM_CONFIG && (typeof INITIAL_FORM_CONFIG.inputProps === 'function' ? INITIAL_FORM_CONFIG.inputProps(formRef.current, INITIAL_FORM_CONFIG._config, _objectSpread({}, _commonInputProps)) : INITIAL_FORM_CONFIG.inputProps) || {});
+      _commonInputProps = _objectSpread(_objectSpread({}, _commonInputProps), INITIAL_FORM_CONFIG && (typeof INITIAL_FORM_CONFIG.inputProps === 'function' ? INITIAL_FORM_CONFIG.inputProps(formRef.current, INITIAL_FORM_CONFIG._config, {
+        onChange: _commonInputProps[onChange],
+        onBlur: _commonInputProps[onBlur],
+        value: _commonInputProps[value],
+        error: _commonInputProps[error],
+        key: key
+      }) : INITIAL_FORM_CONFIG.inputProps) || {});
 
       if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG._commonInputProps = _objectSpread({}, _commonInputProps);
