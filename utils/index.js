@@ -2580,7 +2580,17 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
           return formRef.current.values[_key];
         });
       }, {});
-    }, []);
+    }, []); // const setResponseErrors = useCallback(_errors => {
+    //   const _keyErrors = Object.entries(formRef.current.formConfig).reduce(
+    //     (acc, [_key, _config = {}]) => ({
+    //       ...acc,
+    //       [_key]: _errors[_config.key || _key],
+    //     }),
+    //     {},
+    //   );
+    //   setValues(_keyErrors);
+    // }, []);
+
     var setResponseErrors = React.useCallback(function (_errors) {
       var _keyErrors = Object.entries(formRef.current.formConfig).reduce(function (acc, _ref22) {
         var _ref23 = _slicedToArray(_ref22, 2),
@@ -2588,10 +2598,10 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
             _ref23$ = _ref23[1],
             _config = _ref23$ === void 0 ? {} : _ref23$;
 
-        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _key, _errors[_config.key || _key]));
+        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _key, Safe(_errors, ".".concat(_config.key || _key))));
       }, {});
 
-      setValues(_keyErrors);
+      setErrors(_keyErrors);
     }, []);
     var getInputProps = React.useCallback(function () {
       var extraProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -2633,8 +2643,9 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
     formRef.current.modifyFormConfig = onAddFormConfig;
     formRef.current.validateCustomForm = validateCustomForm;
     formRef.current.getValues = getValues;
+    formRef.current.getInputProps = getInputProps;
     formRef.current.setResponseErrors = setResponseErrors;
-    formRef.current.getInputProps = getInputProps; // formRef.current.lastUpdated = generateTimeStamp();
+    formRef.current.setKeyErrors = setResponseErrors; // formRef.current.lastUpdated = generateTimeStamp();
 
     formRef.current.setValidate = setValidate;
     formRef.current.setErrors = setErrors;
