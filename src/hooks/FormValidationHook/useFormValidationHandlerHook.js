@@ -530,6 +530,10 @@ const useFormValidationHandlerHook = ({
         (prev, key) => ({
           ...prev,
           [key]: commonInputProps(key, extraProps),
+          _config: {
+            ...formRef.current.formConfig[key],
+            inputProps: undefined,
+          },
         }),
         {},
       ),
