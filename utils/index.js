@@ -2048,7 +2048,8 @@ function useGlobalValueHook(key, initialValue) {
   };
 }
 
-var TYPE_OBJECT$1 = commonConstants.TYPE_OBJECT;
+var TYPE_BOOLEAN$1 = commonConstants.TYPE_BOOLEAN,
+    TYPE_OBJECT$1 = commonConstants.TYPE_OBJECT;
 
 var ON_CHANGE = 'onChange';
 var ON_BLUR = 'onBlur';
@@ -2547,39 +2548,50 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       setValues(_values);
       setErrors({});
     }, []);
-    var getPayloadValues = React.useCallback(function () {
-      return Object.entries(formRef.current.formConfig).reduce(function (acc, _ref16) {
-        var _ref17 = _slicedToArray(_ref16, 2),
-            _key = _ref17[0],
-            _ref17$ = _ref17[1],
-            _config = _ref17$ === void 0 ? {} : _ref17$;
+    var getValues = React.useCallback(function (_response) {
+      var _dontConvertKeysToObject = typeOf(_response) === TYPE_BOOLEAN$1 && _response;
 
-        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _config.key || _key, formRef.current.values[_key]));
-      }, {});
-    }, []);
-    var setResponseErrors = React.useCallback(function (_errors) {
-      var _keyErrors = Object.entries(formRef.current.formConfig).reduce(function (acc, _ref18) {
+      if (typeOf(_response) === TYPE_OBJECT$1) {
+        return Object.entries(formRef.current.formConfig).reduce(function (acc, _ref16) {
+          var _ref17 = _slicedToArray(_ref16, 2),
+              _key = _ref17[0],
+              _ref17$ = _ref17[1],
+              _config = _ref17$ === void 0 ? {} : _ref17$;
+
+          return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _key, Safe(_response, ".".concat(_config.key || _key))));
+        }, {});
+      }
+
+      if (_dontConvertKeysToObject) return Object.entries(formRef.current.formConfig).reduce(function (acc, _ref18) {
         var _ref19 = _slicedToArray(_ref18, 2),
             _key = _ref19[0],
             _ref19$ = _ref19[1],
             _config = _ref19$ === void 0 ? {} : _ref19$;
 
-        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _key, Safe(_errors, ".".concat(_config.key || _key))));
+        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _config.key || _key, formRef.current.values[_key]));
       }, {});
-
-      setErrors(_keyErrors);
-    }, []);
-    var setResponseValues = React.useCallback(function (_values) {
-      var _keyValues = Object.entries(formRef.current.formConfig).reduce(function (acc, _ref20) {
+      return Object.entries(formRef.current.formConfig).reduce(function (acc, _ref20) {
         var _ref21 = _slicedToArray(_ref20, 2),
             _key = _ref21[0],
             _ref21$ = _ref21[1],
             _config = _ref21$ === void 0 ? {} : _ref21$;
 
-        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _key, Safe(_values, ".".concat(_config.key || _key))));
+        return updateIn(acc, (_config.key || _key).split('.'), function () {
+          return formRef.current.values[_key];
+        });
+      }, {});
+    }, []);
+    var setResponseErrors = React.useCallback(function (_errors) {
+      var _keyErrors = Object.entries(formRef.current.formConfig).reduce(function (acc, _ref22) {
+        var _ref23 = _slicedToArray(_ref22, 2),
+            _key = _ref23[0],
+            _ref23$ = _ref23[1],
+            _config = _ref23$ === void 0 ? {} : _ref23$;
+
+        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _key, _errors[_config.key || _key]));
       }, {});
 
-      setValues(_keyValues);
+      setValues(_keyErrors);
     }, []);
     var getInputProps = React.useCallback(function () {
       var extraProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -2594,10 +2606,10 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
 
       var __errors = _objectSpread({}, formRef.current.errors);
 
-      Object.entries(_config).forEach(function (_ref22) {
-        var _ref23 = _slicedToArray(_ref22, 2),
-            _key = _ref23[0],
-            _value = _ref23[1];
+      Object.entries(_config).forEach(function (_ref24) {
+        var _ref25 = _slicedToArray(_ref24, 2),
+            _key = _ref25[0],
+            _value = _ref25[1];
 
         __config[_key]._noValidate = !_value;
         if (!_value) __errors[_key] = '';
@@ -2620,9 +2632,8 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
     formRef.current.addFormConfig = onAddFormConfig;
     formRef.current.modifyFormConfig = onAddFormConfig;
     formRef.current.validateCustomForm = validateCustomForm;
-    formRef.current.getKeyValues = getPayloadValues;
-    formRef.current.setKeyErrors = setResponseErrors;
-    formRef.current.setKeyValues = setResponseValues;
+    formRef.current.getValues = getValues;
+    formRef.current.setResponseErrors = setResponseErrors;
     formRef.current.getInputProps = getInputProps; // formRef.current.lastUpdated = generateTimeStamp();
 
     formRef.current.setValidate = setValidate;

@@ -528,15 +528,26 @@ const useFormValidationHandlerHook = ({
     );
   }, []);
 
+  // const setResponseErrors = useCallback(_errors => {
+  //   const _keyErrors = Object.entries(formRef.current.formConfig).reduce(
+  //     (acc, [_key, _config = {}]) => ({
+  //       ...acc,
+  //       [_key]: _errors[_config.key || _key],
+  //     }),
+  //     {},
+  //   );
+  //   setValues(_keyErrors);
+  // }, []);
+
   const setResponseErrors = useCallback(_errors => {
     const _keyErrors = Object.entries(formRef.current.formConfig).reduce(
       (acc, [_key, _config = {}]) => ({
         ...acc,
-        [_key]: _errors[_config.key || _key],
+        [_key]: Safe(_errors, `.${_config.key || _key}`),
       }),
       {},
     );
-    setValues(_keyErrors);
+    setErrors(_keyErrors);
   }, []);
 
   const getInputProps = useCallback(
@@ -579,8 +590,9 @@ const useFormValidationHandlerHook = ({
   formRef.current.modifyFormConfig = onAddFormConfig;
   formRef.current.validateCustomForm = validateCustomForm;
   formRef.current.getValues = getValues;
-  formRef.current.setResponseErrors = setResponseErrors;
   formRef.current.getInputProps = getInputProps;
+  formRef.current.setResponseErrors = setResponseErrors;
+  formRef.current.setKeyErrors = setResponseErrors;
   // formRef.current.lastUpdated = generateTimeStamp();
   formRef.current.setValidate = setValidate;
   formRef.current.setErrors = setErrors;
