@@ -2580,7 +2580,11 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
     var getInputProps = React.useCallback(function () {
       var extraProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       return Object.keys(formRef.current.formConfig).reduce(function (prev, key) {
-        return _objectSpread(_objectSpread({}, prev), {}, _defineProperty({}, key, commonInputProps(key, extraProps)));
+        var _objectSpread9;
+
+        return _objectSpread(_objectSpread({}, prev), {}, (_objectSpread9 = {}, _defineProperty(_objectSpread9, key, commonInputProps(key, extraProps)), _defineProperty(_objectSpread9, "_config", _objectSpread(_objectSpread({}, formRef.current.formConfig[key]), {}, {
+          inputProps: undefined
+        })), _objectSpread9));
       }, {});
     }, []);
     var setValidate = React.useCallback(function () {
