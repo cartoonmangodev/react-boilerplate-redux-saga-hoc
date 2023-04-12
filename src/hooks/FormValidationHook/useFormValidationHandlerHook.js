@@ -451,6 +451,11 @@ const useFormValidationHandlerHook = ({
             : INITIAL_FORM_CONFIG.inputProps)) ||
           {}),
       };
+      _commonInputProps._config = {
+        ...formRef.current.formConfig[key],
+        inputProps: undefined,
+        _commonInputProps: undefined,
+      };
       if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG._commonInputProps = {
           ..._commonInputProps,
@@ -532,14 +537,7 @@ const useFormValidationHandlerHook = ({
       Object.keys(formRef.current.formConfig).reduce(
         (prev, key) => ({
           ...prev,
-          [key]: {
-            ...commonInputProps(key, extraProps),
-            _config: {
-              ...formRef.current.formConfig[key],
-              inputProps: undefined,
-              _commonInputProps: undefined,
-            },
-          },
+          [key]: commonInputProps(key, extraProps),
         }),
         {},
       ),

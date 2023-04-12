@@ -521,7 +521,7 @@ var nullCheck = function nullCheck(Error) {
   return typeof callBack === 'function' ? callBack(verifyData) : verifyData;
 };
 
-var nullcheck = nullCheck.bind(null, Error);
+var Safe = nullCheck.bind(null, Error);
 
 var passwordReg = new RegExp(/^.{6,16}$/);
 var emailReg = new RegExp('^([\\w\\.\\+\\-]+\\@[a-zA-Z0-9\\.\\-]+\\.[a-zA-z0-9]{2,4})$');
@@ -1093,7 +1093,7 @@ var actionsHandler = {
 
 var cache = {};
 var cacheActions = {};
-var safe = nullcheck;
+var safe = Safe;
 var getData = function getData(data, def) {
   var loader = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
   var filter = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
@@ -2560,29 +2560,30 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
             _ref19$ = _ref19[1],
             _config = _ref19$ === void 0 ? {} : _ref19$;
 
-        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _key, _config.key ? _errors[_config.key] : _errors[_key]));
+        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _key, Safe(_errors, ".".concat(_config.key || _key))));
       }, {});
 
       setErrors(_keyErrors);
     }, []);
     var setResponseValues = React.useCallback(function (_values) {
-      var _keyErrors = Object.entries(formRef.current.formConfig).reduce(function (acc, _ref20) {
+      var _keyValues = Object.entries(formRef.current.formConfig).reduce(function (acc, _ref20) {
         var _ref21 = _slicedToArray(_ref20, 2),
             _key = _ref21[0],
             _ref21$ = _ref21[1],
             _config = _ref21$ === void 0 ? {} : _ref21$;
 
-        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _key, _config.key ? _values[_config.key] : _values[_key]));
+        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _key, Safe(_values, ".".concat(_config.key || _key))));
       }, {});
 
-      setErrors(_keyErrors);
+      setValues(_keyValues);
     }, []);
     var getInputProps = React.useCallback(function () {
       var extraProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       return Object.keys(formRef.current.formConfig).reduce(function (prev, key) {
         return _objectSpread(_objectSpread({}, prev), {}, _defineProperty({}, key, _objectSpread(_objectSpread({}, commonInputProps(key, extraProps)), {}, {
           _config: _objectSpread(_objectSpread({}, formRef.current.formConfig[key]), {}, {
-            inputProps: undefined
+            inputProps: undefined,
+            _commonInputProps: undefined
           })
         })));
       }, {});
@@ -3308,7 +3309,7 @@ exports.Form = form;
 exports.FormContext = FormContext;
 exports.FormValidator = validateForm;
 exports.GlobalEventEmitter = Global;
-exports.Safe = nullcheck;
+exports.Safe = Safe;
 exports.cloneObject = cloneObject;
 exports.commonConstants = commonConstants;
 exports.deleteIn = deleteIn;
