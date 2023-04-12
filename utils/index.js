@@ -2514,6 +2514,10 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         error: _commonInputProps[error],
         key: key
       }) : INITIAL_FORM_CONFIG.inputProps) || {});
+      _commonInputProps._config = _objectSpread(_objectSpread({}, formRef.current.formConfig[key]), {}, {
+        inputProps: undefined,
+        _commonInputProps: undefined
+      });
 
       if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG._commonInputProps = _objectSpread({}, _commonInputProps);
@@ -2580,12 +2584,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
     var getInputProps = React.useCallback(function () {
       var extraProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       return Object.keys(formRef.current.formConfig).reduce(function (prev, key) {
-        return _objectSpread(_objectSpread({}, prev), {}, _defineProperty({}, key, _objectSpread(_objectSpread({}, commonInputProps(key, extraProps)), {}, {
-          _config: _objectSpread(_objectSpread({}, formRef.current.formConfig[key]), {}, {
-            inputProps: undefined,
-            _commonInputProps: undefined
-          })
-        })));
+        return _objectSpread(_objectSpread({}, prev), {}, _defineProperty({}, key, commonInputProps(key, extraProps)));
       }, {});
     }, []);
     var setValidate = React.useCallback(function () {

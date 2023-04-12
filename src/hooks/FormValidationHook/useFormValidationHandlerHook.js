@@ -6,9 +6,9 @@
 /* eslint-disable no-underscore-dangle */
 import { useState, useCallback, useRef } from 'react';
 import { newObject, generateTimeStamp, typeOf } from '../../utils/helpers';
-import { TYPE_OBJECT } from '../../constants';
+import { TYPE_BOOLEAN, TYPE_OBJECT } from '../../constants';
 import { ON_CHANGE, ON_BLUR, VALUE, ERROR } from './constants';
-import { trimStrings } from '../../utils/helpers';
+import { trimStrings, updateIn } from '../../utils/helpers';
 import Safe from '../../utils/nullCheck';
 
 import Validator from './validator';
@@ -497,39 +497,46 @@ const useFormValidationHandlerHook = ({
     setErrors({});
   }, []);
 
-  const getPayloadValues = useCallback(
-    () =>
-      Object.entries(formRef.current.formConfig).reduce(
+  const getValues = useCallback(_response => {
+    const _dontConvertKeysToObject =
+      typeOf(_response) === TYPE_BOOLEAN && _response;
+    if (typeOf(_response) === TYPE_OBJECT) {
+      return Object.entries(formRef.current.formConfig).reduce(
+        (acc, [_key, _config = {}]) => ({
+          ...acc,
+          [_key]: Safe(_response, `.${_config.key || _key}`),
+        }),
+        {},
+      );
+    }
+    if (_dontConvertKeysToObject)
+      return Object.entries(formRef.current.formConfig).reduce(
         (acc, [_key, _config = {}]) => ({
           ...acc,
           [_config.key || _key]: formRef.current.values[_key],
         }),
         {},
-      ),
-    [],
-  );
+      );
+    return Object.entries(formRef.current.formConfig).reduce(
+      (acc, [_key, _config = {}]) =>
+        updateIn(
+          acc,
+          (_config.key || _key).split('.'),
+          () => formRef.current.values[_key],
+        ),
+      {},
+    );
+  }, []);
 
   const setResponseErrors = useCallback(_errors => {
     const _keyErrors = Object.entries(formRef.current.formConfig).reduce(
       (acc, [_key, _config = {}]) => ({
         ...acc,
-        [_key]: Safe(_errors, `.${_config.key || _key}`),
+        [_key]: _errors[_config.key || _key],
       }),
       {},
     );
-    setErrors(_keyErrors);
-  }, []);
-
-  const setResponseValues = useCallback(_values => {
-    const _keyValues = Object.entries(formRef.current.formConfig).reduce(
-      (acc, [_key, _config = {}]) => ({
-        ...acc,
-        // [_key]: _config.key ? _values[_config.key] : _values[_key],
-        [_key]: Safe(_values, `.${_config.key || _key}`),
-      }),
-      {},
-    );
-    setValues(_keyValues);
+    setValues(_keyErrors);
   }, []);
 
   const getInputProps = useCallback(
@@ -571,9 +578,8 @@ const useFormValidationHandlerHook = ({
   formRef.current.addFormConfig = onAddFormConfig;
   formRef.current.modifyFormConfig = onAddFormConfig;
   formRef.current.validateCustomForm = validateCustomForm;
-  formRef.current.getKeyValues = getPayloadValues;
-  formRef.current.setKeyErrors = setResponseErrors;
-  formRef.current.setKeyValues = setResponseValues;
+  formRef.current.getValues = getValues;
+  formRef.current.setResponseErrors = setResponseErrors;
   formRef.current.getInputProps = getInputProps;
   // formRef.current.lastUpdated = generateTimeStamp();
   formRef.current.setValidate = setValidate;
