@@ -9,6 +9,8 @@ import { newObject, generateTimeStamp, typeOf } from '../../utils/helpers';
 import { TYPE_OBJECT } from '../../constants';
 import { ON_CHANGE, ON_BLUR, VALUE, ERROR } from './constants';
 import { trimStrings } from '../../utils/helpers';
+import Safe from '../../utils/nullCheck';
+
 import Validator from './validator';
 const getPlatformBasedFieldValue = e =>
   e &&
@@ -506,7 +508,7 @@ const useFormValidationHandlerHook = ({
     const _keyErrors = Object.entries(formRef.current.formConfig).reduce(
       (acc, [_key, _config = {}]) => ({
         ...acc,
-        [_key]: _config.key ? _errors[_config.key] : _errors[_key],
+        [_key]: Safe(_errors, `.${_config.key || _key}`),
       }),
       {},
     );
@@ -514,14 +516,15 @@ const useFormValidationHandlerHook = ({
   }, []);
 
   const setResponseValues = useCallback(_values => {
-    const _keyErrors = Object.entries(formRef.current.formConfig).reduce(
+    const _keyValues = Object.entries(formRef.current.formConfig).reduce(
       (acc, [_key, _config = {}]) => ({
         ...acc,
-        [_key]: _config.key ? _values[_config.key] : _values[_key],
+        // [_key]: _config.key ? _values[_config.key] : _values[_key],
+        [_key]: Safe(_values, `.${_config.key || _key}`),
       }),
       {},
     );
-    setErrors(_keyErrors);
+    setValues(_keyValues);
   }, []);
 
   const getInputProps = useCallback(
@@ -534,6 +537,7 @@ const useFormValidationHandlerHook = ({
             _config: {
               ...formRef.current.formConfig[key],
               inputProps: undefined,
+              _commonInputProps: undefined,
             },
           },
         }),
