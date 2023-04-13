@@ -499,7 +499,8 @@ const useFormValidationHandlerHook = ({
 
   const getValues = useCallback(_response => {
     const _dontConvertKeysToObject =
-      typeOf(_response) === TYPE_BOOLEAN && _response;
+      typeOf(_response) === TYPE_BOOLEAN && !_response;
+
     if (typeOf(_response) === TYPE_OBJECT) {
       return Object.entries(formRef.current.formConfig).reduce(
         (acc, [_key, _config = {}]) => ({
@@ -509,21 +510,26 @@ const useFormValidationHandlerHook = ({
         {},
       );
     }
+    let _value = formRef.current.values[_key];
+    _value =
+      typeof _config.payloadCallback === 'function'
+        ? _config.payloadCallback(_value)
+        : _config.isAllowEmpty
+        ? _value
+        : _value || undefined;
+
     if (_dontConvertKeysToObject)
       return Object.entries(formRef.current.formConfig).reduce(
         (acc, [_key, _config = {}]) => ({
           ...acc,
-          [_config.key || _key]: formRef.current.values[_key],
+          [_config.key || _key]: _value,
         }),
         {},
       );
+
     return Object.entries(formRef.current.formConfig).reduce(
       (acc, [_key, _config = {}]) =>
-        updateIn(
-          acc,
-          (_config.key || _key).split('.'),
-          () => formRef.current.values[_key],
-        ),
+        updateIn(acc, (_config.key || _key).split('.'), () => _value),
       {},
     );
   }, []);
