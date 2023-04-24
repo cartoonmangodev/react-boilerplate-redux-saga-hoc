@@ -2549,7 +2549,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
       setErrors({});
     }, []);
     var getValues = React.useCallback(function (_response) {
-      var _dontConvertKeysToObject = typeOf(_response) === TYPE_BOOLEAN$1 && _response;
+      var _dontConvertKeysToObject = typeOf(_response) === TYPE_BOOLEAN$1 && !_response;
 
       if (typeOf(_response) === TYPE_OBJECT$1) {
         return Object.entries(formRef.current.formConfig).reduce(function (acc, _ref16) {
@@ -2562,13 +2562,15 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
         }, {});
       }
 
+      var _value = formRef.current.values[_key];
+      _value = typeof _config.payloadCallback === 'function' ? _config.payloadCallback(_value) : _config.isAllowEmpty ? _value : _value || undefined;
       if (_dontConvertKeysToObject) return Object.entries(formRef.current.formConfig).reduce(function (acc, _ref18) {
         var _ref19 = _slicedToArray(_ref18, 2),
             _key = _ref19[0],
             _ref19$ = _ref19[1],
             _config = _ref19$ === void 0 ? {} : _ref19$;
 
-        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _config.key || _key, formRef.current.values[_key]));
+        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, _config.key || _key, _value));
       }, {});
       return Object.entries(formRef.current.formConfig).reduce(function (acc, _ref20) {
         var _ref21 = _slicedToArray(_ref20, 2),
@@ -2577,7 +2579,7 @@ var useFormValidationHandlerHook = function useFormValidationHandlerHook() {
             _config = _ref21$ === void 0 ? {} : _ref21$;
 
         return updateIn(acc, (_config.key || _key).split('.'), function () {
-          return formRef.current.values[_key];
+          return _value;
         });
       }, {});
     }, []); // const setResponseErrors = useCallback(_errors => {

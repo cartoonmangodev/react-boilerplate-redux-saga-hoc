@@ -114,6 +114,8 @@ export default function({
       });
       return;
     }
+    let _success = null;
+    let _error = null;
     /* above code is used for refetching cached api - end */
     const {
       resolve,
@@ -414,19 +416,20 @@ export default function({
             successMessage,
           );
           let successCallbackResponse = null;
+          _success = {
+            response: postData,
+            posts: data,
+            data: data.data,
+            res: data && data.data && data.data.data,
+            message: successMessage,
+            status: successStatus,
+          };
           if (typeof successCallback === 'function') {
             const {
               cancel: CancelPolling,
               successCallbackResponse: _successCallbackResponse = null,
             } = yield race({
-              successCallbackResponse: call(successCallback, {
-                response: postData,
-                posts: data,
-                data: data.data,
-                res: data && data.data && data.data.data,
-                message: successMessage,
-                status: successStatus,
-              }),
+              successCallbackResponse: call(successCallback, _success),
               cancel: take(action.cancel),
             });
             if (CancelPolling) loop = false;
@@ -499,11 +502,12 @@ export default function({
         } else if (process.env.NODE_ENV === 'test' && action.success)
           yield put(action.success({ data }));
         else {
+          _success = {
+            response: postData,
+            status: postData && postData.status,
+          };
           if (typeof successCallback === 'function' && !cancelTask) {
-            successCallback({
-              response: postData,
-              status: postData && postData.status,
-            });
+            successCallback(_success);
           }
           if (!dontUpdateReducer)
             yield call(loaderGenerator, {
@@ -607,6 +611,34 @@ export default function({
                 } = {},
               } = {},
             } = error || {};
+            _error = {
+              error,
+              errorData: isResponseErrorParser
+                ? errorData &&
+                  typeof responseErrorParser(errorData) === 'object' &&
+                  Object.keys(responseErrorParser(errorData) || {}).length > 0
+                  ? responseErrorParser(errorData)
+                  : errorData
+                : errorData,
+              ...(typeof errorParser === 'function'
+                ? {
+                    errorParser: errorParser({
+                      error,
+                      errorData,
+                      status: errorStatus,
+                      response: error && error.response,
+                      message: errorMessage,
+                    }),
+                  }
+                : {}),
+              isNetworkError:
+                error && error.request && error.message === 'Network Error',
+              errorMessage: error && error.message,
+              message: errorMessage,
+              status: errorStatus,
+              response: error && error.response,
+              errors: errorData,
+            };
             if (typeof errorCallback === 'function') {
               let errorCallbackResponse = null;
               if (typeof errorCallback === 'function') {
@@ -614,37 +646,7 @@ export default function({
                   cancel: CancelPolling,
                   errorCallbackResponse: _errorCallbackResponse = null,
                 } = yield race({
-                  errorCallbackResponse: call(errorCallback, {
-                    error,
-                    errorData: isResponseErrorParser
-                      ? errorData &&
-                        typeof responseErrorParser(errorData) === 'object' &&
-                        Object.keys(responseErrorParser(errorData) || {})
-                          .length > 0
-                        ? responseErrorParser(errorData)
-                        : errorData
-                      : errorData,
-                    ...(typeof errorParser === 'function'
-                      ? {
-                          errorParser: errorParser({
-                            error,
-                            errorData,
-                            status: errorStatus,
-                            response: error && error.response,
-                            message: errorMessage,
-                          }),
-                        }
-                      : {}),
-                    isNetworkError:
-                      error &&
-                      error.request &&
-                      error.message === 'Network Error',
-                    errorMessage: error && error.message,
-                    message: errorMessage,
-                    status: errorStatus,
-                    response: error && error.response,
-                    errors: errorData,
-                  }),
+                  errorCallbackResponse: call(errorCallback, _error),
                   cancel: take(action.cancel),
                 });
                 if (CancelPolling) loop = false;
@@ -743,6 +745,8 @@ export default function({
               payload: commonData,
               Cancelled,
               isError,
+              success: _success,
+              error: _error,
             }),
             cancel: take(action.cancel),
           });
