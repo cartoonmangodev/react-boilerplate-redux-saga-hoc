@@ -139,7 +139,7 @@ export const commmonStateHandler = ({
           filterArrayloadingHandler({
             filter: (Array.isArray(filter || responseFilter) &&
               (filter || responseFilter)) || [filter || responseFilter],
-            ...(request ? { ...request, payload: undefined } : {}),
+            ...(request ? { request: { ...request, payload: undefined } } : {}),
             loader:
               customTask && customLoader !== undefined
                 ? customLoader
@@ -167,7 +167,7 @@ export const commmonStateHandler = ({
                 : status || loader,
             lastUpdated: generateTimeStamp(),
           },
-          ...(request ? { ...request, payload: undefined } : {}),
+          ...(request ? { request: { ...request, payload: undefined } } : {}),
           initialState: false,
           ...((clearData || initialData) &&
           ![ON_SUCCESS, ON_ERROR].includes(method)
