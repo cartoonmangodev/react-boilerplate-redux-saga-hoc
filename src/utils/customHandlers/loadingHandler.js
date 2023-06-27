@@ -30,7 +30,7 @@ const returnData = ({ data, initialData, clearData, loader, request }) =>
     },
     lastUpdated: generateTimeStamp(),
     initialState: false,
-    request,
+    ...(request || {}),
     ...(clearData || initialData
       ? {
           data: Array.isArray(_data) ? initialData || [] : initialData || {},
