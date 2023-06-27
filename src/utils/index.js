@@ -64,9 +64,10 @@ export const commmonStateHandler = ({
       task = {},
       dontUpdateReducer,
       dontUpdateReducerOnCall,
-      request,
+      request = {},
     } = {},
   } = action;
+  if (request && request.payload) delete request.payload;
   if (dontUpdateReducer || dontUpdateReducerOnCall) return state;
   const {
     payload: {
@@ -139,7 +140,7 @@ export const commmonStateHandler = ({
           filterArrayloadingHandler({
             filter: (Array.isArray(filter || responseFilter) &&
               (filter || responseFilter)) || [filter || responseFilter],
-            ...(request ? { request: { ...request, payload: undefined } } : {}),
+            ...(request ? { request } : {}),
             loader:
               customTask && customLoader !== undefined
                 ? customLoader
@@ -167,7 +168,7 @@ export const commmonStateHandler = ({
                 : status || loader,
             lastUpdated: generateTimeStamp(),
           },
-          ...(request ? { request: { ...request, payload: undefined } } : {}),
+          ...(request ? { request } : {}),
           initialState: false,
           ...((clearData || initialData) &&
           ![ON_SUCCESS, ON_ERROR].includes(method)
