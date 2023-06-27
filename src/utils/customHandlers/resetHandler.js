@@ -22,6 +22,7 @@ export const resetHandler = (
       infiniteEnd: typeof infiniteEnd === 'boolean' ? false : undefined,
       lastUpdated: generateTimeStamp(),
       initialState: true,
+      request: undefined,
     })),
   }));
 const _CheckFilter = Filter =>
@@ -59,6 +60,8 @@ export const filterArrayResetHandler = (
                       infiniteEnd:
                         typeof infiniteEnd === 'boolean' ? false : undefined,
                       lastUpdated: generateTimeStamp(),
+                      initialState: true,
+                      request: undefined,
                     }))
                   : _data,
               ),
@@ -76,6 +79,7 @@ export const filterArrayResetHandler = (
             infiniteEnd: typeof infiniteEnd === 'boolean' ? false : undefined,
             lastUpdated: generateTimeStamp(),
             initialState: true,
+            request: undefined,
           })),
         );
       })(),

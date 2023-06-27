@@ -64,6 +64,7 @@ export const commmonStateHandler = ({
       task = {},
       dontUpdateReducer,
       dontUpdateReducerOnCall,
+      request,
     } = {},
   } = action;
   if (dontUpdateReducer || dontUpdateReducerOnCall) return state;
@@ -138,6 +139,7 @@ export const commmonStateHandler = ({
           filterArrayloadingHandler({
             filter: (Array.isArray(filter || responseFilter) &&
               (filter || responseFilter)) || [filter || responseFilter],
+            request,
             loader:
               customTask && customLoader !== undefined
                 ? customLoader

@@ -42,8 +42,10 @@ export const filterArrayloadingHandler = ({
   filter,
   clearData,
   initialData,
+  request,
 } = {}) => ({ data: Data = {} }) => ({
   lastUpdated: generateTimeStamp(),
+  request,
   data: (() => {
     if (filter && filter.some(fil => Array.isArray(fil))) {
       return filter.reduce(
