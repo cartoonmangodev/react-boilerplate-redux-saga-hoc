@@ -22,7 +22,7 @@ const _CheckFilter = Filter =>
     ? Filter.split('.')
     : [];
 
-const returnData = (data, initialData, clearData, loader) =>
+const returnData = ({ data, initialData, clearData, loader, request }) =>
   newObject(data, ({ data: _data }) => ({
     loading: {
       status: loader,
@@ -30,6 +30,7 @@ const returnData = (data, initialData, clearData, loader) =>
     },
     lastUpdated: generateTimeStamp(),
     initialState: false,
+    request,
     ...(clearData || initialData
       ? {
           data: Array.isArray(_data) ? initialData || [] : initialData || {},
@@ -45,21 +46,20 @@ export const filterArrayloadingHandler = ({
   request,
 } = {}) => ({ data: Data = {} }) => ({
   lastUpdated: generateTimeStamp(),
-  request,
   data: (() => {
     if (filter && filter.some(fil => Array.isArray(fil))) {
       return filter.reduce(
         (accumulator, filterArray) =>
           updateIn(accumulator, _CheckFilter(filterArray), data =>
             _CheckFilter(filterArray).length > 0
-              ? returnData(data, initialData, clearData, loader)
+              ? returnData({ data, initialData, clearData, loader, request })
               : data,
           ),
         Data,
       );
     }
     return updateIn(Data, filter, data =>
-      returnData(data, initialData, clearData, loader),
+      returnData({ data, initialData, clearData, loader, request }),
     );
   })(),
 });

@@ -167,6 +167,7 @@ export const commmonStateHandler = ({
                 : status || loader,
             lastUpdated: generateTimeStamp(),
           },
+          request,
           initialState: false,
           ...((clearData || initialData) &&
           ![ON_SUCCESS, ON_ERROR].includes(method)
