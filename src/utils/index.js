@@ -64,7 +64,7 @@ export const commmonStateHandler = ({
       task = {},
       dontUpdateReducer,
       dontUpdateReducerOnCall,
-      request = {},
+      request,
     } = {},
   } = action;
   if (request && request.payload) delete request.payload;
