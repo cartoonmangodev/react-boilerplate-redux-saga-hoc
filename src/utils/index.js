@@ -67,7 +67,7 @@ export const commmonStateHandler = ({
       request: _request,
     } = {},
   } = action;
-  const request = { ..._request };
+  const request = _request ? { ..._request } : undefined;
   if (request && request.payload) delete request.payload;
   if (dontUpdateReducer || dontUpdateReducerOnCall) return state;
   const {
