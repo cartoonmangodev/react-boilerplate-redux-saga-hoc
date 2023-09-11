@@ -19,6 +19,7 @@ import GlobalEmitter from './globals';
  */
 
 export default function useGlobalValueHook(key, initialValue) {
+  const globalRef = useRef({});
   const valueRef = useRef({ initial: true });
   if (
     initialValue &&
@@ -43,14 +44,18 @@ export default function useGlobalValueHook(key, initialValue) {
         }
       });
   }, []);
+
+  globalRef.current.value = key ? values[key] : values;
+  globalRef.current.dispatch = GlobalEmitter.dispatch.bind(GlobalEmitter);
+  globalRef.current.resetValue = GlobalEmitter.resetValue.bind(GlobalEmitter);
+  globalRef.current.clearValue = GlobalEmitter.clearValue.bind(GlobalEmitter);
+  globalRef.current.getValue = GlobalEmitter.getValue.bind(GlobalEmitter);
+  globalRef.current.setValue = GlobalEmitter.setValue.bind(GlobalEmitter);
+  globalRef.current.subscribe = GlobalEmitter.subscribe.bind(GlobalEmitter);
+  globalRef.current.GlobalEmitter = GlobalEmitter;
+
   return {
-    value: key ? values[key] : values,
-    dispatch: GlobalEmitter.dispatch.bind(GlobalEmitter),
-    resetValue: GlobalEmitter.resetValue.bind(GlobalEmitter),
-    clearValue: GlobalEmitter.clearValue.bind(GlobalEmitter),
-    getValue: GlobalEmitter.getValue.bind(GlobalEmitter),
-    setValue: GlobalEmitter.setValue.bind(GlobalEmitter),
-    subscribe: GlobalEmitter.subscribe.bind(GlobalEmitter),
-    GlobalEmitter,
+    ...globalRef.current,
+    globalRef: globalRef.current,
   };
 }
