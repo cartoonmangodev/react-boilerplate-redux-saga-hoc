@@ -2012,6 +2012,7 @@ var globals = new Global({});
  */
 
 function useGlobalValueHook(key, initialValue) {
+  var globalRef = React.useRef({});
   var valueRef = React.useRef({
     initial: true
   });
@@ -2036,16 +2037,17 @@ function useGlobalValueHook(key, initialValue) {
       }
     });
   }, []);
-  return {
-    value: key ? values[key] : values,
-    dispatch: globals.dispatch.bind(globals),
-    resetValue: globals.resetValue.bind(globals),
-    clearValue: globals.clearValue.bind(globals),
-    getValue: globals.getValue.bind(globals),
-    setValue: globals.setValue.bind(globals),
-    subscribe: globals.subscribe.bind(globals),
-    GlobalEmitter: globals
-  };
+  globalRef.current.value = key ? values[key] : values;
+  globalRef.current.dispatch = globals.dispatch.bind(globals);
+  globalRef.current.resetValue = globals.resetValue.bind(globals);
+  globalRef.current.clearValue = globals.clearValue.bind(globals);
+  globalRef.current.getValue = globals.getValue.bind(globals);
+  globalRef.current.setValue = globals.setValue.bind(globals);
+  globalRef.current.subscribe = globals.subscribe.bind(globals);
+  globalRef.current.GlobalEmitter = globals;
+  return _objectSpread(_objectSpread({}, globalRef.current), {}, {
+    globalRef: globalRef.current
+  });
 }
 
 var TYPE_BOOLEAN$1 = commonConstants.TYPE_BOOLEAN,
