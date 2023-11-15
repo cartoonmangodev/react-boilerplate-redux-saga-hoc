@@ -4,7 +4,12 @@
  * Create the store with dynamic reducers
  */
 
-import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
+import {
+  legacy_createStore as createStore,
+  applyMiddleware,
+  compose,
+  combineReducers,
+} from 'redux';
 // import { routerMiddleware } from 'connected-react-router';
 import createSagaMiddleware from 'redux-saga';
 import { all, fork } from 'redux-saga/effects';
@@ -83,7 +88,7 @@ const nextStore = ({
   // if (typeof window !== "undefined")
   //   monitor = window["__SAGA_MONITOR_EXTENSION__"];
 
-  const reduxSagaMonitorOptions = { sagaMonitor: monitor };
+  const reduxSagaMonitorOptions = {};
   // eslint-disable-next-line global-require
   // If Redux Dev Tools and Saga Dev Tools Extensions are installed, enable them
   /* istanbul ignore next */
