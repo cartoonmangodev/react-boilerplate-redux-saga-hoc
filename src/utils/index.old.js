@@ -867,6 +867,7 @@ export const useMutation = reducerName => {
  *   const { data, status } = await toPromise(DEMP_API_CALL, { task: 'Data-Handler' });
  * }
  */
+/** @important Please don't remove or modify this function will affect the hoc (used in mapDispatchToProps)   */
 export const toPromise = (action, config = {}, isReject, dispatch) => {
   if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined')
     checkKeyWithMessage(
