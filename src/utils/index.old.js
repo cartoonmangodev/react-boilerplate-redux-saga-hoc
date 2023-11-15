@@ -869,16 +869,22 @@ export const useMutation = reducerName => {
  */
 /** @important Please don't remove or modify this function will affect the hoc (used in mapDispatchToProps)   */
 export const toPromise = (action, config = {}, isReject, dispatch) => {
-  if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined')
+  if (!(typeOf(config) === 'object' || typeOf(config) === 'boolean'))
     checkKeyWithMessage(
       config,
       'object',
       `toPromise() : Expected a config (second parameter) to be object`,
     );
+  let _config = config;
+  let _isReject = false;
+  if (typeof config === 'boolean') {
+    _config = {};
+    _isReject = config;
+  } else _isReject = _config._isReject || isReject;
   return new Promise((resolve, reject) =>
     typeof dispatch === 'function'
-      ? dispatch(action({ ...config, resolve, reject, isReject }))
-      : action({ ...config, resolve, reject, isReject }),
+      ? dispatch(action({ ..._config, resolve, reject, isReject: _isReject }))
+      : action({ ..._config, resolve, reject, isReject: _isReject }),
   );
 };
 /* example
