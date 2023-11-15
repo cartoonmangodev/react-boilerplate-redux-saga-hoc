@@ -35,7 +35,16 @@ export default [
       nodeResolve({
         extensions,
       }),
-      terser(),
+      terser({
+        ecma: 2015,
+        mangle: { toplevel: true },
+        compress: {
+          toplevel: true,
+          drop_console: !dev,
+          drop_debugger: !dev,
+        },
+        output: { quote_style: 1 },
+      }),
       // typescript({ useTsconfigDeclarationDir: true }),
       babel({
         extensions,
@@ -57,7 +66,16 @@ export default [
       nodeResolve({
         extensions,
       }),
-      terser(),
+      terser({
+        ecma: 2015,
+        mangle: { toplevel: true },
+        compress: {
+          toplevel: true,
+          drop_console: !dev,
+          drop_debugger: !dev,
+        },
+        output: { quote_style: 1 },
+      }),
       // typescript({ useTsconfigDeclarationDir: true }),
       babel({
         extensions,
@@ -79,7 +97,16 @@ export default [
       nodeResolve({
         extensions,
       }),
-      terser(),
+      terser({
+        ecma: 2015,
+        mangle: { toplevel: true },
+        compress: {
+          toplevel: true,
+          drop_console: !dev,
+          drop_debugger: !dev,
+        },
+        output: { quote_style: 1 },
+      }),
       // typescript({ useTsconfigDeclarationDir: true }),
       babel({
         extensions,
