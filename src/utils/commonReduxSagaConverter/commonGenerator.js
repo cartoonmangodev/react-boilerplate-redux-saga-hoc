@@ -574,18 +574,20 @@ export default function({
           if (!polling && retry && retry - 1 >= count) {
             // console.log(count);
           } else {
+            const ERROR_RESPONSE = {
+              status: 'ERROR',
+              error: error || 'NETWORK ERROR',
+              respone: error && error.response,
+              isAxiosError: !!(
+                error &&
+                typeof error === 'object' &&
+                error.isAxiosError
+              ),
+            };
             if (isReject && reject && typeOf(reject) === 'function')
-              reject({
-                status: 'ERROR',
-                error: error || 'NETWORK ERROR',
-                respone: error && error.response,
-              });
+              reject(ERROR_RESPONSE);
             else if (resolve && typeOf(resolve) === 'function')
-              resolve({
-                status: 'ERROR',
-                error: error || 'NETWORK ERROR',
-                respone: error && error.response,
-              });
+              resolve(ERROR_RESPONSE);
             // eslint-disable-next-line no-console
             if (process.env.NODE_ENV === 'test') console.log(error);
             const {
