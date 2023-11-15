@@ -70,6 +70,18 @@ const ALLOW_MAP_STATE_TO_PROPS = 'mapStateToProps';
 const GET_INITIAL_PROPS_KEY = 'getInitialPropsKey';
 const IS_DEVELOPMENT = 'isDevelopment';
 
+const API_END_POINTS = 'apiEndPoints';
+const INITIAL_STATE = 'initialState';
+const GET_DEFAULT_CONFIG = 'getDefaultConfig';
+const DONT_RESET_REDUCER_KEYS = 'dontReset';
+const IS_MOBILE = 'isMobile';
+const SAGA = 'saga';
+const SAGA_CONSTANT = 'constantSaga';
+const REDUCER_CONSTANT = 'constantReducer';
+const REDUCER = 'reducer';
+const AXIOS_INTERCEPTORS = 'axiosInterceptors';
+const REDUCER_NAME = 'name';
+
 export const HOC_MAIN_CONFIG_KEY = {
   HANDLERS,
   NEXT_JS,
@@ -107,18 +119,6 @@ export const HOC_MAIN_SERVER_SIDE_CONFIG_DEFAULT = {
   [USE_TYPE]: FOR_INTERNAL_USE_ONLY,
   [GET_DEFAULT_CONFIG]: false,
 };
-
-const API_END_POINTS = 'apiEndPoints';
-const INITIAL_STATE = 'initialState';
-const GET_DEFAULT_CONFIG = 'getDefaultConfig';
-const DONT_RESET_REDUCER_KEYS = 'dontReset';
-const IS_MOBILE = 'isMobile';
-const SAGA = 'saga';
-const SAGA_CONSTANT = 'constantSaga';
-const REDUCER_CONSTANT = 'constantReducer';
-const REDUCER = 'reducer';
-const AXIOS_INTERCEPTORS = 'axiosInterceptors';
-const REDUCER_NAME = 'name';
 
 export const HOC_INITIAL_CONFIG_KEY = {
   API_END_POINTS,
