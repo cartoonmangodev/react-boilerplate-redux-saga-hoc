@@ -1,6 +1,6 @@
 {
   "name": "react-boilerplate-redux-saga-hoc",
-  "version": "1.8.95",
+  "version": "1.8.84",
   "description": "Easy ways to handle api calls,redux,saga...etc",
   "main": "./lib/index.js",
   "unpkg": "./lib/index.js",
@@ -121,6 +121,7 @@
     "rollup-plugin-peer-deps-external": "^2.2.3",
     "rollup-plugin-replace": "^2.1.1",
     "rollup-plugin-size": "^0.2.2",
+    "rollup-plugin-terser": "^4.0.4",
     "rollup-plugin-typescript2": "^0.27.2",
     "rollup-plugin-visualizer": "^4.1.0",
     "webpack": "^4.42.0",
