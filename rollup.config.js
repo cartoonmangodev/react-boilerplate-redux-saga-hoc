@@ -71,8 +71,8 @@ export default [
         mangle: { toplevel: true },
         compress: {
           toplevel: true,
-          drop_console: !dev,
-          drop_debugger: !dev,
+          // drop_console: !dev,
+          // drop_debugger: !dev,
         },
         output: { quote_style: 1 },
       }),
@@ -102,8 +102,8 @@ export default [
         mangle: { toplevel: true },
         compress: {
           toplevel: true,
-          drop_console: !dev,
-          drop_debugger: !dev,
+          // drop_console: !dev,
+          // drop_debugger: !dev,
         },
         output: { quote_style: 1 },
       }),
