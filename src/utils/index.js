@@ -299,7 +299,13 @@ export const mapDispatchToProps = (
   ...(actions && Object.keys(actions).length
     ? newObject(componentData, ({ [`${reducerName}_hoc`]: data }) => ({
         [`${reducerName}_hoc`]: newObject(data, {
-          actions: bindActionCreators(actions, dispatch),
+          actions: Object.entries(bindActionCreators(actions, dispatch)).reduce(
+            (acc, [key, action]) => ({
+              ...acc,
+              [key]: toPromise.bind(null, action),
+            }),
+            {},
+          ),
         }),
       }))
     : {}),
@@ -819,6 +825,7 @@ export const useMutation = reducerName => {
  * }
  */
 export const toPromise = (action, config = {}, isReject, dispatch) => {
+  const _config = config || {};
   if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined')
     checkKeyWithMessage(
       config,
@@ -827,8 +834,8 @@ export const toPromise = (action, config = {}, isReject, dispatch) => {
     );
   return new Promise((resolve, reject) =>
     typeof dispatch === 'function'
-      ? dispatch(action({ ...config, resolve, reject, isReject }))
-      : action({ ...config, resolve, reject, isReject }),
+      ? dispatch(action({ ..._config, resolve, reject, isReject }))
+      : action({ ..._config, resolve, reject, isReject }),
   );
 };
 /* example
