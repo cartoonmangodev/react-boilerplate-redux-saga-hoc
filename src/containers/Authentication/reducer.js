@@ -254,7 +254,7 @@ export default ({
         if (constantReducer) {
           const returnData = constantReducer({
             state: reducerState,
-            type: type || action.type,
+            type: action.type,
             proxyFor: _proxyFor,
             action,
             constants: authenticationConstants,
