@@ -825,17 +825,22 @@ export const useMutation = reducerName => {
  * }
  */
 export const toPromise = (action, config = {}, isReject, dispatch) => {
-  const _config = config || {};
-  if (typeOf(config) !== 'null' || typeOf(config) !== 'undefined')
+  if (!(typeOf(config) === TYPE_OBJECT || typeOf(config) === TYPE_BOOLEAN))
     checkKeyWithMessage(
       config,
       'object',
-      `toPromise() : Expected a config (second parameter) to be object`,
+      `toPromise() : Expected a parameter to be object`,
     );
+  let _config = config;
+  let _isReject = false;
+  if (typeof config === 'boolean') {
+    _config = {};
+    _isReject = config;
+  } else _isReject = _config._isReject || isReject;
   return new Promise((resolve, reject) =>
     typeof dispatch === 'function'
-      ? dispatch(action({ ..._config, resolve, reject, isReject }))
-      : action({ ..._config, resolve, reject, isReject }),
+      ? dispatch(action({ ..._config, resolve, reject, isReject: _isReject }))
+      : action({ ..._config, resolve, reject, isReject: _isReject }),
   );
 };
 /* example
