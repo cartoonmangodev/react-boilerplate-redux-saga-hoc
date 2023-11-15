@@ -18,10 +18,12 @@ function withReduxSaga(BaseComponent = {}) {
 
       // Stop saga on the server
       if (isServer) {
+        setTimeout(() => {
+          store.dispatch(END);
+        }, 1);
         if (typeof store.sagaTask.toPromise === 'function') {
           await store.sagaTask.toPromise();
         } else await store.sagaTask.done;
-        store.dispatch(END);
       }
 
       return pageProps;
