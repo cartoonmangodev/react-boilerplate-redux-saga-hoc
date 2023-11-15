@@ -1,12 +1,19 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef, createContext, useContext } from 'react';
-import { bindActionCreators, combineReducers } from 'redux';
-import { useSelector, useDispatch, useStore, batch, ReactReduxContext } from 'react-redux';
-import isEqual from 'fast-deep-equal';
-import { createSelector } from 'reselect';
-import invariant from 'invariant';
-import cloneDeep from 'lodash/cloneDeep';
-import _defineProperty from '@babel/runtime/helpers/defineProperty';
-import hoistNonReactStatics from 'hoist-non-react-statics';
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var React = require('react');
+var React__default = _interopDefault(React);
+var redux = require('redux');
+var reactRedux = require('react-redux');
+var isEqual = _interopDefault(require('fast-deep-equal'));
+var reselect = require('reselect');
+var invariant = _interopDefault(require('invariant'));
+var cloneDeep = _interopDefault(require('lodash/cloneDeep'));
+var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
+var hoistNonReactStatics = _interopDefault(require('hoist-non-react-statics'));
 
 /* eslint-disable no-underscore-dangle */
 const TAKE_EVERY = 'every';
@@ -1121,8 +1128,8 @@ const useQuery = function () {
   };
   if (name) checkKey(name, 'reducer name', 'string', 'valid string');
   // const store = useStore();
-  const [_key] = useState({});
-  useEffect(() => {
+  const [_key] = React.useState({});
+  React.useEffect(() => {
     previousData.set(_key, {});
     initialRender.set(_key, true);
     return () => {
@@ -1132,7 +1139,7 @@ const useQuery = function () {
       previousDependencyArrayData.delete(_key);
     };
   }, []);
-  const equalityCheckFunction = useCallback((e, f) => {
+  const equalityCheckFunction = React.useCallback((e, f) => {
     const _isEqual = typeof e.isEqualCheck === 'undefined' ? isEqual(e.data, f.data) : e.isEqualCheck;
     if ((!_isEqual || initialRender.get(_key)) && typeof callbackSuccess === 'function') {
       initialRender.set(_key, false);
@@ -1141,7 +1148,7 @@ const useQuery = function () {
 
     return _isEqual;
   }, []);
-  const selectReducerKey = useMemo(() => {
+  const selectReducerKey = React.useMemo(() => {
     const _arr = [];
     const executeRequiredKey = _requiredKey => _requiredKey.forEach(e => {
       if (typeof e === 'string') _arr.push(e);else if (typeOf(e) === 'object' && e.key) _arr.push(e.key);
@@ -1162,7 +1169,7 @@ const useQuery = function () {
     });
     return _arr;
   }, [refreshKey]);
-  const selectState = useMemo(() => {
+  const selectState = React.useMemo(() => {
     if (selectReducerKey && selectReducerKey.length) {
       const _arr = [];
       selectReducerKey.forEach(_k => _arr.push(state => state[name] && state[name][_k]));
@@ -1170,7 +1177,7 @@ const useQuery = function () {
     }
     return [state => state[name]];
   }, [selectReducerKey]);
-  const executeSelector = useCallback(function () {
+  const executeSelector = React.useCallback(function () {
     for (var _len = arguments.length, rest = new Array(_len), _key2 = 0; _key2 < _len; _key2++) {
       rest[_key2] = arguments[_key2];
     }
@@ -1200,8 +1207,8 @@ const useQuery = function () {
     }
     return _execute(rest[0], name, array, config, _key, callback);
   }, [selectReducerKey, refreshKey]);
-  const createdSelector = useMemo(() => createSelector(selectState, executeSelector), [executeSelector, selectState]);
-  const _selectorData = useSelector(!name || !array ? state => _execute(state, name, array, config, _key, callback) : createdSelector, !name || !array ? undefined : equalityCheckFunction);
+  const createdSelector = React.useMemo(() => reselect.createSelector(selectState, executeSelector), [executeSelector, selectState]);
+  const _selectorData = reactRedux.useSelector(!name || !array ? state => _execute(state, name, array, config, _key, callback) : createdSelector, !name || !array ? undefined : equalityCheckFunction);
   return _selectorData.data;
 };
 /* example
@@ -1223,12 +1230,12 @@ const useQuery = function () {
 const useActionsHook = function () {
   let name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
   let actions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  const dispatch = useDispatch();
-  const [dispatchAction, setDispatchAction] = useState(!actions ? cacheActions[name] || {} : bindActionCreators(actions, dispatch));
-  useEffect(() => {
+  const dispatch = reactRedux.useDispatch();
+  const [dispatchAction, setDispatchAction] = React.useState(!actions ? cacheActions[name] || {} : redux.bindActionCreators(actions, dispatch));
+  React.useEffect(() => {
     if (!isEqual(cacheActions[name], actions)) {
       cacheActions[name] = actions;
-      cache[name] = bindActionCreators(actions, dispatch);
+      cache[name] = redux.bindActionCreators(actions, dispatch);
       setDispatchAction(cache[name]);
     } else setDispatchAction(cache[name]);
   }, [isEqual(cacheActions[name], actions)]);
@@ -1246,13 +1253,13 @@ const useActionsHook = function () {
  */
 const useMutation = reducerName => {
   if (!reducerName) checkKeyWithMessage(reducerName, 'string', 'useMutation(`reducerkey`) : Expected a valid reducer key');
-  const store = useStore();
-  useEffect(() => {
+  const store = reactRedux.useStore();
+  React.useEffect(() => {
     if (reducerName) checkKeyWithMessage(reducerName, 'string', 'useMutation(`reducerkey`) : Expected a reducer key to be string');
     if (!store.getState()[reducerName]) checkKeyWithMessage(null, 'string', ` reducerName '${reducerName}' not a valid reducer key.`);
   }, []);
-  const dispatch = useDispatch();
-  const _callback = useCallback(_ref11 => {
+  const dispatch = reactRedux.useDispatch();
+  const _callback = React.useCallback(_ref11 => {
     let {
       key: type,
       value,
@@ -1423,9 +1430,9 @@ function useStaleRefresh(fn, name) {
   let initial
   // initialLoadingstate = true,
   = arguments.length > 3 ? arguments[3] : undefined;
-  const prevArgs = useRef(null);
-  const [isUpdating, setIsUpdating] = useState(null);
-  const refresh = useCallback(function () {
+  const prevArgs = React.useRef(null);
+  const [isUpdating, setIsUpdating] = React.useState(null);
+  const refresh = React.useCallback(function () {
     let {
       loader,
       clearData,
@@ -1454,7 +1461,7 @@ function useStaleRefresh(fn, name) {
       // setLoading(false);
     });
   }, [arg, initial]);
-  useEffect(() => {
+  React.useEffect(() => {
     // args is an object so deep compare to rule out false changes
     if (isEqual(arg, prevArgs.current)) {
       return;
@@ -1462,7 +1469,7 @@ function useStaleRefresh(fn, name) {
     if (initial) refresh();
     // cacheID is how a cache is identified against a unique request
   }, [arg, fn, name, initial]);
-  useEffect(() => {
+  React.useEffect(() => {
     prevArgs.current = arg;
   });
   return [refresh, isUpdating];
@@ -1472,9 +1479,9 @@ function useStaleRefresh(fn, name) {
  * mutateReducer(state => state)
  */
 const useMutateReducer = reducerName => {
-  const store = useStore();
-  const dispatch = useDispatch();
-  const _callback = useCallback(callback => {
+  const store = reactRedux.useStore();
+  const dispatch = reactRedux.useDispatch();
+  const _callback = React.useCallback(callback => {
     const state = reducerName ? store.getState()[reducerName] : store.getState();
     const newState = callback(state);
     if (newState) dispatch({
@@ -1490,9 +1497,9 @@ const useMutateReducer = reducerName => {
  */
 const useCancelAllRunningApiCalls = reducerName => {
   if (!reducerName) checkKeyWithMessage(reducerName, 'string', 'useCancelAllRunningApiCalls(`reducerkey`) : Expected a valid reducer key');
-  const store = useStore();
-  const dispatch = useDispatch();
-  const _callback = useCallback(function () {
+  const store = reactRedux.useStore();
+  const dispatch = reactRedux.useDispatch();
+  const _callback = React.useCallback(function () {
     let dontCancelKeys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     const state = store.getState()[reducerName];
     const actions = Object.entries(state).reduce((acc, _ref12) => {
@@ -1506,7 +1513,7 @@ const useCancelAllRunningApiCalls = reducerName => {
       return acc;
     }, []);
     if (actions && actions.length > 0) {
-      batch(() => {
+      reactRedux.batch(() => {
         for (let i = 0; i < actions.length; i++) {
           dispatch(actions[i]);
         }
@@ -1521,8 +1528,8 @@ const useCancelAllRunningApiCalls = reducerName => {
  * resetState(dontResetKeys); it will reset state to initial state except some dontResetKeys
  */
 const useResetState = reducerName => {
-  const dispatch = useDispatch();
-  const _callback = useCallback(function () {
+  const dispatch = reactRedux.useDispatch();
+  const _callback = React.useCallback(function () {
     let dontResetKeys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     dispatch({
       type: reducerName ? `${reducerName}_RESET_STATE` : 'RESET_STATE',
@@ -1537,8 +1544,8 @@ const useResetState = reducerName => {
  * resetState(dontResetKeys); it will reset only endpoints to initial state except some dontResetKeys
  */
 const useResetOnlyApiEndPointsState = reducerName => {
-  const dispatch = useDispatch();
-  const _callback = useCallback(function () {
+  const dispatch = reactRedux.useDispatch();
+  const _callback = React.useCallback(function () {
     let dontResetKeys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     dispatch({
       type: reducerName ? `${reducerName}_RESET_API` : 'RESET_API',
@@ -1554,8 +1561,8 @@ const useResetOnlyApiEndPointsState = reducerName => {
  */
 const useRefetchCachedApi = reducerkey => {
   if (!reducerkey) checkKeyWithMessage(reducerkey, 'string', 'useRefetchApi(`reducerkey`) : Expected a valid reducer key');
-  const dispatch = useDispatch();
-  const _callback = useCallback(key => {
+  const dispatch = reactRedux.useDispatch();
+  const _callback = React.useCallback(key => {
     const regex = REDUCER_BASE_PATH.concat('+.*?_CALL');
     const isSearchMatched = reducerkey.search(regex) > -1;
     if (isSearchMatched) dispatch({
@@ -1583,11 +1590,11 @@ const useApiQuery = (reducerkey, isQueryData, isMutation) => {
   let data;
   let mutation;
   const reducerName = reducerkey.split('/')[2];
-  const ref = useRef({
+  const ref = React.useRef({
     isQueryData,
     isMutation
   });
-  const dispatch = useDispatch();
+  const dispatch = reactRedux.useDispatch();
   if (ref.current.isMutation) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     mutation = useMutation(reducerName);
@@ -1599,7 +1606,7 @@ const useApiQuery = (reducerkey, isQueryData, isMutation) => {
       default: {}
     });
   }
-  const _action = useMemo(() => {
+  const _action = React.useMemo(() => {
     const regex = REDUCER_BASE_PATH.concat('+.*?_CALL');
     const isSearchMatched = reducerkey.search(regex) > -1;
     if (isSearchMatched) return {
@@ -1727,8 +1734,8 @@ const globals = new Global({});
  */
 
 function useGlobalValueHook(key, initialValue) {
-  const globalRef = useRef({});
-  const valueRef = useRef({
+  const globalRef = React.useRef({});
+  const valueRef = React.useRef({
     initial: true
   });
   if (initialValue && typeof initialValue === 'object' && valueRef.current.initial) {
@@ -1736,9 +1743,9 @@ function useGlobalValueHook(key, initialValue) {
   }
   valueRef.current.initial = false;
   valueRef.current.key = key;
-  const [values, setValues] = useState(initialValue || globals.value);
+  const [values, setValues] = React.useState(initialValue || globals.value);
   valueRef.current.value = values;
-  useEffect(() => {
+  React.useEffect(() => {
     if (valueRef.current.key !== null) globals.subscribe(_value => {
       if (key ? _value[key] !== valueRef.current.value[key] : _value !== valueRef.current.value) {
         setValues(_value);
@@ -1908,24 +1915,24 @@ const useFormValidationHandlerHook = function () {
       VALUE_KEY = _VALUE_KEY || VALUE,
       ERROR_KEY = _ERROR_KEY || ERROR$2
     } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    const formRef = useRef({
+    const formRef = React.useRef({
       is_validate_form_triggered: false
     });
-    const [formConfig, _setFormConfig] = useState(FORM_CONFIG);
-    const [errors, _setErrors] = useState({});
-    const [values, _setValues] = useState(() => _setInitialValues({
+    const [formConfig, _setFormConfig] = React.useState(FORM_CONFIG);
+    const [errors, _setErrors] = React.useState({});
+    const [values, _setValues] = React.useState(() => _setInitialValues({
       formConfig,
       initialValues
     }));
-    const setFormConfig = useCallback(_formConfig => {
+    const setFormConfig = React.useCallback(_formConfig => {
       formRef.current.formConfig = checkType(_formConfig, formRef.current.formConfig);
       _setFormConfig(formRef.current.formConfig);
     }, []);
-    const setValues = useCallback(_values => {
+    const setValues = React.useCallback(_values => {
       formRef.current.values = checkType(_values, formRef.current.values);
       _setValues(formRef.current.values);
     }, []);
-    const setErrors = useCallback(_errors => {
+    const setErrors = React.useCallback(_errors => {
       formRef.current.errors = checkType(_errors, formRef.current.errors);
       _setErrors(formRef.current.errors);
     }, []);
@@ -1933,7 +1940,7 @@ const useFormValidationHandlerHook = function () {
     formRef.current.errors = errors;
     formRef.current.formConfig = formConfig;
     formRef.current.setFormConfig = setFormConfig;
-    const validateValue = useCallback(function (__value, key, isSetValue, isSetError, _config) {
+    const validateValue = React.useCallback(function (__value, key, isSetValue, isSetError, _config) {
       let isTrim = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : false;
       formRef.current.lastUpdated = generateTimeStamp();
       const config = _config || formRef.current.formConfig[key] || {};
@@ -2013,7 +2020,7 @@ const useFormValidationHandlerHook = function () {
         key
       };
     }, []);
-    const onChangeValues = useCallback(function () {
+    const onChangeValues = React.useCallback(function () {
       let e = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       let key = arguments.length > 1 ? arguments[1] : undefined;
       let {
@@ -2034,7 +2041,7 @@ const useFormValidationHandlerHook = function () {
       if (isValidateOnly || !KEY) return validateValue(value, KEY, null, null, config, trim);
       validateValue(value, KEY, true, isSetError === undefined ? true : isSetError, undefined, trim);
     }, []);
-    const onValidateValues = useCallback(_ref3 => {
+    const onValidateValues = React.useCallback(_ref3 => {
       let {
         value,
         isValue,
@@ -2050,14 +2057,14 @@ const useFormValidationHandlerHook = function () {
         trim
       });
     }, []);
-    const onBlurValues = useCallback(function (e, key) {
+    const onBlurValues = React.useCallback(function (e, key) {
       let config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       const _key = getPlatformBasedFieldName(e);
       const KEY = key || _key;
       const value = formRef.current.values[KEY];
       if (config.isValidateOnBlur === undefined ? true : config.isValidateOnBlur) validateValue(value, KEY, false, true);
     }, []);
-    const validateForm = useCallback(function () {
+    const validateForm = React.useCallback(function () {
       let {
         isSetError,
         formConfig: __FORM_CONFIG = {},
@@ -2095,7 +2102,7 @@ const useFormValidationHandlerHook = function () {
         isValidatePassed: isError.length === 0
       };
     }, []);
-    const validateCustomForm = useCallback(_ref4 => {
+    const validateCustomForm = React.useCallback(_ref4 => {
       let {
         isSetError,
         formConfig: form_config = {},
@@ -2124,7 +2131,7 @@ const useFormValidationHandlerHook = function () {
         isValidatePassed: isError.length === 0
       };
     }, []);
-    const onValidateCustomObject = useCallback((value, config) => validateForm({
+    const onValidateCustomObject = React.useCallback((value, config) => validateForm({
       isSetError: false,
       values: value,
       formConfig: config,
@@ -2132,7 +2139,7 @@ const useFormValidationHandlerHook = function () {
       isResetValue: true,
       isResetError: true
     }), []);
-    const onAddFormConfig = useCallback(function (config, isReset) {
+    const onAddFormConfig = React.useCallback(function (config, isReset) {
       let _values = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       formRef.current.lastUpdated = generateTimeStamp();
       setFormConfig(newObject(isReset ? {} : formRef.current.formConfig, config));
@@ -2149,7 +2156,7 @@ const useFormValidationHandlerHook = function () {
         setValues(newObject(formRef.current.values, newVal));
       }
     }, []);
-    const commonInputProps = useCallback(function (key) {
+    const commonInputProps = React.useCallback(function (key) {
       let {
         index,
         config,
@@ -2207,14 +2214,14 @@ const useFormValidationHandlerHook = function () {
       }
       return _commonInputProps;
     }, []);
-    const setInitialFormData = useCallback(data => {
+    const setInitialFormData = React.useCallback(data => {
       formRef.current.lastUpdated = generateTimeStamp();
       const _values = Object.keys(formRef.current.formConfig).reduce((acc, key) => newObject(acc, {
         [key]: typeof data[key] !== 'undefined' ? data[key] || '' : formRef.current.values[key]
       }), {});
       setValues(_values);
     }, []);
-    const resetForm = useCallback(() => {
+    const resetForm = React.useCallback(() => {
       const _values = Object.entries(formConfig || {}).reduce((acc, _ref6) => {
         let [key, val = {}] = _ref6;
         return newObject(acc, {
@@ -2224,7 +2231,7 @@ const useFormValidationHandlerHook = function () {
       setValues(_values);
       setErrors({});
     }, []);
-    const getValues = useCallback(_response => {
+    const getValues = React.useCallback(_response => {
       const _dontConvertKeysToObject = typeOf(_response) === TYPE_BOOLEAN$1 && !_response;
       if (typeOf(_response) === TYPE_OBJECT$1) {
         return Object.entries(formRef.current.formConfig).reduce((acc, _ref7) => {
@@ -2261,7 +2268,7 @@ const useFormValidationHandlerHook = function () {
     //   setValues(_keyErrors);
     // }, []);
 
-    const setResponseErrors = useCallback(_errors => {
+    const setResponseErrors = React.useCallback(_errors => {
       const _keyErrors = Object.entries(formRef.current.formConfig).reduce((acc, _ref10) => {
         let [_key, _config = {}] = _ref10;
         return {
@@ -2271,14 +2278,14 @@ const useFormValidationHandlerHook = function () {
       }, {});
       setErrors(_keyErrors);
     }, []);
-    const getInputProps = useCallback(function () {
+    const getInputProps = React.useCallback(function () {
       let extraProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       return Object.keys(formRef.current.formConfig).reduce((prev, key) => ({
         ...prev,
         [key]: commonInputProps(key, extraProps)
       }), {});
     }, []);
-    const setValidate = useCallback(function () {
+    const setValidate = React.useCallback(function () {
       let _config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       let __config = {
         ...formRef.current.formConfig
@@ -2412,14 +2419,14 @@ const useFormValidationHandlerHook = function () {
 const checkType$1 = (val, oldVal) => newObject(typeof val === 'function' ? val(oldVal) : val);
 const useMultipleOptionsHook = function () {
   let initialValue = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  const [options, _setOptions] = useState(initialValue);
-  const ref = useRef({});
+  const [options, _setOptions] = React.useState(initialValue);
+  const ref = React.useRef({});
   ref.current.options = options;
-  const setOptions = useCallback(_values => {
+  const setOptions = React.useCallback(_values => {
     ref.current.options = checkType$1(_values, ref.current.options);
     _setOptions(ref.current.options);
   }, []);
-  const onChangeOptions = useCallback((key, index, value, error) => {
+  const onChangeOptions = React.useCallback((key, index, value, error) => {
     if (typeOf(key) === 'object') {
       const {
         key: _key,
@@ -2448,7 +2455,7 @@ const useMultipleOptionsHook = function () {
       return ___val;
     });
   }, []);
-  const onDeleteOptions = useCallback(function (key, i) {
+  const onDeleteOptions = React.useCallback(function (key, i) {
     let count = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
     setOptions(_val => {
       const ___val = {
@@ -2460,7 +2467,7 @@ const useMultipleOptionsHook = function () {
       return ___val;
     });
   }, []);
-  const onDeleteMultipleOptions = useCallback(function (key) {
+  const onDeleteMultipleOptions = React.useCallback(function (key) {
     let indexes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
     setOptions(_val => {
       const ___val = {
@@ -2472,9 +2479,9 @@ const useMultipleOptionsHook = function () {
       return __val;
     });
   }, []);
-  const onGetValues = useCallback(key => ref.current.options[key].map(e => e.value), []);
-  const findRecursiveError = useCallback(obj => Object.values(obj).some(e => typeOf(e) === 'object' ? findRecursiveError(e) : e), []);
-  const onValidateValues = useCallback((key, callback, isSetError) => {
+  const onGetValues = React.useCallback(key => ref.current.options[key].map(e => e.value), []);
+  const findRecursiveError = React.useCallback(obj => Object.values(obj).some(e => typeOf(e) === 'object' ? findRecursiveError(e) : e), []);
+  const onValidateValues = React.useCallback((key, callback, isSetError) => {
     if (Array.isArray(key)) {
       const ___val = cloneDeep(ref.current.options);
       let isError = false;
@@ -2527,7 +2534,7 @@ const useMultipleOptionsHook = function () {
       errorCount: errorLength
     };
   }, []);
-  const onAddOptions = useCallback(function (key, value, index) {
+  const onAddOptions = React.useCallback(function (key, value, index) {
     let count = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1;
     setOptions(_val => {
       const ___val = {
@@ -2541,7 +2548,7 @@ const useMultipleOptionsHook = function () {
       return ___val;
     });
   }, []);
-  const onChangeOrderForm = useCallback((key, currentIndex, index) => {
+  const onChangeOrderForm = React.useCallback((key, currentIndex, index) => {
     setOptions(_val => {
       const ___val = {
         ..._val
@@ -2556,16 +2563,16 @@ const useMultipleOptionsHook = function () {
       return ___val;
     });
   }, []);
-  const onResetForm = useCallback(resetValue => {
+  const onResetForm = React.useCallback(resetValue => {
     if (resetValue) setOptions(() => newObject({}, resetValue));
   }, []);
-  const onResetValue = useCallback(resetValue => {
+  const onResetValue = React.useCallback(resetValue => {
     if (resetValue) setOptions(_options => newObject(_options, resetValue));else setOptions(initialValue);
   }, []);
-  const onAddForm = useCallback(value => {
+  const onAddForm = React.useCallback(value => {
     if (value) setOptions(_options => newObject(_options, value));
   }, []);
-  const onDeleteMultipleForm = useCallback(function () {
+  const onDeleteMultipleForm = React.useCallback(function () {
     let deleteKey = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     if (deleteKey.length > 0) setOptions(_options => {
       const __options = {
@@ -2577,7 +2584,7 @@ const useMultipleOptionsHook = function () {
       return __options;
     });
   }, []);
-  const onDeleteForm = useCallback(function () {
+  const onDeleteForm = React.useCallback(function () {
     let deleteKey = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
     setOptions(_options => {
       const __options = {
@@ -2622,7 +2629,7 @@ const useMultipleOptionsHook = function () {
   };
 };
 
-var FormContext = /*#__PURE__*/createContext(null);
+var FormContext = /*#__PURE__*/React.createContext(null);
 
 var form = (_ref => {
   let {
@@ -2631,7 +2638,7 @@ var form = (_ref => {
     idKey,
     onSubmit
   } = _ref;
-  return /*#__PURE__*/React.createElement(FormContext.Provider, {
+  return /*#__PURE__*/React__default.createElement(FormContext.Provider, {
     value: {
       inputProps,
       idKey,
@@ -2647,7 +2654,7 @@ var hook = (function () {
     inputProps = {},
     idKey,
     onSubmit
-  } = useContext(FormContext) || {};
+  } = React.useContext(FormContext) || {};
   return {
     ...(onSubmit ? {
       onSubmit
@@ -2692,7 +2699,7 @@ function createReducer() {
   const reducer = Object.keys(injectedReducers).length > 0 ? injectedReducers : {
     global: () => ({})
   };
-  const rootReducer = combineReducers(reducer);
+  const rootReducer = redux.combineReducers(reducer);
   return rootReducer;
 }
 
@@ -2727,17 +2734,17 @@ var injectReducer = ((_ref, createReducer) => {
     reducer
   } = _ref;
   return WrappedComponent => {
-    class ReducerInjector extends React.Component {
+    class ReducerInjector extends React__default.Component {
       constructor(props, context) {
         super(props, context);
         getInjectors(context.store).injectReducer(key, reducer, createReducer);
       }
       render() {
-        return /*#__PURE__*/React.createElement(WrappedComponent, this.props);
+        return /*#__PURE__*/React__default.createElement(WrappedComponent, this.props);
       }
     }
     _defineProperty(ReducerInjector, "WrappedComponent", WrappedComponent);
-    _defineProperty(ReducerInjector, "contextType", ReactReduxContext);
+    _defineProperty(ReducerInjector, "contextType", reactRedux.ReactReduxContext);
     _defineProperty(ReducerInjector, "displayName", `withReducer(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`);
     return hoistNonReactStatics(ReducerInjector, WrappedComponent);
   };
@@ -2748,8 +2755,8 @@ const useInjectReducer = function (_ref2, createReducer) {
     reducer
   } = _ref2;
   let inject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-  const context = React.useContext(ReactReduxContext);
-  React.useEffect(() => {
+  const context = React__default.useContext(reactRedux.ReactReduxContext);
+  React__default.useEffect(() => {
     if (inject) getInjectors(context.store).injectReducer(key, reducer, createReducer);
   }, []);
 };
@@ -2847,7 +2854,7 @@ var injectSaga = (_ref => {
     mode
   } = _ref;
   return WrappedComponent => {
-    class InjectSaga extends React.Component {
+    class InjectSaga extends React__default.Component {
       constructor(props, context) {
         super(props, context);
         this.injectors = getInjectors$1(context.store);
@@ -2860,11 +2867,11 @@ var injectSaga = (_ref => {
         this.injectors.ejectSaga(key);
       }
       render() {
-        return /*#__PURE__*/React.createElement(WrappedComponent, this.props);
+        return /*#__PURE__*/React__default.createElement(WrappedComponent, this.props);
       }
     }
     _defineProperty(InjectSaga, "WrappedComponent", WrappedComponent);
-    _defineProperty(InjectSaga, "contextType", ReactReduxContext);
+    _defineProperty(InjectSaga, "contextType", reactRedux.ReactReduxContext);
     _defineProperty(InjectSaga, "displayName", `withSaga(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`);
     return hoistNonReactStatics(InjectSaga, WrappedComponent);
   };
@@ -2878,8 +2885,8 @@ const useInjectSaga = function (_ref2) {
   let inject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
   let eject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
   let callback = arguments.length > 3 ? arguments[3] : undefined;
-  const context = React.useContext(ReactReduxContext);
-  React.useEffect(() => {
+  const context = React__default.useContext(reactRedux.ReactReduxContext);
+  React__default.useEffect(() => {
     const injectors = getInjectors$1(context.store);
     if (inject) {
       injectors.injectSaga(key, {
@@ -2894,4 +2901,43 @@ const useInjectSaga = function (_ref2) {
   }, []);
 };
 
-export { CustomError, form as Form, FormContext, validateForm as FormValidator, Global as GlobalEventEmitter, Safe, cloneObject, commonConstants, deleteIn, generateTimeStamp, getData, getIn, globals as globalState, injectReducer, injectSaga, newObject, objectEquals, setIn, toCapitalize, toPromise, toPromiseAllFunction, toPromiseFunction, typeOf, updateIn, useActionsHook as useActions, useApiQuery, useCancelAllRunningApiCalls, useFormValidationHandlerHook, useGlobalValueHook as useGlobalStateHook, useInjectReducer, useInjectSaga, useMultipleOptionsHook, useMutateReducer, useMutation, hook as useProps, useQuery, useRefetchCachedApi, useResetOnlyApiEndPointsState, useResetState, useStaleRefresh };
+exports.CustomError = CustomError;
+exports.Form = form;
+exports.FormContext = FormContext;
+exports.FormValidator = validateForm;
+exports.GlobalEventEmitter = Global;
+exports.Safe = Safe;
+exports.cloneObject = cloneObject;
+exports.commonConstants = commonConstants;
+exports.deleteIn = deleteIn;
+exports.generateTimeStamp = generateTimeStamp;
+exports.getData = getData;
+exports.getIn = getIn;
+exports.globalState = globals;
+exports.injectReducer = injectReducer;
+exports.injectSaga = injectSaga;
+exports.newObject = newObject;
+exports.objectEquals = objectEquals;
+exports.setIn = setIn;
+exports.toCapitalize = toCapitalize;
+exports.toPromise = toPromise;
+exports.toPromiseAllFunction = toPromiseAllFunction;
+exports.toPromiseFunction = toPromiseFunction;
+exports.typeOf = typeOf;
+exports.updateIn = updateIn;
+exports.useActions = useActionsHook;
+exports.useApiQuery = useApiQuery;
+exports.useCancelAllRunningApiCalls = useCancelAllRunningApiCalls;
+exports.useFormValidationHandlerHook = useFormValidationHandlerHook;
+exports.useGlobalStateHook = useGlobalValueHook;
+exports.useInjectReducer = useInjectReducer;
+exports.useInjectSaga = useInjectSaga;
+exports.useMultipleOptionsHook = useMultipleOptionsHook;
+exports.useMutateReducer = useMutateReducer;
+exports.useMutation = useMutation;
+exports.useProps = hook;
+exports.useQuery = useQuery;
+exports.useRefetchCachedApi = useRefetchCachedApi;
+exports.useResetOnlyApiEndPointsState = useResetOnlyApiEndPointsState;
+exports.useResetState = useResetState;
+exports.useStaleRefresh = useStaleRefresh;
