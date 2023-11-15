@@ -2,7 +2,7 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import babel from 'rollup-plugin-babel';
 // import replace from '@rollup/plugin-replace';
 // import typescript from 'rollup-plugin-typescript2';
-import { terser } from 'rollup-plugin-terser';
+// import { terser } from 'rollup-plugin-terser';
 
 import pkg from './package.json';
 
@@ -26,7 +26,7 @@ export default [
   // CommonJS
   {
     input: 'src/index.js',
-    output: { file: 'lib/index.js', format: 'cjs', indent: false },
+    output: { file: 'lib/index.js', format: 'es', indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),
@@ -35,7 +35,6 @@ export default [
       nodeResolve({
         extensions,
       }),
-      terser(),
       // typescript({ useTsconfigDeclarationDir: true }),
       babel({
         extensions,
@@ -48,7 +47,7 @@ export default [
   },
   {
     input: 'src/util.js',
-    output: { file: 'utils/index.js', format: 'cjs', indent: false },
+    output: { file: 'utils/index.js', format: 'es', indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),
@@ -57,7 +56,7 @@ export default [
       nodeResolve({
         extensions,
       }),
-      terser(),
+      // terser(),
       // typescript({ useTsconfigDeclarationDir: true }),
       babel({
         extensions,
@@ -70,7 +69,7 @@ export default [
   },
   {
     input: 'src/constants.js',
-    output: { file: 'constants/index.js', format: 'cjs', indent: false },
+    output: { file: 'constants/index.js', format: 'es', indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),
