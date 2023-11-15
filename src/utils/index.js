@@ -33,6 +33,7 @@ import {
   filterArrayResetHandler,
 } from './customHandlers';
 import nullcheck from './nullCheck';
+import { TYPE_BOOLEAN, TYPE_OBJECT } from '../constants';
 const cache = {};
 const cacheActions = {};
 const safe = nullcheck;
