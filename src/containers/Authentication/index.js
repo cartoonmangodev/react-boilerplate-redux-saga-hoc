@@ -20,7 +20,7 @@ import generateAction from './actions';
 import Reducer from './reducer';
 import Saga from './generator';
 import nullcheck from '../../utils/nullCheck';
-import { getData, mapDispatchToProps } from '../../utils';
+import { getData, mapDispatchToProps, toPromise } from '../../utils';
 import {
   commonConstants,
   FOR_INTERNAL_USE_ONLY,
@@ -202,7 +202,16 @@ export default ({
     if ((!stateProps || isDevelopment) && dispatch) {
       stateProps = {
         ...componentData[reducer_name_hoc_key],
-        actions: bindActionCreators(componentActions, dispatch),
+        // actions: bindActionCreators(componentActions, dispatch),
+        actions: Object.entries(
+          bindActionCreators(componentActions, dispatch),
+        ).reduce(
+          (acc, [key, action]) => ({
+            ...acc,
+            [key]: toPromise.bind(null, action),
+          }),
+          {},
+        ),
         dispatch,
       };
     }
