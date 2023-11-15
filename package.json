@@ -1,6 +1,6 @@
 {
   "name": "react-boilerplate-redux-saga-hoc",
-  "version": "1.8.84",
+  "version": "1.8.96",
   "description": "Easy ways to handle api calls,redux,saga...etc",
   "main": "./lib/index.js",
   "unpkg": "./lib/index.js",
