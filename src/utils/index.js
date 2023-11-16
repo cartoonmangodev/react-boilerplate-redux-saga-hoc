@@ -291,6 +291,15 @@ export const getData = (data, def, loader = true, filter = []) => ({
   ),
 });
 
+export const bindActionsToDispatch = (actions, dispatch) =>
+  Object.entries(bindActionCreators(actions, dispatch)).reduce(
+    (acc, [key, action]) => ({
+      ...acc,
+      [key]: toPromise.bind(null, action),
+    }),
+    {},
+  );
+
 export const mapDispatchToProps = (
   actions,
   componentData,
@@ -300,13 +309,7 @@ export const mapDispatchToProps = (
   ...(actions && Object.keys(actions).length
     ? newObject(componentData, ({ [`${reducerName}_hoc`]: data }) => ({
         [`${reducerName}_hoc`]: newObject(data, {
-          actions: Object.entries(bindActionCreators(actions, dispatch)).reduce(
-            (acc, [key, action]) => ({
-              ...acc,
-              [key]: toPromise.bind(null, action),
-            }),
-            {},
-          ),
+          actions: bindActionsToDispatch(actions, dispatch),
         }),
       }))
     : {}),

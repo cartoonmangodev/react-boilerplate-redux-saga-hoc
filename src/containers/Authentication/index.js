@@ -7,7 +7,7 @@ import React, { useRef, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import invariant from 'invariant';
 import { createStructuredSelector } from 'reselect';
-import { compose, bindActionCreators } from 'redux';
+import { compose } from 'redux';
 import axios from '../../config/axios';
 import generateConstants from './constants';
 import injectSaga, { useInjectSaga } from '../../utils/utils/injectSaga';
@@ -20,7 +20,12 @@ import generateAction from './actions';
 import Reducer from './reducer';
 import Saga from './generator';
 import nullcheck from '../../utils/nullCheck';
-import { getData, mapDispatchToProps, toPromise } from '../../utils';
+import {
+  bindActionsToDispatch,
+  getData,
+  mapDispatchToProps,
+  toPromise,
+} from '../../utils';
 import {
   commonConstants,
   FOR_INTERNAL_USE_ONLY,
@@ -203,15 +208,7 @@ export default ({
       stateProps = {
         ...componentData[reducer_name_hoc_key],
         // actions: bindActionCreators(componentActions, dispatch),
-        actions: Object.entries(
-          bindActionCreators(componentActions, dispatch),
-        ).reduce(
-          (acc, [key, action]) => ({
-            ...acc,
-            [key]: toPromise.bind(null, action),
-          }),
-          {},
-        ),
+        actions: bindActionsToDispatch(componentActions, dispatch),
         dispatch,
       };
     }
