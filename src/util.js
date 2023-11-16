@@ -24,6 +24,7 @@ export {
   useStaleRefresh,
   useMutateReducer,
   toPromiseFunction,
+  mapDispatchToProps,
   useRefetchCachedApi,
   toPromiseAllFunction,
   useCancelAllRunningApiCalls,
