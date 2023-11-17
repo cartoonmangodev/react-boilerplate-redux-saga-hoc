@@ -390,9 +390,15 @@ export default function(makeStore, config) {
                 initialProps = {};
                 if (!('getInitialProps' in App))
                   return [
-                    3,
-                    /*break*/
                     2,
+                    /*break*/
+                    {
+                      isServer: isServer,
+                      initialState: isServer
+                        ? config.serializeState(store.getState())
+                        : store.getState(),
+                      initialProps: initialProps,
+                    },
                   ];
                 return [
                   4,
