@@ -82,7 +82,10 @@ const nextStore = ({
   reducer,
   middlewares: _middlewares = [],
   enhancers: _enhancers = [],
-}) => (initialState = {}, { isServer, req = null } = {}) => {
+}) => (
+  initialState = {},
+  { isServer = typeof window === 'undefined', req = null } = {},
+) => {
   let composeEnhancers = compose;
   const monitor = null;
   // if (typeof window !== "undefined")
