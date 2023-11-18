@@ -310,6 +310,11 @@ export const mapDispatchToProps = (
     ? newObject(componentData, ({ [`${reducerName}_hoc`]: data }) => ({
         [`${reducerName}_hoc`]: newObject(data, {
           actions: bindActionsToDispatch(actions, dispatch),
+          mutateState: payload =>
+            dispatch({
+              type: `${reducerName}_MUTATE_STATE`,
+              payload: payload,
+            }),
         }),
       }))
     : {}),

@@ -207,6 +207,11 @@ export default ({
     if ((!stateProps || isDevelopment) && dispatch) {
       stateProps = {
         ...componentData[reducer_name_hoc_key],
+        mutateState: payload =>
+          dispatch({
+            type: `${reducerName}_MUTATE_STATE`,
+            payload: payload,
+          }),
         // actions: bindActionCreators(componentActions, dispatch),
         actions: bindActionsToDispatch(componentActions, dispatch),
         dispatch,
