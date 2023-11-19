@@ -1,6 +1,6 @@
 {
   "name": "react-boilerplate-redux-saga-hoc",
-  "version": "1.9.25",
+  "version": "1.9.23",
   "description": "Easy ways to handle api calls,redux,saga...etc",
   "main": "./lib/index.js",
   "unpkg": "./lib/index.js",
@@ -61,6 +61,7 @@
   "license": "MIT",
   "peerDependencies": {
     "axios": "^0.24.0 || ^0.27.2",
+    "lodash": "^4.17.21",
     "react-redux": "^7.0.2 || ^8.0.4",
     "react": "^16.8 || ^17.0 || ^18.0",
     "react-dom": "^16.8 || ^17.0 || ^18.0",
