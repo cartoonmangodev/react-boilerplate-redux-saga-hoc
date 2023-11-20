@@ -21,7 +21,7 @@ import AxiosDefault from 'axios';
 import * as constants from './commonConstants';
 import { responseErrorParser } from '../index';
 import Axios from '../../config/axios';
-import { typeOf } from '../helpers';
+import { typeOf, delay } from '../helpers';
 import * as commonActions from './commonActions';
 import {
   DEBOUNCE_API_CALL_DELAY_IN_MS,
@@ -29,7 +29,6 @@ import {
   REFETCH_API_QUERY,
 } from './commonConstants';
 import CustomError from '../customError';
-import { delay } from '../utils/delay';
 const headers = '';
 function* loaderGenerator({ type, commonData }) {
   yield put(

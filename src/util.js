@@ -13,6 +13,7 @@ export {
   generateTimeStamp,
   toCapitalize,
   typeOf,
+  delay,
 } from './utils/helpers';
 export {
   getData,
@@ -41,4 +42,3 @@ export {
   useInjectReducer,
 } from './utils/utils/injectReducer';
 export { default as injectSaga, useInjectSaga } from './utils/utils/injectSaga';
-export { delay } from './utils/utils/delay';
