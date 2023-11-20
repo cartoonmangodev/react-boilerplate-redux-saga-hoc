@@ -29,6 +29,7 @@ import {
   REFETCH_API_QUERY,
 } from './commonConstants';
 import CustomError from '../customError';
+import { delay } from '../utils/delay';
 const headers = '';
 function* loaderGenerator({ type, commonData }) {
   yield put(
@@ -39,7 +40,7 @@ function* loaderGenerator({ type, commonData }) {
     }),
   );
 }
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+// const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const debounce = (ms, pattern, task, isEvery, ...args) =>
   fork(function*() {

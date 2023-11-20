@@ -41,3 +41,4 @@ export {
   useInjectReducer,
 } from './utils/utils/injectReducer';
 export { default as injectSaga, useInjectSaga } from './utils/utils/injectSaga';
+export { delay } from './utils/utils/delay';
