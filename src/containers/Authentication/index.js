@@ -24,7 +24,7 @@ import {
   bindActionsToDispatch,
   getData,
   mapDispatchToProps,
-  toPromise,
+  mutateState,
 } from '../../utils';
 import {
   commonConstants,
@@ -207,11 +207,7 @@ export default ({
     if ((!stateProps || isDevelopment) && dispatch) {
       stateProps = {
         ...componentData[reducer_name_hoc_key],
-        mutateState: payload =>
-          dispatch({
-            type: `${reducerName}_MUTATE_STATE`,
-            payload: payload,
-          }),
+        mutateState: mutateState(dispatch, reducerName),
         // actions: bindActionCreators(componentActions, dispatch),
         actions: bindActionsToDispatch(componentActions, dispatch),
         dispatch,

@@ -295,10 +295,19 @@ export const bindActionsToDispatch = (actions, dispatch) =>
   Object.entries(bindActionCreators(actions, dispatch)).reduce(
     (acc, [key, action]) => ({
       ...acc,
-      [key]: toPromise.bind(null, action),
+      [key]:
+        key && key.includes('_CALL') && key.slice(-5) === '_CALL'
+          ? toPromise.bind(null, action)
+          : action,
     }),
     {},
   );
+
+export const mutateState = (dispatch, reducerName) => payload =>
+  dispatch({
+    type: `${reducerName}_MUTATE_STATE`,
+    payload,
+  });
 
 export const mapDispatchToProps = (
   actions,
@@ -310,11 +319,7 @@ export const mapDispatchToProps = (
     ? newObject(componentData, ({ [`${reducerName}_hoc`]: data }) => ({
         [`${reducerName}_hoc`]: newObject(data, {
           actions: bindActionsToDispatch(actions, dispatch),
-          mutateState: payload =>
-            dispatch({
-              type: `${reducerName}_MUTATE_STATE`,
-              payload: payload,
-            }),
+          mutateState: mutateState(dispatch, reducerName),
         }),
       }))
     : {}),
