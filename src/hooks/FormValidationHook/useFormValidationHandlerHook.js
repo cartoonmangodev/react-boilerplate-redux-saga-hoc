@@ -175,6 +175,11 @@ const useFormValidationHandlerHook = ({
               [key]: value,
             });
           }
+      } else {
+        setValues({
+          ...formRef.current.values,
+          [key]: value,
+        });
       }
       if (typeof config.callback === 'function') {
         const response = config.callback(
@@ -387,6 +392,15 @@ const useFormValidationHandlerHook = ({
       setValues(newObject(formRef.current.values, newVal));
     }
   }, []);
+
+  const validateFields = (formFields = [], config) => {
+    formFields.forEach(_key => {
+      if (formRef.current.values[_key]) {
+        onChangeValues(formRef.current.values[_key], _key, config);
+      }
+    });
+  };
+
   const commonInputProps = useCallback(
     (
       key,
@@ -417,15 +431,10 @@ const useFormValidationHandlerHook = ({
             (config && config.validateFieldsOnChange) ||
             (INITIAL_FORM_CONFIG && INITIAL_FORM_CONFIG.validateFieldsOnChange);
           if (_validateFieldsOnChange && _validateFieldsOnChange.length > 0) {
-            _validateFieldsOnChange.forEach(_key => {
-              if (formRef.current.values[_key]) {
-                onChangeValues(
-                  formRef.current.values[_key],
-                  _key,
-                  INITIAL_FORM_CONFIG._config,
-                );
-              }
-            });
+            validateFields(
+              _validateFieldsOnChange,
+              INITIAL_FORM_CONFIG._config,
+            );
           }
         },
         [onBlur]: e => onBlurValues(e, key, INITIAL_FORM_CONFIG._config),
@@ -579,6 +588,32 @@ const useFormValidationHandlerHook = ({
     setErrors(__errors);
   }, []);
 
+  const setOptional = useCallback((_config = {}) => {
+    let __config = { ...formRef.current.formConfig };
+    let __errors = { ...formRef.current.errors };
+    Object.entries(_config).forEach(([_key, _value]) => {
+      __config[_key].optional = true;
+      __config[_key].isRequired = false;
+      __errors[_key] = '';
+    });
+    setFormConfig(__config);
+    setErrors(__errors);
+    validateFields(Object.keys(_config));
+  }, []);
+
+  const setRequired = useCallback((_config = {}) => {
+    let __config = { ...formRef.current.formConfig };
+    let __errors = { ...formRef.current.errors };
+    Object.entries(_config).forEach(([_key, _value]) => {
+      __config[_key].optional = false;
+      __config[_key].isRequired = true;
+      __errors[_key] = '';
+    });
+    setFormConfig(__config);
+    setErrors(__errors);
+    validateFields(Object.keys(_config));
+  }, []);
+
   // const isFormChanged = useCallback(
   //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
   //   [],
@@ -601,6 +636,8 @@ const useFormValidationHandlerHook = ({
   formRef.current.setKeyErrors = setResponseErrors;
   // formRef.current.lastUpdated = generateTimeStamp();
   formRef.current.setValidate = setValidate;
+  formRef.current.setOptional = setOptional;
+  formRef.current.setRequired = setRequired;
   formRef.current.setErrors = setErrors;
   formRef.current.resetForm = resetForm;
   formRef.current.setValues = setValues;
@@ -622,6 +659,9 @@ const useFormValidationHandlerHook = ({
     resetForm,
     setValues,
     setErrors,
+    setRequired,
+    setOptional,
+    setValidate,
     errors,
     values,
   };
