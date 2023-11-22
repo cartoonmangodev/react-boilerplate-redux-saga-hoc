@@ -593,6 +593,7 @@ const useFormValidationHandlerHook = ({
     let __errors = { ...formRef.current.errors };
     Object.entries(_config).forEach(([_key, _value]) => {
       __config[_key].optional = _value;
+      __config[_key].isRequired = false;
       __errors[_key] = '';
     });
     setFormConfig(__config);
