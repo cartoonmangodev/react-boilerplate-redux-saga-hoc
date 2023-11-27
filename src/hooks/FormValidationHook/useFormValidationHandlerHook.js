@@ -1,4 +1,3 @@
-'use client';
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable camelcase */
