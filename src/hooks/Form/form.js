@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import FormContext from './context';
 export default ({ children, inputProps, idKey, onSubmit }) => (
