@@ -297,6 +297,7 @@ var defaultConfig = {
 };
 
 export default function(makeStore, config) {
+  // delete global.__INITIAL_STATE__;
   config = __assign(__assign({}, defaultConfig), config);
   var isServer = typeof window === 'undefined';
 
@@ -350,7 +351,7 @@ export default function(makeStore, config) {
           WrappedApp.prototype.render = function() {
             var _a = this.props,
               initialProps = _a.initialProps,
-              initialState = _a.initialState,
+              initialState = global.__INITIAL_STATE__ || _a.initialState,
               props = __rest(_a, ['initialProps', 'initialState']); // Cmp render must return something like <Provider><Component/></Provider>
 
             return react_1.default.createElement(
