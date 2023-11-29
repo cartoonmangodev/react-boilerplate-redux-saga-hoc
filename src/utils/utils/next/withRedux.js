@@ -370,14 +370,6 @@ export default function(makeStore, config) {
         return __awaiter(void 0, void 0, void 0, function() {
           var store, initialProps;
           return __generator(this, function(_a) {
-            global._serializeState = config.serializeState;
-            global.____INITIAL_STATE__ = {
-              isServer: isServer,
-              initialState: isServer
-                ? config.serializeState(store.getState())
-                : store.getState(),
-              initialProps: initialProps,
-            };
             switch (_a.label) {
               case 0:
                 /* istanbul ignore next */
@@ -421,7 +413,15 @@ export default function(makeStore, config) {
                 return [
                   2,
                   /*return*/
-                  global.____INITIAL_STATE__,
+                  {
+                    isServer: isServer,
+                    initialState: isServer
+                      ? config.serializeState(
+                          global.__INITIAL_STATE__ || store.getState(),
+                        )
+                      : global.__INITIAL_STATE__ || store.getState(),
+                    initialProps: initialProps,
+                  },
                 ];
             }
           });
