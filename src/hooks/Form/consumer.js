@@ -1,4 +1,4 @@
-import { useContext, memo } from 'react';
+import React, { useContext, memo } from 'react';
 import FormContext from './context';
 
 const ID_KEY = 'id';
