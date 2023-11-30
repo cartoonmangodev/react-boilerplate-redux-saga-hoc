@@ -453,6 +453,7 @@ const useFormValidationHandlerHook = ({
         [value]: formRef.current.values[key],
         [error]: formRef.current.errors[key],
         keyName: key,
+        lastUpdated: formRef.current.lastUpdated,
       };
       _commonInputProps = {
         ..._commonInputProps,
@@ -476,7 +477,6 @@ const useFormValidationHandlerHook = ({
         ...formRef.current.formConfig[key],
         inputProps: undefined,
         _commonInputProps: undefined,
-        lastUpdated: formRef.current.lastUpdated,
       };
       delete _commonInputProps._config.inputProps;
       delete _commonInputProps._config._commonInputProps;
