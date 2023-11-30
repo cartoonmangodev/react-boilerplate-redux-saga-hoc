@@ -473,11 +473,15 @@ const useFormValidationHandlerHook = ({
             : INITIAL_FORM_CONFIG.inputProps)) ||
           {}),
       };
+      _commonInputProps.inputProps = {
+        ..._commonInputProps,
+      };
       _commonInputProps._config = {
         ...formRef.current.formConfig[key],
         inputProps: undefined,
         _commonInputProps: undefined,
       };
+
       delete _commonInputProps._config.inputProps;
       delete _commonInputProps._config._commonInputProps;
 
