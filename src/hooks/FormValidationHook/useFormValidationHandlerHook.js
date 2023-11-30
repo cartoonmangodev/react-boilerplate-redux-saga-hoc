@@ -476,6 +476,9 @@ const useFormValidationHandlerHook = ({
         inputProps: undefined,
         _commonInputProps: undefined,
       };
+      delete _commonInputProps._config.inputProps;
+      delete _commonInputProps._config._commonInputProps;
+
       if (INITIAL_FORM_CONFIG) {
         INITIAL_FORM_CONFIG._commonInputProps = {
           ..._commonInputProps,
