@@ -6,7 +6,7 @@
 /* eslint-disable no-underscore-dangle */
 import { useState, useCallback, useRef } from 'react';
 import { newObject, generateTimeStamp, typeOf } from '../../utils/helpers';
-import { TYPE_BOOLEAN, TYPE_OBJECT } from '../../constants';
+import { TYPE_BOOLEAN, TYPE_OBJECT, TYPE_FUNCTION } from '../../constants';
 import { ON_CHANGE, ON_BLUR, VALUE, ERROR } from './constants';
 import { trimStrings, updateIn } from '../../utils/helpers';
 import Safe from '../../utils/nullCheck';
@@ -61,6 +61,9 @@ const useFormValidationHandlerHook = ({
   ERROR_KEY = _ERROR_KEY || ERROR,
 } = {}) => {
   const formRef = useRef({ is_validate_form_triggered: false });
+  const [formId] = useState(() =>
+    Math.floor(Math.random() * generateTimeStamp()),
+  );
   const [formConfig, _setFormConfig] = useState(FORM_CONFIG);
   const [errors, _setErrors] = useState({});
   const [values, _setValues] = useState(() =>
@@ -72,15 +75,23 @@ const useFormValidationHandlerHook = ({
       _formConfig,
       formRef.current.formConfig,
     );
-    _setFormConfig(formRef.current.formConfig);
+    if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION)
+      formRef.current.setInputProps(formRef.current.getInputProps());
+    else _setFormConfig(formRef.current.formConfig);
   }, []);
+
   const setValues = useCallback(_values => {
     formRef.current.values = checkType(_values, formRef.current.values);
-    _setValues(formRef.current.values);
+    if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION)
+      formRef.current.setInputProps(formRef.current.getInputProps());
+    else _setValues(formRef.current.values);
   }, []);
+
   const setErrors = useCallback(_errors => {
     formRef.current.errors = checkType(_errors, formRef.current.errors);
-    _setErrors(formRef.current.errors);
+    if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION)
+      formRef.current.setInputProps(formRef.current.getInputProps());
+    else _setErrors(formRef.current.errors);
   }, []);
 
   formRef.current.values = values;
@@ -614,6 +625,12 @@ const useFormValidationHandlerHook = ({
     validateFields(Object.keys(_config));
   }, []);
 
+  const renderForm = useCallback((_config = {}) => {
+    _setValues(formRef.current.values);
+    _setErrors(formRef.current.errors);
+    _setFormConfig(formRef.current.formConfig);
+  }, []);
+
   // const isFormChanged = useCallback(
   //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
   //   [],
@@ -641,6 +658,8 @@ const useFormValidationHandlerHook = ({
   formRef.current.setErrors = setErrors;
   formRef.current.resetForm = resetForm;
   formRef.current.setValues = setValues;
+  formRef.current.renderForm = renderForm;
+  formRef.current.formId = formId;
   // formRef.current.isFormChanged = isFormChanged;
   return {
     ...formRef.current,

@@ -1,7 +1,22 @@
 import React from 'react';
 import FormContext from './context';
-export default ({ children, inputProps, idKey, onSubmit }) => (
-  <FormContext.Provider value={{ inputProps, idKey, onSubmit }}>
-    {children}
-  </FormContext.Provider>
-);
+export default ({
+  children,
+  idKey,
+  onSubmit,
+  formRef,
+  inputProps: _inputProps,
+}) => {
+  const [inputProps, setInputProps] = useState(
+    () => _inputProps || formRef.getInputProps(),
+  );
+  useEffect(() => {
+    if (formRef && formRef.setInputProp) formRef.setInputProps = setInputProps;
+  }, []);
+  const __inputProps = _inputProps || inputProps;
+  return (
+    <FormContext.Provider value={{ inputProps: __inputProps, idKey, onSubmit }}>
+      {typeof children === 'function' ? children(__inputProps) : children}
+    </FormContext.Provider>
+  );
+};
