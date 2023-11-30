@@ -15,9 +15,12 @@ const Consumer = memo(
 
 export default ({ children, ...props }) => {
   const { inputProps = {}, idKey, onSubmit } = useContext(FormContext) || {};
+  const _inputFieldProps = inputProps[props[idKey || ID_KEY]] || {};
+  const _config = _inputFieldProps._config || {};
   const _props = {
+    inputProps: _inputFieldProps.inputProps || {},
+    _inputFieldConfig: _config,
     ...(onSubmit ? { onSubmit } : {}),
-    ...(inputProps[props[idKey || ID_KEY]] || {}),
     ...props,
   };
   return <Consumer {..._props}>{children}</Consumer>;
