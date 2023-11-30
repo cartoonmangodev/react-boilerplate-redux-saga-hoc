@@ -7,7 +7,10 @@ const Consumer = memo(
   ({ children, ...props }) => {
     return typeof children === 'function' ? children(props) : children;
   },
-  (prev, next) => prev.value === next.value && prev.error === next.error,
+  (prev, next) =>
+    prev.value === next.value &&
+    prev.error === next.error &&
+    prev.lastUpdated === next.lastUpdated,
 );
 
 export default ({ children, ...props }) => {

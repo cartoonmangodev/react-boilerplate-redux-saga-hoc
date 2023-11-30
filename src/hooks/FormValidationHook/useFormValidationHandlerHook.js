@@ -75,6 +75,7 @@ const useFormValidationHandlerHook = ({
       _formConfig,
       formRef.current.formConfig,
     );
+    formRef.current.lastUpdated = generateTimeStamp();
     if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION)
       formRef.current.setInputProps(formRef.current.getInputProps());
     else _setFormConfig(formRef.current.formConfig);
@@ -101,7 +102,7 @@ const useFormValidationHandlerHook = ({
 
   const validateValue = useCallback(
     (__value, key, isSetValue, isSetError, _config, isTrim = false) => {
-      formRef.current.lastUpdated = generateTimeStamp();
+      // formRef.current.lastUpdated = generateTimeStamp();
       const config = _config || formRef.current.formConfig[key] || {};
       // eslint-disable-next-line prefer-const
       let { value, error: validatorError } =
@@ -314,7 +315,7 @@ const useFormValidationHandlerHook = ({
         if (_error) isError.push(null);
       }
       if (isSetError) {
-        formRef.current.lastUpdated = generateTimeStamp();
+        // formRef.current.lastUpdated = generateTimeStamp();
         setErrors(_errors);
       }
       formRef.current.is_validate_form_triggered = false;
@@ -336,7 +337,7 @@ const useFormValidationHandlerHook = ({
       values: __values = {},
       errors: __errors = {},
     }) => {
-      formRef.current.lastUpdated = generateTimeStamp();
+      // formRef.current.lastUpdated = generateTimeStamp();
       const _FORM_CONFIG = form_config;
       const _values = __values;
       const _errors = __errors;
@@ -377,7 +378,7 @@ const useFormValidationHandlerHook = ({
     [],
   );
   const onAddFormConfig = useCallback((config, isReset, _values = {}) => {
-    formRef.current.lastUpdated = generateTimeStamp();
+    // formRef.current.lastUpdated = generateTimeStamp();
     setFormConfig(newObject(isReset ? {} : formRef.current.formConfig, config));
     const newVal = Object.entries(config || {}).reduce(
       (acc, [key, _config = {}]) =>
@@ -475,6 +476,7 @@ const useFormValidationHandlerHook = ({
         ...formRef.current.formConfig[key],
         inputProps: undefined,
         _commonInputProps: undefined,
+        lastUpdated: formRef.current.lastUpdated,
       };
       delete _commonInputProps._config.inputProps;
       delete _commonInputProps._config._commonInputProps;
@@ -489,7 +491,7 @@ const useFormValidationHandlerHook = ({
     [],
   );
   const setInitialFormData = useCallback(data => {
-    formRef.current.lastUpdated = generateTimeStamp();
+    // formRef.current.lastUpdated = generateTimeStamp();
     const _values = Object.keys(formRef.current.formConfig).reduce(
       (acc, key) =>
         newObject(acc, {
