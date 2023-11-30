@@ -11,7 +11,7 @@ export default ({
     () => _inputProps || formRef.getInputProps(),
   );
   useEffect(() => {
-    if (formRef && formRef.setInputProp) formRef.setInputProps = setInputProps;
+    if (formRef && formRef.formId) formRef.setInputProps = setInputProps;
   }, []);
   const __inputProps = _inputProps || inputProps;
   return (
