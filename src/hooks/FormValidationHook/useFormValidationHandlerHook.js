@@ -64,9 +64,9 @@ const useFormValidationHandlerHook = ({
   const [formId] = useState(() =>
     Math.floor(Math.random() * generateTimeStamp()),
   );
-  const [formConfig, _setFormConfig] = useState(FORM_CONFIG);
-  const [errors, _setErrors] = useState({});
-  const [values, _setValues] = useState(() =>
+  let [formConfig, _setFormConfig] = useState(FORM_CONFIG);
+  let [errors, _setErrors] = useState({});
+  let [values, _setValues] = useState(() =>
     _setInitialValues({ formConfig, initialValues }),
   );
 
@@ -76,23 +76,26 @@ const useFormValidationHandlerHook = ({
       formRef.current.formConfig,
     );
     formRef.current.lastUpdated = generateTimeStamp();
-    if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION)
+    if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION) {
+      formConfig = formRef.current.formConfig;
       formRef.current.setInputProps(formRef.current.getInputProps());
-    else _setFormConfig(formRef.current.formConfig);
+    } else _setFormConfig(formRef.current.formConfig);
   }, []);
 
   const setValues = useCallback(_values => {
     formRef.current.values = checkType(_values, formRef.current.values);
-    if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION)
+    if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION) {
+      values = formRef.current.values;
       formRef.current.setInputProps(formRef.current.getInputProps());
-    else _setValues(formRef.current.values);
+    } else _setValues(formRef.current.values);
   }, []);
 
   const setErrors = useCallback(_errors => {
     formRef.current.errors = checkType(_errors, formRef.current.errors);
-    if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION)
+    if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION) {
+      errors = formRef.current.errors;
       formRef.current.setInputProps(formRef.current.getInputProps());
-    else _setErrors(formRef.current.errors);
+    } else _setErrors(formRef.current.errors);
   }, []);
 
   formRef.current.values = values;
@@ -696,6 +699,8 @@ const useFormValidationHandlerHook = ({
     setRequired,
     setOptional,
     setValidate,
+    values,
+    errors,
   };
 };
 export default useFormValidationHandlerHook;
