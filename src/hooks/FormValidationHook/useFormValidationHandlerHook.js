@@ -526,7 +526,7 @@ const useFormValidationHandlerHook = ({
     setErrors({});
   }, []);
 
-  const getValues = useCallback(_response => {
+  const getResponseValues = useCallback(_response => {
     const _dontConvertKeysToObject =
       typeOf(_response) === TYPE_BOOLEAN && !_response;
 
@@ -640,6 +640,10 @@ const useFormValidationHandlerHook = ({
     _setFormConfig(formRef.current.formConfig);
   }, []);
 
+  const getValues = useCallback(() => formRef.current.values, []);
+
+  const getErrors = useCallback(() => formRef.current.errors, []);
+
   // const isFormChanged = useCallback(
   //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
   //   [],
@@ -656,7 +660,7 @@ const useFormValidationHandlerHook = ({
   formRef.current.addFormConfig = onAddFormConfig;
   formRef.current.modifyFormConfig = onAddFormConfig;
   formRef.current.validateCustomForm = validateCustomForm;
-  formRef.current.getValues = getValues;
+  formRef.current.getResponseValues = getResponseValues;
   formRef.current.getInputProps = getInputProps;
   formRef.current.setResponseErrors = setResponseErrors;
   formRef.current.setKeyErrors = setResponseErrors;
@@ -668,6 +672,8 @@ const useFormValidationHandlerHook = ({
   formRef.current.resetForm = resetForm;
   formRef.current.setValues = setValues;
   formRef.current.renderForm = renderForm;
+  formRef.current.getValues = getValues;
+  formRef.current.getErrors = getErrors;
   formRef.current.formId = formId;
   // formRef.current.isFormChanged = isFormChanged;
   return {
@@ -690,8 +696,6 @@ const useFormValidationHandlerHook = ({
     setRequired,
     setOptional,
     setValidate,
-    errors,
-    values,
   };
 };
 export default useFormValidationHandlerHook;
