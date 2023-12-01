@@ -15,13 +15,14 @@ export default ({
     () => _inputProps || formRef.getInputProps(extraProps),
   );
   useEffect(() => {
-    if (formRef && formRef.formId) formRef.setInputProps = setInputProps;
+    if (formRef && formRef.formId && !_inputProps)
+      formRef.setInputProps = setInputProps;
   }, []);
 
   const is_equal = isEqual(ref.current, extraProps);
 
   useEffect(() => {
-    if (!is_equal) {
+    if (!is_equal && !_inputProps) {
       ref.current = extraProps;
       setInputProps(formRef.getInputProps(extraProps));
     }
