@@ -643,9 +643,9 @@ const useFormValidationHandlerHook = ({
     _setFormConfig(formRef.current.formConfig);
   }, []);
 
-  const getValues = useCallback(() => formRef.current.values, []);
+  const getValues = () => formRef.current.values;
 
-  const getErrors = useCallback(() => formRef.current.errors, []);
+  const getErrors = () => formRef.current.errors;
 
   // const isFormChanged = useCallback(
   //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
