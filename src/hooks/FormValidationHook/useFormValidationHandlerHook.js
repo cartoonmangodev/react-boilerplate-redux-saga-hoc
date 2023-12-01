@@ -70,33 +70,42 @@ const useFormValidationHandlerHook = ({
     _setInitialValues({ formConfig, initialValues }),
   );
 
-  const setFormConfig = useCallback(_formConfig => {
-    formRef.current.formConfig = checkType(
-      _formConfig,
-      formRef.current.formConfig,
-    );
-    formRef.current.lastUpdated = generateTimeStamp();
-    if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION) {
-      formConfig = formRef.current.formConfig;
-      formRef.current.setInputProps(formRef.current.getInputProps());
-    } else _setFormConfig(formRef.current.formConfig);
-  }, []);
+  const setFormConfig = useCallback(
+    _formConfig => {
+      formRef.current.formConfig = checkType(
+        _formConfig,
+        formRef.current.formConfig,
+      );
+      formRef.current.lastUpdated = generateTimeStamp();
+      if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION) {
+        formConfig = formRef.current.formConfig;
+        formRef.current.setInputProps(formRef.current.getInputProps());
+      } else _setFormConfig(formRef.current.formConfig);
+    },
+    [formConfig],
+  );
 
-  const setValues = useCallback(_values => {
-    formRef.current.values = checkType(_values, formRef.current.values);
-    if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION) {
-      values = formRef.current.values;
-      formRef.current.setInputProps(formRef.current.getInputProps());
-    } else _setValues(formRef.current.values);
-  }, []);
+  const setValues = useCallback(
+    _values => {
+      formRef.current.values = checkType(_values, formRef.current.values);
+      if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION) {
+        values = formRef.current.values;
+        formRef.current.setInputProps(formRef.current.getInputProps());
+      } else _setValues(formRef.current.values);
+    },
+    [values],
+  );
 
-  const setErrors = useCallback(_errors => {
-    formRef.current.errors = checkType(_errors, formRef.current.errors);
-    if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION) {
-      errors = formRef.current.errors;
-      formRef.current.setInputProps(formRef.current.getInputProps());
-    } else _setErrors(formRef.current.errors);
-  }, []);
+  const setErrors = useCallback(
+    _errors => {
+      formRef.current.errors = checkType(_errors, formRef.current.errors);
+      if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION) {
+        errors = formRef.current.errors;
+        formRef.current.setInputProps(formRef.current.getInputProps());
+      } else _setErrors(formRef.current.errors);
+    },
+    [errors],
+  );
 
   formRef.current.values = values;
   formRef.current.errors = errors;
@@ -566,17 +575,6 @@ const useFormValidationHandlerHook = ({
     );
   }, []);
 
-  // const setResponseErrors = useCallback(_errors => {
-  //   const _keyErrors = Object.entries(formRef.current.formConfig).reduce(
-  //     (acc, [_key, _config = {}]) => ({
-  //       ...acc,
-  //       [_key]: _errors[_config.key || _key],
-  //     }),
-  //     {},
-  //   );
-  //   setValues(_keyErrors);
-  // }, []);
-
   const setResponseErrors = useCallback(_errors => {
     const _keyErrors = Object.entries(formRef.current.formConfig).reduce(
       (acc, [_key, _config = {}]) => ({
@@ -643,9 +641,9 @@ const useFormValidationHandlerHook = ({
     _setFormConfig(formRef.current.formConfig);
   }, []);
 
-  const getValues = () => values;
-
-  const getErrors = () => errors;
+  const getValues = useCallback(() => values, [values]);
+  const getErrors = useCallback(() => errors, [errors]);
+  const getFormConfig = useCallback(() => formConfig, [formConfig]);
 
   // const isFormChanged = useCallback(
   //   () => !isEqual(formRef.current.initialLoadValues, formRef.current.values),
@@ -677,13 +675,14 @@ const useFormValidationHandlerHook = ({
   formRef.current.renderForm = renderForm;
   formRef.current.getValues = getValues;
   formRef.current.getErrors = getErrors;
+  formRef.current.getFormConfig = getFormConfig;
   formRef.current.formId = formId;
   // formRef.current.isFormChanged = isFormChanged;
   return {
     ...formRef.current,
+    formRef: formRef.current,
     validateCustomObject: onValidateCustomObject,
     getPlatformBasedFieldValue,
-    formRef: formRef.current,
     setInitialFormData,
     commonInputProps,
     onValidateValues,
