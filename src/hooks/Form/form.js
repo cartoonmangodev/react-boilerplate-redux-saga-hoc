@@ -12,7 +12,7 @@ export default ({
 }) => {
   const ref = useRef(extraProps);
   const [inputProps, setInputProps] = useState(
-    () => _inputProps || formRef.getInputProps(extraProps),
+    () => _inputProps || (formRef && formRef.getInputProps(extraProps)),
   );
   useEffect(() => {
     if (formRef && formRef.formId && !_inputProps)
@@ -22,7 +22,7 @@ export default ({
   const is_equal = isEqual(ref.current, extraProps);
 
   useEffect(() => {
-    if (!is_equal && !_inputProps) {
+    if (!is_equal && formRef && !_inputProps) {
       ref.current = extraProps;
       setInputProps(formRef.getInputProps(extraProps));
     }
