@@ -10,23 +10,16 @@ export default ({
   inputProps: _inputProps,
   extraProps,
 }) => {
-  const ref = useRef(extraProps);
   const [inputProps, setInputProps] = useState(
     () => _inputProps || (formRef && formRef.getInputProps(extraProps)),
   );
   useEffect(() => {
-    if (formRef && formRef.formId && !_inputProps)
+    if (formRef && formRef.formId && !_inputProps && !formRef.setInputProps)
       formRef.setInputProps = setInputProps;
-  }, []);
+    else if (formRef.setInputProps) delete formRef.setInputProps;
+  }, [!!_inputProps]);
 
-  const is_equal = isEqual(ref.current, extraProps);
-
-  useEffect(() => {
-    if (!is_equal && formRef && !_inputProps) {
-      ref.current = extraProps;
-      setInputProps(formRef.getInputProps(extraProps));
-    }
-  }, [is_equal]);
+  if (formRef && formRef.formId) formRef._extraProps = extraProps;
 
   const __inputProps = _inputProps || inputProps;
   return (

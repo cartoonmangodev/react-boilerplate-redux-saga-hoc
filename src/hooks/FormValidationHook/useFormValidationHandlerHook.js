@@ -79,7 +79,9 @@ const useFormValidationHandlerHook = ({
       formRef.current.lastUpdated = generateTimeStamp();
       if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION) {
         formConfig = formRef.current.formConfig;
-        formRef.current.setInputProps(formRef.current.getInputProps());
+        formRef.current.setInputProps(
+          formRef.current.getInputProps(formRef.current._extraProps),
+        );
       } else _setFormConfig(formRef.current.formConfig);
     },
     [formConfig],
@@ -90,7 +92,9 @@ const useFormValidationHandlerHook = ({
       formRef.current.values = checkType(_values, formRef.current.values);
       if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION) {
         values = formRef.current.values;
-        formRef.current.setInputProps(formRef.current.getInputProps());
+        formRef.current.setInputProps(
+          formRef.current.getInputProps(formRef.current._extraProps),
+        );
       } else _setValues(formRef.current.values);
     },
     [values],
@@ -101,7 +105,9 @@ const useFormValidationHandlerHook = ({
       formRef.current.errors = checkType(_errors, formRef.current.errors);
       if (typeOf(formRef.current.setInputProps) === TYPE_FUNCTION) {
         errors = formRef.current.errors;
-        formRef.current.setInputProps(formRef.current.getInputProps());
+        formRef.current.setInputProps(
+          formRef.current.getInputProps(formRef.current._extraProps),
+        );
       } else _setErrors(formRef.current.errors);
     },
     [errors],
