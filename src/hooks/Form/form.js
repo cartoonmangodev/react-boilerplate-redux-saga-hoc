@@ -22,6 +22,7 @@ export default ({
   if (formRef && formRef.formId) formRef._extraProps = extraProps;
 
   const __inputProps = _inputProps || inputProps;
+
   return (
     <FormContext.Provider value={{ inputProps: __inputProps, idKey, onSubmit }}>
       {typeof children === 'function' ? children(__inputProps) : children}
