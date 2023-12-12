@@ -141,7 +141,7 @@ const useFormValidationHandlerHook = ({
             : config.trim || isTrim
         )
           value = trimStrings(value, config.isNumber);
-        if (config.maxLength && (__value || '').length > config.maxLength) {
+        if (config.maxLength && (value || '').length > config.maxLength) {
           maxError =
             typeof (config.message && config.message.maxLength) !== 'undefined'
               ? config.message.maxLength
