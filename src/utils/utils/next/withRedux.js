@@ -296,7 +296,7 @@ var defaultConfig = {
   },
 };
 
-export default function(makeStore, config) {
+export default function(makeStore, setStore, config) {
   config = __assign(__assign({}, defaultConfig), config);
   var isServer = typeof window === 'undefined';
 
@@ -313,11 +313,13 @@ export default function(makeStore, config) {
         }),
       );
     };
+    const _store = createStore();
+    if (typeof setStore === 'function') setStore(_store);
 
-    if (isServer) return createStore(); // Memoize store if client
+    if (isServer) return _store; // Memoize store if client
 
     if (!(storeKey in window)) {
-      window[storeKey] = createStore();
+      window[storeKey] = _store;
     }
 
     return window[storeKey];
