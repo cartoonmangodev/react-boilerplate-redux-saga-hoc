@@ -45,12 +45,14 @@ let errorConsole = (parentObj, error, path, func = [], notFound) => {
 };
 const errorLog = () => {
   let e = new Error();
-  let stack = e.stack.toString().split(/\r\n|\n/);
+  let stack = e.stack ? e.stack.toString().split(/\r\n|\n/) : e.stack;
   console.log('Error :');
-  stack.splice(0, 1);
-  stack.map((err, index) =>
-    console.log(`[${stack[stack.length - 1 - index]} ]`),
-  );
+  if (stack && stack.length) {
+    stack.splice(0, 1);
+    stack.map((err, index) =>
+      console.log(`[${stack[stack.length - 1 - index]} ]`),
+    );
+  }
   // console.log(`[ Error ${stack[stack.length - 1]} ]`);
 };
 
